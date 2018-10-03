@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>8724e9cb-9b49-4cec-b22c-7e902a1da39f</Guid>
+    <Name>CovertInfiltration</Name>
+    <Description>A smaller mod to overhaul the Covert Actions system</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>CovertInfiltration</AssemblyName>
+    <RootNamespace>CovertInfiltration</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\CovertInfiltration\" />
+    <Folder Include="Src\CovertInfiltration\Classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="Config\XComEditor.ini" />
+    <Content Include="Config\XComEngine.ini" />
+    <Content Include="Config\XComGame.ini" />
+    <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
