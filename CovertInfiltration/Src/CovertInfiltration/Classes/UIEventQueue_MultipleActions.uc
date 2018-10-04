@@ -106,7 +106,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 				if( List.ItemCount <= j )
 				{
 					if( Events[i].bActionEvent )
-						ListItem = Spawn(class'UIEventQueue_CovertActionListItem', List.itemContainer).InitListItem();
+						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 					else
 						ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
 

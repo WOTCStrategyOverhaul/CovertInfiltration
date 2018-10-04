@@ -4,6 +4,9 @@ var config int MAX_ACTIONS_GLOBAL;
 var config array<int> MAX_ACTIONS_PERFACTION;
 var config array<name> GLOBAL_ACTIONS_UPGRADE;
 
+var localized string CovertActions_GlobalActionsMax;
+var localized string CovertActions_FactionActionMax;
+
 function int GetMaxGlobalActions()
 {
 	local name UpgradeName;
@@ -58,9 +61,9 @@ function string GetCovertActionError(name ErrorName)
 		case 'AA_OneActionMax':
 			return CovertActions_ActionInProgressTooltip;
 		case 'AA_GlobalActionsMax':
-			return "Maximum number of Covert Action is in progress.";
+			return CovertActions_GlobalActionsMax;
 		case 'AA_FactionActionMax':
-			return "Maximum number of Covert Action for this faction's influence is in progress.";
+			return CovertActions_FactionActionMax;
 		default:
 			break;
 	}
