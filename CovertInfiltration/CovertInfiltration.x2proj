@@ -19,6 +19,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Localization\CovertInfiltration.int">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\XComEditor.ini" />
@@ -26,6 +29,9 @@
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
     <Content Include="Src\CovertInfiltration\Classes\UICovertActions_MultipleActions.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_MaskedCovertActionListItem.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_MultipleActions.uc">
