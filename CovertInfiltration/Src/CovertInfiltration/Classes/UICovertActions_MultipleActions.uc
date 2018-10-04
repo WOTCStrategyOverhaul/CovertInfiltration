@@ -38,9 +38,6 @@ function name CanStartCovertAction(XComGameState_CovertAction ActionToStart)
 			}
 		}
 	}
-	//`log("Faction Name:" @ ActionToStart.GetFaction().GetFactionName(),, 'MultCovertActions');
-	//`log("Faction Influence:" @ string(EFactionInfluence(ActionToStart.GetFaction().GetInfluence())) @ "(" $ int(ActionToStart.GetFaction().GetInfluence()) $ ")",, 'MultCovertActions');
-	//`log("MAX:" @ MAX_ACTIONS_PERFACTION[int(ActionToStart.GetFaction().GetInfluence())],, 'MultCovertActions');
 
 	if (GlobalActions >= GetMaxGlobalActions())
 	{
