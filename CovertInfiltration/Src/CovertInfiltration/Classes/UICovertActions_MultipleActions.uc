@@ -29,7 +29,7 @@ function name CanStartCovertAction(XComGameState_CovertAction ActionToStart)
 	History = `XCOMHISTORY;
 	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
 	{
-		if (ActionState.bStarted)
+		if (ActionState.bStarted && !ActionState.bCompleted)
 		{
 			GlobalActions++;
 			if (ActionState.Faction.ObjectID == ActionToStart.Faction.ObjectID)
