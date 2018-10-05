@@ -1,11 +1,9 @@
 //---------------------------------------------------------------------------------------
-//  FILE:   XComDownloadableContentInfo_CovertInfiltration.uc                                    
-//           
-//	Use the X2DownloadableContentInfo class to specify unique mod behavior when the 
-//  player creates a new campaign or loads a saved game.
-//  
+//  AUTHOR:  (Integrated from BountyGiver's mod)
+//  PURPOSE: This class is used for various hooks and to add commands to game's
+//           debug console
 //---------------------------------------------------------------------------------------
-//  Copyright (c) 2016 Firaxis Games, Inc. All rights reserved.
+//  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;

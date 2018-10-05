@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  (Integrated from BountyGiver's mod)
+//  PURPOSE: This class is a replacement for base game's UIEventQueue
+//           which allows multiple covert actions to be shown
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIEventQueue_MultipleActions extends UIEventQueue;
 
 simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool EnableEditControls)

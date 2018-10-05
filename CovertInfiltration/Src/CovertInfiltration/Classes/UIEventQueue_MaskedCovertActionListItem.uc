@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  RoboJumper
+//  PURPOSE: This class is a decorator around base game's UIEventQueue_CovertActionListItem
+//           which hides the header and makes the item same height as other ones
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIEventQueue_MaskedCovertActionListItem extends UIEventQueue_CovertActionListItem;
 
 var UIEventQueue_CovertActionListItem InnerItem;

@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  (Integrated from BountyGiver's mod)
+//  PURPOSE: This class is a replacement for base game's UICovertActions
+//           which allows multiple covert actions to be launched simulatinously
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActions_MultipleActions extends UICovertActions config(GameData);
 
 var config int MAX_ACTIONS_GLOBAL;
