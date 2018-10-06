@@ -119,7 +119,9 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 			{
 				if( List.ItemCount <= j )
 				{
-					if( Events[i].bActionEvent )
+					if( Events[i].bActionEvent && Events[i].Hours == -1 )
+						ListItem = Spawn(class'UIEventQueue_CovertActionListItem', List.itemContainer).InitListItem();
+					else if( Events[i].bActionEvent )
 						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 					else
 						ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
@@ -179,7 +181,7 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 			bActionFound = true;
 		}
 	}
-	/*
+	
 	ResHQ = XComGameState_HeadquartersResistance(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
 	bRingBuilt = `XCOMHQ.HasFacilityByName('ResistanceRing');
 	if (!bActionFound)
@@ -190,7 +192,7 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 		kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
 		kEvent.bActionEvent = true;
 		arrEvents.AddItem(kEvent);
-	}*/
+	}
 }
 
 //---------------------------------------------------------------------------------------
