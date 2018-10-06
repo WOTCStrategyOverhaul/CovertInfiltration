@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  (Integrated from BountyGiver's mod)
-//			 Adapted for overhaul by NotSoLoneWolf
+//           Adapted for overhaul by NotSoLoneWolf
 //  PURPOSE: This class is a replacement for base game's UIEventQueue
 //           which allows multiple covert actions to be shown.
-//			 Modified to shift Covert Actions into the regular queue,
-//			 instead of being stuck at the bottom all the time.
+//           Modified to shift Covert Actions into the regular queue,
+//           instead of being stuck at the bottom all the time.
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -119,12 +119,17 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 			{
 				if( List.ItemCount <= j )
 				{
-					if( Events[i].bActionEvent && Events[i].Hours == -1 )
-						ListItem = Spawn(class'UIEventQueue_CovertActionListItem', List.itemContainer).InitListItem();
-					else if( Events[i].bActionEvent )
-						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
-					else
+					if( Events[i].bActionEvent )
+					{
+						if( Events[i].Hours == -1 )
+						{
+							ListItem = Spawn(class'UIEventQueue_CovertActionListItem', List.itemContainer).InitListItem();
+						} else {
+							ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
+						}
+					} else {
 						ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
+					}
 
 					ListItem.OnUpButtonClicked = OnUpButtonClicked;
 					ListItem.OnDownButtonClicked = OnDownButtonClicked;
