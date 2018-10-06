@@ -1,7 +1,10 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  (Integrated from BountyGiver's mod)
+//			 Adapted for overhaul by NotSoLoneWolf
 //  PURPOSE: This class is a replacement for base game's UIEventQueue
-//           which allows multiple covert actions to be shown
+//           which allows multiple covert actions to be shown.
+//			 Modified to shift Covert Actions into the regular queue,
+//			 instead of being stuck at the bottom all the time.
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -54,7 +57,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 
 	if (Events.Length > 0 && !bIsInStrategyMap || (`HQPRES.StrategyMap2D != none && `HQPRES.StrategyMap2D.m_eUIState != eSMS_Flight))
 	{
-		// Remove all covert actions first, we will need to do something else with it
+		// Remove the one covert action in the event queue already
 		for( i = 0; i < Events.Length; i++ )
 		{
 			if (Events[i].bActionEvent)
@@ -64,12 +67,15 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 			}
 		}
 
-		//`log("Removed all covert actions, new length:" @ Events.Length,, 'MultCovertActions');
+		//`log("Removed covert actions, new length:" @ Events.Length,, 'MultCovertActions');
 
-
-		GetCovertActionEvents(Events); // Re-add covert actions, now adding all actions
+		// Add ALL active covert actions to the end of the queue
+		GetCovertActionEvents(Events); 
 
 		//`log("Re-added all covert actions, new length:" @ Events.Length,, 'MultCovertActions');
+
+		// Properly sort the events by hours instead of having the Covert Events at the bottom
+		Events.sort(EventSorting);
 
 		NumCovert = 0;
 
@@ -83,7 +89,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 
 		if( bIsExpanded )
 		{
-			NumItemsToShow = Events.Length - NumCovert;
+			NumItemsToShow = Events.Length;
 		}
 		else
 		{
@@ -100,7 +106,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 		//`log("Refreshing list list_length:" @ List.ItemCount $ ", num item to show:" @ NumItemsToShow,, 'MultCovertActions');
 		//`log("Num Covert:" @ NumCovert $ ", Num Covert Item:" @ NumCovertItem,, 'MultCovertActions');
 
-		if( List.ItemCount != NumItemsToShow + NumCovert || NumCovert != NumCovertItem )
+		if( List.ItemCount != NumItemsToShow || NumCovert != NumCovertItem )
 			List.ClearItems();
 
 		//Look through all events
@@ -109,7 +115,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 		{
 			// Display the number of items to show PLUS all covert action events. 
 			// Covert actions should never hide. 
-			if( i < NumItemsToShow || Events[i].bActionEvent )
+			if( i < NumItemsToShow )
 			{
 				if( List.ItemCount <= j )
 				{
@@ -173,21 +179,22 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 			bActionFound = true;
 		}
 	}
-
+	/*
 	ResHQ = XComGameState_HeadquartersResistance(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
 	bRingBuilt = `XCOMHQ.HasFacilityByName('ResistanceRing');
-	if (!bActionFound && (ResHQ.NumMonths >= 1 || bRingBuilt))
+	if (!bActionFound)
 	{
-		if (bRingBuilt)
-			kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsGoToRing;
-		else if (!ResHQ.bCovertActionStartedThisMonth)
-			kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
-		else
-			kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsBuildRing;
+		kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
 
 		kEvent.Hours = -1;
 		kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
 		kEvent.bActionEvent = true;
 		arrEvents.AddItem(kEvent);
-	}
+	}*/
+}
+
+//---------------------------------------------------------------------------------------
+function int EventSorting(HQEvent A, HQEvent B)
+{
+    return A.Hours > B.Hours ? -1 : 0;
 }
