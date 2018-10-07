@@ -14,14 +14,17 @@ event OnInit(UIScreen Screen)
 {
 
 	local UILargeButton CovertActionButton;
+	local UIStrategyMap StrategyMap;
 
-	CovertActionButton = Screen.Spawn(class 'UILargeButton', Screen);
+	StrategyMap = UIStrategyMap(Screen);
+	if (StrategyMap == none) return;
 
-	CovertActionButton.SetResizeToText(false);
+	CovertActionButton = Screen.Spawn(class 'UILargeButton', StrategyMap.StrategyMapHUD);
+
 	CovertActionButton.InitButton('CovertActionButton', CovertActionButtonLabel, OnCovertActionButton);
-	CovertActionButton.AnchorTopRight();
-	CovertActionButton.SetFontSize(35);
-	CovertActionButton.SetPosition(-250, 70);
+	CovertActionButton.AnchorBottomCenter();
+	CovertActionButton.SetFontSize(40);
+	CovertActionButton.SetPosition(-135, -200);
 	
 }
 
@@ -29,20 +32,18 @@ public function OnCovertActionButton(UIButton CovertActionButton)
 {
 
 	local UIScreenStack ScreenStack;
-	local UIAvengerHUD AvengerHUDScreen;
+	local UIScreen AvengerHUDScreen;
 	local UIScreen CovertActionScreen;
 
 	ScreenStack = `SCREENSTACK;
 	CovertActionScreen = ScreenStack.GetScreen(class'UICovertActions');
-	AvengerHUDScreen = UIAvengerHUD(ScreenStack.GetScreen(class'UIAvengerHUD'));
+	AvengerHUDScreen = ScreenStack.GetScreen(class'UIStrategyMap');
 
 	if(CovertActionScreen == none)
 		AvengerHUDScreen.Movie.Stack.Push(AvengerHUDScreen.Movie.Pres.Spawn(class'UICovertActions', AvengerHUDScreen.Movie.Pres));
-	else
-		CovertActionScreen.CloseScreen();
 }
 
 defaultproperties
 {
-	ScreenClass = class'UIAvengerHUD';
+	ScreenClass = none //class'UIStrategyMap';
 }
