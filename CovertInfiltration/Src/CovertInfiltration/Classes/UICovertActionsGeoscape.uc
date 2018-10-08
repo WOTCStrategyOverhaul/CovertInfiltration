@@ -53,27 +53,16 @@ simulated function PopulateList()
 	local name LastFactionName;
 	local int idx;
 	local UIListItemString Item;
-	local UICovertOpsFactionListItem listHeader;
+	local UICovertActionsGeoscape_FactionHeader FactionHeader;
 
 	for( idx = 0; idx < arrActions.Length; idx++ )
 	{
 		if (arrActions[idx].GetFaction().GetMyTemplateName() != LastFactionName)
 		{
-			// TODO: ther header is invisible cuz of package mismatch
-			listHeader = Spawn(class'UICovertOpsFactionListItem', ActionsList.itemContainer);
-			if (idx == 0 && arrActions[idx].bStarted)
-			{
-				listHeader.InitCovertOpsListItem(arrActions[idx].GetFaction().FactionIconData, "Some sort of header, dunno", class'UIUtilities_Colors'.const.COVERT_OPS_HTML_COLOR);
-			}
-			else
-			{
-				LastFactionName = arrActions[idx].GetFaction().GetMyTemplateName();
-				
-				listHeader.InitCovertOpsListItem(arrActions[idx].GetFaction().FactionIconData, Caps(arrActions[idx].GetFaction().GetFactionTitle()), class'UIUtilities_Colors'.static.GetColorForFaction(LastFactionName));
-			}
-
-			listHeader.DisableNavigation(); //bsg-jneal (2.17.17): disable faction headers in the list so they get skipped over for navigation
+			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
+			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
 		}
+
 		Item = Spawn(class'UIListItemString', ActionsList.itemContainer);
 		Item.InitListItem(GetActionLocString(idx));
 		Item.metadataInt = arrActions[idx].ObjectID;
@@ -90,13 +79,14 @@ simulated function PopulateList()
 		{
 			ActionsList.SetSelectedItem(Item);
 		}
+
+		LastFactionName = arrActions[idx].GetFaction().GetMyTemplateName();
 	}
 }
 
 simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
 {
 	local UIPanel ListItem;
-	local XComGameState NewGameState;
 	local StateObjectReference NewRef;
 	local int i;
 
