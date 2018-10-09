@@ -40,9 +40,11 @@ simulated function OnInit()
 
 simulated function OnReceiveFocus()
 {
-	// Came back from UISquadSelect
 	super.OnReceiveFocus();
-	FocusCameraOnCurrentAction();
+	
+	// Came back from UISquadSelect
+	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
+	FocusCameraOnCurrentAction(true);
 }
 
 simulated function BuildScreen()
@@ -219,39 +221,39 @@ simulated function UpdateData()
 	FocusCameraOnCurrentAction();
 }
 
-simulated function FocusCameraOnCurrentAction()
+simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
 {
-	GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
+	if (Instant)
+	{
+		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM, 0);
+	}
+	else
+	{
+		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
+	}
+}
+
+simulated function OpenLoadoutForCurrentAction()
+{
+	local SquadSelectForCovertActionManager SSManager;
+
+	SSManager = new class'SquadSelectForCovertActionManager';
+	SSManager.Action = GetAction();
+	SSManager.OpenSquadSelect();
+
+	// TODO: Store SSManager somewhere
 }
 
 /// CHILD CALLBAKCS
 
 simulated function OnConfirmClicked(UIButton Button)
 {
-	/*local TDialogueBoxData DialogData;
-	
-	DialogData.eType = eDialog_Normal;
-	DialogData.strTitle = "Button clicked";
-	DialogData.strText = "OnConfirmClicked";
-	
-	GetHQPres().UIRaiseDialog(DialogData);*/
-
-	// TODO
-
-	class'SSAAT_Opener'.static.ShowSquadSelect(); // Just default config for now
+	OpenLoadoutForCurrentAction();
 }
 
 simulated function OnCloseScreenClicked(UIButton Button)
 {
-	local TDialogueBoxData DialogData;
-	
-	DialogData.eType = eDialog_Normal;
-	DialogData.strTitle = "Button clicked";
-	DialogData.strText = "OnCloseScreenClicked";
-	
-	GetHQPres().UIRaiseDialog(DialogData);
-
-	// TODO
+	CloseScreen();
 }
 
 /// KEYBOARD/CONTROLLER INPUT
