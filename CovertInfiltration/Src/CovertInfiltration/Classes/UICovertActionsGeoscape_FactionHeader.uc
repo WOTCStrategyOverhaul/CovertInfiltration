@@ -4,6 +4,7 @@ var protectedwrite XComGameState_ResistanceFaction Faction;
 var protectedwrite bool bIsOngoing;
 
 var protectedwrite UIImage BG;
+var protectedwrite UIImage Icon;
 
 simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction, bool IsOngoing)
 {
@@ -16,8 +17,19 @@ simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction
 	Faction = InitFaction;
 	bIsOngoing = IsOngoing;
 
+	CreateElements();
 	UpdateText();
+	UpdateFactionIcon();
 	UpdateBG();
+}
+
+simulated protected function CreateElements()
+{
+	Icon = Spawn(class'UIImage', self);
+	Icon.InitImage('Icon');
+
+	/*BG = Spawn(class'UIImage', self);
+	BG.InitImage('BG');*/
 }
 
 simulated function UpdateText()
@@ -35,27 +47,44 @@ simulated function UpdateText()
 
 	strText = class'UIUtilities_Text'.static.AddFontInfo(strText, Screen.bIsIn3D, true);
 	strText = ColourText(strText, GetFactionColour());
-	strText = InjectFactionIcon(strText);
+	strText = "       " $ strText; // Add some space for the icon
 
 	SetHtmlText(strText);
+
+	// Note that if (space + text) exceeds the line width, it will scroll together with space.
+	// A fix will be to spawn another, smaller sized UIText, but I do not belive this problem will ever happen
 }
 
-simulated function string InjectFactionIcon(string strText)
+simulated function UpdateFactionIcon()
 {
-	// For now just space
-	return "     " $ strText;
+	// For now we will use just the static image from class template
+	
+	local X2SoldierClassTemplateManager ClassTemplateManager;
+	local X2SoldierClassTemplate ClassTemplate;
+
+	ClassTemplateManager = class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager();
+	ClassTemplate = ClassTemplateManager.FindSoldierClassTemplate(Faction.GetMyTemplate().ChampionSoldierClass);
+	if (ClassTemplate == none) return; // Can't find any image
+
+	if (Icon == none)
+	{
+		Icon = Spawn(class'UIImage', self);
+		Icon.InitImage('Icon');
+	}
+
+	Icon.LoadImage(ClassTemplate.IconImage);
+	Icon.SetSize(42, 42);
 }
 
 simulated function UpdateBG()
 {
-	local UIFactionIcon d;
+	// For now do nothing, can't find a good/working bg image
 
-	BG = Spawn(class'UIImage', self);
-	BG.InitImage('BG', "img:///gfxXPACK_CovertOps.Gradient");
+	/*BG.LoadImage("img:///gfxXPACK_CovertOps.Gradient");
 	BG.SetAlpha(0.33); // Doesn't seem to work
 	BG.SetColor(GetFactionColour());
 	BG.SetHeight(40);
-	BG.SetWidth(List.Width);
+	BG.SetWidth(List.Width);*/
 }
 
 /// HELPERS
