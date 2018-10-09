@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a header item for the list of covert ops in UICovertActionsGeoscape
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_FactionHeader extends UIListItemString;
 
 var protectedwrite XComGameState_ResistanceFaction Faction;
@@ -38,7 +45,7 @@ simulated function UpdateText()
 
 	if (bIsOngoing)
 	{
-		strText = class'UICovertActions'.default.CovertActions_CurrentActiveHeader;
+		strText = class'CI_Helpers'.static.MakeFirstCharCapOnly(class'UICovertActions'.default.CovertActions_CurrentActiveHeader);
 	}
 	else 
 	{
@@ -46,7 +53,7 @@ simulated function UpdateText()
 	}
 
 	strText = class'UIUtilities_Text'.static.AddFontInfo(strText, Screen.bIsIn3D, true);
-	strText = ColourText(strText, GetFactionColour());
+	strText = class'CI_Helpers'.static.ColourText(strText, GetFactionColour());
 	strText = "       " $ strText; // Add some space for the icon
 
 	SetHtmlText(strText);
@@ -94,12 +101,7 @@ simulated function string GetFactionColour()
 	return class'UIUtilities_Colors'.static.GetColorForFaction(Faction.GetMyTemplateName());
 }
 
-static function string ColourText(string strValue, string strColour)
-{
-	return "<font color='#" $ strColour $ "'>" $ strValue $ "</font>";
-}
-
 defaultproperties
 {
-	Height = 42;
+	Height = 46;
 }

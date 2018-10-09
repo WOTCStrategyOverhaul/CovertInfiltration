@@ -28,6 +28,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\CovertInfiltration\Classes\CI_Helpers.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIAvengerHUD_CAButton.uc">
       <SubType>Content</SubType>
     </Content>

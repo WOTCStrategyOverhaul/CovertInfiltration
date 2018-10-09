@@ -1,7 +1,16 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a new (custom) screen for covert ops that uses the world map
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape extends UIScreen;
 
 // UI elements
 var UIList ActionsList;
+var UIBGBox ButtonsBG;
+var UIButton ConfirmButton, CloseScreenButton;
 
 // Data
 var StateObjectReference ActionRef;
@@ -14,7 +23,7 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
-	`HQPRES.StrategyMap2D.Hide();
+	GetHQPres().StrategyMap2D.Hide();
 }
 
 simulated function OnInit()
@@ -31,6 +40,8 @@ simulated function OnInit()
 
 simulated function BuildScreen()
 {
+	// LIST
+
 	ActionsList = Spawn(class'UIList', self);
 	ActionsList.InitList(
 		'ActionsList',
@@ -46,6 +57,28 @@ simulated function BuildScreen()
 	UpdateData();
 
 	Navigator.SetSelected(ActionsList);
+
+	// Buttons
+
+	ButtonsBG = Spawn(class'UIBGBox', self);
+	ButtonsBG.InitBG('ButtonsBG');
+	ButtonsBG.AnchorCenter();
+	ButtonsBG.SetPosition(200, -50);
+	ButtonsBG.SetSize(300, 100);
+
+	ConfirmButton = Spawn(class'UIButton', self);
+	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked);
+	ConfirmButton.SetResizeToText(false);
+	ConfirmButton.AnchorCenter();
+	ConfirmButton.SetPosition(210, -40);
+	ConfirmButton.SetWidth(280);
+
+	CloseScreenButton = Spawn(class'UIButton', self);
+	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked);
+	CloseScreenButton.SetResizeToText(false);
+	CloseScreenButton.AnchorCenter();
+	CloseScreenButton.SetPosition(210, 10);
+	CloseScreenButton.SetWidth(280);
 }
 
 simulated function PopulateList()
@@ -59,6 +92,9 @@ simulated function PopulateList()
 	{
 		if (arrActions[idx].GetFaction().GetMyTemplateName() != LastFactionName)
 		{
+			// FixMe: If there is 1 "in progress" faction and it's the first faction in normal list
+			// then there is no header between "in progress" ands other covert ops for that faction
+
 			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
 			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
 		}
@@ -174,6 +210,34 @@ simulated function FindActions()
 simulated function UpdateData()
 {
 	GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
+}
+
+/// CHILD CALLBAKCS
+
+simulated function OnConfirmClicked(UIButton Button)
+{
+	local TDialogueBoxData DialogData;
+	
+	DialogData.eType = eDialog_Normal;
+	DialogData.strTitle = "Button clicked";
+	DialogData.strText = "OnConfirmClicked";
+	
+	GetHQPres().UIRaiseDialog(DialogData);
+
+	// TODO
+}
+
+simulated function OnCloseScreenClicked(UIButton Button)
+{
+	local TDialogueBoxData DialogData;
+	
+	DialogData.eType = eDialog_Normal;
+	DialogData.strTitle = "Button clicked";
+	DialogData.strText = "OnCloseScreenClicked";
+	
+	GetHQPres().UIRaiseDialog(DialogData);
+
+	// TODO
 }
 
 /// KEYBOARD/CONTROLLER INPUT
