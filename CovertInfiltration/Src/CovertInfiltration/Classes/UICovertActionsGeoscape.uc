@@ -38,6 +38,13 @@ simulated function OnInit()
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
 
+simulated function OnReceiveFocus()
+{
+	// Came back from UISquadSelect
+	super.OnReceiveFocus();
+	FocusCameraOnCurrentAction();
+}
+
 simulated function BuildScreen()
 {
 	// LIST
@@ -209,6 +216,11 @@ simulated function FindActions()
 // Used to update the screen to show new covert action
 simulated function UpdateData()
 {
+	FocusCameraOnCurrentAction();
+}
+
+simulated function FocusCameraOnCurrentAction()
+{
 	GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
 }
 
@@ -216,15 +228,17 @@ simulated function UpdateData()
 
 simulated function OnConfirmClicked(UIButton Button)
 {
-	local TDialogueBoxData DialogData;
+	/*local TDialogueBoxData DialogData;
 	
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = "Button clicked";
 	DialogData.strText = "OnConfirmClicked";
 	
-	GetHQPres().UIRaiseDialog(DialogData);
+	GetHQPres().UIRaiseDialog(DialogData);*/
 
 	// TODO
+
+	class'SSAAT_Opener'.static.ShowSquadSelect(); // Just default config for now
 }
 
 simulated function OnCloseScreenClicked(UIButton Button)
