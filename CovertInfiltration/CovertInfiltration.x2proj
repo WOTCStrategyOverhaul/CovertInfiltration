@@ -38,6 +38,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationModifier.uc">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>
