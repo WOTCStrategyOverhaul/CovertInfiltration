@@ -7,6 +7,7 @@
     <SteamPublishID>0</SteamPublishID>
     <AssemblyName>CovertInfiltration</AssemblyName>
     <RootNamespace>CovertInfiltration</RootNamespace>
+    <ProjectGuid>{8fb7cab2-6a58-4701-aa3c-bf18f61b8749}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Config\" />
@@ -28,6 +29,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\CovertInfiltration\Classes\UIAvengerHUD_CAButton.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActions_MultipleActions.uc">
       <SubType>Content</SubType>
     </Content>
@@ -38,6 +42,18 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplateManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod_DefaultModifiers.uc">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>
