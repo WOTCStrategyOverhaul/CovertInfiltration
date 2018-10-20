@@ -22,7 +22,14 @@ var config int LIGHT_WEAPON_INFIL;
 
 var const name INFILPREFIX;
 
-enum WEIGHTINDEX {Num};
+enum WEIGHTINDEX {
+	nil,
+	stealth,
+	light,
+	medium,
+	heavy,
+	battle
+};
 
 static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIGHTINDEX Weight, optional float Mult = 1, optional name MultCat = '')
 {
@@ -34,15 +41,15 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIG
 	InfilMod = 0;
 	switch(Weight)
 	{
-	case 1:
+	case stealth:
 		InfilMod = default.STEALTH_ARMOR_INFIL;
-	case 2:
+	case light:
 		InfilMod = default.LIGHT_ARMOR_INFIL;
-	case 3:
+	case medium:
 		InfilMod = default.MEDIUM_ARMOR_INFIL;
-	case 4:
+	case heavy:
 		InfilMod = default.HEAVY_ARMOR_INFIL;
-	case 5:
+	case battle:
 		InfilMod = default.BATTLE_ARMOR_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
@@ -65,15 +72,15 @@ static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, WEI
 	InfilMod = 0;
 	switch(Weight)
 	{
-	case 1:
+	case stealth:
 		InfilMod = default.LIGHT_WEAPON_INFIL;
-	case 2:
+	case light:
 		InfilMod = default.MIDLIGHT_WEAPON_INFIL;
-	case 3:
+	case medium:
 		InfilMod = default.MEDIUM_WEAPON_INFIL;
-	case 4:
+	case heavy:
 		InfilMod = default.MIDHEAVY_WEAPON_INFIL;
-	case 5:
+	case battle:
 		InfilMod = default.HEAVY_WEAPON_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
