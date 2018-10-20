@@ -6,40 +6,44 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2InfiltrationMod extends X2DataSet config(GameData);
+class X2InfiltrationMod extends X2DataSet config(Infiltration);
 
-var config int BATTLEARMORINFIL;
-var config int HEAVYARMORINFIL;
-var config int MEDIUMARMORINFIL;
-var config int LIGHTARMORINFIL;
-var config int STEALTHARMORINFIL;
+var config int BATTLE_ARMOR_INFIL;
+var config int HEAVY_ARMOR_INFIL;
+var config int MEDIUM_ARMOR_INFIL;
+var config int LIGHT_ARMOR_INFIL;
+var config int STEALTH_ARMOR_INFIL;
 
-var config int HEAVYWEAPONINFIL;
-var config int MIDHEAVYWEAPONINFIL;
-var config int MEDIUMWEAPONINFIL;
-var config int MIDLIGHTWEAPONINFIL;
-var config int LIGHTWEAPONINFIL;
+var config int HEAVY_WEAPON_INFIL;
+var config int MIDHEAVY_WEAPON_INFIL;
+var config int MEDIUM_WEAPON_INFIL;
+var config int MIDLIGHT_WEAPON_INFIL;
+var config int LIGHT_WEAPON_INFIL;
 
-static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, int Weight, optional float Mult = 1, optional name MultCat = '')
+var const name INFILPREFIX;
+
+enum WEIGHTINDEX {Num};
+
+static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIGHTINDEX Weight, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
 
-	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, DataName);
+	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, name(default.INFILPREFIX $ DataName));
 
 	InfilMod = 0;
 	switch(Weight)
 	{
 	case 1:
-		InfilMod = default.STEALTHARMORINFIL;
+		InfilMod = default.STEALTH_ARMOR_INFIL;
 	case 2:
-		InfilMod = default.LIGHTARMORINFIL;
+		InfilMod = default.LIGHT_ARMOR_INFIL;
 	case 3:
-		InfilMod = default.MEDIUMARMORINFIL;
+		InfilMod = default.MEDIUM_ARMOR_INFIL;
 	case 4:
-		InfilMod = default.HEAVYARMORINFIL;
+		InfilMod = default.HEAVY_ARMOR_INFIL;
 	case 5:
-		InfilMod = default.BATTLEARMORINFIL;
+		InfilMod = default.BATTLE_ARMOR_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
 	
@@ -51,26 +55,26 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, int 
 	return Template;
 }
 
-static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, int Weight, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, WEIGHTINDEX Weight, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
 
-	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, DataName);
+	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, name(default.INFILPREFIX $ DataName));
 
 	InfilMod = 0;
 	switch(Weight)
 	{
 	case 1:
-		InfilMod = default.LIGHTWEAPONINFIL;
+		InfilMod = default.LIGHT_WEAPON_INFIL;
 	case 2:
-		InfilMod = default.MIDLIGHTWEAPONINFIL;
+		InfilMod = default.MIDLIGHT_WEAPON_INFIL;
 	case 3:
-		InfilMod = default.MEDIUMWEAPONINFIL;
+		InfilMod = default.MEDIUM_WEAPON_INFIL;
 	case 4:
-		InfilMod = default.MIDHEAVYWEAPONINFIL;
+		InfilMod = default.MIDHEAVY_WEAPON_INFIL;
 	case 5:
-		InfilMod = default.HEAVYWEAPONINFIL;
+		InfilMod = default.HEAVY_WEAPON_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
 	
@@ -86,7 +90,7 @@ static function X2InfiltrationModTemplate BuildCustomTemplate(name DataName, opt
 {
 	local X2InfiltrationModTemplate		Template;
 
-	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, DataName);
+	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, name(default.INFILPREFIX $ DataName));
 	if(Modifier != 0)
 		Template.InfilModifier = Modifier;
 	if(Mult != 1)
@@ -95,4 +99,9 @@ static function X2InfiltrationModTemplate BuildCustomTemplate(name DataName, opt
 		Template.MultCategory = MultCat;
 	
 	return Template;
+}
+
+defaultproperties
+{
+	INFILPREFIX = "InfilMod_"
 }

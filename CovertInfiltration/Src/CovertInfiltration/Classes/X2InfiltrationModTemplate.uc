@@ -20,7 +20,7 @@ defaultproperties
 {
 	InfilModifier=0
 	InfilMultiplier=1
-	MultCategory=''
+	MultCategory=""
 
 	bShouldCreateDifficultyVariants=false
 	TemplateAvailability=BITFIELD_GAMEAREA_Singleplayer
