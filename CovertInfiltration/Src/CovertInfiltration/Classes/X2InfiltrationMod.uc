@@ -22,16 +22,16 @@ var config int LIGHT_WEAPON_INFIL;
 
 var const name INFILPREFIX;
 
-enum WEIGHTINDEX {
-	nil,
-	stealth,
-	light,
-	medium,
-	heavy,
-	battle
+enum eInfiltrationWeight {
+	eWeight_Nil,
+	eWeight_Stealth,
+	eWeight_Light,
+	eWeight_Medium,
+	eWeight_Heavy,
+	eWeight_Battle
 };
 
-static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIGHTINDEX Weight, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, eInfiltrationWeight Weight, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
@@ -41,15 +41,15 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIG
 	InfilMod = 0;
 	switch(Weight)
 	{
-	case stealth:
+	case eWeight_Stealth:
 		InfilMod = default.STEALTH_ARMOR_INFIL;
-	case light:
+	case eWeight_Light:
 		InfilMod = default.LIGHT_ARMOR_INFIL;
-	case medium:
+	case eWeight_Medium:
 		InfilMod = default.MEDIUM_ARMOR_INFIL;
-	case heavy:
+	case eWeight_Heavy:
 		InfilMod = default.HEAVY_ARMOR_INFIL;
-	case battle:
+	case eWeight_Battle:
 		InfilMod = default.BATTLE_ARMOR_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
@@ -62,7 +62,7 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name DataName, WEIG
 	return Template;
 }
 
-static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, WEIGHTINDEX Weight, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, eInfiltrationWeight Weight, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
@@ -72,15 +72,15 @@ static function X2InfiltrationModTemplate BuildWeaponTemplate(name DataName, WEI
 	InfilMod = 0;
 	switch(Weight)
 	{
-	case stealth:
+	case eWeight_Stealth:
 		InfilMod = default.LIGHT_WEAPON_INFIL;
-	case light:
+	case eWeight_Light:
 		InfilMod = default.MIDLIGHT_WEAPON_INFIL;
-	case medium:
+	case eWeight_Medium:
 		InfilMod = default.MEDIUM_WEAPON_INFIL;
-	case heavy:
+	case eWeight_Heavy:
 		InfilMod = default.MIDHEAVY_WEAPON_INFIL;
-	case battle:
+	case eWeight_Battle:
 		InfilMod = default.HEAVY_WEAPON_INFIL;
 	}
 	Template.InfilModifier = InfilMod;
