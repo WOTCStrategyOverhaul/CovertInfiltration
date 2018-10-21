@@ -6,12 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo config(GameData);
-
-static event OnPostTemplatesCreated()
-{
-	
-}
+class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
 /// /////// ///
 /// HELPERS ///

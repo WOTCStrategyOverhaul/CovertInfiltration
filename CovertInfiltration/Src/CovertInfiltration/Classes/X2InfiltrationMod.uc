@@ -22,7 +22,8 @@ var config int LIGHT_WEAPON_INFIL;
 
 var const name INFILPREFIX;
 
-enum EInfiltrationWeight {
+enum EInfiltrationWeight
+{
 	eInfilWeight_Stealth,
 	eInfilWeight_Light,
 	eInfilWeight_Medium,
