@@ -58,11 +58,16 @@ simulated protected function BuildConfiguration()
 	Configuration.SetHideMissionInfo(true);
 	Configuration.RemoveTerrainAndEnemiesPanels();
 	
+	Configuration.SetCanClickLaunchFn(CanClickLaunch); // TODO
+	Configuration.SetLaunchBehaviour(OnLaunch, true); // There is no option to make it false for now, but we probably would want to in future
+	
 	Configuration.SetPreventOnSizeLimitedEvent(true);
 	Configuration.SetPreventOnSuperSizeEvent(true);
 
 	Configuration.SetFrozen();
 }
+
+
 
 static function SSAAT_SlotNote ConvertRewardToNote(XComGameState_Reward RewardState)
 {
@@ -91,4 +96,48 @@ static function SSAAT_SlotNote CreateOptionalNote()
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
 
 	return Note;
+}
+
+//////////////
+/// LAUNCH ///
+//////////////
+
+simulated protected function bool CanClickLaunch()
+{
+	return true;	
+}
+
+simulated protected function OnLaunch()
+{
+	AssignUnitsFromSquadToAction();
+	Action.ConfirmAction();
+	
+	`HQPRES.m_kXComStrategyMap.OnReceiveFocus();
+}
+
+simulated protected function AssignUnitsFromSquadToAction()
+{
+	local XComGameState_HeadquartersXCom XcomHQ;
+	local XComGameState_StaffSlot StaffSlot;
+
+	local CovertActionStaffSlot CovertActionSlot;
+	local int i;
+
+	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	
+	foreach Action.StaffSlots(CovertActionSlot, i)
+	{
+		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		StaffSlot.AssignStaffToSlot(CreateStaffInfo(XcomHQ.Squad[i]));
+	}
+}
+
+simulated protected function StaffUnitInfo CreateStaffInfo(StateObjectReference UnitRef)
+{
+	local StaffUnitInfo StaffInfo;
+
+	StaffInfo.UnitRef = UnitRef;
+	StaffInfo.bGhostUnit = false;
+
+	return StaffInfo;
 }

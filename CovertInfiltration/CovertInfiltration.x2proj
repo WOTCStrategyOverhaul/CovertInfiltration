@@ -8,12 +8,17 @@
     <AssemblyName>CovertInfiltration</AssemblyName>
     <RootNamespace>CovertInfiltration</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Localization\" />
     <Folder Include="Src\" />
     <Folder Include="Src\CovertInfiltration\" />
     <Folder Include="Src\CovertInfiltration\Classes\" />
+    <Folder Include="Src\LW_Tuple" />
+    <Folder Include="Src\LW_Tuple\Classes" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config\XComGameData.ini">
@@ -53,6 +58,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>

@@ -42,9 +42,15 @@ simulated function OnReceiveFocus()
 {
 	super.OnReceiveFocus();
 	
-	// Came back from UISquadSelect
+	// Came back from UISquadSelect or the confirmation alert
 	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
 	FocusCameraOnCurrentAction(true);
+	
+	if (GetAction().bStarted) // We came from confirmation alert
+	{
+		`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
+		UpdateList();
+	}
 }
 
 simulated function BuildScreen()
@@ -127,6 +133,15 @@ simulated function PopulateList()
 
 		LastFactionName = arrActions[idx].GetFaction().GetMyTemplateName();
 	}
+}
+
+simulated function UpdateList()
+{
+	ActionsList.ClearItems();
+	arrActions.Length = 0;
+
+	FindActions();
+	PopulateList();
 }
 
 simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
