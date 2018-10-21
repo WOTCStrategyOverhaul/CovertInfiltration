@@ -1,12 +1,17 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  (Integrated from BountyGiver's mod)
+//  AUTHOR:  NotSoLoneWolf
 //  PURPOSE: This class is used for various hooks and to add commands to game's
 //           debug console
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
+class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo config(GameData);
+
+static event OnPostTemplatesCreated()
+{
+	
+}
 
 /// /////// ///
 /// HELPERS ///

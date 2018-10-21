@@ -20,6 +20,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComInfiltration.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Localization\CovertInfiltration.int">
       <SubType>Content</SubType>
     </Content>

@@ -13,10 +13,10 @@ static function X2InfiltrationModTemplateManager GetInfilTemplateManager()
     return X2InfiltrationModTemplateManager(class'Engine'.static.GetTemplateManager(class'X2InfiltrationModTemplateManager'));
 }
 
-function X2InfiltrationModTemplate GetInfilTemplateFromItem(X2ItemTemplate ItemTemplate)
+function X2InfiltrationModTemplate GetInfilTemplateFromItem(name ItemTemplate)
 {
 	local X2InfiltrationModTemplate InfilTemplate;
-	InfilTemplate = X2InfiltrationModTemplate(super.FindDataTemplate(name(class'X2InfiltrationMod'.default.INFILPREFIX $ ItemTemplate.DataName)));
+	InfilTemplate = X2InfiltrationModTemplate(FindDataTemplate(class'X2InfiltrationMod'.static.GetInfilName(ItemTemplate)));
 	return InfilTemplate;
 }
 

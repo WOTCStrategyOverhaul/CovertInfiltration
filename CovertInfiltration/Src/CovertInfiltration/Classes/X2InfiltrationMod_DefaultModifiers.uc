@@ -26,74 +26,74 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	//Templates.AddItem(BuildArmorTemplate(name DataName, eInfiltrationWeight Weight, optional float Mult, optional name MultCat));
-	//Templates.AddItem(BuildWeaponTemplate(name DataName, eInfiltrationWeight Weight, optional float Mult, optional name MultCat));
-	//Templates.AddItem(BuildCustomTemplate(name DataName, optional int Modifier, optional float Mult, optional name MultCat));
+	//Templates.AddItem(BuildArmorTemplate(name ItemName, EInfiltrationWeight Weight, optional float Mult, optional name MultCat));
+	//Templates.AddItem(BuildWeaponTemplate(name ItemName, EInfiltrationWeight Weight, optional float Mult, optional name MultCat));
+	//Templates.AddItem(BuildCustomTemplate(name ItemName, optional int Modifier, optional float Mult, optional name MultCat));
 	
-	Templates.AddItem(BuildArmorTemplate('KevlarArmor', eWeight_Medium));
-	Templates.AddItem(BuildArmorTemplate('MediumPlatedArmor', eWeight_Medium));
-	Templates.AddItem(BuildArmorTemplate('LightPlatedArmor', eWeight_Light));
-	Templates.AddItem(BuildArmorTemplate('HeavyPlatedArmor', eWeight_Heavy));
-	Templates.AddItem(BuildArmorTemplate('MediumPoweredArmor', eWeight_Medium));
-	Templates.AddItem(BuildArmorTemplate('LightPoweredArmor', eWeight_Light));
-	Templates.AddItem(BuildArmorTemplate('HeavyPoweredArmor', eWeight_Heavy));
+	Templates.AddItem(BuildArmorTemplate('KevlarArmor', eInfilWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('MediumPlatedArmor', eInfilWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('LightPlatedArmor', eInfilWeight_Light));
+	Templates.AddItem(BuildArmorTemplate('HeavyPlatedArmor', eInfilWeight_Heavy));
+	Templates.AddItem(BuildArmorTemplate('MediumPoweredArmor', eInfilWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('LightPoweredArmor', eInfilWeight_Light));
+	Templates.AddItem(BuildArmorTemplate('HeavyPoweredArmor', eInfilWeight_Heavy));
 
-	Templates.AddItem(BuildArmorTemplate('ReaperArmor', eWeight_Light));
-	Templates.AddItem(BuildArmorTemplate('ReaperPlatedArmor', eWeight_Light));
-	Templates.AddItem(BuildArmorTemplate('ReaperPoweredArmor', eWeight_Light));
+	Templates.AddItem(BuildArmorTemplate('ReaperArmor', eInfilWeight_Light));
+	Templates.AddItem(BuildArmorTemplate('ReaperPlatedArmor', eInfilWeight_Light));
+	Templates.AddItem(BuildArmorTemplate('ReaperPoweredArmor', eInfilWeight_Light));
 
-	Templates.AddItem(BuildArmorTemplate('TemplarArmor', eWeight_Medium));
-	Templates.AddItem(BuildArmorTemplate('TemplarPlatedArmor', eWeight_Medium));
-	Templates.AddItem(BuildArmorTemplate('TemplarPoweredArmor', eWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('TemplarArmor', eInfilWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('TemplarPlatedArmor', eInfilWeight_Medium));
+	Templates.AddItem(BuildArmorTemplate('TemplarPoweredArmor', eInfilWeight_Medium));
 
-	Templates.AddItem(BuildArmorTemplate('SkirmisherArmor', eWeight_Heavy));
-	Templates.AddItem(BuildArmorTemplate('SkirmisherPlatedArmor', eWeight_Heavy));
-	Templates.AddItem(BuildArmorTemplate('SkirmisherPoweredArmor', eWeight_Heavy));
+	Templates.AddItem(BuildArmorTemplate('SkirmisherArmor', eInfilWeight_Heavy));
+	Templates.AddItem(BuildArmorTemplate('SkirmisherPlatedArmor', eInfilWeight_Heavy));
+	Templates.AddItem(BuildArmorTemplate('SkirmisherPoweredArmor', eInfilWeight_Heavy));
 	
-	Templates.AddItem(BuildArmorTemplate('SparkArmor', eWeight_Battle));
-	Templates.AddItem(BuildArmorTemplate('PlatedSparkArmor', eWeight_Battle));
-	Templates.AddItem(BuildArmorTemplate('PoweredSparkArmor', eWeight_Battle));
+	Templates.AddItem(BuildArmorTemplate('SparkArmor', eInfilWeight_Battle));
+	Templates.AddItem(BuildArmorTemplate('PlatedSparkArmor', eInfilWeight_Battle));
+	Templates.AddItem(BuildArmorTemplate('PoweredSparkArmor', eInfilWeight_Battle));
 
 	// note to self: make actual X2Item templates
-	Templates.AddItem(BuildArmorTemplate('CivilianDisguise', eWeight_Stealth, default.DISGUISE_T1_WEPMULT, 'weapon'));
-	Templates.AddItem(BuildArmorTemplate('AdventDisguise', eWeight_Stealth, default.DISGUISE_T2_WEPMULT, 'weapon'));
-	Templates.AddItem(BuildArmorTemplate('HolographicDisguise', eWeight_Stealth, default.DISGUISE_T3_WEPMULT, 'weapon'));
+	Templates.AddItem(BuildArmorTemplate('CivilianDisguise', eInfilWeight_Stealth, default.DISGUISE_T1_WEPMULT, 'weapon'));
+	Templates.AddItem(BuildArmorTemplate('AdventDisguise', eInfilWeight_Stealth, default.DISGUISE_T2_WEPMULT, 'weapon'));
+	Templates.AddItem(BuildArmorTemplate('HolographicDisguise', eInfilWeight_Stealth, default.DISGUISE_T3_WEPMULT, 'weapon'));
 	
-	Templates.AddItem(BuildWeaponTemplate('SMG_CV', eWeight_Stealth));
-	Templates.AddItem(BuildWeaponTemplate('SMG_MG', eWeight_Stealth));
-	Templates.AddItem(BuildWeaponTemplate('SMG_BM', eWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('SMG_CV', eInfilWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('SMG_MG', eInfilWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('SMG_BM', eInfilWeight_Stealth));
 	
-	Templates.AddItem(BuildWeaponTemplate('Shotgun_CV', eWeight_Light));
-	Templates.AddItem(BuildWeaponTemplate('Shotgun_MG', eWeight_Light));
-	Templates.AddItem(BuildWeaponTemplate('Shotgun_BM', eWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Shotgun_CV', eInfilWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Shotgun_MG', eInfilWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Shotgun_BM', eInfilWeight_Light));
 	
-	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_CV', eWeight_Medium));
-	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_MG', eWeight_Medium));
-	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_BM', eWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_CV', eInfilWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_MG', eInfilWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('AssaultRifle_BM', eInfilWeight_Medium));
 	
-	Templates.AddItem(BuildWeaponTemplate('SniperRifle_CV', eWeight_Heavy));
-	Templates.AddItem(BuildWeaponTemplate('SniperRifle_MG', eWeight_Heavy));
-	Templates.AddItem(BuildWeaponTemplate('SniperRifle_BM', eWeight_Heavy));
+	Templates.AddItem(BuildWeaponTemplate('SniperRifle_CV', eInfilWeight_Heavy));
+	Templates.AddItem(BuildWeaponTemplate('SniperRifle_MG', eInfilWeight_Heavy));
+	Templates.AddItem(BuildWeaponTemplate('SniperRifle_BM', eInfilWeight_Heavy));
 	
-	Templates.AddItem(BuildWeaponTemplate('Cannon_CV', eWeight_Battle));
-	Templates.AddItem(BuildWeaponTemplate('Cannon_MG', eWeight_Battle));
-	Templates.AddItem(BuildWeaponTemplate('Cannon_BM', eWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('Cannon_CV', eInfilWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('Cannon_MG', eInfilWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('Cannon_BM', eInfilWeight_Battle));
 	
-	Templates.AddItem(BuildWeaponTemplate('SparkRifle_CV', eWeight_Battle));
-	Templates.AddItem(BuildWeaponTemplate('SparkRifle_MG', eWeight_Battle));
-	Templates.AddItem(BuildWeaponTemplate('SparkRifle_BM', eWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('SparkRifle_CV', eInfilWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('SparkRifle_MG', eInfilWeight_Battle));
+	Templates.AddItem(BuildWeaponTemplate('SparkRifle_BM', eInfilWeight_Battle));
 	
-	Templates.AddItem(BuildWeaponTemplate('Bullpup_CV', eWeight_Light));
-	Templates.AddItem(BuildWeaponTemplate('Bullpup_MG', eWeight_Light));
-	Templates.AddItem(BuildWeaponTemplate('Bullpup_BM', eWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Bullpup_CV', eInfilWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Bullpup_MG', eInfilWeight_Light));
+	Templates.AddItem(BuildWeaponTemplate('Bullpup_BM', eInfilWeight_Light));
 	
-	Templates.AddItem(BuildWeaponTemplate('VektorRifle_CV', eWeight_Medium));
-	Templates.AddItem(BuildWeaponTemplate('VektorRifle_MG', eWeight_Medium));
-	Templates.AddItem(BuildWeaponTemplate('VektorRifle_BM', eWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('VektorRifle_CV', eInfilWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('VektorRifle_MG', eInfilWeight_Medium));
+	Templates.AddItem(BuildWeaponTemplate('VektorRifle_BM', eInfilWeight_Medium));
 	
-	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_CV', eWeight_Stealth));
-	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_MG', eWeight_Stealth));
-	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_BM', eWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_CV', eInfilWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_MG', eInfilWeight_Stealth));
+	Templates.AddItem(BuildWeaponTemplate('ShardGauntlet_BM', eInfilWeight_Stealth));
 	
 	Templates.AddItem(BuildCustomTemplate('Pistol_CV', default.SIDEARM_WEAPON_INFIL));
 	Templates.AddItem(BuildCustomTemplate('Pistol_MG', default.SIDEARM_WEAPON_INFIL));
