@@ -36,9 +36,6 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_Helpers.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\SquadSelectForCovertActionManager.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIAvengerHUD_CAButton.uc">
       <SubType>Content</SubType>
     </Content>
@@ -55,6 +52,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_MultipleActions.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />

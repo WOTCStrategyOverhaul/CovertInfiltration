@@ -1,21 +1,23 @@
-class SquadSelectForCovertActionManager extends Object;
+class UISSManager_CovertAction extends Object;
 
 var XComGameState_CovertAction Action;
+var UICovertActionsGeoscape CovertOpsSrceen;
 
 var protected SSAAT_SquadSelectConfiguration Configuration;
+var protectedwrite UISquadSelect SquadSelect;
 
 simulated function OpenSquadSelect()
 {
 	if (Action == none)
 	{
-		`REDSCREEN("SquadSelectForCovertActionManager::OpenSquadSelect called without setting Action");
+		`REDSCREEN("UISSManager_CovertAction::OpenSquadSelect called without setting Action");
 		`REDSCREEN(GetScriptTrace());
 		return;
 	}
 
 	BuildConfiguration();
 
-	class'SSAAT_Opener'.static.ShowSquadSelect(Configuration);
+	SquadSelect = class'SSAAT_Opener'.static.ShowSquadSelect(Configuration);
 }
 
 simulated protected function BuildConfiguration()
@@ -116,6 +118,7 @@ simulated protected function OnLaunch()
 	Action.ConfirmAction();
 	
 	`HQPRES.m_kXComStrategyMap.OnReceiveFocus();
+	CovertOpsSrceen.bConfirmScreenWasOpened = true;
 }
 
 simulated protected function AssignUnitsFromSquadToAction()
@@ -143,4 +146,22 @@ simulated protected function StaffUnitInfo CreateStaffInfo(StateObjectReference 
 	StaffInfo.bGhostUnit = false;
 
 	return StaffInfo;
+}
+
+/////////////////
+/// Canceling ///
+/////////////////
+                 
+simulated function ClearUnitsFromAction()
+{
+	local XComGameState_StaffSlot StaffSlot;
+	local CovertActionStaffSlot CovertActionSlot;
+
+	foreach Action.StaffSlots(CovertActionSlot)
+	{
+		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		if (StaffSlot.IsSlotEmpty()) continue;
+
+		StaffSlot.EmptySlot();
+	}
 }

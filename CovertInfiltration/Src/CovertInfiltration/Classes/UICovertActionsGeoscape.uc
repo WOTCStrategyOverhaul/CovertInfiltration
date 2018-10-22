@@ -17,6 +17,11 @@ var StateObjectReference ActionRef;
 var array<XComGameState_CovertAction> arrActions;
 var array<XComGameState_ResistanceFaction> NewActionFactions;
 
+var protectedwrite UISSManager_CovertAction SSManager;
+
+// Set by UISS controller
+var bool bConfirmScreenWasOpened;
+
 // Pre-open values
 var protected bool bPreOpenResNetForcedOn;
 var protected EStrategyMapState PreOpenMapState;
@@ -55,10 +60,23 @@ simulated function OnReceiveFocus()
 	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
 	FocusCameraOnCurrentAction(true);
 	
-	if (GetAction().bStarted) // We came from confirmation alert
+	if (bConfirmScreenWasOpened)
 	{
-		`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
-		UpdateList();
+		// The covert op was launched
+		if (GetAction().bStarted)
+		{
+			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
+			UpdateList();
+			SSManager = none;
+		} 
+		else
+		{
+			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
+			SSManager.ClearUnitsFromAction();
+			OpenLoadoutForCurrentAction();
+		}
+
+		bConfirmScreenWasOpened = false;
 	}
 }
 
@@ -265,13 +283,10 @@ simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
 
 simulated function OpenLoadoutForCurrentAction()
 {
-	local SquadSelectForCovertActionManager SSManager;
-
-	SSManager = new class'SquadSelectForCovertActionManager';
+	SSManager = new class'UISSManager_CovertAction';
 	SSManager.Action = GetAction();
+	SSManager.CovertOpsSrceen = self;
 	SSManager.OpenSquadSelect();
-
-	// TODO: Store SSManager somewhere
 }
 
 /// CHILD CALLBAKCS
