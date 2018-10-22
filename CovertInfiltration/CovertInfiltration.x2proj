@@ -36,6 +36,9 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_Helpers.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\CI_XComGameState_CovertAction.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIAvengerHUD_CAButton.uc">
       <SubType>Content</SubType>
     </Content>

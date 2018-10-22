@@ -15,7 +15,6 @@ var UIButton ConfirmButton, CloseScreenButton;
 // Data
 var StateObjectReference ActionRef;
 var array<XComGameState_CovertAction> arrActions;
-var array<XComGameState_ResistanceFaction> NewActionFactions;
 
 var protectedwrite UISSManager_CovertAction SSManager;
 
@@ -224,32 +223,22 @@ simulated function String GetActionLocString(int iAction)
 simulated function FindActions()
 {
 	local XComGameStateHistory History;
-	local XComGameState_ResistanceFaction FactionState;
 	local XComGameState_CovertAction ActionState;
 
 	History = `XCOMHISTORY;
 
 	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
 	{
-		// Only display actions which are actually stored by the Faction. Safety check to prevent
-		// actions which were supposed to have been deleted from showing up in the UI and being accessed.
-		FactionState = ActionState.GetFaction();
-		if (FactionState.CovertActions.Find('ObjectID', ActionState.ObjectID) != INDEX_NONE ||
-			FactionState.GoldenPathActions.Find('ObjectID', ActionState.ObjectID) != INDEX_NONE)
+		if (!class'CI_Helpers'.static.ShouldShowCovertAction(ActionState)) continue;		
+
+		if (ActionState.bStarted)
 		{
-			if (ActionState.bStarted)
-			{
-				arrActions.InsertItem(0, ActionState); // Always place any currently running Covert Action at the top of the list
-				//bActionInProgress = true; // We don't care whether there is anything in progress
-			}
-			else if (ActionState.CanActionBeDisplayed() && (ActionState.GetMyTemplate().bGoldenPath || FactionState.bSeenFactionHQReveal))
-			{
-				arrActions.AddItem(ActionState);
-				if( ActionState.bNewAction)
-				{
-					NewActionFactions.AddItem(ActionState.GetFaction());
-				}
-			}
+			// Always place any currently running Covert Action at the top of the list
+			arrActions.InsertItem(0, ActionState);
+		}
+		else 
+		{
+			arrActions.AddItem(ActionState);
 		}
 	}
 
