@@ -1,0 +1,22 @@
+class UICovertActionsGeoscape_CovertAction extends UIListItemString;
+
+var protectedwrite XComGameState_CovertAction Action;
+
+simulated function InitCovertAction(XComGameState_CovertAction InAction)
+{
+	Action = InAction;
+	InitListItem(GetActionLocString());
+}
+
+// Copied from UICovertActions
+simulated function String GetActionLocString()
+{
+	local string PrefixStr;
+
+	if(Action.bNewAction)
+	{
+		PrefixStr = "(NEW) ";
+	}
+
+	return PrefixStr $ Action.GetObjective();
+}

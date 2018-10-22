@@ -48,10 +48,7 @@ public function OnCovertActionButton(UIButton CovertActionButton)
 
 public function OnCovertActionNewButton(UIButton CovertActionNewButton)
 {
-	local UIScreenStack ScreenStack;
-
-	ScreenStack = CovertActionNewButton.Movie.Stack;
-	ScreenStack.Push(ScreenStack.Pres.Spawn(class'UICovertActionsGeoscape', ScreenStack.Pres));
+	class'CI_Helpers'.static.ShowGeoscapeCovertOps();
 }
 
 defaultproperties

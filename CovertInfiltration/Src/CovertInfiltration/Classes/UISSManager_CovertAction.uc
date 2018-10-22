@@ -117,7 +117,9 @@ simulated protected function OnLaunch()
 	AssignUnitsFromSquadToAction();
 	Action.ConfirmAction();
 	
+	CovertOpsSrceen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
 	`HQPRES.m_kXComStrategyMap.OnReceiveFocus();
+
 	CovertOpsSrceen.bConfirmScreenWasOpened = true;
 }
 

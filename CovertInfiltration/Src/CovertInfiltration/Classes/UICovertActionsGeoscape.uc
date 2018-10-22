@@ -15,7 +15,9 @@ var UIButton ConfirmButton, CloseScreenButton;
 // Data
 var StateObjectReference ActionRef;
 var array<XComGameState_CovertAction> arrActions;
+var StateObjectReference ActionToShowOnInitRef;
 
+// SquadSelect manager
 var protectedwrite UISSManager_CovertAction SSManager;
 
 // Set by UISS controller
@@ -47,6 +49,7 @@ simulated function OnInit()
 
 	FindActions();
 	BuildScreen();
+	AttemptSelectAction(ActionToShowOnInitRef);
 
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
@@ -128,27 +131,25 @@ simulated function BuildScreen()
 
 simulated function PopulateList()
 {
-	local name LastFactionName;
 	local int idx;
-	local UIListItemString Item;
-	local UICovertActionsGeoscape_FactionHeader FactionHeader;
+	local UICovertActionsGeoscape_CovertAction Item;
+	local UICovertActionsGeoscape_FactionHeader FactionHeader, LastHeader;
 
 	for( idx = 0; idx < arrActions.Length; idx++ )
 	{
-		if (arrActions[idx].GetFaction().GetMyTemplateName() != LastFactionName)
-		{
-			// FixMe: If there is 1 "in progress" faction and it's the first faction in normal list
-			// then there is no header between "in progress" ands other covert ops for that faction
-			
-			// TODO: Store and check against latest header and get rid of "LastFactionName" variable
-
+		if (
+			LastHeader == none ||
+			LastHeader.Faction.GetMyTemplateName() != arrActions[idx].GetFaction().GetMyTemplateName() || 
+			LastHeader.bIsOngoing != arrActions[idx].bStarted
+		) {
 			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
 			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
+
+			LastHeader = FactionHeader;
 		}
 
-		Item = Spawn(class'UIListItemString', ActionsList.itemContainer);
-		Item.InitListItem(GetActionLocString(idx));
-		Item.metadataInt = arrActions[idx].ObjectID;
+		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
+		Item.InitCovertAction(arrActions[idx]);
 
 		/*if( IsCovertActionInProgress() && !arrActions[idx].bStarted)
 		{
@@ -162,8 +163,6 @@ simulated function PopulateList()
 		{
 			ActionsList.SetSelectedItem(Item);
 		}
-
-		LastFactionName = arrActions[idx].GetFaction().GetMyTemplateName();
 	}
 }
 
@@ -174,49 +173,6 @@ simulated function UpdateList()
 
 	FindActions();
 	PopulateList();
-}
-
-simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
-{
-	local UIPanel ListItem;
-	local StateObjectReference NewRef;
-	local int i;
-
-	ListItem = ContainerList.GetItem(ItemIndex);
-	if( ListItem != none )
-	{
-		for (i = 0; i < arrActions.length; i++)
-		{
-			if (arrActions[i].ObjectID == UIListItemString(ListItem).metadataInt)
-			{
-				NewRef = arrActions[i].GetReference();
-			}
-		}
-
-		if( ActionRef != NewRef )
-		{
-			ActionRef = NewRef;
-			UpdateData();
-		}
-	}
-}
-
-// Copied from UICovertActions
-simulated function String GetActionLocString(int iAction)
-{
-	local XComGameState_CovertAction CurrentAction;
-	local string PrefixStr;
-
-	if (iAction >= arrActions.Length) return "";
-
-	CurrentAction = arrActions[iAction];
-
-	if(CurrentAction.bNewAction)
-	{
-		PrefixStr = "(NEW) ";
-	}
-
-	return PrefixStr $ CurrentAction.GetObjective();
 }
 
 // Copied from UICovertActions
@@ -247,9 +203,38 @@ simulated function FindActions()
 	arrActions.Sort(SortActionsByFactionMet);
 	arrActions.Sort(SortActionsStarted);
 
-	ActionRef = arrActions[0].GetReference();
+	EnsureSelectedActionIsInList();
+	if (ActionRef.ObjectID == 0)
+	{
+		// No action selected, just use the first one
+		ActionRef = arrActions[0].GetReference();
+	}
 
 	`log("Found" @ arrActions.Length @ "actions",, 'CI');
+}
+
+simulated protected function EnsureSelectedActionIsInList()
+{
+	local XComGameState_CovertAction Action;	
+	local bool bFound;
+
+	// Nothing is selected so there is no need to check
+	if (ActionRef.ObjectID == 0) return;	
+
+	foreach arrActions(Action)
+	{
+		if (Action.ObjectID == ActionRef.ObjectID) 
+		{
+			bFound = true;
+			break;
+		}
+	}	
+
+	if (!bFound)
+	{
+		// Selected action not in list, just set it to nothing
+		ActionRef.ObjectID = 0;
+	}
 }
 
 // Used to update the screen to show new covert action
@@ -270,6 +255,30 @@ simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
 	}
 }
 
+simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
+{
+	local UIPanel ListItem;
+	local UICovertActionsGeoscape_CovertAction ActionListItem;
+
+	if (ActionToFocus.ObjectID == 0)
+	{
+		// This will fail regrdless
+		return;
+	}
+
+	foreach ActionsList.ItemContainer.ChildPanels(ListItem)
+	{
+		ActionListItem = UICovertActionsGeoscape_CovertAction(ListItem);
+		if (ActionListItem == none) continue;
+
+		if (ActionListItem.Action.GetReference() == ActionToFocus)
+		{
+			ActionsList.SetSelectedItem(ActionListItem);
+			return;
+		}
+	}
+}
+
 simulated function OpenLoadoutForCurrentAction()
 {
 	SSManager = new class'UISSManager_CovertAction';
@@ -279,6 +288,23 @@ simulated function OpenLoadoutForCurrentAction()
 }
 
 /// CHILD CALLBAKCS
+
+simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
+{
+	local UICovertActionsGeoscape_CovertAction ListItem;
+	local StateObjectReference NewRef;
+
+	ListItem = UICovertActionsGeoscape_CovertAction(ContainerList.GetItem(ItemIndex));
+	if (ListItem == none) return;
+
+	NewRef = ListItem.Action.GetReference();
+
+	if (ActionRef != NewRef)
+	{
+		ActionRef = NewRef;
+		UpdateData();
+	}
+}
 
 simulated function OnConfirmClicked(UIButton Button)
 {

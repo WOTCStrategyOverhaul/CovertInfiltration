@@ -27,6 +27,20 @@ static function bool ShouldShowCovertAction(XComGameState_CovertAction ActionSta
 
 /// UI/TEXT
 
+static function ShowGeoscapeCovertOps(optional StateObjectReference ActionToFocus)
+{
+	local XComHQPresentationLayer HQPres;
+	local UICovertActionsGeoscape TheScreen;
+
+	HQPres = `HQPRES;
+	if (HQPres.ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape') != none) return;
+
+	TheScreen = HQPres.Spawn(class'UICovertActionsGeoscape', HQPres);
+	TheScreen.ActionToShowOnInitRef = ActionToFocus;
+	
+	HQPres.ScreenStack.Push(TheScreen);
+}
+
 static function string ColourText(string strValue, string strColour)
 {
 	return "<font color='#" $ strColour $ "'>" $ strValue $ "</font>";
