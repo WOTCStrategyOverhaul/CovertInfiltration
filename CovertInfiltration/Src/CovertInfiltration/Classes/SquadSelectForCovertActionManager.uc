@@ -58,8 +58,8 @@ simulated protected function BuildConfiguration()
 	Configuration.SetHideMissionInfo(true);
 	Configuration.RemoveTerrainAndEnemiesPanels();
 	
-	Configuration.SetCanClickLaunchFn(CanClickLaunch); // TODO
-	Configuration.SetLaunchBehaviour(OnLaunch, true); // There is no option to make it false for now, but we probably would want to in future
+	Configuration.SetCanClickLaunchFn(CanClickLaunch);
+	Configuration.SetLaunchBehaviour(OnLaunch, false);
 	
 	Configuration.SetPreventOnSizeLimitedEvent(true);
 	Configuration.SetPreventOnSuperSizeEvent(true);
@@ -67,7 +67,9 @@ simulated protected function BuildConfiguration()
 	Configuration.SetFrozen();
 }
 
-
+//////////////////
+/// SLOT NOTES ///
+//////////////////
 
 static function SSAAT_SlotNote ConvertRewardToNote(XComGameState_Reward RewardState)
 {
@@ -104,6 +106,7 @@ static function SSAAT_SlotNote CreateOptionalNote()
 
 simulated protected function bool CanClickLaunch()
 {
+	// TODO
 	return true;	
 }
 

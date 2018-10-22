@@ -17,7 +17,15 @@ var StateObjectReference ActionRef;
 var array<XComGameState_CovertAction> arrActions;
 var array<XComGameState_ResistanceFaction> NewActionFactions;
 
+// Pre-open values
+var protected bool bPreOpenResNetForcedOn;
+var protected EStrategyMapState PreOpenMapState;
+
 const CAMERA_ZOOM = 0.5f;
+
+///////////////////////////////
+/// SCREEN APPEARING EVENTS ///
+///////////////////////////////
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
@@ -31,6 +39,7 @@ simulated function OnInit()
 	super.OnInit();
 
 	GetHQPres().CAMSaveCurrentLocation();
+	OnInitForceResistanceNetwork();
 
 	FindActions();
 	BuildScreen();
@@ -52,6 +61,10 @@ simulated function OnReceiveFocus()
 		UpdateList();
 	}
 }
+
+///////////////////////
+/// POPULATING INFO ///
+///////////////////////
 
 simulated function BuildScreen()
 {
@@ -109,6 +122,8 @@ simulated function PopulateList()
 		{
 			// FixMe: If there is 1 "in progress" faction and it's the first faction in normal list
 			// then there is no header between "in progress" ands other covert ops for that faction
+			
+			// TODO: Store and check against latest header and get rid of "LastFactionName" variable
 
 			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
 			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
@@ -306,7 +321,9 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	return super.OnUnrealCommand(cmd, arg);
 }
 
-/// CLOSING
+///////////////
+/// CLOSING ///
+///////////////
 
 simulated function OnRemoved()
 {
@@ -316,9 +333,41 @@ simulated function OnRemoved()
 	GetHQPres().CAMRestoreSavedLocation();
 
 	class'UIUtilities_Sound'.static.PlayCloseSound();
+	OnRemoveRestoreResistanceNetwork();
 }
 
-/// SORTING
+//////////////////////////////////
+/// SHOWING RESISTANCE NETWORK ///
+//////////////////////////////////
+
+simulated protected function OnInitForceResistanceNetwork()
+{
+	local UIStrategyMap MapUI;
+	MapUI = GetHQPres().StrategyMap2D;
+
+	bPreOpenResNetForcedOn = MapUI.m_bResNetForcedOn;
+	PreOpenMapState = MapUI.m_eUIState;
+
+	// Cannot use UIStrategyMap::SetUIState(eSMS_Resistance) cuz it gets confused when communications aren't researched
+	MapUI.m_eUIState = eSMS_Resistance;
+	MapUI.m_bResNetForcedOn = true;
+	
+	MapUI.XComMap.UpdateVisuals();
+	MapUI.UpdateRegionPins();
+}
+
+simulated protected function OnRemoveRestoreResistanceNetwork()
+{
+	local UIStrategyMap MapUI;
+	MapUI = GetHQPres().StrategyMap2D;
+
+	MapUI.m_bResNetForcedOn = bPreOpenResNetForcedOn;
+	MapUI.SetUIState(PreOpenMapState);
+}
+
+///////////////
+/// SORTING ///
+///////////////
 
 function int SortActionsByFactionName(XComGameState_CovertAction ActionA, XComGameState_CovertAction ActionB)
 {
