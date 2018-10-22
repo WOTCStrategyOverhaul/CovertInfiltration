@@ -27,6 +27,9 @@ var bool bConfirmScreenWasOpened;
 var protected bool bPreOpenResNetForcedOn;
 var protected EStrategyMapState PreOpenMapState;
 
+// Internal state
+var protected bool bDontUpdateOnSelectionChange;
+
 const CAMERA_ZOOM = 0.5f;
 
 ///////////////////////////////
@@ -44,12 +47,18 @@ simulated function OnInit()
 {
 	super.OnInit();
 
+	// We can have 0-n list index changes during bootsratp so we call UpdateData manually once (!) after we are done
+	bDontUpdateOnSelectionChange = true;
+
 	GetHQPres().CAMSaveCurrentLocation();
 	OnInitForceResistanceNetwork();
 
 	FindActions();
 	BuildScreen();
 	AttemptSelectAction(ActionToShowOnInitRef);
+
+	bDontUpdateOnSelectionChange = false;
+	UpdateData();
 
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
@@ -102,7 +111,6 @@ simulated function BuildScreen()
 	ActionsList.OnSetSelectedIndex = SelectedItemChanged;
 
 	PopulateList();
-	UpdateData();
 
 	Navigator.SetSelected(ActionsList);
 
@@ -151,15 +159,7 @@ simulated function PopulateList()
 		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
 		Item.InitCovertAction(arrActions[idx]);
 
-		/*if( IsCovertActionInProgress() && !arrActions[idx].bStarted)
-		{
-			Item.SetDisabled(true, CovertActions_ActionInProgressTooltip);
-		}
-		else if (!IsActionInfluenceMet(idx)) // If the covert action requires a higher influence level, disable the button
-		{
-			Item.SetDisabled(true, CovertActions_InfluenceRequiredTooltip);
-		}*/
-		if( ActionsList.GetSelectedItem() == None )
+		if (ActionsList.GetSelectedItem() == none)
 		{
 			ActionsList.SetSelectedItem(Item);
 		}
@@ -241,6 +241,7 @@ simulated protected function EnsureSelectedActionIsInList()
 simulated function UpdateData()
 {
 	FocusCameraOnCurrentAction();
+	ConfirmButton.SetDisabled(!CanOpenLoadout());
 }
 
 simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
@@ -253,6 +254,16 @@ simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
 	{
 		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
 	}
+}
+
+simulated function bool CanOpenLoadout()
+{
+	local XComGameState_CovertAction CurrentAction;
+	CurrentAction = GetAction();
+
+	return 
+		!CurrentAction.bStarted &&
+		CurrentAction.RequiredFactionInfluence <= CurrentAction.GetFaction().GetInfluence();
 }
 
 simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
@@ -294,6 +305,8 @@ simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
 	local UICovertActionsGeoscape_CovertAction ListItem;
 	local StateObjectReference NewRef;
 
+	if (bDontUpdateOnSelectionChange) return;
+
 	ListItem = UICovertActionsGeoscape_CovertAction(ContainerList.GetItem(ItemIndex));
 	if (ListItem == none) return;
 
@@ -326,21 +339,15 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	switch(cmd)
 	{
 	// TODO
-	/*case class'UIUtilities_Input'.const.FXS_BUTTON_A:
+	case class'UIUtilities_Input'.const.FXS_BUTTON_A:
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
-		if (ConfirmButton != none && ConfirmButton.bIsVisible && !ConfirmButton.IsDisabled)
+		if (CanOpenLoadout())
 		{
 			ConfirmButton.OnClickedDelegate(ConfirmButton);
-			return true;
 		}
-		else if (Button1 != none && Button1.bIsVisible && !Button1.IsDisabled)
-		{
-			Button1.OnClickedDelegate(Button1);
-			return true;
-		}*/
+		return true;
 
-		//If you don't have a current button, fall down and hit the Navigation system. 
 	case class'UIUtilities_Input'.const.FXS_BUTTON_B:
 	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
