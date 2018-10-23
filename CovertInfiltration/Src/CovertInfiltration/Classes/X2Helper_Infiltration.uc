@@ -7,7 +7,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2Helper_Infiltration extends X2InfiltrationModTemplateManager config(Infiltration);
+class X2Helper_Infiltration extends Helpers config(Infiltration);
 
 var config int PERSONNEL_INFIL;
 
@@ -36,6 +36,9 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	local name						ItemCategory, MultCategory;
 	local float						Multiplier;
 
+	local X2InfiltrationModTemplateManager InfilMgr;
+	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+
 	History = `XCOMHISTORY;
 
 	if(UnitRef.ObjectID <= 0)
@@ -53,15 +56,15 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	{
 		if(InventoryItem != none)
 		{
-			TotalInfil = GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
+			TotalInfil = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
 			ItemCategory = InventoryItem.GetMyTemplate().ItemCat;
 
 			foreach CurrentInventory(MultiplierItem)
 			{
 				if(MultiplierItem != none)
 				{
-					MultCategory = GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).MultCategory;
-					Multiplier = GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).InfilMultiplier;
+					MultCategory = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).MultCategory;
+					Multiplier = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).InfilMultiplier;
 
 					if(MultCategory == ItemCategory)
 					{
