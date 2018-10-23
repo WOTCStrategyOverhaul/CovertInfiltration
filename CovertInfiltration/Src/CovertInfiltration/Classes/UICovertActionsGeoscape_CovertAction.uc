@@ -20,3 +20,8 @@ simulated function String GetActionLocString()
 
 	return PrefixStr $ Action.GetObjective();
 }
+
+simulated function AnimateIn(optional float Delay = 0)
+{
+	AddTweenBetween("_alpha", 0, Alpha, class'UICovertActionsGeoscape'.const.ANIMATE_IN_DURATION, Delay);
+}

@@ -9,8 +9,10 @@ class UICovertActionsGeoscape extends UIScreen;
 
 // UI elements
 var UIList ActionsList;
+var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIButton ConfirmButton, CloseScreenButton;
+
 
 // Data
 var StateObjectReference ActionRef;
@@ -30,6 +32,7 @@ var protected EStrategyMapState PreOpenMapState;
 // Internal state
 var protected bool bDontUpdateOnSelectionChange;
 
+const ANIMATE_IN_DURATION = 0.7f;
 const CAMERA_ZOOM = 0.5f;
 
 ///////////////////////////////
@@ -100,40 +103,48 @@ simulated function BuildScreen()
 	// LIST
 
 	ActionsList = Spawn(class'UIList', self);
+	ActionsList.bStickyClickyHighlight = true;
+	ActionsList.bStickyHighlight = false;
+	ActionsList.bAnimateOnInit = false; // We animate manually
+	ActionsList.OnSetSelectedIndex = SelectedItemChanged;
 	ActionsList.InitList(
 		'ActionsList',
-		50, 50,
+		720, 150,
 		300, 800,
 		false, true
 	);
-	ActionsList.bStickyClickyHighlight = true;
-	ActionsList.bStickyHighlight = false;
-	ActionsList.OnSetSelectedIndex = SelectedItemChanged;
+	ActionsList.AnimateX(240, ANIMATE_IN_DURATION);
+	ActionsList.BG.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
 
 	PopulateList();
-
 	Navigator.SetSelected(ActionsList);
 
 	// Buttons
 
-	ButtonsBG = Spawn(class'UIBGBox', self);
+	ButtonGroupWrap = Spawn(class'UIPanel', self);
+	ButtonGroupWrap.bAnimateOnInit = false; // We animate manually
+	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
+	ButtonGroupWrap.SetPosition(1000, 450);
+	ButtonGroupWrap.AnimateX(1320, ANIMATE_IN_DURATION);
+	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
+
+	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
+	ButtonsBG.bAnimateOnInit = false;
 	ButtonsBG.InitBG('ButtonsBG');
-	ButtonsBG.AnchorCenter();
-	ButtonsBG.SetPosition(200, -50);
 	ButtonsBG.SetSize(300, 100);
 
-	ConfirmButton = Spawn(class'UIButton', self);
+	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
+	ConfirmButton.bAnimateOnInit = false;
 	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked);
 	ConfirmButton.SetResizeToText(false);
-	ConfirmButton.AnchorCenter();
-	ConfirmButton.SetPosition(210, -40);
+	ConfirmButton.SetPosition(10, 10);
 	ConfirmButton.SetWidth(280);
 
-	CloseScreenButton = Spawn(class'UIButton', self);
+	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
+	CloseScreenButton.bAnimateOnInit = false;
 	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked);
 	CloseScreenButton.SetResizeToText(false);
-	CloseScreenButton.AnchorCenter();
-	CloseScreenButton.SetPosition(210, 10);
+	CloseScreenButton.SetPosition(10, 60);
 	CloseScreenButton.SetWidth(280);
 }
 

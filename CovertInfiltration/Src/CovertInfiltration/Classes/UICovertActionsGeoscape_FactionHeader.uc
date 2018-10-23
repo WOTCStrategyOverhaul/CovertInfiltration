@@ -94,6 +94,11 @@ simulated function UpdateBG()
 	BG.SetWidth(List.Width);*/
 }
 
+simulated function AnimateIn(optional float Delay = 0)
+{
+	AddTweenBetween("_alpha", 0, Alpha, class'UICovertActionsGeoscape'.const.ANIMATE_IN_DURATION, Delay);
+}
+
 /// HELPERS
 
 simulated function string GetFactionColour()
