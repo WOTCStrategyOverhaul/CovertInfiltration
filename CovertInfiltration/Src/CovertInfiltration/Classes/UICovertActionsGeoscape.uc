@@ -30,7 +30,7 @@ var protected bool bPreOpenResNetForcedOn;
 var protected EStrategyMapState PreOpenMapState;
 
 // Internal state
-var protected bool bDontUpdateOnSelectionChange;
+var protected bool bDontUpdateData;
 
 const ANIMATE_IN_DURATION = 0.7f;
 const CAMERA_ZOOM = 0.5f;
@@ -51,7 +51,7 @@ simulated function OnInit()
 	super.OnInit();
 
 	// We can have 0-n list index changes during bootsratp so we call UpdateData manually once (!) after we are done
-	bDontUpdateOnSelectionChange = true;
+	bDontUpdateData = true;
 
 	GetHQPres().CAMSaveCurrentLocation();
 	OnInitForceResistanceNetwork();
@@ -60,7 +60,7 @@ simulated function OnInit()
 	BuildScreen();
 	AttemptSelectAction(ActionToShowOnInitRef);
 
-	bDontUpdateOnSelectionChange = false;
+	bDontUpdateData = false;
 	UpdateData();
 
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
@@ -114,7 +114,7 @@ simulated function BuildScreen()
 		false, true
 	);
 	ActionsList.AnimateX(240, ANIMATE_IN_DURATION);
-	ActionsList.BG.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
+	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
 
 	PopulateList();
 	Navigator.SetSelected(ActionsList);
@@ -251,6 +251,8 @@ simulated protected function EnsureSelectedActionIsInList()
 // Used to update the screen to show new covert action
 simulated function UpdateData()
 {
+	if (bDontUpdateData) return;
+
 	FocusCameraOnCurrentAction();
 	ConfirmButton.SetDisabled(!CanOpenLoadout());
 }
@@ -293,7 +295,7 @@ simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
 		ActionListItem = UICovertActionsGeoscape_CovertAction(ListItem);
 		if (ActionListItem == none) continue;
 
-		if (ActionListItem.Action.GetReference() == ActionToFocus)
+		if (ActionListItem.Action.ObjectID == ActionToFocus.ObjectID)
 		{
 			ActionsList.SetSelectedItem(ActionListItem);
 			return;
@@ -315,8 +317,6 @@ simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
 {
 	local UICovertActionsGeoscape_CovertAction ListItem;
 	local StateObjectReference NewRef;
-
-	if (bDontUpdateOnSelectionChange) return;
 
 	ListItem = UICovertActionsGeoscape_CovertAction(ContainerList.GetItem(ItemIndex));
 	if (ListItem == none) return;
