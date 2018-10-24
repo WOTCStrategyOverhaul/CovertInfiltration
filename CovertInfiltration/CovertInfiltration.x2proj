@@ -60,6 +60,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_MultipleActions.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISquadSelectCovertActionInfo.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>

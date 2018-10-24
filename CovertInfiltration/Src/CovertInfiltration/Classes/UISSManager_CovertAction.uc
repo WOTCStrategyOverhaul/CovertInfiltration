@@ -18,6 +18,17 @@ simulated function OpenSquadSelect()
 	BuildConfiguration();
 
 	SquadSelect = class'SSAAT_Opener'.static.ShowSquadSelect(Configuration);
+	PostScreenInit();
+}
+
+simulated protected function PostScreenInit()
+{
+	local UISquadSelectCovertActionInfo ActionInfo;
+
+	ActionInfo = SquadSelect.Spawn(class'UISquadSelectCovertActionInfo', SquadSelect);
+	ActionInfo.bAnimateOnInit = false;
+	ActionInfo.InitCovertActionInfo('CovertActionInfo');
+	ActionInfo.UpdateData(Action);
 }
 
 simulated protected function BuildConfiguration()

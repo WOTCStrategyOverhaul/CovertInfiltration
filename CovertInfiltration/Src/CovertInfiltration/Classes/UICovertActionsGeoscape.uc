@@ -125,6 +125,18 @@ simulated function AnimateIn(optional float Delay = 0.0)
 	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 }
 
+simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
+{
+	if (Instant)
+	{
+		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM, 0);
+	}
+	else
+	{
+		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
+	}
+}
+
 ///////////////////////////////////
 /// Populating the actions list ///
 ///////////////////////////////////
@@ -197,7 +209,7 @@ simulated function PopulateList()
 	local UICovertActionsGeoscape_CovertAction Item;
 	local UICovertActionsGeoscape_FactionHeader FactionHeader, LastHeader;
 
-	for( idx = 0; idx < arrActions.Length; idx++ )
+	for (idx = 0; idx < arrActions.Length; idx++)
 	{
 		if (
 			LastHeader == none ||
@@ -251,18 +263,6 @@ simulated function bool CanOpenLoadout()
 	return 
 		!CurrentAction.bStarted &&
 		CurrentAction.RequiredFactionInfluence <= CurrentAction.GetFaction().GetInfluence();
-}
-
-simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
-{
-	if (Instant)
-	{
-		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM, 0);
-	}
-	else
-	{
-		GetHQPres().CAMLookAtEarth(GetAction().Get2DLocation(), CAMERA_ZOOM);
-	}
 }
 
 //////////////////////////////////////
