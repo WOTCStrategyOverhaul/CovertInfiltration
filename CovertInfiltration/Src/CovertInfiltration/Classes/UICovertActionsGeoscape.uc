@@ -13,7 +13,6 @@ var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIButton ConfirmButton, CloseScreenButton;
 
-
 // Data
 var StateObjectReference ActionRef;
 var array<XComGameState_CovertAction> arrActions;
@@ -35,15 +34,19 @@ var protected bool bDontUpdateData;
 const ANIMATE_IN_DURATION = 0.7f;
 const CAMERA_ZOOM = 0.5f;
 
-///////////////////////////////
-/// SCREEN APPEARING EVENTS ///
-///////////////////////////////
+///////////////////////
+/// Creating screen ///
+///////////////////////
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	GetHQPres().StrategyMap2D.Hide();
+	GetHQPres().CAMSaveCurrentLocation();
+	OnInitForceResistanceNetwork();
+
+	BuildScreen();
 }
 
 simulated function OnInit()
@@ -53,11 +56,8 @@ simulated function OnInit()
 	// We can have 0-n list index changes during bootsratp so we call UpdateData manually once (!) after we are done
 	bDontUpdateData = true;
 
-	GetHQPres().CAMSaveCurrentLocation();
-	OnInitForceResistanceNetwork();
-
 	FindActions();
-	BuildScreen();
+	PopulateList();
 	AttemptSelectAction(ActionToShowOnInitRef);
 
 	bDontUpdateData = false;
@@ -66,37 +66,7 @@ simulated function OnInit()
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
 
-simulated function OnReceiveFocus()
-{
-	super.OnReceiveFocus();
-	
-	// Came back from UISquadSelect or the confirmation alert
-	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
-	FocusCameraOnCurrentAction(true);
-	
-	if (bConfirmScreenWasOpened)
-	{
-		// The covert op was launched
-		if (GetAction().bStarted)
-		{
-			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
-			UpdateList();
-			SSManager = none;
-		} 
-		else
-		{
-			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
-			SSManager.ClearUnitsFromAction();
-			OpenLoadoutForCurrentAction();
-		}
 
-		bConfirmScreenWasOpened = false;
-	}
-}
-
-///////////////////////
-/// POPULATING INFO ///
-///////////////////////
 
 simulated function BuildScreen()
 {
@@ -113,10 +83,6 @@ simulated function BuildScreen()
 		300, 800,
 		false, true
 	);
-	ActionsList.AnimateX(240, ANIMATE_IN_DURATION);
-	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
-
-	PopulateList();
 	Navigator.SetSelected(ActionsList);
 
 	// Buttons
@@ -125,8 +91,6 @@ simulated function BuildScreen()
 	ButtonGroupWrap.bAnimateOnInit = false; // We animate manually
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
 	ButtonGroupWrap.SetPosition(1000, 450);
-	ButtonGroupWrap.AnimateX(1320, ANIMATE_IN_DURATION);
-	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -148,45 +112,24 @@ simulated function BuildScreen()
 	CloseScreenButton.SetWidth(280);
 }
 
-simulated function PopulateList()
+//////////////////
+/// Animations ///
+//////////////////
+
+simulated function AnimateIn(optional float Delay = 0.0)
 {
-	local int idx;
-	local UICovertActionsGeoscape_CovertAction Item;
-	local UICovertActionsGeoscape_FactionHeader FactionHeader, LastHeader;
+	ActionsList.AnimateX(240, ANIMATE_IN_DURATION, Delay);
+	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
-	for( idx = 0; idx < arrActions.Length; idx++ )
-	{
-		if (
-			LastHeader == none ||
-			LastHeader.Faction.GetMyTemplateName() != arrActions[idx].GetFaction().GetMyTemplateName() || 
-			LastHeader.bIsOngoing != arrActions[idx].bStarted
-		) {
-			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
-			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
-
-			LastHeader = FactionHeader;
-		}
-
-		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
-		Item.InitCovertAction(arrActions[idx]);
-
-		if (ActionsList.GetSelectedItem() == none)
-		{
-			ActionsList.SetSelectedItem(Item);
-		}
-	}
+	ButtonGroupWrap.AnimateX(1320, ANIMATE_IN_DURATION, Delay);
+	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 }
 
-simulated function UpdateList()
-{
-	ActionsList.ClearItems();
-	arrActions.Length = 0;
+///////////////////////////////////
+/// Populating the actions list ///
+///////////////////////////////////
 
-	FindActions();
-	PopulateList();
-}
-
-// Copied from UICovertActions
+// Adapted from UICovertActions
 simulated function FindActions()
 {
 	local XComGameStateHistory History;
@@ -248,6 +191,49 @@ simulated protected function EnsureSelectedActionIsInList()
 	}
 }
 
+simulated function PopulateList()
+{
+	local int idx;
+	local UICovertActionsGeoscape_CovertAction Item;
+	local UICovertActionsGeoscape_FactionHeader FactionHeader, LastHeader;
+
+	for( idx = 0; idx < arrActions.Length; idx++ )
+	{
+		if (
+			LastHeader == none ||
+			LastHeader.Faction.GetMyTemplateName() != arrActions[idx].GetFaction().GetMyTemplateName() || 
+			LastHeader.bIsOngoing != arrActions[idx].bStarted
+		) {
+			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
+			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
+
+			LastHeader = FactionHeader;
+		}
+
+		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
+		Item.InitCovertAction(arrActions[idx]);
+
+		if (ActionsList.GetSelectedItem() == none)
+		{
+			ActionsList.SetSelectedItem(Item);
+		}
+	}
+}
+
+/////////////////////////////////////
+/// Refreshing displayed elements ///
+/////////////////////////////////////
+
+simulated function UpdateList()
+{
+	ActionsList.ClearItems();
+	arrActions.Length = 0;
+
+	FindActions();
+	PopulateList();
+	UpdateData();
+}
+
 // Used to update the screen to show new covert action
 simulated function UpdateData()
 {
@@ -255,6 +241,16 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	ConfirmButton.SetDisabled(!CanOpenLoadout());
+}
+
+simulated function bool CanOpenLoadout()
+{
+	local XComGameState_CovertAction CurrentAction;
+	CurrentAction = GetAction();
+
+	return 
+		!CurrentAction.bStarted &&
+		CurrentAction.RequiredFactionInfluence <= CurrentAction.GetFaction().GetInfluence();
 }
 
 simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
@@ -269,14 +265,36 @@ simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
 	}
 }
 
-simulated function bool CanOpenLoadout()
-{
-	local XComGameState_CovertAction CurrentAction;
-	CurrentAction = GetAction();
+//////////////////////////////////////
+/// Interaction with other screens ///
+//////////////////////////////////////
 
-	return 
-		!CurrentAction.bStarted &&
-		CurrentAction.RequiredFactionInfluence <= CurrentAction.GetFaction().GetInfluence();
+simulated function OnReceiveFocus()
+{
+	super.OnReceiveFocus();
+	
+	// Came back from UISquadSelect or the confirmation alert
+	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
+	FocusCameraOnCurrentAction(true);
+	
+	if (bConfirmScreenWasOpened)
+	{
+		// The covert op was launched
+		if (GetAction().bStarted)
+		{
+			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
+			UpdateList();
+			SSManager = none;
+		} 
+		else
+		{
+			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
+			SSManager.ClearUnitsFromAction();
+			OpenLoadoutForCurrentAction();
+		}
+
+		bConfirmScreenWasOpened = false;
+	}
 }
 
 simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
@@ -311,7 +329,9 @@ simulated function OpenLoadoutForCurrentAction()
 	SSManager.OpenSquadSelect();
 }
 
-/// CHILD CALLBAKCS
+///////////////////////
+/// Child callbacks ///
+///////////////////////
 
 simulated function SelectedItemChanged(UIList ContainerList, int ItemIndex)
 {
@@ -340,7 +360,9 @@ simulated function OnCloseScreenClicked(UIButton Button)
 	CloseScreen();
 }
 
-/// KEYBOARD/CONTROLLER INPUT
+/////////////////////////////////////
+/// Keyboard and controller input ///
+/////////////////////////////////////
 
 simulated function bool OnUnrealCommand(int cmd, int arg)
 {
@@ -349,7 +371,6 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 	switch(cmd)
 	{
-	// TODO
 	case class'UIUtilities_Input'.const.FXS_BUTTON_A:
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
@@ -369,9 +390,9 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	return super.OnUnrealCommand(cmd, arg);
 }
 
-///////////////
-/// CLOSING ///
-///////////////
+//////////////////////
+/// Closing screen ///
+//////////////////////
 
 simulated function OnRemoved()
 {
@@ -384,9 +405,9 @@ simulated function OnRemoved()
 	OnRemoveRestoreResistanceNetwork();
 }
 
-//////////////////////////////////
-/// SHOWING RESISTANCE NETWORK ///
-//////////////////////////////////
+//////////////////////////////////////////
+/// Resistance network display control ///
+//////////////////////////////////////////
 
 simulated protected function OnInitForceResistanceNetwork()
 {
@@ -414,8 +435,22 @@ simulated protected function OnRemoveRestoreResistanceNetwork()
 }
 
 ///////////////
-/// SORTING ///
+/// Helpers ///
 ///////////////
+
+simulated function XComGameState_CovertAction GetAction()
+{
+	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID));
+}
+
+simulated function XComHQPresentationLayer GetHQPres()
+{
+	return XComHQPresentationLayer(Movie.Pres);
+}
+
+///////////////////////
+/// Sorting actions ///
+///////////////////////
 
 function int SortActionsByFactionName(XComGameState_CovertAction ActionA, XComGameState_CovertAction ActionB)
 {
@@ -500,15 +535,4 @@ function int SortActionsStarted(XComGameState_CovertAction ActionA, XComGameStat
 	{
 		return 0;
 	}
-}
-
-/// HELPERS
-simulated function XComGameState_CovertAction GetAction()
-{
-	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID));
-}
-
-simulated function XComHQPresentationLayer GetHQPres()
-{
-	return XComHQPresentationLayer(Movie.Pres);
 }
