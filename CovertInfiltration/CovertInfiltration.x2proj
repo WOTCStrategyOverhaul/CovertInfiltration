@@ -90,6 +90,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
       <SubType>Content</SubType>
