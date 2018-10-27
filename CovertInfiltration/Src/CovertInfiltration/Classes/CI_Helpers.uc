@@ -25,7 +25,9 @@ static function bool ShouldShowCovertAction(XComGameState_CovertAction ActionSta
 	return ActionState.CanActionBeDisplayed() && (ActionState.GetMyTemplate().bGoldenPath || FactionState.bSeenFactionHQReveal);;
 }
 
-/// UI/TEXT
+///////////////
+/// UI/Text ///
+///////////////
 
 static function ShowGeoscapeCovertOps(optional StateObjectReference ActionToFocus)
 {

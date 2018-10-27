@@ -7,8 +7,22 @@
 
 class UICovertActionsGeoscape extends UIScreen;
 
-// UI elements
+// UI - list
 var UIList ActionsList;
+
+// UI - per-action info
+var UIPanel ActionInfoContainer;
+var UIMask ActionInfoMask; // Used to animate in
+var UIBGBox ActionInfoBG;
+var UIImage ActionDisplayNameBG;
+var UIText ActionDisplayName;
+var UIText ActionDescription;
+
+// UI - Action image
+var UIImage ActionImageBorder;
+var UIImage ActionImage;
+
+// UI - buttons
 var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIButton ConfirmButton, CloseScreenButton;
@@ -66,31 +80,80 @@ simulated function OnInit()
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
 
-
-
 simulated function BuildScreen()
 {
+	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
+
 	// LIST
 
 	ActionsList = Spawn(class'UIList', self);
 	ActionsList.bStickyClickyHighlight = true;
 	ActionsList.bStickyHighlight = false;
-	ActionsList.bAnimateOnInit = false; // We animate manually
+	ActionsList.bAnimateOnInit = false;
 	ActionsList.OnSetSelectedIndex = SelectedItemChanged;
 	ActionsList.InitList(
 		'ActionsList',
-		720, 150,
+		600, 150,
 		300, 800,
 		false, true
 	);
 	Navigator.SetSelected(ActionsList);
 
+	// Action info
+
+	ActionInfoContainer = Spawn(class'UIPanel', self);
+	ActionInfoContainer.bAnimateOnInit = false;
+	ActionInfoContainer.InitPanel('ActionInfoContainer');
+	ActionInfoContainer.SetPosition(480, 150);
+
+	ActionInfoMask = Spawn(class'UIMask', self);
+	ActionInfoMask.bAnimateOnInit = false;
+	ActionInfoMask.InitMask('ActionInfoMask', ActionInfoContainer);
+	ActionInfoMask.SetPosition(950, 150);
+	ActionInfoMask.SetSize(0, 195);
+
+	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoContainer);
+	ActionInfoBG.bAnimateOnInit = false;
+	ActionInfoBG.InitBG('ActionInfoBG');
+	ActionInfoBG.SetAlpha(60);
+	ActionInfoBG.SetPosition(-10, -10);
+	ActionInfoBG.SetSize(960, 205);
+
+	ActionDisplayNameBG = Spawn(class'UIImage', ActionInfoContainer);
+	ActionDisplayNameBG.bAnimateOnInit = false;
+	ActionDisplayNameBG.InitImage('ActionDisplayNameBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
+	ActionDisplayNameBG.SetPosition(-10, -10);
+	ActionDisplayNameBG.SetSize(960, 60);
+
+	ActionDisplayName = Spawn(class'UIText', ActionInfoContainer);
+	ActionDisplayName.bAnimateOnInit = false;
+	ActionDisplayName.InitText('ActionDisplayName');
+	ActionDisplayName.SetSize(955, 55);
+
+	ActionDescription = Spawn(class'UIText', ActionInfoContainer);
+	ActionDescription.bAnimateOnInit = false;
+	ActionDescription.InitText('ActionDescription');
+	ActionDescription.SetPosition(0, 50);
+	ActionDescription.SetSize(955, 135);
+
+	ActionImageBorder = Spawn(class'UIImage', self);
+	ActionImageBorder.bAnimateOnInit = false;
+	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
+	ActionImageBorder.SetPosition(1309, 148);
+	ActionImageBorder.SetSize(322, 172);
+
+	ActionImage = Spawn(class'UIImage', self);
+	ActionImage.bAnimateOnInit = false;
+	ActionImage.InitImage('ActionImage');
+	ActionImage.SetPosition(1320, 150);
+	ActionImage.SetSize(300, 168);
+
 	// Buttons
 
 	ButtonGroupWrap = Spawn(class'UIPanel', self);
-	ButtonGroupWrap.bAnimateOnInit = false; // We animate manually
+	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
-	ButtonGroupWrap.SetPosition(1000, 450);
+	ButtonGroupWrap.SetPosition(1320, 450);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -118,11 +181,27 @@ simulated function BuildScreen()
 
 simulated function AnimateIn(optional float Delay = 0.0)
 {
-	ActionsList.AnimateX(240, ANIMATE_IN_DURATION, Delay);
+	// Left
+
+	ActionsList.AnimateX(120, ANIMATE_IN_DURATION, Delay);
 	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
-	ButtonGroupWrap.AnimateX(1320, ANIMATE_IN_DURATION, Delay);
+	// Center
+
+	ActionInfoMask.AnimateX(480, ANIMATE_IN_DURATION, Delay);
+	ActionInfoMask.AnimateWidth(960, ANIMATE_IN_DURATION, Delay);
+	ActionInfoContainer.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+
+	// Right
+
+	ButtonGroupWrap.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
 	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+
+	ActionImageBorder.AnimateX(1489, ANIMATE_IN_DURATION, Delay);
+	ActionImageBorder.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+
+	ActionImage.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
+	ActionImage.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 }
 
 simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
@@ -253,6 +332,7 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	ConfirmButton.SetDisabled(!CanOpenLoadout());
+	UpdateCovertActionInfo();
 }
 
 simulated function bool CanOpenLoadout()
@@ -263,6 +343,16 @@ simulated function bool CanOpenLoadout()
 	return 
 		!CurrentAction.bStarted &&
 		CurrentAction.RequiredFactionInfluence <= CurrentAction.GetFaction().GetInfluence();
+}
+
+simulated function UpdateCovertActionInfo()
+{
+	local XComGameState_CovertAction CurrentAction;
+	CurrentAction = GetAction();
+
+	ActionImage.LoadImage(CurrentAction.GetImage());
+	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
+	ActionDescription.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
 }
 
 //////////////////////////////////////
@@ -535,4 +625,9 @@ function int SortActionsStarted(XComGameState_CovertAction ActionA, XComGameStat
 	{
 		return 0;
 	}
+}
+
+defaultproperties
+{
+    InputState=eInputState_Consume
 }
