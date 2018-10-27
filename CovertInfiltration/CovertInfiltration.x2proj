@@ -23,6 +23,9 @@
     <Folder Include="Src\LW_Tuple\Classes" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComContent.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
@@ -98,6 +101,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod_DefaultModifiers.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationArmors.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
