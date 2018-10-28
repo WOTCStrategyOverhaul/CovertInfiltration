@@ -56,6 +56,9 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
+	// Testing code
+	if (ActionToShowOnInitRef.ObjectID != 0) bAnimateOnInit = false;
+
 	GetHQPres().StrategyMap2D.Hide();
 	GetHQPres().CAMSaveCurrentLocation();
 	OnInitForceResistanceNetwork();
@@ -93,7 +96,7 @@ simulated function BuildScreen()
 	ActionsList.OnSetSelectedIndex = SelectedItemChanged;
 	ActionsList.InitList(
 		'ActionsList',
-		600, 150,
+		120, 150,
 		300, 800,
 		false, true
 	);
@@ -109,8 +112,8 @@ simulated function BuildScreen()
 	ActionInfoMask = Spawn(class'UIMask', self);
 	ActionInfoMask.bAnimateOnInit = false;
 	ActionInfoMask.InitMask('ActionInfoMask', ActionInfoContainer);
-	ActionInfoMask.SetPosition(950, 150);
-	ActionInfoMask.SetSize(0, 195);
+	ActionInfoMask.SetPosition(480, 150);
+	ActionInfoMask.SetSize(960, 195);
 
 	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoContainer);
 	ActionInfoBG.bAnimateOnInit = false;
@@ -139,13 +142,13 @@ simulated function BuildScreen()
 	ActionImageBorder = Spawn(class'UIImage', self);
 	ActionImageBorder.bAnimateOnInit = false;
 	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
-	ActionImageBorder.SetPosition(1309, 148);
+	ActionImageBorder.SetPosition(1489, 148);
 	ActionImageBorder.SetSize(322, 172);
 
 	ActionImage = Spawn(class'UIImage', self);
 	ActionImage.bAnimateOnInit = false;
 	ActionImage.InitImage('ActionImage');
-	ActionImage.SetPosition(1320, 150);
+	ActionImage.SetPosition(1500, 150);
 	ActionImage.SetSize(300, 168);
 
 	// Buttons
@@ -153,7 +156,7 @@ simulated function BuildScreen()
 	ButtonGroupWrap = Spawn(class'UIPanel', self);
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
-	ButtonGroupWrap.SetPosition(1320, 450);
+	ButtonGroupWrap.SetPosition(1500, 450);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -183,23 +186,31 @@ simulated function AnimateIn(optional float Delay = 0.0)
 {
 	// Left
 
+	ActionsList.SetX(600);
 	ActionsList.AnimateX(120, ANIMATE_IN_DURATION, Delay);
 	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
 	// Center
 
+	ActionInfoMask.SetX(950);
 	ActionInfoMask.AnimateX(480, ANIMATE_IN_DURATION, Delay);
+
+	ActionInfoMask.SetWidth(0);
 	ActionInfoMask.AnimateWidth(960, ANIMATE_IN_DURATION, Delay);
+
 	ActionInfoContainer.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
 	// Right
 
+	ButtonGroupWrap.SetX(1320);
 	ButtonGroupWrap.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
 	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
+	ActionImageBorder.SetX(1309);
 	ActionImageBorder.AnimateX(1489, ANIMATE_IN_DURATION, Delay);
 	ActionImageBorder.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 
+	ActionImage.SetX(1320);
 	ActionImage.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
 	ActionImage.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
 }
