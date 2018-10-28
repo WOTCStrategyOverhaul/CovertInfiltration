@@ -147,6 +147,7 @@ simulated protected function BuildCenterSection()
 	CenterSection.SetSize(960, 1080);
 
 	BuildActionInfoTop();
+	BuildActionInfoBottom();
 }
 
 simulated protected function BuildActionInfoTop()
@@ -186,6 +187,52 @@ simulated protected function BuildActionInfoTop()
 	ActionDescription.InitText('ActionDescription');
 	ActionDescription.SetPosition(0, 50);
 	ActionDescription.SetSize(ActionInfoTopContainer.Width, ActionInfoTopContainer.Height - ActionDescription.Y);
+}
+
+simulated protected function BuildActionInfoBottom()
+{
+	ActionInfoBottomContainer = Spawn(class'UIPanel', CenterSection);
+	ActionInfoBottomContainer.bAnimateOnInit = false;
+	ActionInfoBottomContainer.InitPanel('ActionInfoBottomContainer');
+	ActionInfoBottomContainer.SetPosition(0, 740);
+	ActionInfoBottomContainer.SetSize(960, 210);
+
+	BuildActionReward();
+}
+
+simulated protected function BuildActionReward()
+{
+	ActionRewardContainer = Spawn(class'UIPanel', ActionInfoBottomContainer);
+	ActionRewardContainer.bAnimateOnInit = false;
+	ActionRewardContainer.InitPanel('ActionRewardContainer');
+	ActionRewardContainer.SetPosition(0, 0);
+	ActionRewardContainer.SetSize(310, ActionInfoBottomContainer.Height);
+
+	ActionRewardTextBG = Spawn(class'UIPanel', ActionRewardContainer);
+	ActionRewardTextBG.bAnimateOnInit = false;
+	ActionRewardTextBG.InitPanel('ActionRewardTextBG', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	ActionRewardTextBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionRewardTextBG.SetSize(ActionRewardContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionRewardContainer.Height + UI_INFO_BOX_MARGIN * 2);
+	ActionRewardTextBG.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
+	ActionRewardTextBG.SetAlpha(60);
+
+	ActionRewardHeaderBG = Spawn(class'UIImage', ActionRewardContainer);
+	ActionRewardHeaderBG.bAnimateOnInit = false;
+	ActionRewardHeaderBG.InitImage('ActionRewardHeaderBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
+	ActionRewardHeaderBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionRewardHeaderBG.SetSize(ActionRewardContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
+
+	ActionRewardHeader = Spawn(class'UIText', ActionRewardContainer);
+	ActionRewardHeader.bAnimateOnInit = false;
+	ActionRewardHeader.InitText('ActionRewardHeader');
+	ActionRewardHeader.SetSize(ActionRewardContainer.Width, 55);
+	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Reward", bIsIn3D, true));
+
+	ActionRewardText = Spawn(class'UIText', ActionRewardContainer);
+	ActionRewardText.bAnimateOnInit = false;
+	ActionRewardText.InitText('ActionRewardText');
+	ActionRewardText.SetPosition(0, 50);
+	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
 }
 
 simulated protected function BuildRightPane()
@@ -415,6 +462,11 @@ simulated function UpdateCovertActionInfo()
 	ActionImage.LoadImage(CurrentAction.GetImage());
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
 	ActionDescription.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
+
+	ActionRewardText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
+		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
+	);
 }
 
 //////////////////////////////////////
