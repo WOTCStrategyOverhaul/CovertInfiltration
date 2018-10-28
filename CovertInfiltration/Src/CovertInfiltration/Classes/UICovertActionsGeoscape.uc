@@ -32,12 +32,12 @@ var UIText ActionRewardHeader;
 var UIPanel ActionRewardTextBG;
 var UIText ActionRewardText;
 
-// UI - action deploayable resources
-var UIPanel ActionResourcesContainer;
-var UIImage ActionResourcesHeaderBG;
-var UIText ActionResourcesHeader;
-var UIPanel ActionResourcesTextBG;
-var UIText ActionResourcesText;
+// UI - action slots
+var UIPanel ActionSlotsContainer;
+var UIImage ActionSlotsHeaderBG;
+var UIText ActionSlotsHeader;
+var UIPanel ActionSlotsTextBG;
+var UIText ActionSlotsText;
 
 // UI - action risks
 var UIPanel ActionRisksContainer;
@@ -198,6 +198,7 @@ simulated protected function BuildActionInfoBottom()
 	ActionInfoBottomContainer.SetSize(960, 210);
 
 	BuildActionReward();
+	BuildActionSlots();
 }
 
 simulated protected function BuildActionReward()
@@ -233,6 +234,41 @@ simulated protected function BuildActionReward()
 	ActionRewardText.InitText('ActionRewardText');
 	ActionRewardText.SetPosition(0, 50);
 	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
+}
+
+simulated protected function BuildActionSlots()
+{
+	ActionSlotsContainer = Spawn(class'UIPanel', ActionInfoBottomContainer);
+	ActionSlotsContainer.bAnimateOnInit = false;
+	ActionSlotsContainer.InitPanel('ActionSlotsContainer');
+	ActionSlotsContainer.SetPosition(340, 0);
+	ActionSlotsContainer.SetSize(ActionInfoBottomContainer.Width - ActionSlotsContainer.X, ActionInfoBottomContainer.Height);
+
+	ActionSlotsTextBG = Spawn(class'UIPanel', ActionSlotsContainer);
+	ActionSlotsTextBG.bAnimateOnInit = false;
+	ActionSlotsTextBG.InitPanel('AActionSlotsTextBG', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	ActionSlotsTextBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionSlotsTextBG.SetSize(ActionSlotsContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionSlotsContainer.Height + UI_INFO_BOX_MARGIN * 2);
+	ActionSlotsTextBG.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
+	ActionSlotsTextBG.SetAlpha(60);
+
+	ActionSlotsHeaderBG = Spawn(class'UIImage', ActionSlotsContainer);
+	ActionSlotsHeaderBG.bAnimateOnInit = false;
+	ActionSlotsHeaderBG.InitImage('ActionSlotsHeaderBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
+	ActionSlotsHeaderBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionSlotsHeaderBG.SetSize(ActionSlotsContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
+
+	ActionSlotsHeader = Spawn(class'UIText', ActionSlotsContainer);
+	ActionSlotsHeader.bAnimateOnInit = false;
+	ActionSlotsHeader.InitText('ActionSlotsHeader');
+	ActionSlotsHeader.SetSize(ActionSlotsContainer.Width, 55);
+	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Deployable resources", bIsIn3D, true));
+
+	ActionSlotsText = Spawn(class'UIText', ActionSlotsContainer);
+	ActionSlotsText.bAnimateOnInit = false;
+	ActionSlotsText.InitText('ActionSlotsText', "DEMO TEXT");
+	ActionSlotsText.SetPosition(0, 50);
+	ActionSlotsText.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlotsText.Y);
 }
 
 simulated protected function BuildRightPane()
