@@ -14,7 +14,7 @@ var UIList ActionsList;
 var UIPanel CenterSection;
 var UIPanel RightPane;
 
-// UI - per-action info
+// UI - action info (top)
 var UIPanel ActionInfoTopContainer;
 var UIMask ActionInfoMask; // Used to animate in
 var UIBGBox ActionInfoBG;
@@ -22,7 +22,31 @@ var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
 var UIText ActionDescription;
 
-// UI - Action image
+// UI - action info (bottom)
+var UIPanel ActionInfoBottomContainer;
+
+// UI - action reward
+var UIPanel ActionRewardContainer;
+var UIImage ActionRewardHeaderBG;
+var UIText ActionRewardHeader;
+var UIPanel ActionRewardTextBG;
+var UIText ActionRewardText;
+
+// UI - action deploayable resources
+var UIPanel ActionResourcesContainer;
+var UIImage ActionResourcesHeaderBG;
+var UIText ActionResourcesHeader;
+var UIPanel ActionResourcesTextBG;
+var UIText ActionResourcesText;
+
+// UI - action risks
+var UIPanel ActionRisksContainer;
+var UIImage ActionRisksHeaderBG;
+var UIText ActionRisksHeader;
+var UIPanel ActionRisksTextBG;
+var UIText ActionRisksText;
+
+// UI - action image
 var UIImage ActionImageBorder;
 var UIImage ActionImage;
 
@@ -93,8 +117,13 @@ simulated function BuildScreen()
 {
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
-	// Left - list
+	BuildActionsList();
+	BuildCenterSection();
+	BuildRightPane();
+}
 
+simulated protected function BuildActionsList()
+{
 	ActionsList = Spawn(class'UIList', self);
 	ActionsList.bStickyClickyHighlight = true;
 	ActionsList.bStickyHighlight = false;
@@ -107,15 +136,21 @@ simulated function BuildScreen()
 		false, true
 	);
 	Navigator.SetSelected(ActionsList);
+}
 
-	// Center - action info top
-
+simulated protected function BuildCenterSection()
+{
 	CenterSection = Spawn(class'UIPanel', self);
 	CenterSection.bAnimateOnInit = false;
 	CenterSection.InitPanel('CenterSection');
 	CenterSection.SetPosition(480, 0); // CenterSection spans the entire viewport vertically
 	CenterSection.SetSize(960, 1080);
 
+	BuildActionInfoTop();
+}
+
+simulated protected function BuildActionInfoTop()
+{
 	ActionInfoTopContainer = Spawn(class'UIPanel', CenterSection);
 	ActionInfoTopContainer.bAnimateOnInit = false;
 	ActionInfoTopContainer.InitPanel('ActionInfoTopContainer');
@@ -151,15 +186,22 @@ simulated function BuildScreen()
 	ActionDescription.InitText('ActionDescription');
 	ActionDescription.SetPosition(0, 50);
 	ActionDescription.SetSize(ActionInfoTopContainer.Width, ActionInfoTopContainer.Height - ActionDescription.Y);
+}
 
-	// Right pane
-
+simulated protected function BuildRightPane()
+{
 	RightPane = Spawn(class'UIPanel', self);
 	RightPane.bAnimateOnInit = false;
 	RightPane.InitPanel('RightPane');
 	RightPane.SetPosition(1500, 0); // RightPane spans the entire viewport vertically
 	RightPane.SetSize(300, 1080);
 
+	BuildActionImage();
+	BuildButtons();
+}
+
+simulated protected function BuildActionImage()
+{
 	ActionImageBorder = Spawn(class'UIImage', RightPane);
 	ActionImageBorder.bAnimateOnInit = false;
 	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
@@ -171,9 +213,10 @@ simulated function BuildScreen()
 	ActionImage.InitImage('ActionImage');
 	ActionImage.SetPosition(0, 150);
 	ActionImage.SetSize(300, 168);
+}
 
-	// Buttons
-
+simulated protected function BuildButtons()
+{
 	ButtonGroupWrap = Spawn(class'UIPanel', RightPane);
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
