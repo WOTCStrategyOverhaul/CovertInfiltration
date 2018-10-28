@@ -10,8 +10,12 @@ class UICovertActionsGeoscape extends UIScreen;
 // UI - list
 var UIList ActionsList;
 
+// UI - layout. Note that there is no need for left pane since UIList is a container on its own
+var UIPanel CenterSection;
+var UIPanel RightPane;
+
 // UI - per-action info
-var UIPanel ActionInfoContainer;
+var UIPanel ActionInfoTopContainer;
 var UIMask ActionInfoMask; // Used to animate in
 var UIBGBox ActionInfoBG;
 var UIImage ActionDisplayNameBG;
@@ -45,8 +49,10 @@ var protected EStrategyMapState PreOpenMapState;
 // Internal state
 var protected bool bDontUpdateData;
 
-const ANIMATE_IN_DURATION = 0.7f;
+const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
+
+const UI_INFO_BOX_MARGIN = 10;
 
 ///////////////////////
 /// Creating screen ///
@@ -87,7 +93,7 @@ simulated function BuildScreen()
 {
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
-	// LIST
+	// Left - list
 
 	ActionsList = Spawn(class'UIList', self);
 	ActionsList.bStickyClickyHighlight = true;
@@ -102,80 +108,96 @@ simulated function BuildScreen()
 	);
 	Navigator.SetSelected(ActionsList);
 
-	// Action info
+	// Center - action info top
 
-	ActionInfoContainer = Spawn(class'UIPanel', self);
-	ActionInfoContainer.bAnimateOnInit = false;
-	ActionInfoContainer.InitPanel('ActionInfoContainer');
-	ActionInfoContainer.SetPosition(480, 150);
+	CenterSection = Spawn(class'UIPanel', self);
+	CenterSection.bAnimateOnInit = false;
+	CenterSection.InitPanel('CenterSection');
+	CenterSection.SetPosition(480, 0); // CenterSection spans the entire viewport vertically
+	CenterSection.SetSize(960, 1080);
+
+	ActionInfoTopContainer = Spawn(class'UIPanel', CenterSection);
+	ActionInfoTopContainer.bAnimateOnInit = false;
+	ActionInfoTopContainer.InitPanel('ActionInfoTopContainer');
+	ActionInfoTopContainer.SetPosition(0, 150);
+	ActionInfoTopContainer.SetSize(960, 195);
 
 	ActionInfoMask = Spawn(class'UIMask', self);
 	ActionInfoMask.bAnimateOnInit = false;
-	ActionInfoMask.InitMask('ActionInfoMask', ActionInfoContainer);
-	ActionInfoMask.SetPosition(480, 150);
-	ActionInfoMask.SetSize(960, 195);
+	ActionInfoMask.InitMask('ActionInfoMask', ActionInfoTopContainer);
+	ActionInfoMask.SetPosition(CenterSection.X + ActionInfoTopContainer.X - UI_INFO_BOX_MARGIN, ActionInfoTopContainer.Y - UI_INFO_BOX_MARGIN);
+	ActionInfoMask.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
 
-	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoContainer);
+	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoTopContainer);
 	ActionInfoBG.bAnimateOnInit = false;
 	ActionInfoBG.InitBG('ActionInfoBG');
 	ActionInfoBG.SetAlpha(60);
-	ActionInfoBG.SetPosition(-10, -10);
-	ActionInfoBG.SetSize(960, 205);
+	ActionInfoBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionInfoBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
 
-	ActionDisplayNameBG = Spawn(class'UIImage', ActionInfoContainer);
+	ActionDisplayNameBG = Spawn(class'UIImage', ActionInfoTopContainer);
 	ActionDisplayNameBG.bAnimateOnInit = false;
 	ActionDisplayNameBG.InitImage('ActionDisplayNameBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
-	ActionDisplayNameBG.SetPosition(-10, -10);
-	ActionDisplayNameBG.SetSize(960, 60);
+	ActionDisplayNameBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionDisplayNameBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
 
-	ActionDisplayName = Spawn(class'UIText', ActionInfoContainer);
+	ActionDisplayName = Spawn(class'UIText', ActionInfoTopContainer);
 	ActionDisplayName.bAnimateOnInit = false;
 	ActionDisplayName.InitText('ActionDisplayName');
-	ActionDisplayName.SetSize(955, 55);
+	ActionDisplayName.SetSize(ActionInfoTopContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UIText', ActionInfoContainer);
+	ActionDescription = Spawn(class'UIText', ActionInfoTopContainer);
 	ActionDescription.bAnimateOnInit = false;
 	ActionDescription.InitText('ActionDescription');
 	ActionDescription.SetPosition(0, 50);
-	ActionDescription.SetSize(955, 135);
+	ActionDescription.SetSize(ActionInfoTopContainer.Width, ActionInfoTopContainer.Height - ActionDescription.Y);
 
-	ActionImageBorder = Spawn(class'UIImage', self);
+	// Right pane
+
+	RightPane = Spawn(class'UIPanel', self);
+	RightPane.bAnimateOnInit = false;
+	RightPane.InitPanel('RightPane');
+	RightPane.SetPosition(1500, 0); // RightPane spans the entire viewport vertically
+	RightPane.SetSize(300, 1080);
+
+	ActionImageBorder = Spawn(class'UIImage', RightPane);
 	ActionImageBorder.bAnimateOnInit = false;
 	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
-	ActionImageBorder.SetPosition(1489, 148);
-	ActionImageBorder.SetSize(322, 172);
+	ActionImageBorder.SetPosition(-10, 148);
+	ActionImageBorder.SetSize(320, 172);
 
-	ActionImage = Spawn(class'UIImage', self);
+	ActionImage = Spawn(class'UIImage', RightPane);
 	ActionImage.bAnimateOnInit = false;
 	ActionImage.InitImage('ActionImage');
-	ActionImage.SetPosition(1500, 150);
+	ActionImage.SetPosition(0, 150);
 	ActionImage.SetSize(300, 168);
 
 	// Buttons
 
-	ButtonGroupWrap = Spawn(class'UIPanel', self);
+	ButtonGroupWrap = Spawn(class'UIPanel', RightPane);
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
-	ButtonGroupWrap.SetPosition(1500, 450);
+	ButtonGroupWrap.SetPosition(0, 500);
+	ButtonGroupWrap.SetSize(RightPane.Width, 80);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
 	ButtonsBG.InitBG('ButtonsBG');
-	ButtonsBG.SetSize(300, 100);
+	ButtonsBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ButtonsBG.SetSize(ButtonGroupWrap.Width + UI_INFO_BOX_MARGIN * 2, ButtonGroupWrap.Height + UI_INFO_BOX_MARGIN * 2);
 
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
 	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked);
 	ConfirmButton.SetResizeToText(false);
-	ConfirmButton.SetPosition(10, 10);
-	ConfirmButton.SetWidth(280);
+	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
 	CloseScreenButton.bAnimateOnInit = false;
 	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked);
 	CloseScreenButton.SetResizeToText(false);
-	CloseScreenButton.SetPosition(10, 60);
-	CloseScreenButton.SetWidth(280);
+	CloseScreenButton.SetPosition(0, 50);
+	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
 }
 
 //////////////////
@@ -186,33 +208,19 @@ simulated function AnimateIn(optional float Delay = 0.0)
 {
 	// Left
 
-	ActionsList.SetX(600);
-	ActionsList.AnimateX(120, ANIMATE_IN_DURATION, Delay);
-	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+	ActionsList.AddTweenBetween("_x", 600, ActionsList.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	ActionsList.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay, "easeoutquad");
 
 	// Center
 
-	ActionInfoMask.SetX(950);
-	ActionInfoMask.AnimateX(480, ANIMATE_IN_DURATION, Delay);
-
-	ActionInfoMask.SetWidth(0);
-	ActionInfoMask.AnimateWidth(960, ANIMATE_IN_DURATION, Delay);
-
-	ActionInfoContainer.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+	ActionInfoMask.AddTweenBetween("_x", 960, ActionInfoMask.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	ActionInfoMask.AddTweenBetween("_width", 0, ActionInfoMask.Width, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	CenterSection.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay, "easeoutquad");
 
 	// Right
 
-	ButtonGroupWrap.SetX(1320);
-	ButtonGroupWrap.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
-	ButtonGroupWrap.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
-
-	ActionImageBorder.SetX(1309);
-	ActionImageBorder.AnimateX(1489, ANIMATE_IN_DURATION, Delay);
-	ActionImageBorder.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
-
-	ActionImage.SetX(1320);
-	ActionImage.AnimateX(1500, ANIMATE_IN_DURATION, Delay);
-	ActionImage.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay);
+	RightPane.AddTweenBetween("_x", 1320, RightPane.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	RightPane.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay, "easeoutquad");
 }
 
 simulated function FocusCameraOnCurrentAction(optional bool Instant = false)
