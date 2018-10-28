@@ -12,11 +12,11 @@ var UIList ActionsList;
 
 // UI - layout. Note that there is no need for left pane since UIList is a container on its own
 var UIPanel CenterSection;
+var UIMask CenterSectionMask; // Used to animate in
 var UIPanel RightPane;
 
 // UI - action info (top)
 var UIPanel ActionInfoTopContainer;
-var UIMask ActionInfoMask; // Used to animate in
 var UIBGBox ActionInfoBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
@@ -146,6 +146,12 @@ simulated protected function BuildCenterSection()
 	CenterSection.SetPosition(480, 0); // CenterSection spans the entire viewport vertically
 	CenterSection.SetSize(960, 1080);
 
+	CenterSectionMask = Spawn(class'UIMask', self);
+	CenterSectionMask.bAnimateOnInit = false;
+	CenterSectionMask.InitMask('CenterSectionMask', CenterSection);
+	CenterSectionMask.SetPosition(CenterSection.X - UI_INFO_BOX_MARGIN, 0);
+	CenterSectionMask.SetSize(CenterSection.Width + UI_INFO_BOX_MARGIN * 2, 1080);
+
 	BuildActionInfoTop();
 	BuildActionInfoBottom();
 }
@@ -157,12 +163,6 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.InitPanel('ActionInfoTopContainer');
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
-
-	ActionInfoMask = Spawn(class'UIMask', self);
-	ActionInfoMask.bAnimateOnInit = false;
-	ActionInfoMask.InitMask('ActionInfoMask', ActionInfoTopContainer);
-	ActionInfoMask.SetPosition(CenterSection.X + ActionInfoTopContainer.X - UI_INFO_BOX_MARGIN, ActionInfoTopContainer.Y - UI_INFO_BOX_MARGIN);
-	ActionInfoMask.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
 
 	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoTopContainer);
 	ActionInfoBG.bAnimateOnInit = false;
@@ -357,7 +357,7 @@ simulated protected function BuildRisks()
 
 	ActionRisksText = Spawn(class'UIText', ActionRisksContainer);
 	ActionRisksText.bAnimateOnInit = false;
-	ActionRisksText.InitText('ActionRisksText', "DEMO TEXT");
+	ActionRisksText.InitText('ActionRisksText');
 	ActionRisksText.SetPosition(0, 50);
 	ActionRisksText.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionSlotsText.Y);
 }
@@ -375,9 +375,9 @@ simulated function AnimateIn(optional float Delay = 0.0)
 
 	// Center
 
-	ActionInfoMask.AddTweenBetween("_x", 960, ActionInfoMask.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
-	ActionInfoMask.AddTweenBetween("_width", 0, ActionInfoMask.Width, ANIMATE_IN_DURATION, Delay, "easeoutquad");
 	CenterSection.AddTweenBetween("_alpha", 0, 100, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	CenterSectionMask.AddTweenBetween("_x", 960, CenterSectionMask.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	CenterSectionMask.AddTweenBetween("_width", 0, CenterSectionMask.Width, ANIMATE_IN_DURATION, Delay, "easeoutquad");
 
 	// Right
 
@@ -539,6 +539,27 @@ simulated function UpdateCovertActionInfo()
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
 	);
+
+	UpdateRisks();
+}
+
+simulated protected function UpdateRisks()
+{
+	local XComGameState_CovertAction CurrentAction;
+	local array<string> Labels, Values; 
+	local string strRisks;
+	local int idx; 
+
+	CurrentAction = GetAction();
+	CurrentAction.GetRisksStrings(Labels, Values);
+
+	for (idx = 0; idx < Labels.Length; idx++)
+	{
+		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], bIsIn3D) $ "</p>";
+	}
+
+	ActionRisksText.SetHtmlText(strRisks);
+	ActionRisksContainer.SetVisible(Labels.Length > 0);
 }
 
 //////////////////////////////////////
