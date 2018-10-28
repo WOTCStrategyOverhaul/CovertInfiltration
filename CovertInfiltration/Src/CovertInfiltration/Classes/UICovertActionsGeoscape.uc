@@ -39,13 +39,6 @@ var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
 var UIText ActionSlotsText;
 
-// UI - action risks
-var UIPanel ActionRisksContainer;
-var UIImage ActionRisksHeaderBG;
-var UIText ActionRisksHeader;
-var UIPanel ActionRisksTextBG;
-var UIText ActionRisksText;
-
 // UI - action image
 var UIImage ActionImageBorder;
 var UIImage ActionImage;
@@ -54,6 +47,13 @@ var UIImage ActionImage;
 var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIButton ConfirmButton, CloseScreenButton;
+
+// UI - action risks
+var UIPanel ActionRisksContainer;
+var UIImage ActionRisksHeaderBG;
+var UIText ActionRisksHeader;
+var UIPanel ActionRisksTextBG;
+var UIText ActionRisksText;
 
 // Data
 var StateObjectReference ActionRef;
@@ -281,6 +281,7 @@ simulated protected function BuildRightPane()
 
 	BuildActionImage();
 	BuildButtons();
+	BuildRisks();
 }
 
 simulated protected function BuildActionImage()
@@ -324,6 +325,41 @@ simulated protected function BuildButtons()
 	CloseScreenButton.SetResizeToText(false);
 	CloseScreenButton.SetPosition(0, 50);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
+}
+
+simulated protected function BuildRisks()
+{
+	ActionRisksContainer = Spawn(class'UIPanel', RightPane);
+	ActionRisksContainer.bAnimateOnInit = false;
+	ActionRisksContainer.InitPanel('ActionRisksContainer');
+	ActionRisksContainer.SetPosition(0, ActionInfoBottomContainer.Y);
+	ActionRisksContainer.SetSize(RightPane.Width, ActionInfoBottomContainer.Height);
+
+	ActionRisksTextBG = Spawn(class'UIPanel', ActionRisksContainer);
+	ActionRisksTextBG.bAnimateOnInit = false;
+	ActionRisksTextBG.InitPanel('ActionRisksTextBG', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	ActionRisksTextBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionRisksTextBG.SetSize(ActionRisksContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionRisksContainer.Height + UI_INFO_BOX_MARGIN * 2);
+	ActionRisksTextBG.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
+	ActionRisksTextBG.SetAlpha(60);
+
+	ActionRisksHeaderBG = Spawn(class'UIImage', ActionRisksContainer);
+	ActionRisksHeaderBG.bAnimateOnInit = false;
+	ActionRisksHeaderBG.InitImage('ActionRisksHeaderBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
+	ActionRisksHeaderBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionRisksHeaderBG.SetSize(ActionRisksContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
+
+	ActionRisksHeader = Spawn(class'UIText', ActionRisksContainer);
+	ActionRisksHeader.bAnimateOnInit = false;
+	ActionRisksHeader.InitText('ActionRisksHeader');
+	ActionRisksHeader.SetSize(ActionRisksContainer.Width, 55);
+	ActionRisksHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Risks", bIsIn3D, true));
+
+	ActionRisksText = Spawn(class'UIText', ActionRisksContainer);
+	ActionRisksText.bAnimateOnInit = false;
+	ActionRisksText.InitText('ActionRisksText', "DEMO TEXT");
+	ActionRisksText.SetPosition(0, 50);
+	ActionRisksText.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionSlotsText.Y);
 }
 
 //////////////////
