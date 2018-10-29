@@ -49,10 +49,19 @@
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_BaseSlot.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_CostSlot.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_FactionHeader.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_StaffSlot.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActions_MultipleActions.uc">

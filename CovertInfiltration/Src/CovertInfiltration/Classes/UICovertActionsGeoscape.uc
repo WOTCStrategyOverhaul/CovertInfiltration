@@ -37,7 +37,7 @@ var UIPanel ActionSlotsContainer;
 var UIImage ActionSlotsHeaderBG;
 var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
-var UIText ActionSlotsText;
+var UIList ActionSlots;
 
 // UI - action image
 var UIImage ActionImageBorder;
@@ -264,11 +264,12 @@ simulated protected function BuildActionSlots()
 	ActionSlotsHeader.SetSize(ActionSlotsContainer.Width, 55);
 	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Deployable resources", bIsIn3D, true));
 
-	ActionSlotsText = Spawn(class'UIText', ActionSlotsContainer);
-	ActionSlotsText.bAnimateOnInit = false;
-	ActionSlotsText.InitText('ActionSlotsText', "DEMO TEXT");
-	ActionSlotsText.SetPosition(0, 50);
-	ActionSlotsText.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlotsText.Y);
+	ActionSlots = Spawn(class'UIList', ActionSlotsContainer);
+	ActionSlots.bAnimateOnInit = false;
+	ActionSlots.InitList('ActionSlots');
+	ActionSlots.SetPosition(0, 50);
+	ActionSlots.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlots.Y);
+	ActionSlots.DisableNavigation();
 }
 
 simulated protected function BuildRightPane()
@@ -359,7 +360,7 @@ simulated protected function BuildRisks()
 	ActionRisksText.bAnimateOnInit = false;
 	ActionRisksText.InitText('ActionRisksText');
 	ActionRisksText.SetPosition(0, 50);
-	ActionRisksText.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionSlotsText.Y);
+	ActionRisksText.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionRisksText.Y);
 }
 
 //////////////////
@@ -540,7 +541,37 @@ simulated function UpdateCovertActionInfo()
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
 	);
 
+	UpdateSlots();
 	UpdateRisks();
+}
+
+simulated protected function UpdateSlots()
+{
+	// TODO (1): Make UICovertActionsGeoscape_SlotRow which will house 2 displayed items (per row)
+	// TODO (2): Convert "clearing -> new elements" to resuing old elements to prevent flickering on selection change
+
+	local UICovertActionsGeoscape_StaffSlot StaffSlotUI;
+	local UICovertActionsGeoscape_CostSlot CostSlotUI;
+	local XComGameState_CovertAction CurrentAction;
+	local CovertActionStaffSlot StaffSlot;
+	local CovertActionCostSlot CostSlot;
+	
+	CurrentAction = GetAction();
+	ActionSlots.ClearItems();
+
+	foreach CurrentAction.StaffSlots(StaffSlot)
+	{
+		StaffSlotUI = Spawn(class'UICovertActionsGeoscape_StaffSlot', ActionSlots.ItemContainer);
+		StaffSlotUI.InitSlotBase();
+		StaffSlotUI.UpdateStaffSlot(StaffSlot);
+	}
+
+	foreach CurrentAction.CostSlots(CostSlot)
+	{
+		CostSlotUI = Spawn(class'UICovertActionsGeoscape_CostSlot', ActionSlots.ItemContainer);
+		CostSlotUI.InitSlotBase();
+		CostSlotUI.UpdateCostSlot(CostSlot);
+	}
 }
 
 simulated protected function UpdateRisks()
