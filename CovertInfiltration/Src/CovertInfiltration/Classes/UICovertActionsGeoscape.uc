@@ -37,7 +37,7 @@ var UIPanel ActionSlotsContainer;
 var UIImage ActionSlotsHeaderBG;
 var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
-var UIList ActionSlots;
+var UIList ActionSlotRows;
 
 // UI - action image
 var UIImage ActionImageBorder;
@@ -77,6 +77,7 @@ const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
 
 const UI_INFO_BOX_MARGIN = 10;
+const ACTION_SLOTS_PER_ROW = 2;
 
 ///////////////////////
 /// Creating screen ///
@@ -264,12 +265,12 @@ simulated protected function BuildActionSlots()
 	ActionSlotsHeader.SetSize(ActionSlotsContainer.Width, 55);
 	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Deployable resources", bIsIn3D, true));
 
-	ActionSlots = Spawn(class'UIList', ActionSlotsContainer);
-	ActionSlots.bAnimateOnInit = false;
-	ActionSlots.InitList('ActionSlots');
-	ActionSlots.SetPosition(0, 50);
-	ActionSlots.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlots.Y);
-	ActionSlots.DisableNavigation();
+	ActionSlotRows = Spawn(class'UIList', ActionSlotsContainer);
+	ActionSlotRows.bAnimateOnInit = false;
+	ActionSlotRows.InitList('ActionSlotRows');
+	ActionSlotRows.SetPosition(0, 50);
+	ActionSlotRows.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlotRows.Y);
+	ActionSlotRows.DisableNavigation();
 }
 
 simulated protected function BuildRightPane()
@@ -547,31 +548,100 @@ simulated function UpdateCovertActionInfo()
 
 simulated protected function UpdateSlots()
 {
-	// TODO (1): Make UICovertActionsGeoscape_SlotRow which will house 2 displayed items (per row)
-	// TODO (2): Convert "clearing -> new elements" to resuing old elements to prevent flickering on selection change
+	// TODO (1): Show resource bar (top-right)
+	// TODO (2): Adjust the display on already deployed CAs
 
-	local UICovertActionsGeoscape_StaffSlot StaffSlotUI;
-	local UICovertActionsGeoscape_CostSlot CostSlotUI;
 	local XComGameState_CovertAction CurrentAction;
 	local CovertActionStaffSlot StaffSlot;
 	local CovertActionCostSlot CostSlot;
 	
+	local UICovertActionsGeoscape_SlotRow Row;
+	local UICovertActionsGeoscape_Slot SlotUI;
+	local int iCurrentSlot, i;
+
 	CurrentAction = GetAction();
-	ActionSlots.ClearItems();
+	iCurrentSlot = -1;
+
+	EnsureEnoughSlotRows();
 
 	foreach CurrentAction.StaffSlots(StaffSlot)
 	{
-		StaffSlotUI = Spawn(class'UICovertActionsGeoscape_StaffSlot', ActionSlots.ItemContainer);
-		StaffSlotUI.InitSlotBase();
-		StaffSlotUI.UpdateStaffSlot(StaffSlot);
+		iCurrentSlot++;
+		
+		Row = UICovertActionsGeoscape_SlotRow(ActionSlotRows.GetItem(iCurrentSlot / ACTION_SLOTS_PER_ROW));
+		SlotUI = Row.Slots[iCurrentSlot % ACTION_SLOTS_PER_ROW];
+
+		Row.Show();
+		SlotUI.Show();
+		SlotUI.UpdateStaffSlot(StaffSlot);
 	}
 
 	foreach CurrentAction.CostSlots(CostSlot)
 	{
-		CostSlotUI = Spawn(class'UICovertActionsGeoscape_CostSlot', ActionSlots.ItemContainer);
-		CostSlotUI.InitSlotBase();
-		CostSlotUI.UpdateCostSlot(CostSlot);
+		iCurrentSlot++;
+		
+		Row = UICovertActionsGeoscape_SlotRow(ActionSlotRows.GetItem(iCurrentSlot / ACTION_SLOTS_PER_ROW));
+		SlotUI = Row.Slots[iCurrentSlot % ACTION_SLOTS_PER_ROW];
+
+		Row.Show();
+		SlotUI.Show();
+		SlotUI.UpdateCostSlot(CostSlot);
 	}
+
+	HideUnusedSlotRows();
+
+	// Hide unsed slots in current row
+	for (i = (iCurrentSlot % ACTION_SLOTS_PER_ROW) + 1; i < Row.Slots.Length; i++)
+	{
+		Row.Slots[i].Hide();
+	}
+}
+
+simulated protected function EnsureEnoughSlotRows()
+{
+	local UICovertActionsGeoscape_SlotRow Row;
+	local int TotalRows;
+	local int i;
+
+	TotalRows = GetNumNeededSlotRows();
+
+	for (i = ActionSlotRows.GetItemCount() - 1; i < TotalRows; i++)
+	{
+		Row = Spawn(class'UICovertActionsGeoscape_SlotRow', ActionSlotRows.ItemContainer);
+		Row.NumSlots = ACTION_SLOTS_PER_ROW;
+		Row.InitRow();
+		Row.SetWidth(ActionSlotRows.Width);
+		Row.CreateSlots();
+		Row.Hide();
+	}
+}
+
+simulated protected function HideUnusedSlotRows()
+{
+	local int TotalUsedRows;
+	local int i;
+
+	TotalUsedRows = GetNumNeededSlotRows();
+
+	// TotalUsedRows is 1-based and i is zero based and since we want to 
+	// start from [the row after TotalUsedRows] we just start i from TotalUsedRows
+
+	for (i = TotalUsedRows; i < ActionSlotRows.GetItemCount(); i++)
+	{
+		ActionSlotRows.GetItem(i).Hide();
+	}
+}
+
+simulated protected function int GetNumNeededSlotRows()
+{
+	local XComGameState_CovertAction CurrentAction;
+	local int TotalSlots, TotalRows;
+
+	CurrentAction = GetAction();
+	TotalSlots = CurrentAction.StaffSlots.Length + CurrentAction.CostSlots.Length;
+	TotalRows = FCeil(TotalSlots / float(ACTION_SLOTS_PER_ROW));
+
+	return TotalRows;
 }
 
 simulated protected function UpdateRisks()
