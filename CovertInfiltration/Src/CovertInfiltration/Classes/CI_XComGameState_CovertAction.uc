@@ -7,7 +7,7 @@ class CI_XComGameState_CovertAction extends XComGameState_CovertAction;
 
 function bool ShouldBeVisible()
 {
-	return class'CI_Helpers'.static.ShouldShowCovertAction(self);
+	return class'UIUtilities_Infiltration'.static.ShouldShowCovertAction(self);
 }
 
 protected function bool CanInteract()
@@ -19,6 +19,6 @@ protected function bool CanInteract()
 // otherwise returns false.
 protected function bool DisplaySelectionPrompt()
 {
-	class'CI_Helpers'.static.ShowGeoscapeCovertOps(GetReference());	
+	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(GetReference());	
 	return true;
 }

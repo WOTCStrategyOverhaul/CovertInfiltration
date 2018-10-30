@@ -45,7 +45,7 @@ simulated function UpdateText()
 
 	if (bIsOngoing)
 	{
-		strText = class'CI_Helpers'.static.MakeFirstCharCapOnly(class'UICovertActions'.default.CovertActions_CurrentActiveHeader);
+		strText = class'UIUtilities_Infiltration'.static.MakeFirstCharCapOnly(class'UICovertActions'.default.CovertActions_CurrentActiveHeader);
 	}
 	else 
 	{
@@ -53,7 +53,7 @@ simulated function UpdateText()
 	}
 
 	strText = class'UIUtilities_Text'.static.AddFontInfo(strText, Screen.bIsIn3D, true);
-	strText = class'CI_Helpers'.static.ColourText(strText, GetFactionColour());
+	strText = class'UIUtilities_Infiltration'.static.ColourText(strText, GetFactionColour());
 	strText = "       " $ strText; // Add some space for the icon
 
 	SetHtmlText(strText);

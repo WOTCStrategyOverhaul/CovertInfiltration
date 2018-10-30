@@ -413,7 +413,7 @@ simulated function FindActions()
 
 	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
 	{
-		if (!class'CI_Helpers'.static.ShouldShowCovertAction(ActionState)) continue;		
+		if (!class'UIUtilities_Infiltration'.static.ShouldShowCovertAction(ActionState)) continue;		
 
 		if (ActionState.bStarted)
 		{

@@ -48,7 +48,7 @@ public function OnCovertActionButton(UIButton CovertActionButton)
 
 public function OnCovertActionNewButton(UIButton CovertActionNewButton)
 {
-	class'CI_Helpers'.static.ShowGeoscapeCovertOps();
+	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
 }
 
 defaultproperties

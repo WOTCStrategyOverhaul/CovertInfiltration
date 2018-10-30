@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # XCOM ModBuddy Solution File, Format Version 11.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "CovertInfiltration", "CovertInfiltration\CovertInfiltration.x2proj", "{220E5CBA-2BE6-46CA-8EF7-0C2C805FD502}"
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "CovertInfiltration", "CovertInfiltration\CovertInfiltration.x2proj", "{E60AB14D-45D2-4455-8E07-78B8AEB0040C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Default|XCOM 2 = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{220E5CBA-2BE6-46CA-8EF7-0C2C805FD502}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
-		{220E5CBA-2BE6-46CA-8EF7-0C2C805FD502}.Debug|XCOM 2.Build.0 = Debug|XCOM 2
-		{220E5CBA-2BE6-46CA-8EF7-0C2C805FD502}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
-		{220E5CBA-2BE6-46CA-8EF7-0C2C805FD502}.Default|XCOM 2.Build.0 = Default|XCOM 2
+		{E60AB14D-45D2-4455-8E07-78B8AEB0040C}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
+		{E60AB14D-45D2-4455-8E07-78B8AEB0040C}.Debug|XCOM 2.Build.0 = Debug|XCOM 2
+		{E60AB14D-45D2-4455-8E07-78B8AEB0040C}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{E60AB14D-45D2-4455-8E07-78B8AEB0040C}.Default|XCOM 2.Build.0 = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

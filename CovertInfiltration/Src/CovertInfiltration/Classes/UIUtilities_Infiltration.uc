@@ -1,4 +1,4 @@
-class CI_Helpers extends Object;
+class UIUtilities_Infiltration extends Object;
 
 //////////////////
 /// Game state ///
@@ -29,7 +29,7 @@ static function bool ShouldShowCovertAction(XComGameState_CovertAction ActionSta
 /// UI/Text ///
 ///////////////
 
-static function ShowGeoscapeCovertOps(optional StateObjectReference ActionToFocus)
+static function UICovertActionsGeoscape(optional StateObjectReference ActionToFocus)
 {
 	local XComHQPresentationLayer HQPres;
 	local UICovertActionsGeoscape TheScreen;
