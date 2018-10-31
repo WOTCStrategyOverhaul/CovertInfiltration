@@ -23,7 +23,7 @@ static function X2DataTemplate CreateCivilianDisguise()
 	local X2ArmorTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'CivilianDisguise');
-	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Kevlar_Armor";
+	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Ivn_Disguise_Civilian";
 	Template.StartingItem = true;
 	Template.CanBeBuilt = false;
 	Template.bInfiniteItem = true;
@@ -44,15 +44,16 @@ static function X2DataTemplate CreateCivilianDisguise()
 static function X2DataTemplate CreateAdventDisguise()
 {
 	local X2ArmorTemplate Template;
+	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'AdventDisguise');
-	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Predator_Armor";
+	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Ivn_Disguise_Advent";
 	Template.ItemCat = 'armor';
 	//Template.bAddsUtilitySlot = true;
-	Template.StartingItem = true; // false
+	Template.StartingItem = false;
 	Template.CanBeBuilt = false;
 	Template.bInfiniteItem = true;
-	Template.TradingPostValue = 20;
+	Template.TradingPostValue = 15;
 	Template.PointsToComplete = 0;
 	Template.Abilities.AddItem('AdventDisguiseStats');
 	Template.Abilities.AddItem('Phantom');
@@ -60,10 +61,9 @@ static function X2DataTemplate CreateAdventDisguise()
 	Template.ArmorClass = 'medium';
 	Template.Tier = 1;
 	Template.AkAudioSoldierArmorSwitch = 'Predator';
-	//Template.EquipNarrative = "X2NarrativeMoments.Strategy.CIN_ArmorIntro_PlatedMedium";
-	Template.EquipSound = "StrategyUI_Armor_Equip_Plated";
+	Template.EquipSound = "StrategyUI_Armor_Equip_Conventional";
 
-	Template.CreatorTemplateName = 'MediumPlatedArmor_Schematic'; // The schematic which creates this item
+	Template.CreatorTemplateName = 'AdventDisguise_Schematic'; // The schematic which creates this item
 	Template.BaseItem = 'CivilianDisguise'; // Which item this will be upgraded from
 
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.ADVENT_DISGUISE_HEALTH_BONUS, true);
@@ -72,18 +72,53 @@ static function X2DataTemplate CreateAdventDisguise()
 	return Template;
 }
 
+
+
+static function X2DataTemplate CreateMediumPoweredArmor()
+{
+	local X2ArmorTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'MediumPoweredArmor');
+	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Warden_Armor";
+	Template.ItemCat = 'armor';
+	Template.bAddsUtilitySlot = true;
+	Template.StartingItem = false;
+	Template.CanBeBuilt = false;
+	Template.bInfiniteItem = true;
+	Template.TradingPostValue = 60;
+	Template.PointsToComplete = 0;
+	Template.Abilities.AddItem('MediumPoweredArmorStats');
+	Template.ArmorTechCat = 'powered';
+	Template.ArmorClass = 'medium';
+	Template.Tier = 3;
+	Template.AkAudioSoldierArmorSwitch = 'Warden';
+	Template.EquipNarrative = "X2NarrativeMoments.Strategy.CIN_ArmorIntro_PoweredMedium";
+	Template.EquipSound = "StrategyUI_Armor_Equip_Powered";
+
+	Template.CreatorTemplateName = 'MediumPoweredArmor_Schematic'; // The schematic which creates this item
+	Template.BaseItem = 'MediumPlatedArmor'; // Which item this will be upgraded from
+
+	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_ItemGrantedAbilitySet'.default.MEDIUM_POWERED_HEALTH_BONUS, true);
+	Template.SetUIStatMarkup(class'XLocalizedData'.default.ArmorLabel, eStat_ArmorMitigation, class'X2Ability_ItemGrantedAbilitySet'.default.MEDIUM_POWERED_MITIGATION_AMOUNT);
+	
+	return Template;
+}
+
+
+
 static function X2DataTemplate CreateHolographicDisguise()
 {
 	local X2ArmorTemplate Template;
+	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'HolographicDisguise');
 	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Warden_Armor";
 	Template.ItemCat = 'armor';
 	//Template.bAddsUtilitySlot = true;
-	Template.StartingItem = true; // false
+	Template.StartingItem = false; // false
 	Template.CanBeBuilt = false;
 	Template.bInfiniteItem = true;
-	Template.TradingPostValue = 60;
+	Template.TradingPostValue = 50;
 	Template.PointsToComplete = 0;
 	Template.Abilities.AddItem('HolographicDisguiseStats');
 	Template.Abilities.AddItem('Phantom');
@@ -91,10 +126,9 @@ static function X2DataTemplate CreateHolographicDisguise()
 	Template.ArmorClass = 'medium';
 	Template.Tier = 3;
 	Template.AkAudioSoldierArmorSwitch = 'Warden';
-	//Template.EquipNarrative = "X2NarrativeMoments.Strategy.CIN_ArmorIntro_PoweredMedium";
 	Template.EquipSound = "StrategyUI_Armor_Equip_Powered";
 
-	Template.CreatorTemplateName = 'MediumPoweredArmor_Schematic'; // The schematic which creates this item
+	Template.CreatorTemplateName = 'HolographicDisguise_Schematic'; // The schematic which creates this item
 	Template.BaseItem = 'AdventDisguise'; // Which item this will be upgraded from
 
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.HOLOGRAPHIC_DISGUISE_HEALTH_BONUS, true);

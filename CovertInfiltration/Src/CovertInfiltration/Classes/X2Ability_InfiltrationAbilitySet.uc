@@ -8,12 +8,15 @@
 class X2Ability_InfiltrationAbilitySet extends X2Ability_ItemGrantedAbilitySet config(Infiltration);
 
 var config int CIVILIAN_DISGUISE_MOBILITY_BONUS;
+var config int CIVILIAN_DISGUISE_DETECTION_MODIFIER;
 
 var config int ADVENT_DISGUISE_HEALTH_BONUS;
 var config int ADVENT_DISGUISE_MOBILITY_BONUS;
+var config int ADVENT_DISGUISE_DETECTION_MODIFIER;
 
 var config int HOLOGRAPHIC_DISGUISE_HEALTH_BONUS;
 var config int HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS;
+var config int HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -51,6 +54,8 @@ static function X2AbilityTemplate CivilianDisguiseStats()
 	PersistentStatChangeEffect = new class'X2Effect_PersistentStatChange';
 	PersistentStatChangeEffect.BuildPersistentEffect(1, true, false, false);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.CIVILIAN_DISGUISE_MOBILITY_BONUS);
+	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.CIVILIAN_DISGUISE_DETECTION_MODIFIER);
+
 	Template.AddTargetEffect(PersistentStatChangeEffect);
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -84,6 +89,7 @@ static function X2AbilityTemplate AdventDisguiseStats()
 	PersistentStatChangeEffect.BuildPersistentEffect(1, true, false, false);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_HP, default.ADVENT_DISGUISE_HEALTH_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.ADVENT_DISGUISE_MOBILITY_BONUS);
+	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.ADVENT_DISGUISE_DETECTION_MODIFIER);
 	Template.AddTargetEffect(PersistentStatChangeEffect);
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -117,6 +123,7 @@ static function X2AbilityTemplate HolographicDisguiseStats()
 	PersistentStatChangeEffect.BuildPersistentEffect(1, true, false, false);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_HP, default.HOLOGRAPHIC_DISGUISE_HEALTH_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS);
+	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER);
 	Template.AddTargetEffect(PersistentStatChangeEffect);
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;

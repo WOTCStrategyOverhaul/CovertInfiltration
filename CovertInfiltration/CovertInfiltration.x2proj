@@ -33,6 +33,9 @@
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\UILibrary_DisguiseIcons.upk">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Localization\CovertInfiltration.int">
       <SubType>Content</SubType>
     </Content>
@@ -107,6 +110,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationArmors.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationSchematics.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
