@@ -16,6 +16,7 @@ simulated function OpenSquadSelect()
 	}
 
 	BuildConfiguration();
+	SubscribeToEvents();
 
 	SquadSelect = class'SSAAT_Opener'.static.ShowSquadSelect(Configuration);
 	PostScreenInit();
@@ -49,7 +50,7 @@ simulated protected function BuildConfiguration()
 		StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(Action.StaffSlots[i].StaffSlotRef.ObjectID));
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(Action.StaffSlots[i].RewardRef.ObjectID));
 
-		// Add notes
+		// Add notes. TODO: Add required class and rank notes
 		if (RewardState != none) Slots[i].Notes.AddItem(ConvertRewardToNote(RewardState));
 		if (Action.StaffSlots[i].bOptional) Slots[i].Notes.AddItem(CreateOptionalNote());
 
@@ -137,22 +138,57 @@ simulated protected function StaffUnitInfo CreateStaffInfo(StateObjectReference 
 	return StaffInfo;
 }
 
+simulated protected function EventListenerReturn OnSquadSelectUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XcomHQ;
+	local XComGameState_StaffSlot StaffSlot;
+
+	local StateObjectReference UnitRef;
+	local CovertActionStaffSlot CovertActionSlot;
+	
+	local bool IsSlotFilled;
+	local int i;
+
+	History = `XCOMHISTORY;
+	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	foreach XcomHQ.Squad(UnitRef, i)
+	{
+		CovertActionSlot = Action.StaffSlots[i];
+		StaffSlot = XComGameState_StaffSlot(History.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		IsSlotFilled = UnitRef.ObjectID != 0;
+
+		// Do nothing if evrything is correct already
+		if (UnitRef.ObjectID == StaffSlot.AssignedStaff.UnitRef.ObjectID) continue;
+
+		if (IsSlotFilled)
+		{
+			StaffSlot.AssignStaffToSlot(CreateStaffInfo(UnitRef));
+		}
+		else
+		{	
+			StaffSlot.EmptySlot();
+		}
+	}
+
+	return ELR_NoInterrupt;
+}
+
 //////////////
 /// Launch ///
 //////////////
 
 simulated protected function bool CanClickLaunch()
 {
-	// TODO
-	return true;
-	//return Action.CanBeginAction();	
+	return Action.CanBeginAction();	
 }
 
 simulated protected function OnLaunch()
 {
 	SquadSelect = none;
+	UnsubscribeFromAllEvents();
 
-	AssignUnitsFromSquadToAction();
 	Action.ConfirmAction();
 	
 	CovertOpsSrceen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
@@ -161,37 +197,25 @@ simulated protected function OnLaunch()
 	CovertOpsSrceen.bConfirmScreenWasOpened = true;
 }
 
-simulated protected function AssignUnitsFromSquadToAction()
+////////////////////////////////////
+/// Event interaction management ///
+////////////////////////////////////
+
+simulated protected function SubscribeToEvents()
 {
-	local XComGameState_HeadquartersXCom XcomHQ;
-	local XComGameState_StaffSlot StaffSlot;
+	local X2EventManager EventManager;
+	local Object ThisObj;
 
-	local CovertActionStaffSlot CovertActionSlot;
-	local int i;
+	EventManager = `XEVENTMGR;
+    ThisObj = self;
 
-	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	
-	foreach Action.StaffSlots(CovertActionSlot, i)
-	{
-		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
-		StaffSlot.AssignStaffToSlot(CreateStaffInfo(XcomHQ.Squad[i]));
-	}
+	EventManager.RegisterForEvent(ThisObj, 'rjSquadSelect_UpdateData', OnSquadSelectUpdate);
 }
 
-/////////////////
-/// Canceling ///
-/////////////////
-                 
-simulated function ClearUnitsFromAction()
+simulated protected function UnsubscribeFromAllEvents()
 {
-	local XComGameState_StaffSlot StaffSlot;
-	local CovertActionStaffSlot CovertActionSlot;
+    local Object ThisObj;
 
-	foreach Action.StaffSlots(CovertActionSlot)
-	{
-		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
-		if (StaffSlot.IsSlotEmpty()) continue;
-
-		StaffSlot.EmptySlot();
-	}
+    ThisObj = self;
+    `XEVENTMGR.UnRegisterFromAllEvents(ThisObj);
 }

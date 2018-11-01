@@ -680,17 +680,20 @@ simulated function OnReceiveFocus()
 		if (GetAction().bStarted)
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
-			UpdateList();
 			SSManager = none;
+			UpdateList();
 		} 
 		else
 		{
 			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
-			SSManager.ClearUnitsFromAction();
 			OpenLoadoutForCurrentAction();
 		}
 
 		bConfirmScreenWasOpened = false;
+	}
+	else
+	{
+		ClearUnitsFromAction();
 	}
 }
 
@@ -730,6 +733,22 @@ simulated function MakeMapProperlyShow()
 {
 	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
 	`GAME.GetGeoscape().Pause(); // XComStrategyMap::OnReceiveFocus resumes time so we need to stop it again
+}
+
+//////////////////////////////
+/// Gamestate manipulation ///
+//////////////////////////////
+
+simulated function ClearUnitsFromAction()
+{
+	local XComGameState_StaffSlot StaffSlot;
+	local CovertActionStaffSlot CovertActionSlot;
+
+	foreach GetAction().StaffSlots(CovertActionSlot)
+	{
+		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		StaffSlot.EmptySlot(); // This is noop if the slot is empty
+	}
 }
 
 ///////////////////////
