@@ -63,8 +63,7 @@ simulated protected function BuildConfiguration()
 			Slots[i].PersonnelType = eUIPersonnel_Scientists;
 		}
 
-		// TODO: use proper callback. The problem - different arguments are passed
-		Slots[i].CanUnitBeSelectedFn = class'SSAAT_SquadSelectConfiguration'.static.DefaultCanSoldierBeSelected;
+		Slots[i].CanUnitBeSelectedFn = CanSelectUnit;
 	}
 
 	Configuration.SetSlots(Slots);
@@ -81,7 +80,7 @@ simulated protected function BuildConfiguration()
 }
 
 //////////////////
-/// SLOT NOTES ///
+/// Slot notes ///
 //////////////////
 
 static function SSAAT_SlotNote ConvertRewardToNote(XComGameState_Reward RewardState)
@@ -113,23 +112,51 @@ static function SSAAT_SlotNote CreateOptionalNote()
 	return Note;
 }
 
+////////////////////////
+/// Slot interaction ///
+////////////////////////
+
+simulated protected function bool CanSelectUnit(XComGameState_Unit Unit, int iSlot)
+{
+	local XComGameState_StaffSlot StaffSlotState;
+	local XComGameStateHistory History;
+
+	History = `XCOMHISTORY;
+	StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(Action.StaffSlots[iSlot].StaffSlotRef.ObjectID));
+	
+	return StaffSlotState.ValidUnitForSlot(CreateStaffInfo(Unit.GetReference()));
+}
+
+simulated protected function StaffUnitInfo CreateStaffInfo(StateObjectReference UnitRef)
+{
+	local StaffUnitInfo StaffInfo;
+
+	StaffInfo.UnitRef = UnitRef;
+	StaffInfo.bGhostUnit = false;
+
+	return StaffInfo;
+}
+
 //////////////
-/// LAUNCH ///
+/// Launch ///
 //////////////
 
 simulated protected function bool CanClickLaunch()
 {
 	// TODO
-	return true;	
+	return true;
+	//return Action.CanBeginAction();	
 }
 
 simulated protected function OnLaunch()
 {
+	SquadSelect = none;
+
 	AssignUnitsFromSquadToAction();
 	Action.ConfirmAction();
 	
 	CovertOpsSrceen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
-	`HQPRES.m_kXComStrategyMap.OnReceiveFocus();
+	CovertOpsSrceen.MakeMapProperlyShow();
 
 	CovertOpsSrceen.bConfirmScreenWasOpened = true;
 }
@@ -149,16 +176,6 @@ simulated protected function AssignUnitsFromSquadToAction()
 		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
 		StaffSlot.AssignStaffToSlot(CreateStaffInfo(XcomHQ.Squad[i]));
 	}
-}
-
-simulated protected function StaffUnitInfo CreateStaffInfo(StateObjectReference UnitRef)
-{
-	local StaffUnitInfo StaffInfo;
-
-	StaffInfo.UnitRef = UnitRef;
-	StaffInfo.bGhostUnit = false;
-
-	return StaffInfo;
 }
 
 /////////////////

@@ -548,8 +548,7 @@ simulated function UpdateCovertActionInfo()
 
 simulated protected function UpdateSlots()
 {
-	// TODO (1): Show resource bar (top-right)
-	// TODO (2): Adjust the display on already deployed CAs
+	// TODO: Adjust the display on already deployed CAs
 
 	local XComGameState_CovertAction CurrentAction;
 	local CovertActionStaffSlot StaffSlot;
@@ -672,7 +671,7 @@ simulated function OnReceiveFocus()
 	super.OnReceiveFocus();
 	
 	// Came back from UISquadSelect or the confirmation alert
-	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
+	MakeMapProperlyShow();
 	FocusCameraOnCurrentAction(true);
 	
 	if (bConfirmScreenWasOpened)
@@ -725,6 +724,12 @@ simulated function OpenLoadoutForCurrentAction()
 	SSManager.Action = GetAction();
 	SSManager.CovertOpsSrceen = self;
 	SSManager.OpenSquadSelect();
+}
+
+simulated function MakeMapProperlyShow()
+{
+	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
+	`GAME.GetGeoscape().Pause(); // XComStrategyMap::OnReceiveFocus resumes time so we need to stop it again
 }
 
 ///////////////////////
