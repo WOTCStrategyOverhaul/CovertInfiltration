@@ -1,20 +1,15 @@
 class UISSManager_CovertAction extends Object;
 
-var XComGameState_CovertAction Action;
 var UICovertActionsGeoscape CovertOpsSrceen;
 
 var protected SSAAT_SquadSelectConfiguration Configuration;
 var protectedwrite UISquadSelect SquadSelect;
 
+var protected bool bCreatedUIElements;
+var protected UISS_CovertActionRisks RisksDisplay;
+
 simulated function OpenSquadSelect()
 {
-	if (Action == none)
-	{
-		`REDSCREEN("UISSManager_CovertAction::OpenSquadSelect called without setting Action");
-		`REDSCREEN(GetScriptTrace());
-		return;
-	}
-
 	BuildConfiguration();
 	SubscribeToEvents();
 
@@ -29,7 +24,13 @@ simulated protected function PostScreenInit()
 	ActionInfo = SquadSelect.Spawn(class'UISquadSelectCovertActionInfo', SquadSelect);
 	ActionInfo.bAnimateOnInit = false;
 	ActionInfo.InitCovertActionInfo('CovertActionInfo');
-	ActionInfo.UpdateData(Action);
+	ActionInfo.UpdateData(GetAction());
+	
+	RisksDisplay = SquadSelect.Spawn(class'UISS_CovertActionRisks', SquadSelect);
+	RisksDisplay.InitRisks();
+
+	bCreatedUIElements = true;
+	UpdateUIElements();
 }
 
 simulated protected function BuildConfiguration()
@@ -44,15 +45,15 @@ simulated protected function BuildConfiguration()
 	Configuration = new class'SSAAT_SquadSelectConfiguration';
 	History = `XCOMHISTORY;
 
-	Slots.Length = Action.StaffSlots.Length;
+	Slots.Length = GetAction().StaffSlots.Length;
 	for (i = 0; i < Slots.Length; ++i)
 	{
-		StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(Action.StaffSlots[i].StaffSlotRef.ObjectID));
-		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(Action.StaffSlots[i].RewardRef.ObjectID));
+		StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(GetAction().StaffSlots[i].StaffSlotRef.ObjectID));
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(GetAction().StaffSlots[i].RewardRef.ObjectID));
 
 		// Add notes. TODO: Add required class and rank notes
 		if (RewardState != none) Slots[i].Notes.AddItem(ConvertRewardToNote(RewardState));
-		if (Action.StaffSlots[i].bOptional) Slots[i].Notes.AddItem(CreateOptionalNote());
+		if (GetAction().StaffSlots[i].bOptional) Slots[i].Notes.AddItem(CreateOptionalNote());
 
 		// Change the slot type if needed
 		if (StaffSlotState.IsEngineerSlot())
@@ -78,6 +79,17 @@ simulated protected function BuildConfiguration()
 	Configuration.SetPreventOnSuperSizeEvent(true);
 
 	Configuration.SetFrozen();
+
+	// TODO: Disallow autofill
+}
+
+///////////////////
+/// UI Elements ///
+///////////////////
+
+simulated protected function UpdateUIElements()
+{
+	RisksDisplay.UpdateData(GetAction());
 }
 
 //////////////////
@@ -123,7 +135,7 @@ simulated protected function bool CanSelectUnit(XComGameState_Unit Unit, int iSl
 	local XComGameStateHistory History;
 
 	History = `XCOMHISTORY;
-	StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(Action.StaffSlots[iSlot].StaffSlotRef.ObjectID));
+	StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(GetAction().StaffSlots[iSlot].StaffSlotRef.ObjectID));
 	
 	return StaffSlotState.ValidUnitForSlot(CreateStaffInfo(Unit.GetReference()));
 }
@@ -155,7 +167,7 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 
 	foreach XcomHQ.Squad(UnitRef, i)
 	{
-		CovertActionSlot = Action.StaffSlots[i];
+		CovertActionSlot = GetAction().StaffSlots[i];
 		StaffSlot = XComGameState_StaffSlot(History.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
 		IsSlotFilled = UnitRef.ObjectID != 0;
 
@@ -172,6 +184,8 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 		}
 	}
 
+	if (bCreatedUIElements) UpdateUIElements();
+
 	return ELR_NoInterrupt;
 }
 
@@ -181,7 +195,7 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 
 simulated protected function bool CanClickLaunch()
 {
-	return Action.CanBeginAction();	
+	return GetAction().CanBeginAction();	
 }
 
 simulated protected function OnLaunch()
@@ -189,7 +203,7 @@ simulated protected function OnLaunch()
 	SquadSelect = none;
 	UnsubscribeFromAllEvents();
 
-	Action.ConfirmAction();
+	GetAction().ConfirmAction();
 	
 	CovertOpsSrceen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
 	CovertOpsSrceen.MakeMapProperlyShow();
@@ -218,4 +232,13 @@ simulated protected function UnsubscribeFromAllEvents()
 
     ThisObj = self;
     `XEVENTMGR.UnRegisterFromAllEvents(ThisObj);
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+simulated function XComGameState_CovertAction GetAction()
+{
+	return CovertOpsSrceen.GetAction();
 }

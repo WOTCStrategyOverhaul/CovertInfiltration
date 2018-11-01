@@ -40,6 +40,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_ResourcesHook.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_CovertActionRisks.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIUtilities_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>

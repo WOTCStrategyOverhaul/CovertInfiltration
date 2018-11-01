@@ -724,7 +724,6 @@ simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
 simulated function OpenLoadoutForCurrentAction()
 {
 	SSManager = new class'UISSManager_CovertAction';
-	SSManager.Action = GetAction();
 	SSManager.CovertOpsSrceen = self;
 	SSManager.OpenSquadSelect();
 }
