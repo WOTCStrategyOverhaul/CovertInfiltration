@@ -1,4 +1,4 @@
-class UISquadSelectCovertActionInfo extends UIPanel;
+class UISS_CovertActionInfo extends UIPanel;
 
 simulated function InitCovertActionInfo(optional name InitName)
 {

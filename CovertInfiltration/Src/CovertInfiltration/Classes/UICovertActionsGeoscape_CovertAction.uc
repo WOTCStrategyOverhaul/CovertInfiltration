@@ -15,7 +15,7 @@ simulated function String GetActionLocString()
 
 	if(Action.bNewAction)
 	{
-		PrefixStr = "(NEW) ";
+		PrefixStr = class'UICovertActions'.default.CovertActions_NewAction;
 	}
 
 	return PrefixStr $ Action.GetObjective();

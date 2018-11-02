@@ -1,12 +1,14 @@
 class UISSManager_CovertAction extends Object;
 
-var UICovertActionsGeoscape CovertOpsSrceen;
+var UICovertActionsGeoscape CovertOpsScreen;
 
 var protected SSAAT_SquadSelectConfiguration Configuration;
 var protectedwrite UISquadSelect SquadSelect;
 
 var protected bool bCreatedUIElements;
 var protected UISS_CovertActionRisks RisksDisplay;
+
+var localized string strSlotOptionalNote;
 
 simulated function OpenSquadSelect()
 {
@@ -19,9 +21,9 @@ simulated function OpenSquadSelect()
 
 simulated protected function PostScreenInit()
 {
-	local UISquadSelectCovertActionInfo ActionInfo;
+	local UISS_CovertActionInfo ActionInfo;
 
-	ActionInfo = SquadSelect.Spawn(class'UISquadSelectCovertActionInfo', SquadSelect);
+	ActionInfo = SquadSelect.Spawn(class'UISS_CovertActionInfo', SquadSelect);
 	ActionInfo.bAnimateOnInit = false;
 	ActionInfo.InitCovertActionInfo('CovertActionInfo');
 	ActionInfo.UpdateData(GetAction());
@@ -118,7 +120,7 @@ static function SSAAT_SlotNote CreateOptionalNote()
 {
 	local SSAAT_SlotNote Note;
 	
-	Note.Text = "Optional"; // The localized text reads "OPTIONAL:"
+	Note.Text = default.strSlotOptionalNote; // The localized text reads "OPTIONAL:"
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
 
@@ -205,10 +207,10 @@ simulated protected function OnLaunch()
 
 	GetAction().ConfirmAction();
 	
-	CovertOpsSrceen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
-	CovertOpsSrceen.MakeMapProperlyShow();
+	CovertOpsScreen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
+	CovertOpsScreen.MakeMapProperlyShow();
 
-	CovertOpsSrceen.bConfirmScreenWasOpened = true;
+	CovertOpsScreen.bConfirmScreenWasOpened = true;
 }
 
 ////////////////////////////////////
@@ -240,5 +242,5 @@ simulated protected function UnsubscribeFromAllEvents()
 
 simulated function XComGameState_CovertAction GetAction()
 {
-	return CovertOpsSrceen.GetAction();
+	return CovertOpsScreen.GetAction();
 }

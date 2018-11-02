@@ -724,12 +724,14 @@ simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
 simulated function OpenLoadoutForCurrentAction()
 {
 	SSManager = new class'UISSManager_CovertAction';
-	SSManager.CovertOpsSrceen = self;
+	SSManager.CovertOpsScreen = self;
 	SSManager.OpenSquadSelect();
 }
 
 simulated function MakeMapProperlyShow()
 {
+	// TODO: Maybe `HQPRES.GetCamera().ForceEarthViewImmediately(false) instead?
+
 	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
 	`GAME.GetGeoscape().Pause(); // XComStrategyMap::OnReceiveFocus resumes time so we need to stop it again
 }
