@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Displays covert action info (such as title and objective) on the squad
+//           select screen
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UISS_CovertActionInfo extends UIPanel;
 
 simulated function InitCovertActionInfo(optional name InitName)

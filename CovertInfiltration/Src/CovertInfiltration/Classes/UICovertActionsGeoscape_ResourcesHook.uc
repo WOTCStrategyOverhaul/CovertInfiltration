@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is an event listener which shows the resource bar 
+//           on UICovertActionsGeoscape
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_ResourcesHook extends X2EventListener;
 
 static function array<X2DataTemplate> CreateTemplates()

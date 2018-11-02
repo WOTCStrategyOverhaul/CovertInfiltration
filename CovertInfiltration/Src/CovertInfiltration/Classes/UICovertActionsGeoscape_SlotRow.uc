@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a single row of slots on the UICovertActionsGeoscape screen
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_SlotRow extends UIPanel;
 
 var int NumSlots;

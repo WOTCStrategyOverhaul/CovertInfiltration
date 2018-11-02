@@ -1,3 +1,12 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is responsible for adjusting squad select screen to behave suitable for
+//           covert action intstead of a mission. It relies heavily on SSAAT to do the
+//           heavy lifting
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UISSManager_CovertAction extends Object;
 
 var UICovertActionsGeoscape CovertOpsScreen;

@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a single slot on the UICovertActionsGeoscape screen which handles
+//           both personnel and cost slots (but not both at the same time)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_Slot extends UIPanel;
 
 var protectedwrite UIText Description;

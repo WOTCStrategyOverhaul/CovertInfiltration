@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a single entry for a CA in the UICovertActionsGeoscape screen's list
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_CovertAction extends UIListItemString;
 
 var protectedwrite XComGameState_CovertAction Action;
