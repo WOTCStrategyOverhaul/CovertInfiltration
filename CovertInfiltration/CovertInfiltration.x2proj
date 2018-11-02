@@ -7,6 +7,7 @@
     <SteamPublishID>0</SteamPublishID>
     <AssemblyName>CovertInfiltration</AssemblyName>
     <RootNamespace>CovertInfiltration</RootNamespace>
+    <ProjectGuid>{8fb7cab2-6a58-4701-aa3c-bf18f61b8749}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -26,6 +27,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk">
+    <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\CovertInfiltration.int">
@@ -83,9 +85,19 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
-    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplateManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod_DefaultModifiers.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>
