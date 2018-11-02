@@ -31,25 +31,25 @@ enum EInfiltrationWeight
 	eInfilWeight_Battle
 };
 
-var config int ARMOR_THREAT_5;
-var config int ARMOR_THREAT_4;
-var config int ARMOR_THREAT_3;
-var config int ARMOR_THREAT_2;
-var config int ARMOR_THREAT_1;
+var config int ARMOR_DETER_5;
+var config int ARMOR_DETER_4;
+var config int ARMOR_DETER_3;
+var config int ARMOR_DETER_2;
+var config int ARMOR_DETER_1;
 
-var config int WEAPON_THREAT_5;
-var config int WEAPON_THREAT_4;
-var config int WEAPON_THREAT_3;
-var config int WEAPON_THREAT_2;
-var config int WEAPON_THREAT_1;
+var config int WEAPON_DETER_5;
+var config int WEAPON_DETER_4;
+var config int WEAPON_DETER_3;
+var config int WEAPON_DETER_2;
+var config int WEAPON_DETER_1;
 
-enum EThreatEscort
+enum EDeterrenceValue
 {
-	eThreatEscort_Invisible,
-	eThreatEscort_Trivial,
-	eThreatEscort_Concerning,
-	eThreatEscort_Threatening,
-	eThreatEscort_Intimidating
+	eDeterrenceValue_Invisible,
+	eDeterrenceValue_Trivial,
+	eDeterrenceValue_Concerning,
+	eDeterrenceValue_Threatening,
+	eDeterrenceValue_Intimidating
 };
 
 static function name GetInfilName(name ItemName)
@@ -59,18 +59,18 @@ static function name GetInfilName(name ItemName)
 	return InfilName;
 }
 
-static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInfiltrationWeight Weight, EThreatEscort Threat, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceValue Deterrence, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
-	local int	ThreatMod;
+	local int	DeterrenceMod;
 
 	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(ItemName));
 
 	InfilMod = CalcArmorInfil(Weight);
 	Template.InfilModifier = InfilMod;
-	ThreatMod = CalcArmorThreat(Threat);
-	Template.ThreatModifier = ThreatMod;
+	DeterrenceMod = CalcArmorDeterrence(Deterrence);
+	Template.Deterrence = DeterrenceMod;
 	
 	if(Mult != 1)
 		Template.InfilMultiplier = Mult;
@@ -80,18 +80,18 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInf
 	return Template;
 }
 
-static function X2InfiltrationModTemplate BuildWeaponTemplate(name ItemName, EInfiltrationWeight Weight, EThreatEscort Threat, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildWeaponTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceValue Deterrence, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
-	local int	ThreatMod;
+	local int	DeterrenceMod;
 
 	`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(ItemName));
 	
 	InfilMod = CalcWeaponInfil(Weight);
 	Template.InfilModifier = InfilMod;
-	ThreatMod = CalcWeaponThreat(Threat);
-	Template.ThreatModifier = ThreatMod;
+	DeterrenceMod = CalcWeaponDeterrence(Deterrence);
+	Template.Deterrence = DeterrenceMod;
 	
 	if(Mult != 1)
 		Template.InfilMultiplier = Mult;
@@ -156,44 +156,44 @@ static function int CalcWeaponInfil(EInfiltrationWeight Weight)
 	return InfilMod;
 }
 
-static function int CalcArmorThreat(EThreatEscort Threat)
+static function int CalcArmorDeterrence(EDeterrenceValue Deterrence)
 {
-	local int ThreatMod;
-	ThreatMod = 0;
-	switch(Threat)
+	local int DeterrenceMod;
+	DeterrenceMod = 0;
+	switch(Deterrence)
 	{
-	case eThreatEscort_Invisible:
-		ThreatMod = default.ARMOR_THREAT_1;
-	case eThreatEscort_Trivial:
-		ThreatMod = default.ARMOR_THREAT_2;
-	case eThreatEscort_Concerning:
-		ThreatMod = default.ARMOR_THREAT_3;
-	case eThreatEscort_Threatening:
-		ThreatMod = default.ARMOR_THREAT_4;
-	case eThreatEscort_Intimidating:
-		ThreatMod = default.ARMOR_THREAT_5;
+	case eDeterrenceValue_Invisible:
+		DeterrenceMod = default.ARMOR_DETER_1;
+	case eDeterrenceValue_Trivial:
+		DeterrenceMod = default.ARMOR_DETER_2;
+	case eDeterrenceValue_Concerning:
+		DeterrenceMod = default.ARMOR_DETER_3;
+	case eDeterrenceValue_Threatening:
+		DeterrenceMod = default.ARMOR_DETER_4;
+	case eDeterrenceValue_Intimidating:
+		DeterrenceMod = default.ARMOR_DETER_5;
 	}
-	return ThreatMod;
+	return DeterrenceMod;
 }
 
-static function int CalcWeaponThreat(EThreatEscort Threat)
+static function int CalcWeaponDeterrence(EDeterrenceValue Deterrence)
 {
-	local int ThreatMod;
-	ThreatMod = 0;
-	switch(Threat)
+	local int DeterrenceMod;
+	DeterrenceMod = 0;
+	switch(Deterrence)
 	{
-	case eThreatEscort_Invisible:
-		ThreatMod = default.WEAPON_THREAT_1;
-	case eThreatEscort_Trivial:
-		ThreatMod = default.WEAPON_THREAT_2;
-	case eThreatEscort_Concerning:
-		ThreatMod = default.WEAPON_THREAT_3;
-	case eThreatEscort_Threatening:
-		ThreatMod = default.WEAPON_THREAT_4;
-	case eThreatEscort_Intimidating:
-		ThreatMod = default.WEAPON_THREAT_5;
+	case eDeterrenceValue_Invisible:
+		DeterrenceMod = default.WEAPON_DETER_1;
+	case eDeterrenceValue_Trivial:
+		DeterrenceMod = default.WEAPON_DETER_2;
+	case eDeterrenceValue_Concerning:
+		DeterrenceMod = default.WEAPON_DETER_3;
+	case eDeterrenceValue_Threatening:
+		DeterrenceMod = default.WEAPON_DETER_4;
+	case eDeterrenceValue_Intimidating:
+		DeterrenceMod = default.WEAPON_DETER_5;
 	}
-	return ThreatMod;
+	return DeterrenceMod;
 }
 
 defaultproperties

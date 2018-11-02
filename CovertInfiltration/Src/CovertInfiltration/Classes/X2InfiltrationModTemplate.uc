@@ -16,14 +16,14 @@ var int InfilModifier;
 var float InfilMultiplier;
 var name MultCategory;
 // How much this item reduces the risk of injury/capture on non-Infil CAs
-var int ThreatModifier;
+var int Deterrence;
 
 defaultproperties
 {
 	InfilModifier=0
 	InfilMultiplier=1
 	MultCategory=""
-	ThreatModifier=0
+	Deterrence=0
 
 	bShouldCreateDifficultyVariants=false
 	TemplateAvailability=BITFIELD_GAMEAREA_Singleplayer

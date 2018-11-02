@@ -10,9 +10,9 @@
 class X2Helper_Infiltration extends Object config(Infiltration);
 
 var config int PERSONNEL_INFIL;
-var config int PERSONNEL_THREAT;
+var config int PERSONNEL_DETER;
 
-var config array<int> RANKS_THREAT;
+var config array<int> RANKS_DETER;
 
 function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 {
@@ -82,27 +82,27 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	return UnitInfiltration;
 }
 
-function int GetSquadThreat(array<StateObjectReference> Soldiers)
+function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
-	local int					TotalThreat;
+	local int					TotalDeterrence;
 
-	TotalThreat = 0;
+	TotalDeterrence = 0;
 	foreach Soldiers(UnitRef)
 	{
-		TotalThreat += GetSoldierThreat(Soldiers, UnitRef);
+		TotalDeterrence += GetSoldierDeterrence(Soldiers, UnitRef);
 	}
 
-	return TotalThreat;
+	return TotalDeterrence;
 }
 
-function int GetSoldierThreat(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
 	local array<XComGameState_Item>	CurrentInventory;
 	local XComGameState_Item		InventoryItem;
-	local int						UnitThreat;
+	local int						UnitDeterrence;
 
 	local X2InfiltrationModTemplateManager InfilMgr;
 	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
@@ -115,20 +115,20 @@ function int GetSoldierThreat(array<StateObjectReference> Soldiers, StateObjectR
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
 
 	if(!UnitState.IsSoldier())
-		return default.PERSONNEL_THREAT;
+		return default.PERSONNEL_DETER;
 
-	UnitThreat = 0;
+	UnitDeterrence = 0;
 
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
 		if(InventoryItem != none)
 		{
-			UnitThreat += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
+			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
 		}
 	}
 
-	UnitThreat += default.RANKS_THREAT[UnitState.GetSoldierRank()];
+	UnitDeterrence += default.RANKS_DETER[UnitState.GetSoldierRank()];
 
-	return UnitThreat;
+	return UnitDeterrence;
 }
