@@ -124,7 +124,7 @@ function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObj
 	{
 		if(InventoryItem != none)
 		{
-			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
+			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).Deterrence;
 		}
 	}
 

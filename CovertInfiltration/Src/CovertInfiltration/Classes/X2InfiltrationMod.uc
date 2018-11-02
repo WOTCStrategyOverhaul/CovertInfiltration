@@ -43,13 +43,13 @@ var config int WEAPON_DETER_3;
 var config int WEAPON_DETER_2;
 var config int WEAPON_DETER_1;
 
-enum EDeterrenceValue
+enum EDeterrenceLevel
 {
-	eDeterrenceValue_Invisible,
-	eDeterrenceValue_Trivial,
-	eDeterrenceValue_Concerning,
-	eDeterrenceValue_Threatening,
-	eDeterrenceValue_Intimidating
+	eDeterrenceLevel_Unnoticed,
+	eDeterrenceLevel_Trivial,
+	eDeterrenceLevel_Concerning,
+	eDeterrenceLevel_Threatening,
+	eDeterrenceLevel_Intimidating
 };
 
 static function name GetInfilName(name ItemName)
@@ -59,7 +59,7 @@ static function name GetInfilName(name ItemName)
 	return InfilName;
 }
 
-static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceValue Deterrence, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceLevel Deterrence, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
@@ -80,7 +80,7 @@ static function X2InfiltrationModTemplate BuildArmorTemplate(name ItemName, EInf
 	return Template;
 }
 
-static function X2InfiltrationModTemplate BuildWeaponTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceValue Deterrence, optional float Mult = 1, optional name MultCat = '')
+static function X2InfiltrationModTemplate BuildWeaponTemplate(name ItemName, EInfiltrationWeight Weight, EDeterrenceLevel Deterrence, optional float Mult = 1, optional name MultCat = '')
 {
 	local X2InfiltrationModTemplate		Template;
 	local int	InfilMod;
@@ -156,41 +156,41 @@ static function int CalcWeaponInfil(EInfiltrationWeight Weight)
 	return InfilMod;
 }
 
-static function int CalcArmorDeterrence(EDeterrenceValue Deterrence)
+static function int CalcArmorDeterrence(EDeterrenceLevel Deterrence)
 {
 	local int DeterrenceMod;
 	DeterrenceMod = 0;
 	switch(Deterrence)
 	{
-	case eDeterrenceValue_Invisible:
+	case eDeterrenceLevel_Unnoticed:
 		DeterrenceMod = default.ARMOR_DETER_1;
-	case eDeterrenceValue_Trivial:
+	case eDeterrenceLevel_Trivial:
 		DeterrenceMod = default.ARMOR_DETER_2;
-	case eDeterrenceValue_Concerning:
+	case eDeterrenceLevel_Concerning:
 		DeterrenceMod = default.ARMOR_DETER_3;
-	case eDeterrenceValue_Threatening:
+	case eDeterrenceLevel_Threatening:
 		DeterrenceMod = default.ARMOR_DETER_4;
-	case eDeterrenceValue_Intimidating:
+	case eDeterrenceLevel_Intimidating:
 		DeterrenceMod = default.ARMOR_DETER_5;
 	}
 	return DeterrenceMod;
 }
 
-static function int CalcWeaponDeterrence(EDeterrenceValue Deterrence)
+static function int CalcWeaponDeterrence(EDeterrenceLevel Deterrence)
 {
 	local int DeterrenceMod;
 	DeterrenceMod = 0;
 	switch(Deterrence)
 	{
-	case eDeterrenceValue_Invisible:
+	case eDeterrenceLevel_Unnoticed:
 		DeterrenceMod = default.WEAPON_DETER_1;
-	case eDeterrenceValue_Trivial:
+	case eDeterrenceLevel_Trivial:
 		DeterrenceMod = default.WEAPON_DETER_2;
-	case eDeterrenceValue_Concerning:
+	case eDeterrenceLevel_Concerning:
 		DeterrenceMod = default.WEAPON_DETER_3;
-	case eDeterrenceValue_Threatening:
+	case eDeterrenceLevel_Threatening:
 		DeterrenceMod = default.WEAPON_DETER_4;
-	case eDeterrenceValue_Intimidating:
+	case eDeterrenceLevel_Intimidating:
 		DeterrenceMod = default.WEAPON_DETER_5;
 	}
 	return DeterrenceMod;
