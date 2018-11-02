@@ -4,3 +4,6 @@ CovertActions_FactionActionMax="Maximum number of Covert Actions for this factio
 
 [UIAvengerHUD_CAButton]
 CovertActionButtonLabel=COVERT ACTIONS
+
+[UISSManager_CovertAction]
+strSlotOptionalNote="Optional"
