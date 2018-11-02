@@ -26,7 +26,7 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Content\UILibrary_CovertInfiltration.upk">
+    <Content Include="Content\UILibrary_CovertInfiltration.upk" />
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
@@ -97,7 +97,7 @@
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod_DefaultModifiers.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc">
+    <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
 </Project>
