@@ -124,8 +124,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(BuildCustomTemplate('PsiAmp_BM', default.PSI_WEAPON_INFIL));
 
 	// note to self: make actual X2Item templates
-	Templates.AddItem(BuildCustomTemplate('HoloProjector', , default.HOLOPROJECTOR_WEPMULT, 'weapon'));
-	Templates.AddItem(BuildCustomTemplate('AdaptiveCamo', , default.ADAPTIVECAMO_ARMORMULT, 'armor'));
+	Templates.AddItem(BuildCustomTemplate('HoloProjector', ,, default.HOLOPROJECTOR_WEPMULT, 'weapon'));
+	Templates.AddItem(BuildCustomTemplate('AdaptiveCamo', ,, default.ADAPTIVECAMO_ARMORMULT, 'armor'));
 
 	return Templates;
 }
