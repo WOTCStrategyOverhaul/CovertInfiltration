@@ -686,7 +686,7 @@ simulated function OnReceiveFocus()
 		else
 		{
 			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
-			OpenLoadoutForCurrentAction();
+			OpenLoadoutForCurrentAction(true);
 		}
 
 		bConfirmScreenWasOpened = false;
@@ -721,10 +721,11 @@ simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
 	}
 }
 
-simulated function OpenLoadoutForCurrentAction()
+simulated function OpenLoadoutForCurrentAction(optional bool SkipIntro = false)
 {
 	SSManager = new class'UISSManager_CovertAction';
 	SSManager.CovertOpsScreen = self;
+	SSManager.SkipIntro = SkipIntro;
 	SSManager.OpenSquadSelect();
 }
 
