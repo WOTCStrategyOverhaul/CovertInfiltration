@@ -88,9 +88,10 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	// Testing code
-	if (ActionToShowOnInitRef.ObjectID != 0) bAnimateOnInit = false;
+	//if (ActionToShowOnInitRef.ObjectID != 0) bAnimateOnInit = false;
 
 	GetHQPres().StrategyMap2D.Hide();
+	GetHQPres().StrategyMap2D.HideCursor();
 	GetHQPres().CAMSaveCurrentLocation();
 	OnInitForceResistanceNetwork();
 
@@ -317,13 +318,15 @@ simulated protected function BuildButtons()
 
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
-	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked);
+	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
 	ConfirmButton.SetResizeToText(false);
 	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
 	CloseScreenButton.bAnimateOnInit = false;
-	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked);
+	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
 	CloseScreenButton.SetPosition(0, 50);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
@@ -794,7 +797,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 	switch(cmd)
 	{
-	case class'UIUtilities_Input'.const.FXS_BUTTON_A:
+	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
 		if (CanOpenLoadout())
@@ -803,7 +806,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 		}
 		return true;
 
-	case class'UIUtilities_Input'.const.FXS_BUTTON_B:
+	case class'UIUtilities_Input'.static.GetBackButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
 		CloseScreen();
@@ -821,11 +824,11 @@ simulated function OnRemoved()
 {
 	super.OnRemoved();
 
-	//Restore the saved camera location
 	GetHQPres().CAMRestoreSavedLocation();
+	GetHQPres().StrategyMap2D.ShowCursor();
+	OnRemoveRestoreResistanceNetwork();
 
 	class'UIUtilities_Sound'.static.PlayCloseSound();
-	OnRemoveRestoreResistanceNetwork();
 }
 
 //////////////////////////////////////////

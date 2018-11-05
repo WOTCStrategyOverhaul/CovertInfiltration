@@ -2,7 +2,7 @@
 CovertActions_GlobalActionsMax="Maximum number of Covert Actions are in progress."
 CovertActions_FactionActionMax="Maximum number of Covert Actions for this faction's influence are in progress."
 
-[UIAvengerHUD_CAButton]
+[UIStrategyMap_CAButton]
 CovertActionButtonLabel=COVERT ACTIONS
 
 [UISSManager_CovertAction]
