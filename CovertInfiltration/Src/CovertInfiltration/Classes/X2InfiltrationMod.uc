@@ -19,9 +19,6 @@ enum EInfiltrationWeight
 	eInfilWeight_Battle
 };
 
-var config int ArmourInfiltration[EInfiltrationWeight.EnumCount]<BoundEnum=EInfiltrationWeight>;
-var config int WeaponInfiltration[EInfiltrationWeight.EnumCount]<BoundEnum=EInfiltrationWeight>;
-
 enum EDeterrenceLevel
 {
 	eDeterrenceLevel_Unnoticed,
@@ -31,6 +28,8 @@ enum EDeterrenceLevel
 	eDeterrenceLevel_Intimidating
 };
 
+var config int ArmourInfiltration[EInfiltrationWeight.EnumCount]<BoundEnum=EInfiltrationWeight>;
+var config int WeaponInfiltration[EInfiltrationWeight.EnumCount]<BoundEnum=EInfiltrationWeight>;
 var config int ItemDeterrence[EDeterrenceLevel.EnumCount]<BoundEnum=EDeterrenceLevel>;
 
 static function name GetInfilName(name ItemName)
