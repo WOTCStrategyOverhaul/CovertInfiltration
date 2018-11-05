@@ -317,13 +317,15 @@ simulated protected function BuildButtons()
 
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
-	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked);
+	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
 	ConfirmButton.SetResizeToText(false);
 	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
 	CloseScreenButton.bAnimateOnInit = false;
-	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked);
+	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
 	CloseScreenButton.SetPosition(0, 50);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
