@@ -186,9 +186,8 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 {
 	local XComGameStateHistory History;
 	local XComGameState_CovertAction ActionState;
-	local XComGameState_HeadquartersResistance ResHQ;
 	local HQEvent kEvent;
-	local bool bActionFound, bRingBuilt;
+	local bool bActionFound;
 
 	History = `XCOMHISTORY;
 	
@@ -207,8 +206,6 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 		}
 	}
 	
-	ResHQ = XComGameState_HeadquartersResistance(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
-	bRingBuilt = `XCOMHQ.HasFacilityByName('ResistanceRing');
 	if (!bActionFound)
 	{
 		kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
@@ -222,11 +219,8 @@ function GetCovertActionEvents(out array<HQEvent> arrEvents)
 
 function GetCovertActionWarning(out array<HQEvent> arrEvents)
 {
-	local XComGameStateHistory History;
 	local HQEvent kEvent;
 
-	History = `XCOMHISTORY;
-	
 	kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
 	kEvent.Hours = -1;
 	kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
