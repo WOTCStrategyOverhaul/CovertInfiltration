@@ -51,7 +51,7 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_XComGameState_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIAvengerHUD_CAButton.uc">
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyMap_CAButton.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape.uc">
