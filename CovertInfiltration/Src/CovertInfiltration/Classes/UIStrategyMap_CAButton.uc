@@ -103,7 +103,12 @@ static protected function bool OnUnrealCommand(int cmd, int arg)
 {
 	if (cmd == class'UIUtilities_Input'.const.FXS_BUTTON_X && arg == class'UIUtilities_Input'.const.FXS_ACTION_RELEASE)
 	{
-		class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
+		if (class'XComEngine'.static.GetHQPres().StrategyMap2D.m_eUIState != eSMS_Flight)
+		{
+			// Cannot open screen during flight
+			class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
+		}
+
 		return true;
 	}
 
