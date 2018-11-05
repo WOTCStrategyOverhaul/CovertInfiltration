@@ -45,6 +45,8 @@ event OnInit(UIScreen Screen)
 			$ CovertActionButtonNew.Text
 		);
 	}
+
+	HandleInput(true);
 }
 
 public function OnCovertActionButton(UIButton CovertActionButton)
@@ -78,6 +80,13 @@ event OnReceiveFocus(UIScreen screen)
 }
 
 event OnLoseFocus(UIScreen screen)
+{
+	if (UIStrategyMap(Screen) == none) return;
+	
+	HandleInput(false);
+}
+
+event OnRemoved(UIScreen screen)
 {
 	if (UIStrategyMap(Screen) == none) return;
 	
