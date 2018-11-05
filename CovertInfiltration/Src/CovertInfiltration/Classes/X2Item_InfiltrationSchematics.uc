@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  ArcaneData
+//  PURPOSE: Creates schematics for new armors.
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2Item_InfiltrationSchematics extends X2Item_DefaultSchematics;
 
 static function array<X2DataTemplate> CreateTemplates()
