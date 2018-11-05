@@ -57,14 +57,14 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if(InventoryItem != none)
+		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
 		{
 			TotalInfil = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
 			ItemCategory = InventoryItem.GetMyTemplate().ItemCat;
 
 			foreach CurrentInventory(MultiplierItem)
 			{
-				if(MultiplierItem != none)
+				if(InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()) != none)
 				{
 					MultCategory = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).MultCategory;
 					Multiplier = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).InfilMultiplier;
@@ -122,7 +122,7 @@ function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObj
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if(InventoryItem != none)
+		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
 		{
 			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).Deterrence;
 		}
