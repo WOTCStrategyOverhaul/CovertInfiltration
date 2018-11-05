@@ -88,9 +88,10 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	// Testing code
-	if (ActionToShowOnInitRef.ObjectID != 0) bAnimateOnInit = false;
+	//if (ActionToShowOnInitRef.ObjectID != 0) bAnimateOnInit = false;
 
 	GetHQPres().StrategyMap2D.Hide();
+	GetHQPres().StrategyMap2D.HideCursor();
 	GetHQPres().CAMSaveCurrentLocation();
 	OnInitForceResistanceNetwork();
 
@@ -796,7 +797,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 	switch(cmd)
 	{
-	case class'UIUtilities_Input'.const.FXS_BUTTON_A:
+	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
 		if (CanOpenLoadout())
@@ -805,7 +806,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 		}
 		return true;
 
-	case class'UIUtilities_Input'.const.FXS_BUTTON_B:
+	case class'UIUtilities_Input'.static.GetBackButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
 		CloseScreen();
@@ -823,11 +824,11 @@ simulated function OnRemoved()
 {
 	super.OnRemoved();
 
-	//Restore the saved camera location
 	GetHQPres().CAMRestoreSavedLocation();
+	GetHQPres().StrategyMap2D.ShowCursor();
+	OnRemoveRestoreResistanceNetwork();
 
 	class'UIUtilities_Sound'.static.PlayCloseSound();
-	OnRemoveRestoreResistanceNetwork();
 }
 
 //////////////////////////////////////////
