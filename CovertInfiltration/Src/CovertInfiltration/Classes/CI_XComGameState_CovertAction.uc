@@ -35,6 +35,7 @@ function CompleteCovertAction(XComGameState NewGameState)
 	local X2RewardTemplate RewardTemplate;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
+	local X2CovertMissionInfoTemplate CovertMission;
 	local int index;
 
 	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
@@ -45,27 +46,29 @@ function CompleteCovertAction(XComGameState NewGameState)
 	FactionState.CompletedCovertActions.AddItem(GetMyTemplateName());
 
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
 
-	if (InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName()) != none)
+	if (CovertMission != none)
 	{
 		// It's an infiltration! No rewards for you until mission completion!
 		//GiveRewards(NewGameState);
-
 		// Commence mission spawning as defined by the X2CovertMissionInfo template
+
 		RegionState = GetWorldRegion();
 
 		MissionRewards.Length = 0;
-		for (index = 0; index < InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName()).MissionRewards.length; index++)
+		for (index = 0; index < CovertMission.MissionRewards.length; index++)
 		{
-			RewardTemplate = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName()).MissionRewards[index];
+			RewardTemplate = CovertMission.MissionRewards[index];
 			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
 			MissionRewards.AddItem(RewardState);
 		}
 
-		MissionSource = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName()).MissionSource;
+		MissionSource = CovertMission.MissionSource;
 
 		MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
 		//MissionState.CovertActionRef = GetReference();
+		// Note to self: Make the RegionState return the same location as the CA
 		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
 
 		MissionState.ResistanceFaction = Faction;

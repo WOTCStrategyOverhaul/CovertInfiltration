@@ -15,9 +15,7 @@ static function X2InfiltrationModTemplateManager GetInfilTemplateManager()
 
 function X2InfiltrationModTemplate GetInfilTemplateFromItem(name ItemTemplate)
 {
-	local X2InfiltrationModTemplate InfilTemplate;
-	InfilTemplate = X2InfiltrationModTemplate(FindDataTemplate(class'X2InfiltrationMod'.static.GetInfilName(ItemTemplate)));
-	return InfilTemplate;
+	return X2InfiltrationModTemplate(FindDataTemplate(class'X2InfiltrationMod'.static.GetInfilName(ItemTemplate)));
 }
 
 DefaultProperties

@@ -15,9 +15,7 @@ static function X2CovertMissionInfoTemplateManager GetCovertMissionInfoTemplateM
 
 function X2CovertMissionInfoTemplate GetCovertMissionInfoTemplateFromCA(name TemplateName)
 {
-	local X2CovertMissionInfoTemplate CovertMissionInfoTemplate;
-	CovertMissionInfoTemplate = X2CovertMissionInfoTemplate(FindDataTemplate(class'X2CovertMissionInfo'.static.GetCovertMissionInfoName(TemplateName)));
-	return CovertMissionInfoTemplate;
+	return X2CovertMissionInfoTemplate(FindDataTemplate(class'X2CovertMissionInfo'.static.GetCovertMissionInfoName(TemplateName)));
 }
 
 DefaultProperties

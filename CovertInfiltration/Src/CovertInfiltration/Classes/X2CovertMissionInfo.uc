@@ -12,9 +12,7 @@ var const string ACTIONPREFIX;
 
 static function name GetCovertMissionInfoName(name TemplateName)
 {
-	local name CovertMissionInfoName;
-	CovertMissionInfoName = name(default.ACTIONPREFIX $ TemplateName);
-	return CovertMissionInfoName;
+	return name(default.ACTIONPREFIX $ TemplateName);
 }
 
 defaultproperties

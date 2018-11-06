@@ -18,8 +18,9 @@ static function X2DataTemplate CreateGOpSuppliesTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_GOpSupplies');
 
-	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
-	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	Template.bGoldenPath = true;
 
 	Template.Narratives.AddItem('CovertActionNarrative_GatherSupplies_Skirmishers');
 	Template.Narratives.AddItem('CovertActionNarrative_GatherSupplies_Reapers');
@@ -41,8 +42,9 @@ static function X2DataTemplate CreateGOpIntelTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_GOpIntel');
 
-	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
-	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	Template.bGoldenPath = true;
 
 	Template.Narratives.AddItem('CovertActionNarrative_GatherIntel_Skirmishers');
 	Template.Narratives.AddItem('CovertActionNarrative_GatherIntel_Reapers');
