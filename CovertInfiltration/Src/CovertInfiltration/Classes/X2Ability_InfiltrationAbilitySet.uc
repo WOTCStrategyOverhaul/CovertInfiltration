@@ -5,7 +5,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2Ability_InfiltrationAbilitySet extends X2Ability_ItemGrantedAbilitySet config(Infiltration);
+class X2Ability_InfiltrationAbilitySet extends X2Ability_ItemGrantedAbilitySet config(GameCore);
 
 var config int CIVILIAN_DISGUISE_MOBILITY_BONUS;
 var config int CIVILIAN_DISGUISE_DETECTION_MODIFIER;
