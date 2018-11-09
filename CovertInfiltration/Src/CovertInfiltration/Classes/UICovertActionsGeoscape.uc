@@ -85,6 +85,8 @@ const ACTION_SLOTS_PER_ROW = 2;
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
+	`log("Opening UICovertActionsGeoscape",, 'CI');
+
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	// Testing code

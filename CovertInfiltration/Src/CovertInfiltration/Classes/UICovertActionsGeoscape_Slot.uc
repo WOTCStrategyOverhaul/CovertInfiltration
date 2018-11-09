@@ -90,6 +90,12 @@ simulated function UpdateReward(XComGameState_Reward Reward)
 {
 	local string strReward;
 
+	if (Reward == none)
+	{
+		RewardText.SetText("");
+		return;
+	}
+
 	strReward = Reward.GetRewardPreviewString();
 	strReward = class'UIUtilities_Text'.static.GetColoredText(strReward, eUIState_Good);
 	
