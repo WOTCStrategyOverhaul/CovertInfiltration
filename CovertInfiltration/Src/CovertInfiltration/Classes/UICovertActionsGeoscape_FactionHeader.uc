@@ -41,9 +41,8 @@ simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction
 simulated protected function CreateElements()
 {
 	Icon = Spawn(class'UIStackingIcon', self);
-	Icon.InitPanel('Icon');
-	Icon.SetPosition(21, 21); // Uses center as origin, not top-left corner as everything else
-	Icon.SetSize(42, 42);
+	Icon.InitStackingIcon('Icon');
+	Icon.SetIconSize(42);
 
 	Text = Spawn(class'UIScrollingText', self);
 	Text.bAnimateOnInit = false;
