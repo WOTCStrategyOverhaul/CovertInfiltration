@@ -23,11 +23,20 @@
     <Folder Include="Src\LW_Tuple\Classes" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComContent.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComGameCore.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk" />
     <Content Include="Config\XComInfiltration.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\UILibrary_DisguiseIcons.upk">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\CovertInfiltration.int">
@@ -87,6 +96,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
       <SubType>Content</SubType>
@@ -98,6 +110,15 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod_DefaultModifiers.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationArmors.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationSchematics.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
