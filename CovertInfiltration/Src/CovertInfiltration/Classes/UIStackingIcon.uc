@@ -85,7 +85,6 @@ simulated function SetHeight(float NewHeight)
 
 defaultproperties
 {
-	LibID = "XPACKStackingIcon";
 	bIsNavigable = false;
 	bProcessesMouseEvents = false;
 }
