@@ -73,6 +73,13 @@ var protected EStrategyMapState PreOpenMapState;
 // Internal state
 var protected bool bDontUpdateData;
 
+// Localization strings
+var localized string strRewardHeader;
+var localized string strSlotsHeader;
+var localized string strOpenLoadout;
+var localized string strCloseScreen;
+var localized string strRisksHeader;
+
 const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
 
@@ -231,7 +238,7 @@ simulated protected function BuildActionReward()
 	ActionRewardHeader.bAnimateOnInit = false;
 	ActionRewardHeader.InitText('ActionRewardHeader');
 	ActionRewardHeader.SetSize(ActionRewardContainer.Width, 55);
-	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Reward", bIsIn3D, true));
+	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRewardHeader, bIsIn3D, true));
 
 	ActionRewardText = Spawn(class'UIText', ActionRewardContainer);
 	ActionRewardText.bAnimateOnInit = false;
@@ -266,7 +273,7 @@ simulated protected function BuildActionSlots()
 	ActionSlotsHeader.bAnimateOnInit = false;
 	ActionSlotsHeader.InitText('ActionSlotsHeader');
 	ActionSlotsHeader.SetSize(ActionSlotsContainer.Width, 55);
-	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Deployable resources", bIsIn3D, true));
+	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strSlotsHeader, bIsIn3D, true));
 
 	ActionSlotRows = Spawn(class'UIList', ActionSlotsContainer);
 	ActionSlotRows.bAnimateOnInit = false;
@@ -320,14 +327,14 @@ simulated protected function BuildButtons()
 
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
-	ConfirmButton.InitButton('ConfirmButton', "Go to loadout", OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	ConfirmButton.InitButton('ConfirmButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
 	ConfirmButton.SetResizeToText(false);
 	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
 	CloseScreenButton.bAnimateOnInit = false;
-	CloseScreenButton.InitButton('CloseScreenButton', "Close covert ops", OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	CloseScreenButton.InitButton('CloseScreenButton', strCloseScreen, OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
 	CloseScreenButton.SetPosition(0, 50);
@@ -360,7 +367,7 @@ simulated protected function BuildRisks()
 	ActionRisksHeader.bAnimateOnInit = false;
 	ActionRisksHeader.InitText('ActionRisksHeader');
 	ActionRisksHeader.SetSize(ActionRisksContainer.Width, 55);
-	ActionRisksHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo("Risks", bIsIn3D, true));
+	ActionRisksHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRisksHeader, bIsIn3D, true));
 
 	ActionRisksText = Spawn(class'UIText', ActionRisksContainer);
 	ActionRisksText.bAnimateOnInit = false;

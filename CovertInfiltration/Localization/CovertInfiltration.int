@@ -5,6 +5,13 @@ CovertActions_FactionActionMax="Maximum number of Covert Actions for this factio
 [UIStrategyMap_CAButton]
 CovertActionButtonLabel=COVERT ACTIONS
 
+[UICovertActionsGeoscape]
+strRewardHeader=Reward
+strSlotsHeader="Deployable resources"
+strOpenLoadout="Go to loadout"
+strCloseScreen="Close covert ops"
+strRisksHeader=Risks
+
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
 
