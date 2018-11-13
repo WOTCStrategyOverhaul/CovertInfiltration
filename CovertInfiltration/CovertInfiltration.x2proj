@@ -54,6 +54,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_ResourcesHook.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_CostSlot.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISS_CovertActionRisks.uc">
       <SubType>Content</SubType>
     </Content>
@@ -94,6 +97,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">

@@ -16,6 +16,8 @@ var protectedwrite UISquadSelect SquadSelect;
 
 var protected bool bCreatedUIElements;
 var protected UISS_CovertActionRisks RisksDisplay;
+var protected UIList CostSlotsList;
+var protected array<UISS_CostSlot> CostSlots; // Used for updating (so there is no need to cast each update)
 
 var localized string strSlotOptionalNote;
 
@@ -39,9 +41,39 @@ simulated protected function PostScreenInit()
 	
 	RisksDisplay = SquadSelect.Spawn(class'UISS_CovertActionRisks', SquadSelect);
 	RisksDisplay.InitRisks();
+	RisksDisplay.MoveUnderResourceBar(ShouldShowResourceBar());
+
+	CreateCostSlots();
 
 	bCreatedUIElements = true;
 	UpdateUIElements();
+}
+
+simulated protected function CreateCostSlots()
+{
+	local XComGameState_CovertAction Action;
+	local UISS_CostSlot CostSlot;
+	local int i;
+
+	CostSlotsList = SquadSelect.Spawn(class'UIList', SquadSelect);
+	CostSlotsList.bAnimateOnInit = false;
+	CostSlotsList.ItemPadding = 10;
+	CostSlotsList.InitList('CostSlotsList');
+	CostSlotsList.AnchorTopCenter();
+	CostSlotsList.SetPosition(-500, 0);
+	CostSlotsList.SetWidth(300);
+
+	Action = GetAction();
+	CostSlots.Length = Action.CostSlots.Length;
+
+	for (i = 0; i < CostSlots.Length; i++)
+	{
+		CostSlot = SquadSelect.Spawn(class'UISS_CostSlot', CostSlotsList.ItemContainer);
+		CostSlot.PostStateChanged = UpdateUIElements;
+		CostSlot.InitCostSlot(Action.GetReference(), i);
+		
+		CostSlots[i] = CostSlot;
+	}
 }
 
 simulated protected function BuildConfiguration()
@@ -100,7 +132,19 @@ simulated protected function BuildConfiguration()
 
 simulated protected function UpdateUIElements()
 {
+	local UISS_CostSlot CostSlot;
+
 	RisksDisplay.UpdateData(GetAction());
+
+	foreach CostSlots(CostSlot)
+	{
+		CostSlot.UpdateData();
+	}
+}
+
+simulated function bool ShouldShowResourceBar()
+{
+	return GetAction().CostSlots.Length > 0;
 }
 
 //////////////////
