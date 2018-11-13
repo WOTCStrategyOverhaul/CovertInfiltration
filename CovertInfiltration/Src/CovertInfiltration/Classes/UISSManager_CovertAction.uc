@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
 //  PURPOSE: This is responsible for adjusting squad select screen to behave suitable for
-//           covert action intstead of a mission. It relies heavily on SSAAT to do the
+//           covert action instead of a mission. It relies heavily on SSAAT to do the
 //           heavy lifting
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -20,6 +20,8 @@ var protected UIList CostSlotsList;
 var protected array<UISS_CostSlot> CostSlots; // Used for updating (so there is no need to cast each update)
 
 var localized string strSlotOptionalNote;
+
+const COST_SLOTS_LIST_NAME = 'CostSlotsList';
 
 simulated function OpenSquadSelect()
 {
@@ -56,12 +58,19 @@ simulated protected function CreateCostSlots()
 	local int i;
 
 	CostSlotsList = SquadSelect.Spawn(class'UIList', SquadSelect);
+	CostSlotsList.Tag = 'rjSquadSelect_Navigable';
+	CostSlotsList.bSelectFirstAvailable = false;
+	CostSlotsList.bIsNavigable = false;
 	CostSlotsList.bAnimateOnInit = false;
+	CostSlotsList.bStickyHighlight = false;
 	CostSlotsList.ItemPadding = 10;
-	CostSlotsList.InitList('CostSlotsList');
+	CostSlotsList.InitList(COST_SLOTS_LIST_NAME);
 	CostSlotsList.AnchorTopCenter();
 	CostSlotsList.SetPosition(-500, 0);
 	CostSlotsList.SetWidth(300);
+
+	CostSlotsList.SelectedIndex = 0;
+	CostSlotsList.Navigator.SelectedIndex = 0;
 
 	Action = GetAction();
 	CostSlots.Length = Action.CostSlots.Length;
@@ -74,6 +83,8 @@ simulated protected function CreateCostSlots()
 		
 		CostSlots[i] = CostSlot;
 	}
+
+	// TODO: remove tag if no slots
 }
 
 simulated protected function BuildConfiguration()

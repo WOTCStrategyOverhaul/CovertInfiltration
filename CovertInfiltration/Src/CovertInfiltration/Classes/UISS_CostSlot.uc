@@ -30,6 +30,7 @@ simulated function InitCostSlot(StateObjectReference InitActionRef, int InitCost
 
 	BG = Spawn(class'UIBGBox', self);
 	BG.bAnimateOnInit = false;
+	BG.bHighlightOnMouseEvent = false;
 	BG.InitBG('BG');
 	BG.SetSize(Width, Height);
 
@@ -58,9 +59,11 @@ simulated function InitCostSlot(StateObjectReference InitActionRef, int InitCost
 	
 	AllocateClearButton = Spawn(class'UIButton', self);
 	AllocateClearButton.bAnimateOnInit = false;
-	AllocateClearButton.InitButton('Button',, OnButtonClicked);
+	AllocateClearButton.bIsNavigable = false;
+	AllocateClearButton.InitButton('AllocateClearButton',, OnButtonClicked);
 	AllocateClearButton.SetPosition(TextPosition, Height - Padding - AllocateClearButton.Height);
 	AllocateClearButton.SetWidth(TextWidth);
+	AllocateClearButton.SetResizeToText(false);
 
 	RewardText.SetHeight(AllocateClearButton.Y - RewardText.Y);
 }
@@ -96,6 +99,11 @@ simulated function UpdateData()
 }
 
 simulated protected function OnButtonClicked(UIButton Button)
+{
+	FlipPurchasedState();
+}
+
+simulated protected function FlipPurchasedState()
 {
 	local XComGameState NewGameState;
 	local XComGameState_CovertAction ActionState;
@@ -149,6 +157,36 @@ simulated protected function PlayAllocationSound()
 	}
 }
 
+simulated function OnReceiveFocus()
+{
+	super.OnReceiveFocus();
+	`log(MCName $ "OnReceiveFocus",, 'CI');
+}
+
+simulated function OnLoseFocus()
+{
+	super.OnLoseFocus();
+	`log(MCName $ "OnLoseFocus",, 'CI');
+}
+
+simulated function bool OnUnrealCommand(int cmd, int arg)
+{
+ 	if (!CheckInputIsReleaseOrDirectionRepeat(cmd, arg))
+		return false;
+
+	switch(cmd)
+	{
+	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
+		if (CanAfford())
+		{
+			FlipPurchasedState();
+		}
+		return true;
+	}
+
+	return super.OnUnrealCommand(cmd, arg);
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
@@ -186,4 +224,6 @@ defaultproperties
 	Height = 100;
 	Padding = 5;
 	ImageRightMargin = 5;
+
+	bCascadeSelection = true;
 }
