@@ -57,6 +57,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UISS_CostSlot.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_CostSlotsContainer.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISS_CovertActionRisks.uc">
       <SubType>Content</SubType>
     </Content>

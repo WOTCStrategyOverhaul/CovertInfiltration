@@ -45,4 +45,5 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 defaultproperties
 {
 	bAnimateOnInit = false;
+	bIsNavigable = false;
 }

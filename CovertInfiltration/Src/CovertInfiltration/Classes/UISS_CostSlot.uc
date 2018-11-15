@@ -4,7 +4,7 @@ var protectedwrite UIBGBox BG;
 var protectedwrite UIImage ResourceImage;
 
 var protectedwrite UIScrollingText ResourceText;
-var protectedwrite UIText RewardText;
+var protectedwrite UIScrollingText RewardText;
 
 var protectedwrite UIButton AllocateClearButton;
 
@@ -24,6 +24,7 @@ simulated function InitCostSlot(StateObjectReference InitActionRef, int InitCost
 	local float TextPosition, TextWidth;
 
 	InitListItemBase();
+	CalculateHeight(); // BG, icon and text X positioning relies on this
 
 	ActionRef = InitActionRef;
 	CostSlotIndex = InitCostSlotIndex;
@@ -51,21 +52,34 @@ simulated function InitCostSlot(StateObjectReference InitActionRef, int InitCost
 	ResourceText.SetPosition(TextPosition, Padding);
 	ResourceText.SetWidth(TextWidth);
 	
-	RewardText = Spawn(class'UIText', self);
+	RewardText = Spawn(class'UIScrollingText', self);
 	RewardText.bAnimateOnInit = false;
-	RewardText.InitText('RewardText');
-	RewardText.SetPosition(TextPosition, ResourceText.Y + 23);
+	RewardText.InitScrollingText('RewardText');
+	RewardText.SetPosition(TextPosition, ResourceText.Y + 23); // TODO: A bit more space
 	RewardText.SetWidth(TextWidth);
 	
 	AllocateClearButton = Spawn(class'UIButton', self);
 	AllocateClearButton.bAnimateOnInit = false;
 	AllocateClearButton.bIsNavigable = false;
 	AllocateClearButton.InitButton('AllocateClearButton',, OnButtonClicked);
-	AllocateClearButton.SetPosition(TextPosition, Height - Padding - AllocateClearButton.Height);
+	AllocateClearButton.SetPosition(TextPosition, RewardText.Y + 23);
 	AllocateClearButton.SetWidth(TextWidth);
 	AllocateClearButton.SetResizeToText(false);
 
-	RewardText.SetHeight(AllocateClearButton.Y - RewardText.Y);
+	if (!CanAfford())
+	{
+		DisableNavigation();
+	}
+}
+
+simulated protected function CalculateHeight()
+{
+	Height = 0;
+
+	Height += 23 * 2; // Two lines of text
+	Height += class'UIButton'.default.Height;
+
+	Height += Padding * 2;
 }
 
 simulated function UpdateData()
@@ -221,7 +235,6 @@ simulated function XComGameState_Reward GetReward()
 
 defaultproperties
 {
-	Height = 100;
 	Padding = 5;
 	ImageRightMargin = 5;
 
