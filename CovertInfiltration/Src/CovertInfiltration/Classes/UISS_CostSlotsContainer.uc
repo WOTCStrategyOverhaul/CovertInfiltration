@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Wrapper around resource cost slots in Squad select screen for navigation,
+//           animation purposes, as well as to keep UISSManager_CovertAction clean
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UISS_CostSlotsContainer extends UIPanel;
 
 var protectedwrite StateObjectReference ActionRef;

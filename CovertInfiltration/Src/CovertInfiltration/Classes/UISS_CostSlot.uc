@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Represents a single resource cost slot in Squad select screen and allows
+//           player to allocate and unallocate it
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UISS_CostSlot extends UIVerticalListItemBase;
 
 var protectedwrite UIBGBox BG;

@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Base class for list items that aren't buttons but need to pull the width
+//           from the parent list
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIVerticalListItemBase extends UIPanel abstract;
 
 var privatewrite UIList ParentList;
