@@ -15,13 +15,13 @@ simulated function InitCostSlots(StateObjectReference InitActionRef)
 	CostSlotsList = Spawn(class'UIList', self);
 	CostSlotsList.bAnimateOnInit = false;
 	CostSlotsList.bStickyHighlight = false;
+	CostSlotsList.bSelectFirstAvailable = false; // We do this the first time we gain focus
 	CostSlotsList.ItemPadding = 10;
 	CostSlotsList.InitList('CostSlotsList');
 	CostSlotsList.AnchorTopCenter();
 	CostSlotsList.SetPosition(-500, 0);
 	CostSlotsList.SetWidth(300);
 
-	// TODO: Select first navigatable list item
 	Navigator.SetSelected(CostSlotsList);
 
 	CreateSlots();
@@ -61,6 +61,12 @@ simulated function UpdateData()
 	{
 		CostSlot.UpdateData();
 	}
+}
+
+simulated function OnReceiveFocus()
+{
+	CostSlotsList.Navigator.SelectFirstAvailableIfNoCurrentSelection();
+	super.OnReceiveFocus();
 }
 
 ///////////////

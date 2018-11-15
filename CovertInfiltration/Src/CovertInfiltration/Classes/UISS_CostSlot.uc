@@ -55,14 +55,14 @@ simulated function InitCostSlot(StateObjectReference InitActionRef, int InitCost
 	RewardText = Spawn(class'UIScrollingText', self);
 	RewardText.bAnimateOnInit = false;
 	RewardText.InitScrollingText('RewardText');
-	RewardText.SetPosition(TextPosition, ResourceText.Y + 23); // TODO: A bit more space
+	RewardText.SetPosition(TextPosition, ResourceText.Y + 23);
 	RewardText.SetWidth(TextWidth);
 	
 	AllocateClearButton = Spawn(class'UIButton', self);
 	AllocateClearButton.bAnimateOnInit = false;
 	AllocateClearButton.bIsNavigable = false;
 	AllocateClearButton.InitButton('AllocateClearButton',, OnButtonClicked);
-	AllocateClearButton.SetPosition(TextPosition, RewardText.Y + 23);
+	AllocateClearButton.SetPosition(TextPosition, RewardText.Y + 32);
 	AllocateClearButton.SetWidth(TextWidth);
 	AllocateClearButton.SetResizeToText(false);
 
@@ -76,7 +76,8 @@ simulated protected function CalculateHeight()
 {
 	Height = 0;
 
-	Height += 23 * 2; // Two lines of text
+	Height += 23;
+	Height += 32;
 	Height += class'UIButton'.default.Height;
 
 	Height += Padding * 2;
@@ -169,18 +170,6 @@ simulated protected function PlayAllocationSound()
 				break;
 		}
 	}
-}
-
-simulated function OnReceiveFocus()
-{
-	super.OnReceiveFocus();
-	`log(MCName $ "OnReceiveFocus",, 'CI');
-}
-
-simulated function OnLoseFocus()
-{
-	super.OnLoseFocus();
-	`log(MCName $ "OnLoseFocus",, 'CI');
 }
 
 simulated function bool OnUnrealCommand(int cmd, int arg)
