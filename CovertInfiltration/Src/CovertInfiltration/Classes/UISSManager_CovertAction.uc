@@ -10,6 +10,7 @@
 class UISSManager_CovertAction extends Object;
 
 var UICovertActionsGeoscape CovertOpsScreen;
+var bool SkipIntro;
 
 var protected SSAAT_SquadSelectConfiguration Configuration;
 var protectedwrite UISquadSelect SquadSelect;
@@ -88,6 +89,9 @@ simulated protected function BuildConfiguration()
 		Slots[i].CanUnitBeSelectedFn = CanSelectUnit;
 	}
 
+	Configuration.SetDisallowAutoFill(true);
+	Configuration.SetSkipIntroAnimation(SkipIntro);
+
 	Configuration.SetSlots(Slots);
 	Configuration.SetHideMissionInfo(true);
 	Configuration.RemoveTerrainAndEnemiesPanels();
@@ -99,8 +103,6 @@ simulated protected function BuildConfiguration()
 	Configuration.SetPreventOnSuperSizeEvent(true);
 
 	Configuration.SetFrozen();
-
-	// TODO: Disallow autofill
 }
 
 ///////////////////
