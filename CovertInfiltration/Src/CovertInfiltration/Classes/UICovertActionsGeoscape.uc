@@ -698,6 +698,9 @@ simulated function OnReceiveFocus()
 		else
 		{
 			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
+			// Note that we need to kick units from action, otherwise they will be considered busy and kicked from squad (which will actually kick them from the action)
+			// This way they will get re-added as soon as the UISS screen initializes
+			ClearUnitsFromAction();
 			OpenLoadoutForCurrentAction(true);
 		}
 
