@@ -20,8 +20,6 @@ var protected UISS_CostSlotsContainer CostSlots;;
 
 var localized string strSlotOptionalNote;
 
-const COST_SLOTS_LIST_NAME = 'CostSlotsList';
-
 simulated function OpenSquadSelect()
 {
 	BuildConfiguration();
