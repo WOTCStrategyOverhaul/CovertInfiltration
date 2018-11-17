@@ -72,9 +72,6 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_XComGameState_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIStrategyMap_CAButton.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape.uc">
       <SubType>Content</SubType>
     </Content>
@@ -112,6 +109,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+    <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
       <SubType>Content</SubType>
     </Content>
