@@ -709,6 +709,7 @@ simulated function OnReceiveFocus()
 	else
 	{
 		ClearUnitsFromAction();
+		// TODO: Clear cost slots
 	}
 }
 

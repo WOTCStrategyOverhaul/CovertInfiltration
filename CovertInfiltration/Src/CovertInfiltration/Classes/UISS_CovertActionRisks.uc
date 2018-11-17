@@ -21,6 +21,11 @@ simulated function InitRisks()
 	Text.SetWidth(-X);
 }
 
+simulated function MoveUnderResourceBar(bool NewValue)
+{
+	SetY(NewValue ? 100 : 0);
+}
+
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {
 	local array<string> Labels, Values; 
@@ -40,4 +45,5 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 defaultproperties
 {
 	bAnimateOnInit = false;
+	bIsNavigable = false;
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
 //  PURPOSE: This is responsible for adjusting squad select screen to behave suitable for
-//           covert action intstead of a mission. It relies heavily on SSAAT to do the
+//           covert action instead of a mission. It relies heavily on SSAAT to do the
 //           heavy lifting
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -17,6 +17,7 @@ var protectedwrite UISquadSelect SquadSelect;
 
 var protected bool bCreatedUIElements;
 var protected UISS_CovertActionRisks RisksDisplay;
+var protected UISS_CostSlotsContainer CostSlots;;
 
 var localized string strSlotOptionalNote;
 var localized string strSlotRequiredPrefix;
@@ -41,6 +42,11 @@ simulated protected function PostScreenInit()
 	
 	RisksDisplay = SquadSelect.Spawn(class'UISS_CovertActionRisks', SquadSelect);
 	RisksDisplay.InitRisks();
+	RisksDisplay.MoveUnderResourceBar(ShouldShowResourceBar());
+
+	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
+	CostSlots.PostAnySlotStateChanged = UpdateUIElements;
+	CostSlots.InitCostSlots(GetAction().GetReference());
 
 	bCreatedUIElements = true;
 	UpdateUIElements();
@@ -112,6 +118,12 @@ simulated protected function BuildConfiguration()
 simulated protected function UpdateUIElements()
 {
 	RisksDisplay.UpdateData(GetAction());
+	CostSlots.UpdateData();
+}
+
+simulated function bool ShouldShowResourceBar()
+{
+	return GetAction().CostSlots.Length > 0;
 }
 
 //////////////////
