@@ -77,6 +77,19 @@ simulated function OnReceiveFocus()
 	super.OnReceiveFocus();
 }
 
+simulated function AnimateIn(optional float Delay = 0)
+{
+	// Instead of fading in the entire container/list, we animate via the normal item-by-item approach
+	// Not passing an argument to `AnimateIn` causes it to do list-item-based delays
+
+	local UISS_CostSlot CostSlot;
+
+	foreach CostSlots(CostSlot)
+	{
+		CostSlot.AnimateIn();
+	}
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
