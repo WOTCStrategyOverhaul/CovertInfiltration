@@ -7,6 +7,7 @@ CovertActionButtonLabel=COVERT ACTIONS
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
+strSlotRequiredPrefix="Required:"
 
 [CivilianDisguise X2ArmorTemplate]
 FriendlyName="Civilian Disguise"
@@ -25,3 +26,4 @@ FriendlyName="Holographic Disguise"
 FriendlyNamePlural="Holographic Disguises"
 BriefSummary="Our new mastery of the alien's Elerium technology has lead us to the ultimate in battle armor: the Warden Armor. Elerium powered armor provides unprecedented survivability and versatility in the battle against increasingly powerful alien enemies."
 TacticalText="<Bullet/> Warden Armor is the best medium-class armor available.\n<Bullet/> Warden Armor has 2 inventory item slots."
+

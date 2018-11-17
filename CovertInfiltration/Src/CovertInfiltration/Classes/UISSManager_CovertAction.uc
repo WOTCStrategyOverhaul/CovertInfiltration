@@ -18,6 +18,7 @@ var protected bool bCreatedUIElements;
 var protected UISS_CovertActionRisks RisksDisplay;
 
 var localized string strSlotOptionalNote;
+var localized string strSlotRequiredPrefix;
 
 simulated function OpenSquadSelect()
 {
@@ -48,6 +49,7 @@ simulated protected function BuildConfiguration()
 {
 	local XComGameStateHistory History;
 	local XComGameState_StaffSlot StaffSlotState;
+	local XComGameState_CovertAction CovertAction;
 	local XComGameState_Reward RewardState;
 
 	local array<SSAAT_SlotConfiguration> Slots;
@@ -56,15 +58,22 @@ simulated protected function BuildConfiguration()
 	Configuration = new class'SSAAT_SquadSelectConfiguration';
 	History = `XCOMHISTORY;
 
-	Slots.Length = GetAction().StaffSlots.Length;
+	CovertAction = GetAction();
+	
+	Slots.Length = CovertAction.StaffSlots.Length;
+
 	for (i = 0; i < Slots.Length; ++i)
 	{
-		StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(GetAction().StaffSlots[i].StaffSlotRef.ObjectID));
-		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(GetAction().StaffSlots[i].RewardRef.ObjectID));
+		StaffSlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(CovertAction.StaffSlots[i].StaffSlotRef.ObjectID));
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(CovertAction.StaffSlots[i].RewardRef.ObjectID));
 
-		// Add notes. TODO: Add required class and rank notes
 		if (RewardState != none) Slots[i].Notes.AddItem(ConvertRewardToNote(RewardState));
-		if (GetAction().StaffSlots[i].bOptional) Slots[i].Notes.AddItem(CreateOptionalNote());
+		if (CovertAction.StaffSlots[i].bOptional) Slots[i].Notes.AddItem(CreateOptionalNote());
+		if (StaffSlotState.RequiredClass != '') Slots[i].Notes.AddItem(CreateClassNote(StaffSlotState.RequiredClass));
+		// The original covert action staff slot code never passed a class here. We're passing one. If `RequiredClass` == '' or the class doesn't
+		// have explicit rank names set up, it'll use the standard code path of falling back to the default ranks.
+		if (StaffSlotState.RequiredMinRank > 0) Slots[i].Notes.AddItem(CreateRankNote(StaffSlotState.RequiredMinRank, StaffSlotState.RequiredClass));
+		
 
 		// Change the slot type if needed
 		if (StaffSlotState.IsEngineerSlot())
@@ -130,6 +139,39 @@ static function SSAAT_SlotNote CreateOptionalNote()
 	local SSAAT_SlotNote Note;
 	
 	Note.Text = default.strSlotOptionalNote; // The localized text reads "OPTIONAL:"
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreateClassNote(name SoldierClassName)
+{
+	local SSAAT_SlotNote Note;
+	local X2SoldierClassTemplateManager ClassManager;
+	local X2SoldierClassTemplate ClassTemplate;
+	local string DisplayString;
+
+	ClassManager = class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager();
+	ClassTemplate = ClassManager.FindSoldierClassTemplate(SoldierClassName);
+
+	if (ClassTemplate != none)
+	{
+		DisplayString = ClassTemplate.DisplayName;
+	}
+
+	Note.Text = default.strSlotRequiredPrefix @ DisplayString;
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreateRankNote(int Rank, name SoldierClassName)
+{
+	local SSAAT_SlotNote Note;
+	
+	Note.Text = default.strSlotRequiredPrefix @ class'X2ExperienceConfig'.static.GetRankName(Rank, SoldierClassName);
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
 
