@@ -5,38 +5,50 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UICovertActionsGeoscape_FactionHeader extends UIListItemString;
+class UICovertActionsGeoscape_FactionHeader extends UIPanel;
 
 var protectedwrite XComGameState_ResistanceFaction Faction;
 var protectedwrite bool bIsOngoing;
 
-var protectedwrite UIImage BG;
-var protectedwrite UIImage Icon;
+var protectedwrite UIStackingIcon Icon;
+var protectedwrite UIScrollingText Text;
 
 simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction, bool IsOngoing)
 {
-	InitListItem();
+	local UIList List;
 
-	// Remove unneeded parts
-	DisableNavigation();
-	ButtonBG.Remove();
+	InitPanel();
+	
+	List = UIList(GetParent(class'UIList')); // list items must be owned by UIList.ItemContainer
+	if (List == none)
+	{
+		ScriptTrace();
+		`warn("UI list items must be owned by UIList.ItemContainer");
+	}
+	else
+	{
+		SetWidth(List.Width);
+	}
 
 	Faction = InitFaction;
 	bIsOngoing = IsOngoing;
 
 	CreateElements();
 	UpdateText();
-	UpdateFactionIcon();
-	UpdateBG();
+	UpdateIcon();
 }
 
 simulated protected function CreateElements()
 {
-	Icon = Spawn(class'UIImage', self);
-	Icon.InitImage('Icon');
+	Icon = Spawn(class'UIStackingIcon', self);
+	Icon.InitStackingIcon('Icon');
+	Icon.SetIconSize(42);
 
-	/*BG = Spawn(class'UIImage', self);
-	BG.InitImage('BG');*/
+	Text = Spawn(class'UIScrollingText', self);
+	Text.bAnimateOnInit = false;
+	Text.InitScrollingText('Text');
+	Text.SetX(Icon.Width);
+	Text.SetWidth(Width - Text.X);
 }
 
 simulated function UpdateText()
@@ -54,44 +66,24 @@ simulated function UpdateText()
 
 	strText = class'UIUtilities_Text'.static.AddFontInfo(strText, Screen.bIsIn3D, true);
 	strText = class'UIUtilities_Infiltration'.static.ColourText(strText, GetFactionColour());
-	strText = "       " $ strText; // Add some space for the icon
 
-	SetHtmlText(strText);
-
-	// Note that if (space + text) exceeds the line width, it will scroll together with space.
-	// A fix will be to spawn another, smaller sized UIText, but I do not belive this problem will ever happen
+	Text.SetHTMLText(strText);
 }
 
-simulated function UpdateFactionIcon()
+simulated function UpdateIcon()
 {
-	// For now we will use just the static image from class template
-	
-	local X2SoldierClassTemplateManager ClassTemplateManager;
-	local X2SoldierClassTemplate ClassTemplate;
+	local StackedUIIconData IconData;
+	local int i;
 
-	ClassTemplateManager = class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager();
-	ClassTemplate = ClassTemplateManager.FindSoldierClassTemplate(Faction.GetMyTemplate().ChampionSoldierClass);
-	if (ClassTemplate == none) return; // Can't find any image
+	IconData = Faction.GetFactionIcon();
 
-	if (Icon == none)
+	// Use small versions of images
+	for (i = 0; i < IconData.Images.Length; i++)
 	{
-		Icon = Spawn(class'UIImage', self);
-		Icon.InitImage('Icon');
+		IconData.Images[i] = Repl(IconData.Images[i], ".tga", "_sm.tga");
 	}
 
-	Icon.LoadImage(ClassTemplate.IconImage);
-	Icon.SetSize(42, 42);
-}
-
-simulated function UpdateBG()
-{
-	// For now do nothing, can't find a good/working bg image
-
-	/*BG.LoadImage("img:///gfxXPACK_CovertOps.Gradient");
-	BG.SetAlpha(0.33); // Doesn't seem to work
-	BG.SetColor(GetFactionColour());
-	BG.SetHeight(40);
-	BG.SetWidth(List.Width);*/
+	Icon.SetImageStack(IconData);
 }
 
 /// HELPERS
@@ -104,5 +96,6 @@ simulated function string GetFactionColour()
 defaultproperties
 {
 	Height = 46;
+	bIsNavigable = false;
 	bAnimateOnInit = false; // Animated by the whole list
 }
