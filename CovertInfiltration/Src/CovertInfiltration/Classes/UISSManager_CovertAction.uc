@@ -16,7 +16,7 @@ var protected SSAAT_SquadSelectConfiguration Configuration;
 var protectedwrite UISquadSelect SquadSelect;
 
 var protected bool bCreatedUIElements;
-var protected UISS_CovertActionRisks RisksDisplay;
+var protected UISS_InfiltrationPanel RisksDisplay;
 var protected UISS_CostSlotsContainer CostSlots;;
 
 var localized string strSlotOptionalNote;
@@ -40,7 +40,7 @@ simulated protected function PostScreenInit()
 	ActionInfo.InitCovertActionInfo('CovertActionInfo');
 	ActionInfo.UpdateData(GetAction());
 	
-	RisksDisplay = SquadSelect.Spawn(class'UISS_CovertActionRisks', SquadSelect);
+	RisksDisplay = SquadSelect.Spawn(class'UISS_InfiltrationPanel', SquadSelect);
 	RisksDisplay.InitRisks();
 	RisksDisplay.MoveUnderResourceBar(ShouldShowResourceBar());
 
