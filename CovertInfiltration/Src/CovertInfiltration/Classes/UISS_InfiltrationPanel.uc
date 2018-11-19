@@ -9,16 +9,16 @@ class UISS_InfiltrationPanel extends UIPanel;
 
 //var UIMask InfiltrationMask;
 
-var UISS_InfiltrationItem TotalDurationTitle;
-var UISS_InfiltrationItem TotalDurationDisplay;
+var UIObjectiveListItem TotalDurationTitle;
+var UIObjectiveListItem TotalDurationDisplay;
 
-var UISS_InfiltrationItem BaseDurationTitle;
-var UISS_InfiltrationItem BaseDurationDisplay;
+var UIObjectiveListItem BaseDurationTitle;
+var UIObjectiveListItem BaseDurationDisplay;
 
-var UISS_InfiltrationItem SquadDurationTitle;
-var UISS_InfiltrationItem SquadDurationDisplay;
+var UIObjectiveListItem SquadDurationTitle;
+var UIObjectiveListItem SquadDurationDisplay;
 
-var UISS_InfiltrationItem RisksLabel;
+var UIObjectiveListItem RisksLabel;
 
 simulated function InitRisks()
 {
@@ -27,30 +27,23 @@ simulated function InitRisks()
 	SetSize(375, 450);
 	SetPosition(-375, 0);
 
-	TotalDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(0, 123.5);
-	BaseDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 196);
-	SquadDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 262);
-	RisksLabel = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(12, 310);
+	TotalDurationDisplay = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(0, 103.5);
+	BaseDurationDisplay = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(20, 176);
+	SquadDurationDisplay = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(20, 242);
+	RisksLabel = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(12, 290);
 
-	TotalDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(-29, 82);
+	TotalDurationTitle = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(-29, 62);
 	TotalDurationTitle.SetSubTitle("TOTAL DURATION:", "FAF0C8");
 
-	BaseDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 168);
+	BaseDurationTitle = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(20, 148);
 	BaseDurationTitle.SetSubTitle("BASE DURATION:");
 
-	SquadDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 234);
+	SquadDurationTitle = Spawn(class'UIObjectiveListItem', self).InitObjectiveListItem(20, 214);
 	SquadDurationTitle.SetSubTitle("INFILTRATION MODIFIER:");
 
 	//InfiltrationMask = Spawn(class'UIMask', self).InitMask('TacticalMask', self);
 	//InfiltrationMask.SetPosition(6, 0);
 	//InfiltrationMask.SetSize(375, 450);
-		
-	MCName = 'SquadSelect_InfiltrationInfo';
-}
-
-simulated function MoveUnderResourceBar(bool NewValue)
-{
-	SetY(NewValue ? 100 : 0);
 }
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
@@ -95,7 +88,7 @@ static function string GetDaysAndHoursString(int iHours, optional string locStri
 		locString = "<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
 
 	ActualDays = iHours / 24;
-	ActualHours = iHours - 24 * ActualDays;
+	ActualHours = iHours % 24;
 
 	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 	ParamTag.IntValue0 = ActualDays;

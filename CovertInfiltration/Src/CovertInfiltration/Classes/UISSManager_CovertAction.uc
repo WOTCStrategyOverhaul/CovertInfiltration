@@ -42,7 +42,6 @@ simulated protected function PostScreenInit()
 	
 	RisksDisplay = SquadSelect.Spawn(class'UISS_InfiltrationPanel', SquadSelect);
 	RisksDisplay.InitRisks();
-	RisksDisplay.MoveUnderResourceBar(ShouldShowResourceBar());
 
 	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
 	CostSlots.PostAnySlotStateChanged = UpdateUIElements;

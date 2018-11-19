@@ -1,18 +1,17 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  (Integrated from Long War 2)
-//           Adapted for overhaul by ArcaneData
+//  AUTHOR:  (Integrated from Long War 2) Adapted for overhaul by ArcaneData
 //  PURPOSE: Item linking to X2ObjectiveListItem for displaying shadowed text
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UISS_InfiltrationItem extends UIPanel;
+class UIObjectiveListItem extends UIPanel;
 
 var UIPanel TitleIcon;
 
-simulated function UISS_InfiltrationItem InitObjectiveListItem(optional int InitX = 0, optional int InitY = 0)
+simulated function UIObjectiveListItem InitObjectiveListItem(optional int InitX = 0, optional int InitY = 0, optional name InitName)
 {
-	InitPanel(); 
+	InitPanel(InitName);
 
 	TitleIcon = Spawn(class'UIPanel', self).InitPanel('titleIcon');
 
@@ -21,12 +20,7 @@ simulated function UISS_InfiltrationItem InitObjectiveListItem(optional int Init
 	return self;
 }
 
-simulated function OnInit()
-{
-	super.OnInit();
-}
-
-simulated function SetTitleTest(string Text)
+simulated function SetTitleText(string Text)
 {
 	MC.FunctionString("setTitle", Text);
 }
