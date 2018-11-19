@@ -104,6 +104,7 @@ simulated protected function BuildConfiguration()
 	
 	Configuration.SetCanClickLaunchFn(CanClickLaunch);
 	Configuration.SetLaunchBehaviour(OnLaunch, false);
+	Configuration.EnableLaunchLabelReplacement(class'UICovertActions'.default.CovertActions_LaunchAction, "");
 	
 	Configuration.SetPreventOnSizeLimitedEvent(true);
 	Configuration.SetPreventOnSuperSizeEvent(true);
