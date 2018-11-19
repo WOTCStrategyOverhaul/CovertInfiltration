@@ -30,7 +30,7 @@ simulated function InitRisks()
 	TotalDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(0, 123.5);
 	BaseDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 196);
 	SquadDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(20, 262);
-	RisksLabel = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(26, 320);
+	RisksLabel = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(12, 310);
 
 	TotalDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(-29, 82);
 	TotalDurationTitle.SetSubTitle("TOTAL DURATION:", "FAF0C8");
@@ -54,28 +54,19 @@ simulated function MoveUnderResourceBar(bool NewValue)
 }
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
-{
-	/*
-	local array<string> Labels, Values; 
-	local string strRisks;
-	local int idx; 
+{	
+	local string strPlusDaysAndHours;
+	local int BaseDuration, SquadDuration;
 
-	CurrentAction.GetRisksStrings(Labels, Values);
-
-	for (idx = 0; idx < Labels.Length; idx++)
-	{
-		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], Screen.bIsIn3D) $ "</p>";
-	}
-
-	Text.SetHtmlText(strRisks);
-	*/
+	strPlusDaysAndHours = "+ <XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+	BaseDuration = 105;
+	SquadDuration = 62;
 
 	UpdateRisksLabel(CurrentAction);
 
-	TotalDurationDisplay.SetInfoValue("6 Days, 18 Hours", class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
-	BaseDurationDisplay.SetInfoValue("3 Days, 7 Hours", class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
-	SquadDurationDisplay.SetInfoValue("+2 Days, 11 Hours", class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
-	//RisksLabel.SetInfoValue("MODERATE - Soldier Wounded", class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+	SquadDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration, strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 }
 
 simulated function UpdateRisksLabel(XComGameState_CovertAction CurrentAction)
@@ -91,8 +82,27 @@ simulated function UpdateRisksLabel(XComGameState_CovertAction CurrentAction)
 		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], Screen.bIsIn3D) $ "</p>";
 	}
 
-	//Text.SetHtmlText(strRisks);
 	RisksLabel.SetText(strRisks);
+}
+
+static function string GetDaysAndHoursString(int iHours, optional string locString)
+{
+	local int ActualHours, ActualDays;
+	local XGParamTag ParamTag;
+	local string ReturnString;
+
+	if(locString == "")
+		locString = "<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+
+	ActualDays = iHours / 24;
+	ActualHours = iHours - 24 * ActualDays;
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.IntValue0 = ActualDays;
+	ParamTag.IntValue1 = ActualHours;
+	ReturnString = `XEXPAND.ExpandString(locString);
+
+	return ReturnString;
 }
 
 defaultproperties
