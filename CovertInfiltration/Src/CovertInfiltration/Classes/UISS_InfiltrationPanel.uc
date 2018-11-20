@@ -42,7 +42,7 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 	SquadDurationTitle.SetSubTitle("INFILTRATION MODIFIER:");
 
 	RisksTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 285);
-	RisksTitle.SetSubTitle("RISKS:");
+	RisksTitle.SetSubTitle("RISKS:", "FAF0C8");
 
 	RiskLabelsOffsetY = 32;
 	RiskLabels.AddItem(Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 316));
@@ -66,14 +66,14 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 {
-	local array<string> Labels, Values;
+	local array<string> RiskStrings;
 	local int idx;
 
-	CurrentAction.GetRisksStrings(Labels, Values);
+	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
 
-	for (idx = 0; idx < Labels.Length; idx++)
+	for (idx = 0; idx < RiskStrings.Length; idx++)
 	{
-		GetRiskLabel(idx).SetText(class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], Screen.bIsIn3D));
+		GetRiskLabel(idx).SetText(RiskStrings[idx]);
 	}
 }
 
