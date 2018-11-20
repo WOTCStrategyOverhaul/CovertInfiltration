@@ -658,6 +658,22 @@ simulated protected function int GetNumNeededSlotRows()
 simulated protected function UpdateRisks()
 {
 	local XComGameState_CovertAction CurrentAction;
+	local array<string> RiskStrings;
+	local string strRisks;
+	local int idx;
+	
+	CurrentAction = GetAction();
+	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
+
+	for (idx = 0; idx < RiskStrings.Length; idx++)
+	{
+		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(RiskStrings[idx], bIsIn3D) $ "</p>";
+	}
+
+	ActionRisksText.SetHtmlText(strRisks);
+	ActionRisksContainer.SetVisible(RiskStrings.Length > 0);
+/*
+	local XComGameState_CovertAction CurrentAction;
 	local array<string> Labels, Values; 
 	local string strRisks;
 	local int idx; 
@@ -672,6 +688,7 @@ simulated protected function UpdateRisks()
 
 	ActionRisksText.SetHtmlText(strRisks);
 	ActionRisksContainer.SetVisible(Labels.Length > 0);
+	*/
 }
 
 //////////////////////////////////////

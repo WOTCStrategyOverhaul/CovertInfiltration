@@ -57,11 +57,11 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	BaseDuration = 105;
 	SquadDuration = 62;
 
-	UpdateRiskLabels(CurrentAction);
-
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	SquadDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration, strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+
+	UpdateRiskLabels(CurrentAction);
 }
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)

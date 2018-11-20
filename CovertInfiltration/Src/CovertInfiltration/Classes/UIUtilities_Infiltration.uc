@@ -65,12 +65,16 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 {
 	local X2StrategyElementTemplateManager StratMgr;
 	local array<string> RiskStrings;
+	local array<CovertActionRisk> Risks;
 	local CovertActionRisk Risk;
 	local X2CovertActionRiskTemplate RiskTemplate;
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-	foreach CovertAction.Risks(Risk)
+	Risks = CovertAction.Risks;
+	Risks.Sort(SortRisksByDifficulty);
+
+	foreach Risks(Risk)
 	{
 		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));	
 
@@ -100,4 +104,14 @@ static function string GetRiskDifficultyColouredString(int RiskLevel)
 	}
 
 	return class'UIUtilities_Text'.static.GetColoredText(Text, ColorState);
+}
+
+static function int SortRisksByDifficulty(CovertActionRisk a, CovertActionRisk b)
+{
+	if (a.Level > b.Level)
+		return 1;
+	else if (a.Level < b.Level)
+		return -1;
+	else
+		return 0;
 }
