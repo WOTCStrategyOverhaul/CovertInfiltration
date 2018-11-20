@@ -5,11 +5,11 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIObjectiveListItem extends UIPanel;
+class UISS_InfiltrationItem extends UIPanel;
 
 var UIPanel TitleIcon;
 
-simulated function UIObjectiveListItem InitObjectiveListItem(optional int InitX = 0, optional int InitY = 0, optional name InitName)
+simulated function UISS_InfiltrationItem InitObjectiveListItem(optional name InitName, optional int InitX = 0, optional int InitY = 0)
 {
 	InitPanel(InitName);
 
