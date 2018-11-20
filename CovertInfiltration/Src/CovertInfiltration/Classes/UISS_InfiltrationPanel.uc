@@ -21,6 +21,14 @@ var array<UISS_InfiltrationItem> RiskLabels;
 
 var int RiskLabelsOffsetY;
 
+var localized string strTotalDurationTitle;
+var localized string strBaseDurationTitle;
+var localized string strSquadDurationTitle;
+var localized string strRisksTitle;
+
+var localized string strDaysAndHours;
+var localized string strPlusDaysAndHours;
+
 simulated function InitRisks(optional int InitWidth = 375, optional int InitHeight = 450, optional int InitX = -375, optional int InitY = 0)
 {
 	InitPanel('UISS_InfiltrationPanel');
@@ -33,16 +41,16 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 	SquadDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 247);
 
 	TotalDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, -29, 73);
-	TotalDurationTitle.SetSubTitle("TOTAL DURATION:", "FAF0C8");
+	TotalDurationTitle.SetSubTitle(default.strTotalDurationTitle, "FAF0C8");
 
 	BaseDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 153);
-	BaseDurationTitle.SetSubTitle("BASE DURATION:");
+	BaseDurationTitle.SetSubTitle(default.strBaseDurationTitle);
 
 	SquadDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 219);
-	SquadDurationTitle.SetSubTitle("INFILTRATION MODIFIER:");
+	SquadDurationTitle.SetSubTitle(default.strSquadDurationTitle);
 
 	RisksTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 285);
-	RisksTitle.SetSubTitle("RISKS:", "FAF0C8");
+	RisksTitle.SetSubTitle(default.strRisksTitle, "FAF0C8");
 
 	RiskLabelsOffsetY = 32;
 	RiskLabels.AddItem(Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 316));
@@ -50,16 +58,18 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {	
-	local string strPlusDaysAndHours;
+	//local XComGameState_HeadquartersXCom XComHQ;
 	local int BaseDuration, SquadDuration;
 
-	strPlusDaysAndHours = "+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
-	BaseDuration = 105;
-	SquadDuration = 62;
+	//XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	BaseDuration = CurrentAction.HoursToComplete;
+	//SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad); // TODO: make this a function in the calculator?
+	SquadDuration = 22;
 
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
-	SquadDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration, strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+	SquadDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration, default.strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 
 	UpdateRiskLabels(CurrentAction);
 }
@@ -84,7 +94,7 @@ static function string GetDaysAndHoursString(int iHours, optional string locStri
 	local string ReturnString;
 
 	if(locString == "")
-		locString = "<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+		locString = default.strDaysAndHours;
 
 	ActualDays = iHours / 24;
 	ActualHours = iHours % 24;

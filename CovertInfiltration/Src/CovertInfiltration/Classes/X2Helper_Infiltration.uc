@@ -14,7 +14,7 @@ var config int PERSONNEL_DETER;
 
 var config array<int> RANKS_DETER;
 
-function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
+static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
 	local int					TotalInfiltration;
@@ -28,7 +28,7 @@ function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 	return TotalInfiltration;
 }
 
-function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+static function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
@@ -82,7 +82,7 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	return UnitInfiltration;
 }
 
-function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
+static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
 	local int					TotalDeterrence;
@@ -96,7 +96,7 @@ function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 	return TotalDeterrence;
 }
 
-function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
