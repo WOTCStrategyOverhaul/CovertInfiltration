@@ -16,7 +16,10 @@ var UISS_InfiltrationItem BaseDurationDisplay;
 var UISS_InfiltrationItem SquadDurationTitle;
 var UISS_InfiltrationItem SquadDurationDisplay;
 
-var UISS_InfiltrationItem RisksLabel;
+var UISS_InfiltrationItem RisksTitle;
+var array<UISS_InfiltrationItem> RiskLabels;
+
+var int RiskLabelsOffsetY;
 
 simulated function InitRisks(optional int InitWidth = 375, optional int InitHeight = 450, optional int InitX = -375, optional int InitY = 0)
 {
@@ -26,11 +29,10 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 	SetPosition(InitX, InitY);
 
 	TotalDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 0, 107.5);
-	BaseDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 181);
-	SquadDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 247);
-	RisksLabel = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 12, 295);
+	BaseDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 181);
+	SquadDurationDisplay = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 247);
 
-	TotalDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, -29, 67);
+	TotalDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, -29, 73);
 	TotalDurationTitle.SetSubTitle("TOTAL DURATION:", "FAF0C8");
 
 	BaseDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 153);
@@ -38,6 +40,12 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 
 	SquadDurationTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 219);
 	SquadDurationTitle.SetSubTitle("INFILTRATION MODIFIER:");
+
+	RisksTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 285);
+	RisksTitle.SetSubTitle("RISKS:");
+
+	RiskLabelsOffsetY = 32;
+	RiskLabels.AddItem(Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 316));
 }
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
@@ -45,31 +53,28 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	local string strPlusDaysAndHours;
 	local int BaseDuration, SquadDuration;
 
-	strPlusDaysAndHours = "+ <XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+	strPlusDaysAndHours = "+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
 	BaseDuration = 105;
 	SquadDuration = 62;
 
-	UpdateRisksLabel(CurrentAction);
+	UpdateRiskLabels(CurrentAction);
 
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	SquadDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration, strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 }
 
-simulated function UpdateRisksLabel(XComGameState_CovertAction CurrentAction)
+simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 {
-	local array<string> Labels, Values; 
-	local string strRisks;
-	local int idx; 
+	local array<string> Labels, Values;
+	local int idx;
 
 	CurrentAction.GetRisksStrings(Labels, Values);
 
 	for (idx = 0; idx < Labels.Length; idx++)
 	{
-		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], Screen.bIsIn3D) $ "</p>";
+		GetRiskLabel(idx).SetText(class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], Screen.bIsIn3D));
 	}
-
-	RisksLabel.SetText(strRisks);
 }
 
 static function string GetDaysAndHoursString(int iHours, optional string locString)
@@ -90,6 +95,20 @@ static function string GetDaysAndHoursString(int iHours, optional string locStri
 	ReturnString = `XEXPAND.ExpandString(locString);
 
 	return ReturnString;
+}
+
+simulated function UISS_InfiltrationItem GetRiskLabel(int index)
+{
+	local UISS_InfiltrationItem newLabel;
+
+	if (index < RiskLabels.Length)
+		return RiskLabels[index];
+
+	newLabel = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, RiskLabels[RiskLabels.Length - 1].X, RiskLabels[RiskLabels.Length - 1].Y + RiskLabelsOffsetY);
+
+	RiskLabels.AddItem(newLabel);
+
+	return newLabel;
 }
 
 defaultproperties
