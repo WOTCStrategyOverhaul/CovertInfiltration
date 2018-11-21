@@ -22,22 +22,21 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 	TotalInfiltration = 0;
 	foreach Soldiers(UnitRef)
 	{
-		TotalInfiltration += GetSoldierInfiltration(Soldiers, UnitRef);
+		TotalInfiltration += GetSoldierInfiltration(UnitRef);
+		`log("CI: New Infiltration Value is " $ string(TotalInfiltration));
 	}
 
 	return TotalInfiltration;
 }
 
-static function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
 	local array<XComGameState_Item>	CurrentInventory;
-	local XComGameState_Item		InventoryItem, MultiplierItem;
-	local int						UnitInfiltration;
-	local int						TotalInfil;
-	local name						ItemCategory, MultCategory;
-	local float						Multiplier;
+	local XComGameState_Item		InventoryItem;
+	local X2InfiltrationModTemplate Template;
+	local float						UnitInfiltration; // using float until value is returned to prevent casting inaccuracy
 
 	local X2InfiltrationModTemplateManager InfilMgr;
 	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
@@ -57,29 +56,44 @@ static function int GetSoldierInfiltration(array<StateObjectReference> Soldiers,
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
-		{
-			TotalInfil = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
-			ItemCategory = InventoryItem.GetMyTemplate().ItemCat;
+		`log("CI: Item being checked in inventory.");
+		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
 
-			foreach CurrentInventory(MultiplierItem)
-			{
-				if(InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()) != none)
-				{
-					MultCategory = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).MultCategory;
-					Multiplier = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).InfilMultiplier;
+		if (Template == none)
+			continue;
 
-					if(MultCategory == ItemCategory)
-					{
-						TotalInfil = TotalInfil * Multiplier;
-					}
-				}
-			}
-			UnitInfiltration += TotalInfil;
-		}
+		UnitInfiltration += (float(Template.InfilModifier) * GetUnitInfiltrationModifierForCategory(UnitState, Template.MultCategory));
+		`log("CI: Infiltration Item found - " $ string(Template.InfilModifier) $ "    -    " $ string(GetUnitInfiltrationModifierForCategory(UnitState, Template.MultCategory)));
 	}
 
-	return UnitInfiltration;
+	return int(UnitInfiltration);
+}
+
+static function float GetUnitInfiltrationModifierForCategory(XComGameState_Unit Unit, name category)
+{
+	local float InfiltrationModifier;
+	local array<XComGameState_Item>	CurrentInventory;
+	local XComGameState_Item InventoryItem;
+	local X2InfiltrationModTemplate Template;
+	local X2InfiltrationModTemplateManager InfiltrationManager;
+
+	InfiltrationManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+
+	InfiltrationModifier = 1.0;
+
+	CurrentInventory = Unit.GetAllInventoryItems();
+	foreach CurrentInventory(InventoryItem)
+	{
+		Template = InfiltrationManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
+
+		if (Template == none)
+			continue;
+
+		if (Template.MultCategory == category)
+			InfiltrationModifier *= Template.InfilModifier;
+	}
+
+	return InfiltrationModifier;
 }
 
 static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)

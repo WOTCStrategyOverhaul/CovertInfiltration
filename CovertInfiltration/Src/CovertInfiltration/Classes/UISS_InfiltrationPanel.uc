@@ -58,14 +58,15 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {	
-	//local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersXCom XComHQ;
 	local int BaseDuration, SquadDuration;
 
-	//XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
 	BaseDuration = CurrentAction.HoursToComplete;
-	//SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad); // TODO: make this a function in the calculator?
-	SquadDuration = 22;
+
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad); // TODO: make this a function in the calculator?
+	//SquadDuration = 22;
 
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
