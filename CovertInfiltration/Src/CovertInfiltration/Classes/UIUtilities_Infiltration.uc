@@ -106,7 +106,7 @@ static function string GetRiskDifficultyColouredString(int RiskLevel)
 	return class'UIUtilities_Text'.static.GetColoredText(Text, ColorState);
 }
 
-static function int SortRisksByDifficulty(CovertActionRisk a, CovertActionRisk b)
+protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertActionRisk b)
 {
 	if (a.Level > b.Level)
 		return 1;

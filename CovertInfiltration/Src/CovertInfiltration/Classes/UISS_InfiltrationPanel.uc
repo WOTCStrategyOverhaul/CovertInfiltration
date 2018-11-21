@@ -50,7 +50,7 @@ simulated function InitRisks(optional int InitWidth = 375, optional int InitHeig
 	SquadDurationTitle.SetSubTitle(default.strSquadDurationTitle);
 
 	RisksTitle = Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 20, 285);
-	RisksTitle.SetSubTitle(default.strRisksTitle, "FAF0C8");
+	RisksTitle.SetSubTitle(class'UICovertActions'.default.CovertActions_RiskTitle, "FAF0C8");
 
 	RiskLabelsOffsetY = 32;
 	RiskLabels.AddItem(Spawn(class'UISS_InfiltrationItem', self).InitObjectiveListItem(, 23, 316));

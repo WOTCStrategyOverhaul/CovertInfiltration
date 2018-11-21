@@ -20,7 +20,6 @@ strSlotRequiredPrefix="Required:"
 strTotalDurationTitle="TOTAL DURATION:";
 strBaseDurationTitle="BASE DURATION:";
 strSquadDurationTitle="INFILTRATION MODIFIER:";
-strRisksTitle="RISKS:";
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
 
