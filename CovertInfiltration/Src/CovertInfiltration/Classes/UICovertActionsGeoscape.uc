@@ -672,23 +672,6 @@ simulated protected function UpdateRisks()
 
 	ActionRisksText.SetHtmlText(strRisks);
 	ActionRisksContainer.SetVisible(RiskStrings.Length > 0);
-/*
-	local XComGameState_CovertAction CurrentAction;
-	local array<string> Labels, Values; 
-	local string strRisks;
-	local int idx; 
-
-	CurrentAction = GetAction();
-	CurrentAction.GetRisksStrings(Labels, Values);
-
-	for (idx = 0; idx < Labels.Length; idx++)
-	{
-		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(Values[idx] $ " - " $ Labels[idx], bIsIn3D) $ "</p>";
-	}
-
-	ActionRisksText.SetHtmlText(strRisks);
-	ActionRisksContainer.SetVisible(Labels.Length > 0);
-	*/
 }
 
 //////////////////////////////////////
