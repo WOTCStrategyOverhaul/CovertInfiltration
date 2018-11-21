@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek and ArcaneData
-//  PURPOSE: Displays covert action risks on the squad select screen
+//  AUTHOR:  ArcaneData
+//  PURPOSE: Displays covert action info on the squad select screen
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -65,8 +65,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 	BaseDuration = CurrentAction.HoursToComplete;
 
-	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad); // TODO: make this a function in the calculator?
-	//SquadDuration = 22;
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
 
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);

@@ -23,7 +23,6 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 	foreach Soldiers(UnitRef)
 	{
 		TotalInfiltration += GetSoldierInfiltration(UnitRef);
-		`log("CI: New Infiltration Value is " $ string(TotalInfiltration));
 	}
 
 	return TotalInfiltration;
@@ -56,22 +55,20 @@ static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		`log("CI: Item being checked in inventory.");
 		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
 
 		if (Template == none)
 			continue;
 
-		UnitInfiltration += (float(Template.InfilModifier) * GetUnitInfiltrationModifierForCategory(UnitState, Template.MultCategory));
-		`log("CI: Infiltration Item found - " $ string(Template.InfilModifier) $ "    -    " $ string(GetUnitInfiltrationModifierForCategory(UnitState, Template.MultCategory)));
+		UnitInfiltration += (float(Template.InfilModifier) * GetUnitInfiltrationMultiplierForCategory(UnitState, Template.MultCategory));
 	}
 
 	return int(UnitInfiltration);
 }
 
-static function float GetUnitInfiltrationModifierForCategory(XComGameState_Unit Unit, name category)
+static function float GetUnitInfiltrationMultiplierForCategory(XComGameState_Unit Unit, name category)
 {
-	local float InfiltrationModifier;
+	local float InfiltrationMultiplier;
 	local array<XComGameState_Item>	CurrentInventory;
 	local XComGameState_Item InventoryItem;
 	local X2InfiltrationModTemplate Template;
@@ -79,7 +76,7 @@ static function float GetUnitInfiltrationModifierForCategory(XComGameState_Unit 
 
 	InfiltrationManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
-	InfiltrationModifier = 1.0;
+	InfiltrationMultiplier = 1.0;
 
 	CurrentInventory = Unit.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
@@ -90,10 +87,10 @@ static function float GetUnitInfiltrationModifierForCategory(XComGameState_Unit 
 			continue;
 
 		if (Template.MultCategory == category)
-			InfiltrationModifier *= Template.InfilModifier;
+			InfiltrationMultiplier *= Template.InfilMultiplier;
 	}
 
-	return InfiltrationModifier;
+	return InfiltrationMultiplier;
 }
 
 static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
