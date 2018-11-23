@@ -16,6 +16,13 @@ strRisksHeader=Risks
 strSlotOptionalNote="Optional"
 strSlotRequiredPrefix="Required:"
 
+[UISS_InfiltrationPanel]
+strTotalDurationTitle="TOTAL DURATION:";
+strBaseDurationTitle="BASE DURATION:";
+strSquadDurationTitle="INFILTRATION MODIFIER:";
+strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
+
 [CivilianDisguise X2ArmorTemplate]
 FriendlyName="Civilian Disguise"
 FriendlyNamePlural="Civilian Disguises"

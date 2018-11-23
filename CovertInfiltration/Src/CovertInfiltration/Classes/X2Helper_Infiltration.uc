@@ -14,7 +14,7 @@ var config int PERSONNEL_DETER;
 
 var config array<int> RANKS_DETER;
 
-function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
+static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
 	local int					TotalInfiltration;
@@ -22,22 +22,20 @@ function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 	TotalInfiltration = 0;
 	foreach Soldiers(UnitRef)
 	{
-		TotalInfiltration += GetSoldierInfiltration(Soldiers, UnitRef);
+		TotalInfiltration += GetSoldierInfiltration(UnitRef);
 	}
 
 	return TotalInfiltration;
 }
 
-function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
 	local array<XComGameState_Item>	CurrentInventory;
-	local XComGameState_Item		InventoryItem, MultiplierItem;
-	local int						UnitInfiltration;
-	local int						TotalInfil;
-	local name						ItemCategory, MultCategory;
-	local float						Multiplier;
+	local XComGameState_Item		InventoryItem;
+	local X2InfiltrationModTemplate Template;
+	local float						UnitInfiltration; // using float until value is returned to prevent casting inaccuracy
 
 	local X2InfiltrationModTemplateManager InfilMgr;
 	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
@@ -57,32 +55,45 @@ function int GetSoldierInfiltration(array<StateObjectReference> Soldiers, StateO
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
-		{
-			TotalInfil = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).InfilModifier;
-			ItemCategory = InventoryItem.GetMyTemplate().ItemCat;
+		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
 
-			foreach CurrentInventory(MultiplierItem)
-			{
-				if(InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()) != none)
-				{
-					MultCategory = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).MultCategory;
-					Multiplier = InfilMgr.GetInfilTemplateFromItem(MultiplierItem.GetMyTemplateName()).InfilMultiplier;
+		if (Template == none)
+			continue;
 
-					if(MultCategory == ItemCategory)
-					{
-						TotalInfil = TotalInfil * Multiplier;
-					}
-				}
-			}
-			UnitInfiltration += TotalInfil;
-		}
+		UnitInfiltration += (float(Template.InfilModifier) * GetUnitInfiltrationMultiplierForCategory(UnitState, Template.MultCategory));
 	}
 
-	return UnitInfiltration;
+	return int(UnitInfiltration);
 }
 
-function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
+static function float GetUnitInfiltrationMultiplierForCategory(XComGameState_Unit Unit, name category)
+{
+	local float InfiltrationMultiplier;
+	local array<XComGameState_Item>	CurrentInventory;
+	local XComGameState_Item InventoryItem;
+	local X2InfiltrationModTemplate Template;
+	local X2InfiltrationModTemplateManager InfiltrationManager;
+
+	InfiltrationManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+
+	InfiltrationMultiplier = 1.0;
+
+	CurrentInventory = Unit.GetAllInventoryItems();
+	foreach CurrentInventory(InventoryItem)
+	{
+		Template = InfiltrationManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
+
+		if (Template == none)
+			continue;
+
+		if (Template.MultCategory == category)
+			InfiltrationMultiplier *= Template.InfilMultiplier;
+	}
+
+	return InfiltrationMultiplier;
+}
+
+static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
 	local int					TotalDeterrence;
@@ -96,7 +107,7 @@ function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 	return TotalDeterrence;
 }
 
-function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
+static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
 	local XComGameState_Unit		UnitState;
