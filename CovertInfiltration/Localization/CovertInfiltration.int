@@ -17,27 +17,8 @@ strSlotOptionalNote="Optional"
 strSlotRequiredPrefix="Required:"
 
 [UISS_InfiltrationPanel]
-strTotalDurationTitle="TOTAL DURATION:";
-strBaseDurationTitle="BASE DURATION:";
-strSquadDurationTitle="INFILTRATION MODIFIER:";
-strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
-strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours";
-
-[CivilianDisguise X2ArmorTemplate]
-FriendlyName="Civilian Disguise"
-FriendlyNamePlural="Civilian Disguises"
-BriefSummary="This basic armor consists of improvised protection cobbled together from salvage and Resistance arms caches. It provides minimal protection against ADVENT and alien weaponry."
-TacticalText="<Bullet/> All soldiers receive Kevlar Armor as part of their basic kit.\n<Bullet/> Research can give us access to better armor."
-
-[AdventDisguise X2ArmorTemplate]
-FriendlyName="ADVENT Disguise"
-FriendlyNamePlural="ADVENT Disguises"
-BriefSummary="Using scavenged plates of ADVENT armor, this suit provides increased protection and additional inventory capacity for our soldiers."
-TacticalText="<Bullet/> Predator Armor is a mid-weight armor based on ADVENT salvage.\n<Bullet/> As a medium-class armor, it provides a slot for one additional inventory item."
-
-[HolographicDisguise X2ArmorTemplate]
-FriendlyName="Holographic Disguise"
-FriendlyNamePlural="Holographic Disguises"
-BriefSummary="Our new mastery of the alien's Elerium technology has lead us to the ultimate in battle armor: the Warden Armor. Elerium powered armor provides unprecedented survivability and versatility in the battle against increasingly powerful alien enemies."
-TacticalText="<Bullet/> Warden Armor is the best medium-class armor available.\n<Bullet/> Warden Armor has 2 inventory item slots."
-
+strTotalDurationTitle="TOTAL DURATION:"
+strBaseDurationTitle="BASE DURATION:"
+strSquadDurationTitle="INFILTRATION MODIFIER:"
+strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"

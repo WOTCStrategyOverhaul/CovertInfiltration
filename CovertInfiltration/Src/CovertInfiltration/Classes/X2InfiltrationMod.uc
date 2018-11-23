@@ -31,7 +31,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	{
 		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(Modifier.Item));
 		
-		Template.InfilModifier = Modifier.HoursAdded;
+		Template.HoursAdded = Modifier.HoursAdded;
 		Template.Deterrence = Modifier.RiskReductionPercent;
 		Template.MultCategory = Modifier.MultiplierCategory;
 		Template.InfilMultiplier = Modifier.InfilMultiplier;
