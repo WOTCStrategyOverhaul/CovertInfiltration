@@ -32,6 +32,9 @@ var UIText ActionRewardHeader;
 var UIPanel ActionRewardTextBG;
 var UIText ActionRewardText;
 
+// UI - progress bar
+var UIProgressBar ActionProgressBar;
+
 // UI - action slots
 var UIPanel ActionSlotsContainer;
 var UIImage ActionSlotsHeaderBG;
@@ -208,8 +211,19 @@ simulated protected function BuildActionInfoBottom()
 	ActionInfoBottomContainer.SetPosition(0, 740);
 	ActionInfoBottomContainer.SetSize(960, 210);
 
+	BuildActionProgressBar();
 	BuildActionReward();
 	BuildActionSlots();
+}
+
+simulated protected function BuildActionProgressBar()
+{
+	ActionProgressBar = Spawn(class'UIProgressBar', ActionInfoBottomContainer);
+	ActionProgressBar.bAnimateOnInit = false;
+	ActionProgressBar.InitProgressBar('ActionProgressBar');
+	ActionProgressBar.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN - 50);
+	ActionProgressBar.SetSize(ActionInfoBottomContainer.Width + UI_INFO_BOX_MARGIN * 2, 40);
+	ActionProgressBar.SetColor(class'UIUtilities_Colors'.const.COVERT_OPS_HTML_COLOR);
 }
 
 simulated protected function BuildActionReward()
@@ -528,6 +542,7 @@ simulated function UpdateData()
 	FocusCameraOnCurrentAction();
 	ConfirmButton.SetDisabled(!CanOpenLoadout());
 	UpdateCovertActionInfo();
+	UpdateProgressBar();
 }
 
 simulated function bool CanOpenLoadout()
@@ -672,6 +687,27 @@ simulated protected function UpdateRisks()
 
 	ActionRisksText.SetHtmlText(strRisks);
 	ActionRisksContainer.SetVisible(RiskStrings.Length > 0);
+}
+
+simulated protected function UpdateProgressBar()
+{
+	local XComGameState_CovertAction CurrentAction;
+	local float TotalDuration, RemainingDuration;
+
+	CurrentAction = GetAction();
+
+	if (CurrentAction.bStarted)
+	{
+		TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CurrentAction.EndDateTime, CurrentAction.StartDateTime);
+		RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CurrentAction.EndDateTime, CurrentAction.GetCurrentTime());
+
+		ActionProgressBar.Show();
+		ActionProgressBar.SetPercent(1 - RemainingDuration / TotalDuration);
+	}
+	else
+	{
+		ActionProgressBar.Hide();
+	}
 }
 
 //////////////////////////////////////
