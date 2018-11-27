@@ -16,6 +16,11 @@ struct InfiltrationModifier
 	var float RiskReductionPercent;
 	var name MultiplierCategory;
 	var float InfilMultiplier;
+
+	structdefaultproperties
+    {
+        InfilMultiplier=1.0
+    }
 };
 
 var config array<InfiltrationModifier> InfilModifiers;
@@ -25,7 +30,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 	local InfiltrationModifier Modifier;
 	local X2InfiltrationModTemplate Template;
-	local name InfilModName;
 	
 	foreach default.InfilModifiers(Modifier)
 	{
