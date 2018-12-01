@@ -60,7 +60,7 @@ static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 		if (Template == none)
 			continue;
 
-		UnitInfiltration += (float(Template.InfilModifier) * GetUnitInfiltrationMultiplierForCategory(UnitState, Template.MultCategory));
+		UnitInfiltration += (float(Template.HoursAdded) * GetUnitInfiltrationMultiplierForCategory(UnitState, InventoryItem.GetMyTemplate().ItemCat));
 	}
 
 	return int(UnitInfiltration);
