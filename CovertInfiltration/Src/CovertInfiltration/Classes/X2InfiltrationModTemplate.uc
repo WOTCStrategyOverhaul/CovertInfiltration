@@ -27,7 +27,7 @@ function bool ValidateTemplate(out string strError)
 		return false;
 	}
 
-	return super.ValidateTemplate(strError);
+	return true;
 }
 
 defaultproperties
