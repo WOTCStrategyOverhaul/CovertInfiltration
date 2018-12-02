@@ -51,6 +51,9 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_UIStrategyMapItem_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_SlotInfo.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_ResourcesHook.uc">
       <SubType>Content</SubType>
     </Content>
