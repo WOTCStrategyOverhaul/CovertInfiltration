@@ -30,7 +30,7 @@ simulated function InitSlot(float InitWidth)
 
 simulated function UpdateFromInfo(UICovertActionsGeoscape_SlotInfo SlotInfo)
 {
-	UpdateDescription(GetDescriptionFromInfo(SlotInfo), SlotInfo.CanAfford());
+	UpdateDescription(GetDescriptionFromInfo(SlotInfo), SlotInfo.CanAfford(), SlotInfo.ColourDescription);
 	UpdateReward(SlotInfo.GetReward());
 }
 
@@ -63,8 +63,7 @@ simulated function string GetDescriptionFromInfo(UICovertActionsGeoscape_SlotInf
 	{
 		CostScalars.Length = 0; // Prevent compiler warning as we want empty array
 		
-		// TODO: Disable GetStrategyCostString's colouring
-		strDescription = class'UIUtilities_Strategy'.static.GetStrategyCostString(SlotInfo.CostSlotInfo.Cost, CostScalars);
+		strDescription = class'UIUtilities_Infiltration'.static.GetStrategyCostStringNoColours(SlotInfo.CostSlotInfo.Cost, CostScalars);
 		strPrefix = class'UICovertActionStaffSlot'.default.m_strOptionalSlot;
 	}
 
@@ -76,12 +75,16 @@ simulated function string GetDescriptionFromInfo(UICovertActionsGeoscape_SlotInf
 	return strDescription;
 }
 
-simulated function UpdateDescription(string strDescription, bool CanFullfil)
+simulated function UpdateDescription(string strDescription, bool CanFullfil, optional bool ColourText = true)
 {
 	local EUIState eState;
-	eState = CanFullfil ? eUIState_Normal : eUIState_Bad;
 	
-	strDescription = class'UIUtilities_Text'.static.GetColoredText(strDescription, eState);
+	if (ColourText)
+	{
+		eState = CanFullfil ? eUIState_Normal : eUIState_Bad;
+		strDescription = class'UIUtilities_Text'.static.GetColoredText(strDescription, eState);
+	}
+
 	Description.SetText(strDescription);
 }
 

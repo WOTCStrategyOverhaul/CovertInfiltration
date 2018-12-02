@@ -1,6 +1,18 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This is a information holder for a single slot on the UICovertActionsGeoscape
+//           screen which handles both personnel and cost slots (but not both at the 
+//           same time).
+//           Separate class to simply logic in UICovertActionsGeoscape (since the info is
+//           needed in various places)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UICovertActionsGeoscape_SlotInfo extends Object;
 
 var bool ShowPrefix; // Show "REQUIRED:" or "OPTIONAL:" prefix. Used for ongoing CAs
+var bool ColourDescription;
 
 var protectedwrite bool IsStaffSlot;
 var protectedwrite CovertActionStaffSlot StaffSlotInfo;

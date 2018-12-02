@@ -636,6 +636,7 @@ simulated protected function PrepareSlotsInfo()
 
 		SlotInfo = new class'UICovertActionsGeoscape_SlotInfo';
 		SlotInfo.ShowPrefix = !CurrentAction.bStarted;
+		SlotInfo.ColourDescription = !CurrentAction.bStarted;
 		SlotInfo.SetStaffSlot(StaffSlot);
 
 		CurrentSlots.AddItem(SlotInfo);
@@ -651,6 +652,7 @@ simulated protected function PrepareSlotsInfo()
 
 		SlotInfo = new class'UICovertActionsGeoscape_SlotInfo';
 		SlotInfo.ShowPrefix = !CurrentAction.bStarted;
+		SlotInfo.ColourDescription = !CurrentAction.bStarted;
 		SlotInfo.SetCostSlot(CostSlot);
 
 		CurrentSlots.AddItem(SlotInfo);
