@@ -80,6 +80,11 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 	local int idx;
 
 	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
+	
+	for (idx = 0; idx < RiskLabels.Length; idx++)
+	{
+		GetRiskLabel(idx).SetText("");
+	}
 
 	for (idx = 0; idx < RiskStrings.Length; idx++)
 	{
