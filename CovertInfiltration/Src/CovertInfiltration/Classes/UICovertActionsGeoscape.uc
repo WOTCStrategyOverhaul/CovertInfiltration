@@ -17,7 +17,14 @@ var UIPanel RightPane;
 
 // UI - action info (top)
 var UIPanel ActionInfoTopContainer;
-var UIBGBox ActionInfoBG;
+
+// UI - action image
+//var UIImage ActionImageBorder;
+var UIImage ActionImage;
+
+// UI - action brief
+var UIPanel ActionBriefContainer;
+var UIBGBox ActionBriefBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
 var UIText ActionDescription;
@@ -39,9 +46,10 @@ var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
 var UIList ActionSlotRows;
 
-// UI - action image
-var UIImage ActionImageBorder;
-var UIImage ActionImage;
+// UI - faction info
+var UIImage FactionInfoBorder;
+var UIImage FactionLeaderImage;
+var UIMask FactionLeaderImageMask;
 
 // UI - buttons
 var UIPanel ButtonGroupWrap;
@@ -175,29 +183,56 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
 
-	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoTopContainer);
-	ActionInfoBG.bAnimateOnInit = false;
-	ActionInfoBG.InitBG('ActionInfoBG');
-	ActionInfoBG.SetAlpha(60);
-	ActionInfoBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
-	ActionInfoBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
+	BuildActionImage();
+	BuildActionBrief();
+}
 
-	ActionDisplayNameBG = Spawn(class'UIImage', ActionInfoTopContainer);
+simulated protected function BuildActionImage()
+{
+	/*ActionImageBorder = Spawn(class'UIImage', ActionInfoTopContainer);
+	ActionImageBorder.bAnimateOnInit = false;
+	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
+	ActionImageBorder.SetPosition(-10, -2);
+	ActionImageBorder.SetSize(320, 172);*/
+
+	ActionImage = Spawn(class'UIImage', ActionInfoTopContainer);
+	ActionImage.bAnimateOnInit = false;
+	ActionImage.InitImage('ActionImage');
+	ActionImage.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionImage.SetSize(384, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
+}
+
+simulated protected function BuildActionBrief()
+{
+	ActionBriefContainer = Spawn(class'UIPanel', ActionInfoTopContainer);
+	ActionBriefContainer.bAnimateOnInit = false;
+	ActionBriefContainer.InitPanel('ActionBriefContainer');
+	ActionBriefContainer.SetPosition(390, 0);
+	ActionBriefContainer.SetSize(ActionInfoTopContainer.Width - 390, ActionInfoTopContainer.Height);
+
+	ActionBriefBG = Spawn(class'UIBGBox', ActionBriefContainer);
+	ActionBriefBG.bAnimateOnInit = false;
+	ActionBriefBG.InitBG('ActionBriefBG');
+	ActionBriefBG.SetAlpha(60);
+	ActionBriefBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionBriefBG.SetSize(ActionBriefContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionBriefContainer.Height + UI_INFO_BOX_MARGIN * 2);
+
+	ActionDisplayNameBG = Spawn(class'UIImage', ActionBriefContainer);
 	ActionDisplayNameBG.bAnimateOnInit = false;
 	ActionDisplayNameBG.InitImage('ActionDisplayNameBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
 	ActionDisplayNameBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
-	ActionDisplayNameBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
+	ActionDisplayNameBG.SetSize(ActionBriefContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
 
-	ActionDisplayName = Spawn(class'UIText', ActionInfoTopContainer);
+	ActionDisplayName = Spawn(class'UIText', ActionBriefContainer);
 	ActionDisplayName.bAnimateOnInit = false;
 	ActionDisplayName.InitText('ActionDisplayName');
-	ActionDisplayName.SetSize(ActionInfoTopContainer.Width, 55);
+	ActionDisplayName.SetSize(ActionBriefContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UIText', ActionInfoTopContainer);
+	ActionDescription = Spawn(class'UIText', ActionBriefContainer);
 	ActionDescription.bAnimateOnInit = false;
 	ActionDescription.InitText('ActionDescription');
 	ActionDescription.SetPosition(0, 50);
-	ActionDescription.SetSize(ActionInfoTopContainer.Width, ActionInfoTopContainer.Height - ActionDescription.Y);
+	ActionDescription.SetSize(ActionBriefContainer.Width, ActionBriefContainer.Height - ActionDescription.Y);
 }
 
 simulated protected function BuildActionInfoBottom()
@@ -291,24 +326,32 @@ simulated protected function BuildRightPane()
 	RightPane.SetPosition(1500, 0); // RightPane spans the entire viewport vertically
 	RightPane.SetSize(300, 1080);
 
-	BuildActionImage();
+	BuildFactionInfo();
 	BuildButtons();
 	BuildRisks();
 }
 
-simulated protected function BuildActionImage()
+simulated protected function BuildFactionInfo()
 {
-	ActionImageBorder = Spawn(class'UIImage', RightPane);
-	ActionImageBorder.bAnimateOnInit = false;
-	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
-	ActionImageBorder.SetPosition(-10, 148);
-	ActionImageBorder.SetSize(320, 172);
+	FactionLeaderImage = Spawn(class'UIImage', RightPane);
+	FactionLeaderImage.bAnimateOnInit = false;
+	FactionLeaderImage.InitImage('FactionLeaderImage');
+	FactionLeaderImage.SetPosition(-8, 150);
+	FactionLeaderImage.SetSize(316,158);
 
-	ActionImage = Spawn(class'UIImage', RightPane);
-	ActionImage.bAnimateOnInit = false;
-	ActionImage.InitImage('ActionImage');
-	ActionImage.SetPosition(0, 150);
-	ActionImage.SetSize(300, 168);
+	FactionLeaderImageMask = Spawn(class'UIMask', RightPane);
+	FactionLeaderImageMask.InitMask('FactionLeaderImageMask', FactionLeaderImage);
+	FactionLeaderImageMask.SetPosition(0, 150);
+	FactionLeaderImageMask.SetSize(RightPane.Width, FactionLeaderImage.Height);
+
+	// Temp above to compare sizes
+	FactionInfoBorder = Spawn(class'UIImage', RightPane);
+	FactionInfoBorder.bAnimateOnInit = false;
+	FactionInfoBorder.InitImage('FactionInfoBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
+	FactionInfoBorder.SetPosition(-10, 148);
+	FactionInfoBorder.SetSize(320, 172);
+
+
 }
 
 simulated protected function BuildButtons()
@@ -544,6 +587,8 @@ simulated function UpdateCovertActionInfo()
 {
 	local XComGameState_CovertAction CurrentAction;
 	CurrentAction = GetAction();
+
+	FactionLeaderImage.LoadImage(CurrentAction.GetFaction().GetLeaderImage());
 
 	ActionImage.LoadImage(CurrentAction.GetImage());
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
