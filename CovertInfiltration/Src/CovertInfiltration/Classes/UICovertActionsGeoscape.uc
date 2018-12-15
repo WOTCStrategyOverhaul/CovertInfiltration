@@ -591,21 +591,43 @@ simulated protected function UpdateSlots()
 	local UICovertActionsGeoscape_SlotInfo SlotInfo;
 	local UICovertActionsGeoscape_SlotRow Row;
 	local UICovertActionsGeoscape_Slot SlotUI;
-	local int iCurrentSlot;
+	local int iCurrentSlot, iCurrentRow;
+	local int TotalNeededRows;
 
-	PrepareSlotsUI();
+	TotalNeededRows = FCeil(CurrentSlots.Length / float(ACTION_SLOTS_PER_ROW));
 
+	// Show/Spawn rows we need
+	for (iCurrentRow = 0; iCurrentRow < TotalNeededRows; iCurrentRow++)
+	{
+		if (iCurrentRow == ActionSlotRows.GetItemCount())
+		{
+			Row = Spawn(class'UICovertActionsGeoscape_SlotRow', ActionSlotRows.ItemContainer);
+			Row.NumSlots = ACTION_SLOTS_PER_ROW;
+			Row.InitRow();
+			Row.SetWidth(ActionSlotRows.Width);
+			Row.CreateSlots();
+		}
+
+		ActionSlotRows.GetItem(iCurrentRow).Show();
+	}
+
+	// Hide extra rows
+	for (iCurrentRow = TotalNeededRows; iCurrentRow < ActionSlotRows.GetItemCount(); iCurrentRow++)
+	{
+		ActionSlotRows.GetItem(iCurrentRow).Hide();
+	}
+
+	// Update used slots with curent info
 	foreach CurrentSlots(SlotInfo, iCurrentSlot)
 	{
 		Row = UICovertActionsGeoscape_SlotRow(ActionSlotRows.GetItem(iCurrentSlot / ACTION_SLOTS_PER_ROW));
 		SlotUI = Row.Slots[iCurrentSlot % ACTION_SLOTS_PER_ROW];
+		
 		SlotUI.UpdateFromInfo(SlotInfo);
-
-		Row.Show();
 		SlotUI.Show();
 	}
 
-	// Hide unsed slots in current row
+	// Hide unused slots in current row
 	for (iCurrentSlot = (iCurrentSlot % ACTION_SLOTS_PER_ROW) + 1; iCurrentSlot < Row.Slots.Length; iCurrentSlot++)
 	{
 		Row.Slots[iCurrentSlot].Hide();
@@ -656,42 +678,6 @@ simulated protected function PrepareSlotsInfo()
 		SlotInfo.SetCostSlot(CostSlot);
 
 		CurrentSlots.AddItem(SlotInfo);
-	}
-}
-
-simulated protected function PrepareSlotsUI()
-{
-	local UICovertActionsGeoscape_SlotRow Row;
-	local int TotalNeededRows, NumExistingRows;
-	local int i;
-
-	TotalNeededRows = FCeil(CurrentSlots.Length / float(ACTION_SLOTS_PER_ROW));
-	NumExistingRows = ActionSlotRows.GetItemCount();
-
-	if (TotalNeededRows > NumExistingRows)
-	{
-		// Add more
-
-		for (i = NumExistingRows - 1; i < TotalNeededRows; i++)
-		{
-			Row = Spawn(class'UICovertActionsGeoscape_SlotRow', ActionSlotRows.ItemContainer);
-			Row.NumSlots = ACTION_SLOTS_PER_ROW;
-			Row.InitRow();
-			Row.SetWidth(ActionSlotRows.Width);
-			Row.CreateSlots();
-			Row.Hide();
-		}
-	}
-	else if (TotalNeededRows < NumExistingRows)
-	{
-		// Hide unused ones
-		// TotalUsedRows is 1-based and i is zero based and since we want to 
-		// start from [the row after TotalUsedRows] we just start i from TotalUsedRows
-
-		for (i = TotalNeededRows; i < NumExistingRows; i++)
-		{
-			ActionSlotRows.GetItem(i).Hide();
-		}
 	}
 }
 
