@@ -27,7 +27,7 @@ var UIPanel ActionBriefContainer;
 var UIBGBox ActionBriefBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
-var UIText ActionDescription;
+var UITextContainer ActionDescription;
 
 // UI - action info (bottom)
 var UIPanel ActionInfoBottomContainer;
@@ -228,9 +228,10 @@ simulated protected function BuildActionBrief()
 	ActionDisplayName.InitText('ActionDisplayName');
 	ActionDisplayName.SetSize(ActionBriefContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UIText', ActionBriefContainer);
+	ActionDescription = Spawn(class'UITextContainer', ActionBriefContainer);
 	ActionDescription.bAnimateOnInit = false;
-	ActionDescription.InitText('ActionDescription');
+	ActionDescription.InitTextContainer('ActionDescription');
+	//ActionDescription.bAutoScroll = true; // Doesn't work properly for some reason
 	ActionDescription.SetPosition(0, 50);
 	ActionDescription.SetSize(ActionBriefContainer.Width, ActionBriefContainer.Height - ActionDescription.Y);
 }
@@ -592,7 +593,7 @@ simulated function UpdateCovertActionInfo()
 
 	ActionImage.LoadImage(CurrentAction.GetImage());
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
-	ActionDescription.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
+	ActionDescription.text.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
 
 	ActionRewardText.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
