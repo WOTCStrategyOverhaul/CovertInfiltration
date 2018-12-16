@@ -61,6 +61,8 @@ var UIMask FactionLeaderImageMask;
 // UI - buttons
 var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
+var UIText DurationLabel;
+var UIText DurationValue;
 var UIButton ConfirmButton, CloseScreenButton;
 
 // UI - action risks
@@ -406,8 +408,8 @@ simulated protected function BuildButtons()
 	ButtonGroupWrap = Spawn(class'UIPanel', RightPane);
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
-	ButtonGroupWrap.SetPosition(0, 500);
-	ButtonGroupWrap.SetSize(RightPane.Width, 80);
+	ButtonGroupWrap.SetPosition(0, 490);
+	ButtonGroupWrap.SetSize(RightPane.Width, 100);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -415,11 +417,22 @@ simulated protected function BuildButtons()
 	ButtonsBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
 	ButtonsBG.SetSize(ButtonGroupWrap.Width + UI_INFO_BOX_MARGIN * 2, ButtonGroupWrap.Height + UI_INFO_BOX_MARGIN * 2);
 
+	DurationLabel = Spawn(class'UIText', ButtonGroupWrap);
+	DurationLabel.bAnimateOnInit = false;
+	DurationLabel.InitText('DurationLabel');
+	DurationLabel.SetWidth(ButtonGroupWrap.Width);
+	
+	DurationValue = Spawn(class'UIText', ButtonGroupWrap);
+	DurationValue.bAnimateOnInit = false;
+	DurationValue.InitText('DurationValue');
+	DurationValue.SetWidth(ButtonGroupWrap.Width);
+
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
 	ConfirmButton.InitButton('ConfirmButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
 	ConfirmButton.SetResizeToText(false);
+	ConfirmButton.SetPosition(0, 35);
 	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
@@ -427,7 +440,7 @@ simulated protected function BuildButtons()
 	CloseScreenButton.InitButton('CloseScreenButton', strCloseScreen, OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
-	CloseScreenButton.SetPosition(0, 50);
+	CloseScreenButton.SetPosition(0, 70);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
 }
 
@@ -661,6 +674,9 @@ simulated function UpdateCovertActionInfo()
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
 	);
+
+	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
+	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
 
 	UpdateSlots();
 	UpdateRisks();
