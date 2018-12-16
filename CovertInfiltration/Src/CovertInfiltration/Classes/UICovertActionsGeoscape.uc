@@ -47,7 +47,14 @@ var UIPanel ActionSlotsTextBG;
 var UIList ActionSlotRows;
 
 // UI - faction info
+var UIPanel FactionInfoConatiner;
+var UIPanel FactionInfoBG; // pixel
 var UIImage FactionInfoBorder;
+var UIStackingIcon FactionInfoIcon;
+var UIText FactionGenericName;
+var UIScrollingText FactionNarrativeName;
+var UIText FactionInfluenceLabel;
+var UIText FactionInfluenceValue;
 var UIImage FactionLeaderImage;
 var UIMask FactionLeaderImageMask;
 
@@ -334,25 +341,64 @@ simulated protected function BuildRightPane()
 
 simulated protected function BuildFactionInfo()
 {
-	FactionLeaderImage = Spawn(class'UIImage', RightPane);
-	FactionLeaderImage.bAnimateOnInit = false;
-	FactionLeaderImage.InitImage('FactionLeaderImage');
-	FactionLeaderImage.SetPosition(-8, 150);
-	FactionLeaderImage.SetSize(316,158);
+	FactionInfoConatiner = Spawn(class'UIPanel', RightPane);
+	FactionInfoConatiner.bAnimateOnInit = false;
+	FactionInfoConatiner.InitPanel('FactionInfoConatiner');
+	FactionInfoConatiner.SetPosition(0, 140);
+	FactionInfoConatiner.SetSize(RightPane.Width, 300);
 
-	FactionLeaderImageMask = Spawn(class'UIMask', RightPane);
-	FactionLeaderImageMask.InitMask('FactionLeaderImageMask', FactionLeaderImage);
-	FactionLeaderImageMask.SetPosition(0, 150);
-	FactionLeaderImageMask.SetSize(RightPane.Width, FactionLeaderImage.Height);
-
-	// Temp above to compare sizes
-	FactionInfoBorder = Spawn(class'UIImage', RightPane);
+	FactionInfoBorder = Spawn(class'UIImage', FactionInfoConatiner);
 	FactionInfoBorder.bAnimateOnInit = false;
 	FactionInfoBorder.InitImage('FactionInfoBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
-	FactionInfoBorder.SetPosition(-10, 148);
-	FactionInfoBorder.SetSize(320, 172);
+	FactionInfoBorder.SetPosition(-10, -2);
+	FactionInfoBorder.SetSize(320, 258);
 
+	FactionInfoBG = Spawn(class'UIPanel', FactionInfoConatiner);
+	FactionInfoBG.bAnimateOnInit = false;
+	FactionInfoBG.InitPanel('FactionInfoBG', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	FactionInfoBG.SetSize(FactionInfoConatiner.Width, 95); // Background for space above the leader image
+	FactionInfoBG.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
 
+	FactionInfoIcon = Spawn(class'UIStackingIcon', FactionInfoConatiner);
+	FactionInfoIcon.bAnimateOnInit = false;
+	FactionInfoIcon.InitStackingIcon('FactionInfoIcon');
+	FactionInfoIcon.SetIconSize(60);
+	FactionInfoIcon.SetPosition(5, 5);
+
+	FactionGenericName = Spawn(class'UIText', FactionInfoConatiner);
+	FactionGenericName.bAnimateOnInit = false;
+	FactionGenericName.InitText('FactionGenericName');
+	FactionGenericName.SetPosition(70, 10);
+	FactionGenericName.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN - 70);
+
+	FactionNarrativeName = Spawn(class'UIScrollingText', FactionInfoConatiner);
+	FactionNarrativeName.bAnimateOnInit = false;
+	FactionNarrativeName.InitScrollingText('FactionNarrativeName');
+	FactionNarrativeName.SetPosition(70, 30);
+	FactionNarrativeName.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN - 70);
+
+	FactionInfluenceLabel = Spawn(class'UIText', FactionInfoConatiner);
+	FactionInfluenceLabel.bAnimateOnInit = false;
+	FactionInfluenceLabel.InitText('FactionInfluenceLabel', class'UICovertActions'.default.CovertActions_InfluenceLabel);
+	FactionInfluenceLabel.SetPosition(UI_INFO_BOX_MARGIN, 65);
+	FactionInfluenceLabel.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN * 2);
+
+	FactionInfluenceValue = Spawn(class'UIText', FactionInfoConatiner);
+	FactionInfluenceValue.bAnimateOnInit = false;
+	FactionInfluenceValue.InitText('FactionInfluenceValue');
+	FactionInfluenceValue.SetPosition(UI_INFO_BOX_MARGIN, 65);
+	FactionInfluenceValue.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN * 2);
+
+	FactionLeaderImage = Spawn(class'UIImage', FactionInfoConatiner);
+	FactionLeaderImage.bAnimateOnInit = false;
+	FactionLeaderImage.InitImage('FactionLeaderImage');
+	FactionLeaderImage.SetPosition(-8, 95);
+	FactionLeaderImage.SetSize(316, 158);
+
+	FactionLeaderImageMask = Spawn(class'UIMask', FactionInfoConatiner);
+	FactionLeaderImageMask.InitMask('FactionLeaderImageMask', FactionLeaderImage);
+	FactionLeaderImageMask.SetPosition(0, 95);
+	FactionLeaderImageMask.SetSize(FactionInfoConatiner.Width, FactionLeaderImage.Height);
 }
 
 simulated protected function BuildButtons()
@@ -589,6 +635,22 @@ simulated function UpdateCovertActionInfo()
 	local XComGameState_CovertAction CurrentAction;
 	CurrentAction = GetAction();
 
+	FactionInfoIcon.SetImageStack(CurrentAction.GetFaction().FactionIconData);
+	FactionGenericName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
+		class'UIUtilities_Infiltration'.static.ColourText(
+			Caps(CurrentAction.GetFaction().GetFactionTitle()),
+			"808080"
+		),
+		bIsIn3D, true, true, 17
+	));
+	FactionNarrativeName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
+		class'UIUtilities_Infiltration'.static.ColourText(
+			CurrentAction.GetFaction().FactionName,
+			class'UIUtilities_Colors'.static.GetColorForFaction(CurrentAction.GetFaction().GetMyTemplateName())
+		),
+		bIsIn3D, true, true, 19
+	));
+	FactionInfluenceValue.SetSubTitle(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetFaction().GetInfluenceString()));
 	FactionLeaderImage.LoadImage(CurrentAction.GetFaction().GetLeaderImage());
 
 	ActionImage.LoadImage(CurrentAction.GetImage());
