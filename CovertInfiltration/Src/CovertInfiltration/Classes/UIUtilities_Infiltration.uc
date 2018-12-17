@@ -117,7 +117,7 @@ protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertAc
 }
 
 // Does same thing as UIUtilities_Strategy::GetStrategyCostString but doesn't colour the text
-static function String GetStrategyCostStringNoColours(StrategyCost StratCost, array<StrategyCostScalar> CostScalars, optional float DiscountPercent)
+static function String GetStrategyCostStringNoColors(StrategyCost StratCost, array<StrategyCostScalar> CostScalars, optional float DiscountPercent)
 {
 	local int iResource, iArtifact, Quantity;
 	local String strCost, strResourceCost, strArtifactCost;

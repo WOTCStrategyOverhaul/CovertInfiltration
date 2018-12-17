@@ -12,7 +12,7 @@
 class UICovertActionsGeoscape_SlotInfo extends Object;
 
 var bool ShowPrefix; // Show "REQUIRED:" or "OPTIONAL:" prefix. Used for ongoing CAs
-var bool ColourDescription;
+var bool ColorDescription;
 
 var protectedwrite bool IsStaffSlot;
 var protectedwrite CovertActionStaffSlot StaffSlotInfo;
