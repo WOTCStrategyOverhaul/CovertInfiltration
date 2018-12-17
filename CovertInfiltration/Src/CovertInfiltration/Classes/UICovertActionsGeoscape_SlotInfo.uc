@@ -41,7 +41,7 @@ simulated function bool IsOptional()
 	if (!IsStaffSlot) 
 	{
 		// Costs/resource slots are always optional
-		return false;
+		return true;
 	}
 
 	return StaffSlotInfo.bOptional;

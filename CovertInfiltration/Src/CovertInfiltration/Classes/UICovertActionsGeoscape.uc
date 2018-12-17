@@ -933,10 +933,7 @@ simulated function OpenLoadoutForCurrentAction(optional bool SkipIntro = false)
 
 simulated function MakeMapProperlyShow()
 {
-	// TODO: Maybe `HQPRES.GetCamera().ForceEarthViewImmediately(false) instead?
-
-	GetHQPres().m_kXComStrategyMap.OnReceiveFocus();
-	`GAME.GetGeoscape().Pause(); // XComStrategyMap::OnReceiveFocus resumes time so we need to stop it again
+	GetHQPres().GetCamera().ForceEarthViewImmediately(false);
 }
 
 //////////////////////////////
