@@ -17,10 +17,17 @@ var UIPanel RightPane;
 
 // UI - action info (top)
 var UIPanel ActionInfoTopContainer;
-var UIBGBox ActionInfoBG;
+
+// UI - action image
+//var UIImage ActionImageBorder;
+var UIImage ActionImage;
+
+// UI - action brief
+var UIPanel ActionBriefContainer;
+var UIBGBox ActionBriefBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
-var UIText ActionDescription;
+var UITextContainer ActionDescription;
 
 // UI - action info (bottom)
 var UIPanel ActionInfoBottomContainer;
@@ -42,13 +49,23 @@ var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
 var UIList ActionSlotRows;
 
-// UI - action image
-var UIImage ActionImageBorder;
-var UIImage ActionImage;
+// UI - faction info
+var UIPanel FactionInfoConatiner;
+var UIPanel FactionInfoBG; // pixel
+var UIImage FactionInfoBorder;
+var UIStackingIcon FactionInfoIcon;
+var UIText FactionGenericName;
+var UIScrollingText FactionNarrativeName;
+var UIText FactionInfluenceLabel;
+var UIText FactionInfluenceValue;
+var UIImage FactionLeaderImage;
+var UIMask FactionLeaderImageMask;
 
 // UI - buttons
 var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
+var UIText DurationLabel;
+var UIText DurationValue;
 var UIButton ConfirmButton, CloseScreenButton;
 
 // UI - action risks
@@ -178,29 +195,57 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
 
-	ActionInfoBG = Spawn(class'UIBGBox', ActionInfoTopContainer);
-	ActionInfoBG.bAnimateOnInit = false;
-	ActionInfoBG.InitBG('ActionInfoBG');
-	ActionInfoBG.SetAlpha(60);
-	ActionInfoBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
-	ActionInfoBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
+	BuildActionImage();
+	BuildActionBrief();
+}
 
-	ActionDisplayNameBG = Spawn(class'UIImage', ActionInfoTopContainer);
+simulated protected function BuildActionImage()
+{
+	/*ActionImageBorder = Spawn(class'UIImage', ActionInfoTopContainer);
+	ActionImageBorder.bAnimateOnInit = false;
+	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
+	ActionImageBorder.SetPosition(-10, -2);
+	ActionImageBorder.SetSize(320, 172);*/
+
+	ActionImage = Spawn(class'UIImage', ActionInfoTopContainer);
+	ActionImage.bAnimateOnInit = false;
+	ActionImage.InitImage('ActionImage');
+	ActionImage.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionImage.SetSize(384, ActionInfoTopContainer.Height + UI_INFO_BOX_MARGIN * 2);
+}
+
+simulated protected function BuildActionBrief()
+{
+	ActionBriefContainer = Spawn(class'UIPanel', ActionInfoTopContainer);
+	ActionBriefContainer.bAnimateOnInit = false;
+	ActionBriefContainer.InitPanel('ActionBriefContainer');
+	ActionBriefContainer.SetPosition(390, 0);
+	ActionBriefContainer.SetSize(ActionInfoTopContainer.Width - 390, ActionInfoTopContainer.Height);
+
+	ActionBriefBG = Spawn(class'UIBGBox', ActionBriefContainer);
+	ActionBriefBG.bAnimateOnInit = false;
+	ActionBriefBG.InitBG('ActionBriefBG');
+	ActionBriefBG.SetAlpha(60);
+	ActionBriefBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
+	ActionBriefBG.SetSize(ActionBriefContainer.Width + UI_INFO_BOX_MARGIN * 2, ActionBriefContainer.Height + UI_INFO_BOX_MARGIN * 2);
+
+	ActionDisplayNameBG = Spawn(class'UIImage', ActionBriefContainer);
 	ActionDisplayNameBG.bAnimateOnInit = false;
 	ActionDisplayNameBG.InitImage('ActionDisplayNameBG', "img:///UILibrary_CovertInfiltration.Ops_Header_BG");
 	ActionDisplayNameBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
-	ActionDisplayNameBG.SetSize(ActionInfoTopContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
+	ActionDisplayNameBG.SetSize(ActionBriefContainer.Width + UI_INFO_BOX_MARGIN * 2, 60);
 
-	ActionDisplayName = Spawn(class'UIText', ActionInfoTopContainer);
+	ActionDisplayName = Spawn(class'UIText', ActionBriefContainer);
 	ActionDisplayName.bAnimateOnInit = false;
 	ActionDisplayName.InitText('ActionDisplayName');
-	ActionDisplayName.SetSize(ActionInfoTopContainer.Width, 55);
+	ActionDisplayName.SetSize(ActionBriefContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UIText', ActionInfoTopContainer);
+	ActionDescription = Spawn(class'UITextContainer', ActionBriefContainer);
 	ActionDescription.bAnimateOnInit = false;
-	ActionDescription.InitText('ActionDescription');
+	ActionDescription.InitTextContainer('ActionDescription');
+	//ActionDescription.bAutoScroll = true; // Doesn't work properly for some reason
 	ActionDescription.SetPosition(0, 50);
-	ActionDescription.SetSize(ActionInfoTopContainer.Width, ActionInfoTopContainer.Height - ActionDescription.Y);
+	ActionDescription.SetSize(ActionBriefContainer.Width, ActionBriefContainer.Height - ActionDescription.Y);
 }
 
 simulated protected function BuildActionInfoBottom()
@@ -305,24 +350,71 @@ simulated protected function BuildRightPane()
 	RightPane.SetPosition(1500, 0); // RightPane spans the entire viewport vertically
 	RightPane.SetSize(300, 1080);
 
-	BuildActionImage();
+	BuildFactionInfo();
 	BuildButtons();
 	BuildRisks();
 }
 
-simulated protected function BuildActionImage()
+simulated protected function BuildFactionInfo()
 {
-	ActionImageBorder = Spawn(class'UIImage', RightPane);
-	ActionImageBorder.bAnimateOnInit = false;
-	ActionImageBorder.InitImage('ActionImageBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
-	ActionImageBorder.SetPosition(-10, 148);
-	ActionImageBorder.SetSize(320, 172);
+	FactionInfoConatiner = Spawn(class'UIPanel', RightPane);
+	FactionInfoConatiner.bAnimateOnInit = false;
+	FactionInfoConatiner.InitPanel('FactionInfoConatiner');
+	FactionInfoConatiner.SetPosition(0, 140);
+	FactionInfoConatiner.SetSize(RightPane.Width, 300);
 
-	ActionImage = Spawn(class'UIImage', RightPane);
-	ActionImage.bAnimateOnInit = false;
-	ActionImage.InitImage('ActionImage');
-	ActionImage.SetPosition(0, 150);
-	ActionImage.SetSize(300, 168);
+	FactionInfoBorder = Spawn(class'UIImage', FactionInfoConatiner);
+	FactionInfoBorder.bAnimateOnInit = false;
+	FactionInfoBorder.InitImage('FactionInfoBorder', "img:///UILibrary_CovertInfiltration.Ops_Border_Full");
+	FactionInfoBorder.SetPosition(-10, -2);
+	FactionInfoBorder.SetSize(320, 258);
+
+	FactionInfoBG = Spawn(class'UIPanel', FactionInfoConatiner);
+	FactionInfoBG.bAnimateOnInit = false;
+	FactionInfoBG.InitPanel('FactionInfoBG', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	FactionInfoBG.SetSize(FactionInfoConatiner.Width, 95); // Background for space above the leader image
+	FactionInfoBG.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
+
+	FactionInfoIcon = Spawn(class'UIStackingIcon', FactionInfoConatiner);
+	FactionInfoIcon.bAnimateOnInit = false;
+	FactionInfoIcon.InitStackingIcon('FactionInfoIcon');
+	FactionInfoIcon.SetIconSize(60);
+	FactionInfoIcon.SetPosition(5, 5);
+
+	FactionGenericName = Spawn(class'UIText', FactionInfoConatiner);
+	FactionGenericName.bAnimateOnInit = false;
+	FactionGenericName.InitText('FactionGenericName');
+	FactionGenericName.SetPosition(70, 10);
+	FactionGenericName.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN - 70);
+
+	FactionNarrativeName = Spawn(class'UIScrollingText', FactionInfoConatiner);
+	FactionNarrativeName.bAnimateOnInit = false;
+	FactionNarrativeName.InitScrollingText('FactionNarrativeName');
+	FactionNarrativeName.SetPosition(70, 30);
+	FactionNarrativeName.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN - 70);
+
+	FactionInfluenceLabel = Spawn(class'UIText', FactionInfoConatiner);
+	FactionInfluenceLabel.bAnimateOnInit = false;
+	FactionInfluenceLabel.InitText('FactionInfluenceLabel', class'UICovertActions'.default.CovertActions_InfluenceLabel);
+	FactionInfluenceLabel.SetPosition(UI_INFO_BOX_MARGIN, 65);
+	FactionInfluenceLabel.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN * 2);
+
+	FactionInfluenceValue = Spawn(class'UIText', FactionInfoConatiner);
+	FactionInfluenceValue.bAnimateOnInit = false;
+	FactionInfluenceValue.InitText('FactionInfluenceValue');
+	FactionInfluenceValue.SetPosition(UI_INFO_BOX_MARGIN, 65);
+	FactionInfluenceValue.SetWidth(FactionInfoConatiner.Width - UI_INFO_BOX_MARGIN * 2);
+
+	FactionLeaderImage = Spawn(class'UIImage', FactionInfoConatiner);
+	FactionLeaderImage.bAnimateOnInit = false;
+	FactionLeaderImage.InitImage('FactionLeaderImage');
+	FactionLeaderImage.SetPosition(-8, 95);
+	FactionLeaderImage.SetSize(316, 158);
+
+	FactionLeaderImageMask = Spawn(class'UIMask', FactionInfoConatiner);
+	FactionLeaderImageMask.InitMask('FactionLeaderImageMask', FactionLeaderImage);
+	FactionLeaderImageMask.SetPosition(0, 95);
+	FactionLeaderImageMask.SetSize(FactionInfoConatiner.Width, FactionLeaderImage.Height);
 }
 
 simulated protected function BuildButtons()
@@ -330,8 +422,8 @@ simulated protected function BuildButtons()
 	ButtonGroupWrap = Spawn(class'UIPanel', RightPane);
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
-	ButtonGroupWrap.SetPosition(0, 500);
-	ButtonGroupWrap.SetSize(RightPane.Width, 80);
+	ButtonGroupWrap.SetPosition(0, 490);
+	ButtonGroupWrap.SetSize(RightPane.Width, 100);
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -339,11 +431,22 @@ simulated protected function BuildButtons()
 	ButtonsBG.SetPosition(-UI_INFO_BOX_MARGIN, -UI_INFO_BOX_MARGIN);
 	ButtonsBG.SetSize(ButtonGroupWrap.Width + UI_INFO_BOX_MARGIN * 2, ButtonGroupWrap.Height + UI_INFO_BOX_MARGIN * 2);
 
+	DurationLabel = Spawn(class'UIText', ButtonGroupWrap);
+	DurationLabel.bAnimateOnInit = false;
+	DurationLabel.InitText('DurationLabel');
+	DurationLabel.SetWidth(ButtonGroupWrap.Width);
+	
+	DurationValue = Spawn(class'UIText', ButtonGroupWrap);
+	DurationValue.bAnimateOnInit = false;
+	DurationValue.InitText('DurationValue');
+	DurationValue.SetWidth(ButtonGroupWrap.Width);
+
 	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
 	ConfirmButton.bAnimateOnInit = false;
 	ConfirmButton.InitButton('ConfirmButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
 	ConfirmButton.SetResizeToText(false);
+	ConfirmButton.SetPosition(0, 35);
 	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
@@ -351,7 +454,7 @@ simulated protected function BuildButtons()
 	CloseScreenButton.InitButton('CloseScreenButton', strCloseScreen, OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
-	CloseScreenButton.SetPosition(0, 50);
+	CloseScreenButton.SetPosition(0, 70);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
 }
 
@@ -560,14 +663,35 @@ simulated function UpdateCovertActionInfo()
 	local XComGameState_CovertAction CurrentAction;
 	CurrentAction = GetAction();
 
+	FactionInfoIcon.SetImageStack(CurrentAction.GetFaction().FactionIconData);
+	FactionGenericName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
+		class'UIUtilities_Infiltration'.static.ColourText(
+			Caps(CurrentAction.GetFaction().GetFactionTitle()),
+			"808080"
+		),
+		bIsIn3D, true, true, 17
+	));
+	FactionNarrativeName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
+		class'UIUtilities_Infiltration'.static.ColourText(
+			CurrentAction.GetFaction().FactionName,
+			class'UIUtilities_Colors'.static.GetColorForFaction(CurrentAction.GetFaction().GetMyTemplateName())
+		),
+		bIsIn3D, true, true, 19
+	));
+	FactionInfluenceValue.SetSubTitle(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetFaction().GetInfluenceString()));
+	FactionLeaderImage.LoadImage(CurrentAction.GetFaction().GetLeaderImage());
+
 	ActionImage.LoadImage(CurrentAction.GetImage());
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
-	ActionDescription.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
+	ActionDescription.text.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
 
 	ActionRewardText.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
 		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
 	);
+
+	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
+	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
 
 	UpdateSlots();
 	UpdateRisks();
