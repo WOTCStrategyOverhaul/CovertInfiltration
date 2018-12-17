@@ -23,6 +23,9 @@ simulated function CreateFacilityButtons()
 simulated function OnViewOrders()
 {
 	`HQPRES.UIStrategyPolicy(false, true);
+
+	// Even though the listener will redirect the camera, we do it here to prevent the small jump
+	class'UIUtilities_Infiltration'.static.ForceRingViewIfPossible(0);
 }
 
 simulated function OnReceiveFocus()

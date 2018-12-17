@@ -173,3 +173,13 @@ static function String GetStrategyCostStringNoColors(StrategyCost StratCost, arr
 
 	return class'UIUtilities_Text'.static.FormatCommaSeparatedNouns(strCost);
 }
+
+static function ForceRingViewIfPossible(float InterpTime)
+{
+	local XComGameState_FacilityXCom FacilityState;
+
+	FacilityState = `XCOMHQ.GetFacilityByName('ResistanceRing');
+	if (FacilityState == none) return;
+
+	`HQPRES.CAMLookAtRoom(FacilityState.GetRoom(), InterpTime);
+}
