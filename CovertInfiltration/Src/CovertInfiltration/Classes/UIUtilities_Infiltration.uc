@@ -115,3 +115,61 @@ protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertAc
 	else
 		return 0;
 }
+
+// Does same thing as UIUtilities_Strategy::GetStrategyCostString but doesn't colour the text
+static function String GetStrategyCostStringNoColors(StrategyCost StratCost, array<StrategyCostScalar> CostScalars, optional float DiscountPercent)
+{
+	local int iResource, iArtifact, Quantity;
+	local String strCost, strResourceCost, strArtifactCost;
+	local StrategyCost ScaledStratCost;
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	ScaledStratCost = XComHQ.GetScaledStrategyCost(StratCost, CostScalars, DiscountPercent);
+
+	for (iArtifact = 0; iArtifact < ScaledStratCost.ArtifactCosts.Length; iArtifact++)
+	{
+		Quantity = ScaledStratCost.ArtifactCosts[iArtifact].Quantity;
+		strArtifactCost = String(Quantity) @ class'UIUtilities_Strategy'.static.GetResourceDisplayName(ScaledStratCost.ArtifactCosts[iArtifact].ItemTemplateName, Quantity);
+
+		if (iArtifact < ScaledStratCost.ArtifactCosts.Length - 1)
+		{
+			strArtifactCost $= ",";
+		}
+		else if (ScaledStratCost.ResourceCosts.Length > 0)
+		{
+			strArtifactCost $= ",";
+		}
+
+		if (strCost == "")
+		{
+			strCost $= strArtifactCost; 
+		}
+		else
+		{
+			strCost @= strArtifactCost;
+		}
+	}
+
+	for (iResource = 0; iResource < ScaledStratCost.ResourceCosts.Length; iResource++)
+	{
+		Quantity = ScaledStratCost.ResourceCosts[iResource].Quantity;
+		strResourceCost = String(Quantity) @ class'UIUtilities_Strategy'.static.GetResourceDisplayName(ScaledStratCost.ResourceCosts[iResource].ItemTemplateName, Quantity);
+
+		if (iResource < ScaledStratCost.ResourceCosts.Length - 1)
+		{
+			strResourceCost $= ",";
+		}
+
+		if (strCost == "")
+		{
+			strCost $= strResourceCost;
+		}
+		else
+		{
+			strCost @= strResourceCost;
+		}
+	}
+
+	return class'UIUtilities_Text'.static.FormatCommaSeparatedNouns(strCost);
+}

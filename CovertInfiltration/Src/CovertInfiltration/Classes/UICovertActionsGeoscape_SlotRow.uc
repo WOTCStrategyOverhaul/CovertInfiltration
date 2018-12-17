@@ -43,4 +43,5 @@ defaultproperties
 	SpaceBetweenSlots = 10;
 	
 	Height = 52;
+	bAnimateOnInit = false;
 }

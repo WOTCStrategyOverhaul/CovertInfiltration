@@ -8,81 +8,83 @@
 
 class UICovertActionsGeoscape_Slot extends UIPanel;
 
-var protectedwrite UIText Description;
-var protectedwrite UIText RewardText;
+var protectedwrite UIScrollingText Description;
+var protectedwrite UIScrollingText RewardText;
 
 simulated function InitSlot(float InitWidth)
 {
 	InitPanel();
 	SetWidth(InitWidth);
 
-	Description = Spawn(class'UIText', self);
+	Description = Spawn(class'UIScrollingText', self);
 	Description.bAnimateOnInit = false;
-	Description.InitText('Description');
+	Description.InitScrollingText('Description');
 	Description.SetWidth(Width);
 
-	RewardText = Spawn(class'UIText', self);
+	RewardText = Spawn(class'UIScrollingText', self);
 	RewardText.bAnimateOnInit = false;
-	RewardText.InitText('RewardText');
+	RewardText.InitScrollingText('RewardText');
 	RewardText.SetY(23);
 	RewardText.SetWidth(Width);
 }
 
-simulated function UpdateCostSlot(CovertActionCostSlot CostSlotInfo)
+simulated function UpdateFromInfo(UICovertActionsGeoscape_SlotInfo SlotInfo)
 {
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local StrategyCost Cost;
-	local array<StrategyCostScalar> CostScalars;
-	local string strDescription;
-
-	History = `XCOMHISTORY;
-	Cost = CostSlotInfo.Cost;
-	CostScalars.Length = 0; // Prevent compiler warnning as we want empty array
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-
-	// TODO: this colours the text green if it's affordable, make it white instead
-	strDescription = class'UIUtilities_Strategy'.static.GetStrategyCostString(Cost, CostScalars);
-	strDescription = class'UICovertActionStaffSlot'.default.m_strOptionalSlot @ strDescription;
-
-	UpdateDescription(strDescription, XComHQ.CanAffordAllStrategyCosts(Cost, CostScalars));
-	UpdateReward(XComGameState_Reward(History.GetGameStateForObjectID(CostSlotInfo.RewardRef.ObjectID)));
+	UpdateDescription(GetDescriptionFromInfo(SlotInfo), SlotInfo.CanAfford(), SlotInfo.ColorDescription);
+	UpdateReward(SlotInfo.GetReward());
 }
 
-simulated function UpdateStaffSlot(CovertActionStaffSlot StaffSlotInfo)
+simulated function string GetDescriptionFromInfo(UICovertActionsGeoscape_SlotInfo SlotInfo)
 {
-	local XComGameStateHistory History;
-	local XComGameState_StaffSlot StaffSlot;
-	local string strDescription;
+	local string strDescription, strPrefix;
+	
+	// Cost slots
+	local array<StrategyCostScalar> CostScalars;
 
-	History = `XCOMHISTORY;
-	StaffSlot = XComGameState_StaffSlot(History.GetGameStateForObjectID(StaffSlotInfo.StaffSlotRef.ObjectID));
-	strDescription = StaffSlot.GetNameDisplayString();
-
-	if (StaffSlotInfo.bFame)
+	if (SlotInfo.IsStaffSlot)
 	{
-		strDescription = class'UICovertActionStaffSlot'.default.m_strFamous @ strDescription;
-	}
+		strDescription = SlotInfo.GetStaffSlotState().GetNameDisplayString();
 
-	if (StaffSlotInfo.bOptional)
-	{
-		strDescription = class'UICovertActionStaffSlot'.default.m_strOptionalSlot @ strDescription;
+		if (SlotInfo.StaffSlotInfo.bFame)
+		{
+			strDescription = class'UICovertActionStaffSlot'.default.m_strFamous @ strDescription;
+		}
+
+		if (SlotInfo.StaffSlotInfo.bOptional)
+		{
+			strPrefix = class'UICovertActionStaffSlot'.default.m_strOptionalSlot;
+		}
+		else
+		{
+			strPrefix = class'UICovertActionStaffSlot'.default.m_strRequiredSlot;
+		}
 	}
 	else
 	{
-		strDescription = class'UICovertActionStaffSlot'.default.m_strRequiredSlot @ strDescription;
+		CostScalars.Length = 0; // Prevent compiler warning as we want empty array
+		
+		strDescription = class'UIUtilities_Infiltration'.static.GetStrategyCostStringNoColors(SlotInfo.CostSlotInfo.Cost, CostScalars);
+		strPrefix = class'UICovertActionStaffSlot'.default.m_strOptionalSlot;
 	}
 
-	UpdateDescription(strDescription, StaffSlot.IsUnitAvailableForThisSlot());
-	UpdateReward(XComGameState_Reward(History.GetGameStateForObjectID(StaffSlotInfo.RewardRef.ObjectID)));
+	if (SlotInfo.ShowPrefix)
+	{
+		strDescription = strPrefix @ strDescription;
+	}
+
+	return strDescription;
 }
 
-simulated function UpdateDescription(string strDescription, bool CanFullfil)
+simulated function UpdateDescription(string strDescription, bool CanFullfil, optional bool ColorText = true)
 {
 	local EUIState eState;
-	eState = CanFullfil ? eUIState_Normal : eUIState_Bad;
 	
-	strDescription = class'UIUtilities_Text'.static.GetColoredText(strDescription, eState);
+	if (ColorText)
+	{
+		eState = CanFullfil ? eUIState_Normal : eUIState_Bad;
+		strDescription = class'UIUtilities_Text'.static.GetColoredText(strDescription, eState);
+	}
+
 	Description.SetText(strDescription);
 }
 
