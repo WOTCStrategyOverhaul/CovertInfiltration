@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: This class is used to adjust the "Next covert op" alert
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIListener_NextCovertAction extends UIScreenListener;
 
 event OnInit(UIScreen Screen)

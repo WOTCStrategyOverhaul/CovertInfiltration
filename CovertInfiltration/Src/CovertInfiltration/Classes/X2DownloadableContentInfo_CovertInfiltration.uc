@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
+//  AUTHOR:  NotSoLoneWolf and Xymanek
 //  PURPOSE: This class is used for various hooks and to add commands to game's
 //           debug console
 //---------------------------------------------------------------------------------------
