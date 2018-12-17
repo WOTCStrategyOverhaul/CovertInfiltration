@@ -457,6 +457,29 @@ simulated protected function BuildButtons()
 	CloseScreenButton.SetResizeToText(false);
 	CloseScreenButton.SetPosition(0, 70);
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		ConfirmButton.OnSizeRealized = OnConfirmButtonSizeRealized;
+		ConfirmButton.SetResizeToText(true);
+		ConfirmButton.Hide();
+
+		CloseScreenButton.OnSizeRealized = OnCloseScreenButtonSizeRealized;
+		CloseScreenButton.SetResizeToText(true);
+		CloseScreenButton.Hide();
+	}
+}
+
+simulated protected function OnConfirmButtonSizeRealized()
+{
+	ConfirmButton.SetX(ButtonGroupWrap.Width / 2 - ConfirmButton.Width / 2);
+	ConfirmButton.Show();
+}
+
+simulated protected function OnCloseScreenButtonSizeRealized()
+{
+	CloseScreenButton.SetX(ButtonGroupWrap.Width / 2 - CloseScreenButton.Width / 2);
+	CloseScreenButton.Show();
 }
 
 simulated protected function BuildRisks()
