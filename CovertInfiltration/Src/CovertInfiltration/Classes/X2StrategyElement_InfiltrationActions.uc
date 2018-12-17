@@ -6,56 +6,50 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> CovertActions;
 	
-	CovertActions.AddItem(CreateGOpSuppliesTemplate());
-	CovertActions.AddItem(CreateGOpIntelTemplate());
+	CovertActions.AddItem(CreatePrepareGOpTemplate());
+	CovertActions.AddItem(CreatePrepareRaidTemplate());
 
 	return CovertActions;
 }
 
-static function X2DataTemplate CreateGOpSuppliesTemplate()
+static function X2DataTemplate CreatePrepareGOpTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_GOpSupplies');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_PrepareGOp');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
-	Template.bGoldenPath = true;
-
-	Template.Narratives.AddItem('CovertActionNarrative_GatherSupplies_Skirmishers');
-	Template.Narratives.AddItem('CovertActionNarrative_GatherSupplies_Reapers');
-	Template.Narratives.AddItem('CovertActionNarrative_GatherSupplies_Templars');
+	
+	Template.Narratives.AddItem('CovertActionNarrative_PrepareGOp');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
-
-	Template.Rewards.AddItem('Reward_Supplies');
+	
+	//Template.Rewards.AddItem('Reward_CAGuerillaOp');
 
 	return Template;
 }
 
-static function X2DataTemplate CreateGOpIntelTemplate()
+static function X2DataTemplate CreatePrepareRaidTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_GOpIntel');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_PrepareRaid');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
-	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
-	Template.bGoldenPath = true;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
 
-	Template.Narratives.AddItem('CovertActionNarrative_GatherIntel_Skirmishers');
-	Template.Narratives.AddItem('CovertActionNarrative_GatherIntel_Reapers');
-	Template.Narratives.AddItem('CovertActionNarrative_GatherIntel_Templars');
+	Template.Narratives.AddItem('CovertActionNarrative_PrepareRaid');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 
-	Template.Rewards.AddItem('Reward_Intel');
+	//Template.Rewards.AddItem('Reward_CASupplyRaid');
 
 	return Template;
 }
@@ -102,7 +96,7 @@ private static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName
 
 	OptionalSlot.StaffSlot = SlotName;
 	OptionalSlot.bChanceFame = false;
-	OptionalSlot.bReduceRisk = true;
+	//OptionalSlot.bReduceRisk = true;
 	OptionalSlot.iMinRank = iMinRank;
 	OptionalSlot.bFactionClass = bFactionClass;
 

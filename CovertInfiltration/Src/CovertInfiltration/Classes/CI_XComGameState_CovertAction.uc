@@ -5,6 +5,9 @@
 
 class CI_XComGameState_CovertAction extends XComGameState_CovertAction;
 
+var() bool bInfiltrated;
+var() bool bNeedsInfiltratedPopup;
+
 function bool ShouldBeVisible()
 {
 	return class'UIUtilities_Infiltration'.static.ShouldShowCovertAction(self);
@@ -23,7 +26,56 @@ protected function bool DisplaySelectionPrompt()
 	return true;
 }
 
-function CompleteCovertAction(XComGameState NewGameState)
+function bool Update(XComGameState NewGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local bool bModified;
+	//local XComNarrativeMoment ActionNarrative;
+	local UIStrategyMap StrategyMap;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	StrategyMap = `HQPRES.StrategyMap2D;
+	bModified = false;
+
+	// Do not trigger anything while the Avenger or Skyranger are flying, or if another popup is already being presented
+	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight && !`HQPRES.ScreenStack.IsCurrentClass(class'UIAlert'))
+	{
+		if (!bCompleted)
+		{
+			// If the end date time has passed, this action has completed
+			if (bStarted && class'X2StrategyGameRulesetDataStructures'.static.LessThan(EndDateTime, GetCurrentTime()))
+			{
+				ApplyRisks(NewGameState);
+				ApplyInfiltration(NewGameState);
+				if (bAmbushed || bInfiltrated)
+				{
+					// Flag XComHQ as expecting an ambush, so we can ensure the Covert Action rewards are only granted after it is completed
+					XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+					XComHQ.bWaitingForChosenAmbush = true;
+				}
+				else
+				{
+					CompleteCovertAction(NewGameState);
+				}
+
+				bCompleted = true;
+				bModified = true;
+			}
+		}
+		else if (bAmbushed && !XComHQ.bWaitingForChosenAmbush)
+		{
+			bAmbushed = false; // Turn off Ambush flag so we don't hit this code block more than once
+			bInfiltrated = false;
+			// If the mission was ambushed, rewards were not granted before the tactical battle, so give them here
+			CompleteCovertAction(NewGameState);
+			bModified = true;
+		}
+	}
+
+	return bModified;
+}
+
+function ApplyInfiltration(XComGameState NewGameState)
 {
 	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_ResistanceFaction FactionState;
@@ -40,19 +92,17 @@ function CompleteCovertAction(XComGameState NewGameState)
 
 	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
 
-	// Save the Action as completed by its faction
-	FactionState = GetFaction();
-	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
-	FactionState.CompletedCovertActions.AddItem(GetMyTemplateName());
-
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
 	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
 
 	if (CovertMission != none)
 	{
-		// It's an infiltration! No rewards for you until mission completion!
-		//GiveRewards(NewGameState);
-		// Commence mission spawning as defined by the X2CovertMissionInfo template
+		`LOG("COVERT INFILTRATION TRIGGERED");
+
+		bInfiltrated = true;
+		bNeedsInfiltratedPopup = true;
+
+		// It's an infiltration! Commence mission spawning as defined by the X2CovertMissionInfo template
 
 		RegionState = GetWorldRegion();
 
@@ -67,30 +117,89 @@ function CompleteCovertAction(XComGameState NewGameState)
 		MissionSource = CovertMission.MissionSource;
 
 		MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
-		//MissionState.CovertActionRef = GetReference();
+
 		// Note to self: Make the RegionState return the same location as the CA
 		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
-
 		MissionState.ResistanceFaction = Faction;
+
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 	else
 	{
-		GiveRewards(NewGameState);
+		`LOG("WAS NOT AN INFILTRATION ACTION");
+	}
+}
 
-		// Check to ensure a Rookie Action is available
-		if (ResHQ.RookieCovertActions.Find(GetMyTemplateName()) != INDEX_NONE)
-		{
-			// This is a Rookie Action, so check to see if another one exists
-			if (!ResHQ.IsRookieCovertActionAvailable(NewGameState))
-			{
-				ResHQ = XComGameState_HeadquartersResistance(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersResistance', ResHQ.ObjectID));
-				ResHQ.CreateRookieCovertAction(NewGameState);
-			}
-		}
+function UpdateGameBoard()
+{
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction NewActionState;
+	local UIStrategyMap StrategyMap;
+	local bool bUpdated;
+	
+	if (ShouldUpdate())
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Update Covert Action");
+
+		NewActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ObjectID));
+
+		bUpdated = NewActionState.Update(NewGameState);
+		`assert(bUpdated); // why did Update & ShouldUpdate return different bools?
+
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+		`HQPRES.StrategyMap2D.UpdateMissions();
 	}
 
-	// Flag the completion popup and trigger appropriate events
-	bNeedsActionCompletePopup = true;
-	`XEVENTMGR.TriggerEvent('CovertActionCompleted', , , NewGameState);
-	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_ActionsCompleted');
+	StrategyMap = `HQPRES.StrategyMap2D;
+	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
+	{
+		// Flags indicate the covert action has been completed
+		if (bNeedsInfiltratedPopup || bNeedsAmbushPopup || bNeedsActionCompletePopup)
+		{
+			StartActionCompleteSequence();
+		}
+	}
+}
+
+simulated public function ShowActionCompletePopups()
+{
+	if (bNeedsInfiltratedPopup)
+	{
+		InfiltratedPopup();
+	}
+	else if (bNeedsAmbushPopup)
+	{
+		AmbushPopup();
+	}
+	else if (bNeedsActionCompletePopup)
+	{
+		ActionCompletePopup();
+	}
+}
+
+// Going to have to create a new popup window from scratch, using this existing stuff is not working
+simulated public function InfiltratedPopup()
+{
+	local XComGameState NewGameState;
+	local CI_XComGameState_CovertAction ActionState;
+	local XComGameState_MissionSite MissionSite;
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate CovertMission;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Toggle Action Complete Popup");
+	ActionState = CI_XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', self.ObjectID));
+	ActionState.bNeedsInfiltratedPopup = false;
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
+	MissionSite = GetMission(CovertMission.MissionSource.DataName); // Find the mission and display its popup
+	
+	if (MissionSite != none && MissionSite.GetMissionSource().MissionPopupFn != none)
+	{
+		`HQPRES.OnMissionSelected(MissionSite);
+		//MissionSite.GetMissionSource().MissionPopupFn(MissionSite);
+	}
+	
+	`GAME.GetGeoscape().Pause();
 }

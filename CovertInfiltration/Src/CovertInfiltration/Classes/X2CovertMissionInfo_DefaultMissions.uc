@@ -13,18 +13,18 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	Templates.AddItem(CreateGOpSuppliesMission());
-	Templates.AddItem(CreateGOpIntelMission());
+	Templates.AddItem(CreatePrepareGOpMission());
+	Templates.AddItem(CreatePrepareRaidMission());
 
 	return Templates;
 }
 
-static function X2DataTemplate CreateGOpSuppliesMission()
+static function X2DataTemplate CreatePrepareGOpMission()
 {
 	local X2CovertMissionInfoTemplate Template;
 	local X2StrategyElementTemplateManager StratMgr;
 
-	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_GOpSupplies'));
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareGOp'));
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	
@@ -34,17 +34,17 @@ static function X2DataTemplate CreateGOpSuppliesMission()
 	return Template;
 }
 
-static function X2DataTemplate CreateGOpIntelMission()
+static function X2DataTemplate CreatePrepareRaidMission()
 {
 	local X2CovertMissionInfoTemplate Template;
 	local X2StrategyElementTemplateManager StratMgr;
 
-	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_GOpIntel'));
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareRaid'));
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	
-	Template.MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_GuerillaOp'));
-	Template.MissionRewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Intel')));
+	Template.MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_SupplyRaid'));
+	Template.MissionRewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Supplies')));
 
 	return Template;
 }

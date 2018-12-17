@@ -184,6 +184,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationActions.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationRewards.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
   </ItemGroup>
   <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
