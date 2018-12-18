@@ -48,6 +48,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
       <SubType>Content</SubType>
     </Content>
@@ -61,6 +64,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_NextCovertAction.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIMapToCovertActionsForcer.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationItem.uc">

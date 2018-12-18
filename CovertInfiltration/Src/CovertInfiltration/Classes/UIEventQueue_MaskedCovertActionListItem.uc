@@ -15,7 +15,7 @@ simulated function UIEventQueue_ListItem InitListItem()
 {
 	super(UIPanel).InitPanel();
 
-	InnerItem = Spawn(class'UIEventQueue_CovertActionListItem', self);
+	InnerItem = Spawn(class'UIEventQueue_CovertActionListItem_CI', self);
 	InnerItem.InitListItem();
 	InnerItem.SetPosition(0, height - class'UIEventQueue_CovertActionListItem'.default.height);
 	InnerItem.OnUpButtonClicked = OnInnerUpButtonClicked;
