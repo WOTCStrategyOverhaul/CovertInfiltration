@@ -28,6 +28,7 @@ static protected function PatchResistanceRing()
 	}
 
 	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
+	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
 
 static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
