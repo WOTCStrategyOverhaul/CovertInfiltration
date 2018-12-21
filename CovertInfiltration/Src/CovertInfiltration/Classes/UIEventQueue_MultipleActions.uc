@@ -143,7 +143,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 					{
 						if(Events[i].Hours == -1)
 						{
-							ListItem = Spawn(class'UIEventQueue_CovertActionListItem', List.itemContainer).InitListItem();
+							ListItem = Spawn(class'UIEventQueue_CovertActionListItem_CI', List.itemContainer).InitListItem();
 						} else {
 							ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 						}

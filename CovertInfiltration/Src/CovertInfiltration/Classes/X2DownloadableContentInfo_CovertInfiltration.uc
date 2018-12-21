@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
+//  AUTHOR:  NotSoLoneWolf and Xymanek
 //  PURPOSE: This class is used for various hooks and to add commands to game's
 //           debug console
 //---------------------------------------------------------------------------------------
@@ -7,6 +7,34 @@
 //---------------------------------------------------------------------------------------
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
+
+static event OnPostTemplatesCreated()
+{
+	PatchResistanceRing();
+}
+
+static protected function PatchResistanceRing()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2FacilityTemplate RingTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	RingTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('ResistanceRing'));
+
+	if (RingTemplate == none)
+	{
+		`REDSCREEN("CI: Failed to find resistance ring template");
+		return;
+	}
+
+	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
+	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
+}
+
+static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
+{	
+	return false;
+}
 
 /// /////// ///
 /// HELPERS ///
