@@ -28,7 +28,7 @@ static function X2DataTemplate CreatePrepareGOpTemplate()
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 	
-	//Template.Rewards.AddItem('Reward_CAGuerillaOp');
+	Template.Rewards.AddItem('Reward_CAGuerillaOp');
 
 	return Template;
 }
@@ -49,7 +49,7 @@ static function X2DataTemplate CreatePrepareRaidTemplate()
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
 
-	//Template.Rewards.AddItem('Reward_CASupplyRaid');
+	Template.Rewards.AddItem('Reward_CASupplyRaid');
 
 	return Template;
 }

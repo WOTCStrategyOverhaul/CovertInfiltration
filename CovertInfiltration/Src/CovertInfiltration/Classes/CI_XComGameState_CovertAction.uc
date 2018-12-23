@@ -80,7 +80,7 @@ function ApplyInfiltration(XComGameState NewGameState)
 	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_ResistanceFaction FactionState;
 	local X2CovertMissionInfoTemplateManager InfilMgr;
-	local XComGameState_MissionSite MissionState;
+	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_WorldRegion RegionState;
 	local XComGameState_Reward RewardState;
 	local X2StrategyElementTemplateManager StratMgr;
@@ -116,10 +116,11 @@ function ApplyInfiltration(XComGameState NewGameState)
 
 		MissionSource = CovertMission.MissionSource;
 
-		MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
+		MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
 
 		// Note to self: Make the RegionState return the same location as the CA
 		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
+		//MissionState.SetMissionData(CovertMission.MissionRewards[0], false, 1);
 		MissionState.ResistanceFaction = Faction;
 
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
@@ -182,24 +183,43 @@ simulated public function InfiltratedPopup()
 {
 	local XComGameState NewGameState;
 	local CI_XComGameState_CovertAction ActionState;
-	local XComGameState_MissionSite MissionSite;
-	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local X2CovertMissionInfoTemplate CovertMission;
+	local TDialogueBoxData DialogData;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Toggle Action Complete Popup");
 	ActionState = CI_XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', self.ObjectID));
 	ActionState.bNeedsInfiltratedPopup = false;
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	
-	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
-	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
-	MissionSite = GetMission(CovertMission.MissionSource.DataName); // Find the mission and display its popup
-	
-	if (MissionSite != none && MissionSite.GetMissionSource().MissionPopupFn != none)
-	{
-		`HQPRES.OnMissionSelected(MissionSite);
-		//MissionSite.GetMissionSource().MissionPopupFn(MissionSite);
-	}
+	DialogData.eType = eDialog_Normal;
+	DialogData.strTitle = "Covert Infiltration Complete";
+	DialogData.strText = "Our troopers have successfully infiltrated the enemy and have informed us they are ready to strike.";
+	DialogData.strAccept = "Launch Mission";
+	DialogData.strCancel = "Return to Avenger";
+	DialogData.fnCallback = LaunchInfiltration;
+	`HQPRES.UIRaiseDialog(DialogData);
 	
 	`GAME.GetGeoscape().Pause();
+}
+
+function LaunchInfiltration(name eAction)
+{
+	local XComGameState_MissionSiteInfiltration MissionSite;
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate CovertMission;
+	local TDialogueBoxData DialogData;
+	
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
+	MissionSite = XComGameState_MissionSiteInfiltration(GetMission(CovertMission.MissionSource.DataName));
+
+	if(eAction == 'eUIAction_Accept')
+	{
+		MissionSite.SelectSquad();
+		MissionSite.StartMission();
+	}
+	else
+	{
+		
+	}
 }
