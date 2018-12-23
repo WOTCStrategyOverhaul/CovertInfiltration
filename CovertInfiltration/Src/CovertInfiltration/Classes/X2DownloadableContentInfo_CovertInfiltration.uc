@@ -50,7 +50,7 @@ static protected function PatchResistanceRing()
 	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
 
-// Cut out CI-generating things
+// Cut out action-generating things
 static protected function OnResistanceRingBuilt(StateObjectReference FacilityRef)
 {
 	local XComGameStateHistory History;
