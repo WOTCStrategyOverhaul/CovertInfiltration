@@ -84,7 +84,7 @@
     <Content Include="Src\CovertInfiltration\Classes\UIStackingIcon.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIStrategyPolicy_Listener.uc">
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyPolicy_CI.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIUtilities_Infiltration.uc">

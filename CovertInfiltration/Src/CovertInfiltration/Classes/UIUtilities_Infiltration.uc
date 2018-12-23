@@ -174,7 +174,7 @@ static function String GetStrategyCostStringNoColors(StrategyCost StratCost, arr
 	return class'UIUtilities_Text'.static.FormatCommaSeparatedNouns(strCost);
 }
 
-static function ForceRingViewIfPossible(float InterpTime)
+static function CamRingView(float InterpTime)
 {
 	local XComGameState_FacilityXCom FacilityState;
 

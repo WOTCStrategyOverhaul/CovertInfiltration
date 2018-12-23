@@ -13,10 +13,17 @@ simulated function CreateFacilityButtons()
 	AddFacilityButton(class'UIStrategyMap'.default.m_srResistanceOrders, OnViewOrders);
 }
 
+simulated function OnInit()
+{
+	super.OnInit();
+
+	if (!class'UIUtilities_Strategy'.static.GetXComHQ().bHasSeenResistanceOrdersIntroPopup)
+	{
+		`HQPRES.UIResistanceOrdersIntro();
+	}
+}
+
 simulated function OnViewOrders()
 {
 	`HQPRES.UIStrategyPolicy(false, true);
-
-	// Even though the listener will redirect the camera, we do it here to prevent the small jump
-	class'UIUtilities_Infiltration'.static.ForceRingViewIfPossible(0);
 }
