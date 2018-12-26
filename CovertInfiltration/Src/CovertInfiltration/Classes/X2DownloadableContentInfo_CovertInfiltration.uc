@@ -95,3 +95,25 @@ exec function GetRingModifier()
 	DialogData.strText = "Modifier:" @ class'UIUtilities_Strategy'.static.GetResistanceHQ().CovertActionDurationModifier;
 	`HQPRES.UIRaiseDialog(DialogData);
 }
+
+exec function RemoveEmptyWildcardSlot()
+{
+	local XComGameState NewGameState;
+	local XComGameState_HeadquartersResistance NewResHQ;
+	local int iEmptySlot;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: Removing empty wildcard slot");
+	NewResHQ = class'X2StrategyElement_StaffSlots_Infiltration'.static.GetNewResHQState(NewGameState);
+	iEmptySlot = class'X2StrategyElement_StaffSlots_Infiltration'.static.FindEmptyWildcardSlot(NewResHQ);
+
+	if (iEmptySlot > -1)
+	{
+		NewResHQ.WildCardSlots.Remove(iEmptySlot, 1);
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		`RedScreen("Cannot remove wildcard slot - no empty slots found");
+		`XCOMHISTORY.CleanupPendingGamestate(NewGameState);
+	}
+}

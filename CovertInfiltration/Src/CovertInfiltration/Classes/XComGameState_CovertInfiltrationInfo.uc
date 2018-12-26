@@ -1,10 +1,29 @@
 class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
 
 var bool bCompletedFirstOrdersAssignment; // If false (just built the ring) - allow player to assign orders at any time without waiting for supply drop
+var bool bRingStaffReplacement; // True if we are replacing the staff assigned to resistance ring and no empty wildcard slots - do not un-grant/grant slot
 
 static function XComGameState_CovertInfiltrationInfo GetInfo(optional bool AllowNull = false)
 {
 	return XComGameState_CovertInfiltrationInfo(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CovertInfiltrationInfo', AllowNull));
+}
+
+static function XComGameState_CovertInfiltrationInfo ChangeForGamestate(XComGameState NewGameState)
+{
+	local XComGameState_CovertInfiltrationInfo NewInfo;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_CovertInfiltrationInfo', NewInfo)
+	{
+		break;
+	}
+
+	if (NewInfo == none)
+	{
+		NewInfo = GetInfo();
+		NewInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
+	}
+
+	return NewInfo;
 }
 
 static function CreateInfo(optional XComGameState StartState)
