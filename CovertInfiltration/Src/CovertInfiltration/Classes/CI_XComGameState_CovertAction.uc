@@ -122,8 +122,6 @@ function ApplyInfiltration(XComGameState NewGameState)
 		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
 		//MissionState.SetMissionData(CovertMission.MissionRewards[0], false, 1);
 		MissionState.ResistanceFaction = Faction;
-
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 	else
 	{
