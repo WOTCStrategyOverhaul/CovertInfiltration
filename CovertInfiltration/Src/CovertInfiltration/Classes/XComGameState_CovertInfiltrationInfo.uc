@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
-//  PURPOSE: A container XCGS object to hold various mod-added properties so that we
-//           don't need to override other XCGS classes
+//  PURPOSE: A singleton container XCGS object to hold various mod-added properties so
+//           that we don't need to override other XCGS classes
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
