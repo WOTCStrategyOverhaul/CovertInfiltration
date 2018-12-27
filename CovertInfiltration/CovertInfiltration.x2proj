@@ -84,7 +84,7 @@
     <Content Include="Src\CovertInfiltration\Classes\UIStackingIcon.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIStrategyPolicy_Listener.uc">
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyPolicy_CI.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIUtilities_Infiltration.uc">
@@ -149,6 +149,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_CovertInfiltrationInfo.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
