@@ -46,13 +46,15 @@ static protected function PatchResistanceRing()
 	}
 
 	RingTemplate.OnFacilityBuiltFn = OnResistanceRingBuilt;
-	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention; // TODO: Text ("assign orders")
+	RingTemplate.GetQueueMessageFn = GetRingQueueMessage;
+	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
 	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
 
-// Cut out action-generating things
 static protected function OnResistanceRingBuilt(StateObjectReference FacilityRef)
 {
+	// Removed action-generating things since the ring is now about orders
+
 	local XComGameStateHistory History;
 	local XComGameState_ResistanceFaction FactionState;
 	local XComGameState_FacilityXCom FacilityState;
@@ -75,6 +77,16 @@ static protected function OnResistanceRingBuilt(StateObjectReference FacilityRef
 	}
 	
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+static protected function string GetRingQueueMessage(StateObjectReference FacilityRef)
+{
+	if (ResistanceRingNeedsAttention(FacilityRef))
+	{
+		return class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_ResitanceRing'.default.strAssingOrdersOverlay, eUIState_Bad);
+	}
+
+	return "";
 }
 
 static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)

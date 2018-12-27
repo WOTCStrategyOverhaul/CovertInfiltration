@@ -8,6 +8,8 @@
 
 class UIFacility_ResitanceRing extends UIFacility;
 
+var localized string strAssingOrdersOverlay;
+
 simulated function CreateFacilityButtons()
 {
 	AddFacilityButton(class'UIStrategyMap'.default.m_srResistanceOrders, OnViewOrders);
