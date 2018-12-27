@@ -29,6 +29,7 @@ static event OnLoadedSavedGame()
 static event OnPostTemplatesCreated()
 {
 	PatchResistanceRing();
+	RemoveNoCovertActionNags();
 }
 
 static protected function PatchResistanceRing()
@@ -93,6 +94,33 @@ static protected function bool ResistanceRingNeedsAttention(StateObjectReference
 {	
 	// Highlight the ring if it was just built and the player needs to assign orders
 	return !class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment;
+}
+
+static protected function RemoveNoCovertActionNags()
+{
+	// Remove the warning about no covert action running since those refernce the ring
+
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ObjectiveTemplate Template;
+	local int i;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('CEN_ToDoWarnings'));
+
+	if (Template == none)
+	{
+		`REDSCREEN("CI: Failed to find CEN_ToDoWarnings template - cannot remove no covert action nags");
+		return;
+	}
+
+	for (i = 0; i < Template.NarrativeTriggers.Length; i++)
+	{
+		if (Template.NarrativeTriggers[i].NarrativeDeck == 'CentralCovertActionNags')
+		{
+			Template.NarrativeTriggers.Remove(i, 1);
+			i--; // The array is shifted, so we need to account for that
+		}
+	}
 }
 
 /// /////// ///
