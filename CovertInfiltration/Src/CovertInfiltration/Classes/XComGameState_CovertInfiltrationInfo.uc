@@ -1,7 +1,19 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: A container XCGS object to hold various mod-added properties so that we
+//           don't need to override other XCGS classes
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
 
 var bool bCompletedFirstOrdersAssignment; // If false (just built the ring) - allow player to assign orders at any time without waiting for supply drop
 var bool bRingStaffReplacement; // True if we are replacing the staff assigned to resistance ring and no empty wildcard slots - do not un-grant/grant slot
+
+/////////////////
+/// Accessors ///
+/////////////////
 
 static function XComGameState_CovertInfiltrationInfo GetInfo(optional bool AllowNull = false)
 {
@@ -25,6 +37,10 @@ static function XComGameState_CovertInfiltrationInfo ChangeForGamestate(XComGame
 
 	return NewInfo;
 }
+
+////////////////
+/// Creation ///
+////////////////
 
 static function CreateInfo(optional XComGameState StartState)
 {

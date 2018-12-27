@@ -1,3 +1,15 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Replaces several behavior aspects of orders screen - especially when
+//           opening and closing. Could be lifted to CHL hooks in future
+//  CHANGES: 1) If the Ring isn't built skip all setup and instantly close the screen
+//           2) Change camera to look at the Ring facility
+//           3) Allow changing orders if this is the first time the screen was opened
+//           4) Do not show UICovertActions if supply drop and no CA is running
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIStrategyPolicy_CI extends UIStrategyPolicy;
 
 var private bool RemoveDueNoFacility;

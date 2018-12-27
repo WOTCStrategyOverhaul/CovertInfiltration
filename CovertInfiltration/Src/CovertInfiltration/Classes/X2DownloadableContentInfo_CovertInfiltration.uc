@@ -46,7 +46,7 @@ static protected function PatchResistanceRing()
 	}
 
 	RingTemplate.OnFacilityBuiltFn = OnResistanceRingBuilt;
-	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
+	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention; // TODO: Text ("assign orders")
 	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
 

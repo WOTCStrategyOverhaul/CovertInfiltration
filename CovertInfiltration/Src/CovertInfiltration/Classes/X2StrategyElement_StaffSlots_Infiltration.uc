@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Provides staff slot templates created by this mod. Currently used to
+//           completely replace Resistance Ring staff slot
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2StrategyElement_StaffSlots_Infiltration extends X2StrategyElement_DefaultStaffSlots;
 
 static function array<X2DataTemplate> CreateTemplates()
@@ -23,7 +31,7 @@ static function X2DataTemplate CreateResistanceRingStaffSlotTemplate()
 	Template.GetAvengerBonusAmountFn = GetResistanceRingAvengerBonus;
 	Template.GetBonusDisplayStringFn = GetResistanceRingBonusDisplayString;
 	Template.MatineeSlotName = "Engineer";
-
+	
 	return Template;
 }
 
