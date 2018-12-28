@@ -14,7 +14,7 @@ static function CHEventListenerTemplate CreateUIListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Geoscape_UI');
-	Template.AddCHEvent('Geoscape_ResInfoButtonVisiblie', ResistanceButtonVisible, ELD_Immediate);
+	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', ResistanceButtonVisible, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -26,7 +26,7 @@ static protected function EventListenerReturn ResistanceButtonVisible(Object Eve
 	local XComGameState_FacilityXCom FacilityState;
 
 	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'Geoscape_ResInfoButtonVisiblie') return ELR_NoInterrupt;
+	if (Tuple == none || Tuple.Id != 'Geoscape_ResInfoButtonVisible') return ELR_NoInterrupt;
 
 	FacilityState = `XCOMHQ.GetFacilityByName('ResistanceRing');
 	Tuple.Data[0].b = FacilityState != none && !Tuple.Data[1].b;
