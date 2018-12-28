@@ -24,15 +24,12 @@ static protected function EventListenerReturn ResistanceButtonVisible(Object Eve
 {
 	local XComLWTuple Tuple;
 	local XComGameState_FacilityXCom FacilityState;
-	local UIStrategyMap StrategyMap;
 
 	Tuple = XComLWTuple(EventData);
 	if (Tuple == none || Tuple.Id != 'Geoscape_ResInfoButtonVisiblie') return ELR_NoInterrupt;
 
 	FacilityState = `XCOMHQ.GetFacilityByName('ResistanceRing');
-	StrategyMap = UIStrategyMap(`SCREENSTACK.GetFirstInstanceOf(class'UIStrategyMap'));
-
-	Tuple.Data[0].b = FacilityState != none && !StrategyMap.IsInFlightMode();
+	Tuple.Data[0].b = FacilityState != none && !Tuple.Data[1].b;
 	
 	return ELR_NoInterrupt;
 }
