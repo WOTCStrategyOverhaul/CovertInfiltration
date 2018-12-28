@@ -130,7 +130,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
-    <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_Geoscape.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_UI.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration.uc">

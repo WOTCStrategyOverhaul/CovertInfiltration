@@ -1,19 +1,19 @@
-class X2EventListener_Infiltration_Geoscape extends X2EventListener;
+class X2EventListener_Infiltration_UI extends X2EventListener;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 
-	Templates.AddItem(CreateUIListeners());
+	Templates.AddItem(CreateGeoscapeListeners());
 
 	return Templates;
 }
 
-static function CHEventListenerTemplate CreateUIListeners()
+static function CHEventListenerTemplate CreateGeoscapeListeners()
 {
 	local CHEventListenerTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Geoscape_UI');
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Geoscape');
 	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', ResistanceButtonVisible, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
