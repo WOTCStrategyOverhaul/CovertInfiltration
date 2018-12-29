@@ -8,8 +8,10 @@
 
 class X2CovertMissionInfoTemplate extends X2StrategyElementTemplate;
 
-var array<X2RewardTemplate> MissionRewards;
-var X2MissionSourceTemplate MissionSource;
+//var array<X2RewardTemplate> MissionRewards;
+//var X2MissionSourceTemplate MissionSource;
+var array<name> MissionRewards;
+var name MissionSource;
 
 defaultproperties
 {

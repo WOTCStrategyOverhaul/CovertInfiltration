@@ -18,7 +18,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	return Templates;
 }
-
+/*
 static function X2DataTemplate CreatePrepareGOpMission()
 {
 	local X2CovertMissionInfoTemplate Template;
@@ -45,6 +45,29 @@ static function X2DataTemplate CreatePrepareRaidMission()
 	
 	Template.MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_SupplyRaid'));
 	Template.MissionRewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Supplies')));
+
+	return Template;
+}
+*/
+static function X2DataTemplate CreatePrepareGOpMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareGOp'));
+
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_Supplies');
+
+	return Template;
+}
+
+static function X2DataTemplate CreatePrepareRaidMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareRaid'));
+
+	Template.MissionSource = 'MissionSource_SupplyRaid';
+	Template.MissionRewards.AddItem('Reward_Supplies');
 
 	return Template;
 }

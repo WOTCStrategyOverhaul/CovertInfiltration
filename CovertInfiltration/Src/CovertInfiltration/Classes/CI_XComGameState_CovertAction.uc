@@ -84,7 +84,7 @@ function ApplyInfiltration(XComGameState NewGameState)
 	local XComGameState_WorldRegion RegionState;
 	local XComGameState_Reward RewardState;
 	local X2StrategyElementTemplateManager StratMgr;
-	local X2RewardTemplate RewardTemplate;
+	local array<X2RewardTemplate> RewardTemplates;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
 	local X2CovertMissionInfoTemplate CovertMission;
@@ -106,15 +106,15 @@ function ApplyInfiltration(XComGameState NewGameState)
 
 		RegionState = GetWorldRegion();
 
+		RewardTemplates = InfilMgr.GetCovertMissionRewards(CovertMission.DataName);
 		MissionRewards.Length = 0;
-		for (index = 0; index < CovertMission.MissionRewards.length; index++)
+		for (index = 0; index < RewardTemplates.length; index++)
 		{
-			RewardTemplate = CovertMission.MissionRewards[index];
-			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState = RewardTemplates[index].CreateInstanceFromTemplate(NewGameState);
 			MissionRewards.AddItem(RewardState);
 		}
 
-		MissionSource = CovertMission.MissionSource;
+		MissionSource = InfilMgr.GetCovertMissionSource(CovertMission);
 
 		MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
 
@@ -209,7 +209,7 @@ function LaunchInfiltration(name eAction)
 	
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
 	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
-	MissionSite = XComGameState_MissionSiteInfiltration(GetMission(CovertMission.MissionSource.DataName));
+	MissionSite = XComGameState_MissionSiteInfiltration(GetMission(CovertMission.MissionSource));
 
 	if(eAction == 'eUIAction_Accept')
 	{
