@@ -27,6 +27,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Geoscape');
 	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', GeoscapeResistanceButtonVisible, ELD_Immediate); // Relies on CHL #365, will be avaliable in v1.17
+	Template.AddCHEvent('GeoscapeFlightModeUpdate', GeoscapeFlightModeUpdate, ELD_Immediate); // Relies on CHL #358, will be avaliable in v1.17
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -43,6 +44,20 @@ static protected function EventListenerReturn GeoscapeResistanceButtonVisible(Ob
 	FacilityState = `XCOMHQ.GetFacilityByName('ResistanceRing');
 	Tuple.Data[0].b = FacilityState != none && !Tuple.Data[1].b;
 	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn GeoscapeFlightModeUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UIStrategyMap StrategyMap;
+	local bool bInFlight;
+
+	StrategyMap = UIStrategyMap(EventSource);
+	bInFlight = StrategyMap.IsInFlightMode();
+
+	StrategyMap.StrategyMapHUD.GetChildByName('CovertActionButton').SetVisible(!bInFlight);
+	StrategyMap.StrategyMapHUD.GetChildByName('CovertActionButtonNew').SetVisible(!bInFlight);
+
 	return ELR_NoInterrupt;
 }
 
