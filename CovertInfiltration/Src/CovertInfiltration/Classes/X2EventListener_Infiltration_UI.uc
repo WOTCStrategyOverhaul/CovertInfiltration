@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Listeners for various UI events (mostly CHL hooks)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2EventListener_Infiltration_UI extends X2EventListener;
 
 static function array<X2DataTemplate> CreateTemplates()
@@ -14,7 +21,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Geoscape');
-	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', ResistanceButtonVisible, ELD_Immediate);
+	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', ResistanceButtonVisible, ELD_Immediate); // Relies on CHL #365, will be avaliable in v1.17
 	Template.RegisterInStrategy = true;
 
 	return Template;
