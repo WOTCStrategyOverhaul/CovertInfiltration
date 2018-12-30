@@ -1,125 +1,153 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf and Xymanek
-//  PURPOSE: This class adds a button to the Avenger to allow players to access
-//           the Covert Actions menu without the Resistance Ring built
+//  AUTHOR:  Xymanek
+//  PURPOSE: New Geoscape button, positioned above the factions "triangle" at the bottom
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIStrategyMap_CAButton extends UIScreenListener dependson(UICovertActions);
+class UIStrategyMap_CAButton extends UIPanel;
 
-var localized string CovertActionButtonLabel;
+var UIPanel BG;
+var UIText Label;
+var UIImage ControllerIcon;
 
-/////////////////////
-/// Adding button ///
-/////////////////////
+var localized string strLabel;
 
-event OnInit(UIScreen Screen)
+simulated function InitCAButton()
 {
-	local UILargeButton CovertActionButton;
-	local UILargeButton CovertActionButtonNew;
-	local UIStrategyMap StrategyMap;
+	InitPanel('CovertActionButton');
 
-	StrategyMap = UIStrategyMap(Screen);
-	if (StrategyMap == none) return;
+	BG = Spawn(class'UIPanel', self);
+	BG.InitPanel('BG', 'X2MenuBG');
+	BG.AnchorBottomCenter();
+	BG.SetWidth(140);
+	BG.SetX(-(BG.Width / 2));
+	BG.SetAlpha(80);
 
-	CovertActionButton = Screen.Spawn(class 'UILargeButton', StrategyMap.StrategyMapHUD);
-	CovertActionButton.InitButton('CovertActionButton', CovertActionButtonLabel, OnCovertActionButton);
-	CovertActionButton.AnchorBottomCenter();
-	CovertActionButton.SetFontSize(40);
-	CovertActionButton.SetPosition(-135, -200);
-
-	CovertActionButtonNew = Screen.Spawn(class 'UILargeButton', StrategyMap.StrategyMapHUD);
-	CovertActionButtonNew.InitButton('CovertActionButtonNew', CovertActionButtonLabel $ "2", OnCovertActionNewButton);
-	CovertActionButtonNew.AnchorBottomCenter();
-	CovertActionButtonNew.SetFontSize(40);
-	CovertActionButtonNew.SetPosition(-135, -300);	
-
-	CovertActionButton.DisableNavigation();
-	CovertActionButtonNew.DisableNavigation();
-
+	Label = Spawn(class'UIText', self);
+	Label.InitText('Label');
+	Label.AnchorBottomCenter();
+	Label.SetX(BG.X + 5);
+	Label.SetWidth(BG.Width - 10);
+	Label.OnTextSizeRealized = OnLabelSizeRealized;
+	
 	if (`ISCONTROLLERACTIVE)
 	{
-		CovertActionButtonNew.SetText(
-			class'UIUtilities_Text'.static.InjectImage(class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ class'UIUtilities_Input'.const.ICON_X_SQUARE, 26, 26, -10)
-			$ CovertActionButtonNew.Text
-		);
+		ControllerIcon = Spawn(class'UIImage', self);
+		ControllerIcon.InitImage('ControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ class'UIUtilities_Input'.const.ICON_X_SQUARE);
+		ControllerIcon.AnchorBottomCenter();
+		ControllerIcon.SetSize(40, 40);
+		ControllerIcon.SetX(BG.X + 10);
+
+		Label.SetX(ControllerIcon.X + ControllerIcon.Width + 10);
+		Label.SetWidth(BG.Width - ControllerIcon.Width - 20);
 	}
 
-	HandleInput(true);
+	UpdateLabel();
+	SubscribeToEvents();
 }
 
-public function OnCovertActionButton(UIButton CovertActionButton)
+// TODO: (3) jump
+
+simulated protected function RealizeLayout()
 {
-	local UIScreenStack ScreenStack;
-	local UIScreen AvengerHUDScreen;
-	local UIScreen CovertActionScreen;
+	BG.SetHeight(Max(50, Label.Height + 10));
+	BG.SetY(-(133 + BG.Height));
 
-	ScreenStack = `SCREENSTACK;
-	CovertActionScreen = ScreenStack.GetScreen(class'UICovertActions');
-	AvengerHUDScreen = ScreenStack.GetScreen(class'UIStrategyMap');
-
-	if(CovertActionScreen == none)
-		AvengerHUDScreen.Movie.Stack.Push(AvengerHUDScreen.Movie.Pres.Spawn(class'UICovertActions', AvengerHUDScreen.Movie.Pres));
-}
-
-public function OnCovertActionNewButton(UIButton CovertActionNewButton)
-{
-	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
-}
-
-///////////////////////////////////////////
-/// Handling input (controller support) ///
-///////////////////////////////////////////
-
-event OnReceiveFocus(UIScreen screen)
-{
-	if (UIStrategyMap(Screen) == none) return;
-
-	HandleInput(true);
-}
-
-event OnLoseFocus(UIScreen screen)
-{
-	if (UIStrategyMap(Screen) == none) return;
-	
-	HandleInput(false);
-}
-
-event OnRemoved(UIScreen screen)
-{
-	if (UIStrategyMap(Screen) == none) return;
-	
-	HandleInput(false);
-}
-
-function HandleInput(bool isSubscribing)
-{
-	local delegate<UIScreenStack.CHOnInputDelegate> inputDelegate;
-	inputDelegate = OnUnrealCommand;
-
-	if(isSubscribing)
+	if (ControllerIcon != none)
 	{
-		`SCREENSTACK.SubscribeToOnInput(inputDelegate);
+		ControllerIcon.SetY(BG.Y + (BG.Height - ControllerIcon.Height) / 2);
+	}
+
+	Label.SetY(BG.Y + 5);
+}
+
+simulated protected function UpdateLabel()
+{
+	if (bIsFocused)
+	{
+		Label.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strLabel, Screen.bIsIn3D,,, 26));
 	}
 	else
 	{
-		`SCREENSTACK.UnsubscribeFromOnInput(inputDelegate);
+		Label.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strLabel, Screen.bIsIn3D,,, 24));
 	}
 }
 
-static protected function bool OnUnrealCommand(int cmd, int arg)
+simulated protected function OnLabelSizeRealized()
 {
-	if (cmd == class'UIUtilities_Input'.const.FXS_BUTTON_X && arg == class'UIUtilities_Input'.const.FXS_ACTION_RELEASE)
+	RealizeLayout();
+}
+
+simulated function OnReceiveFocus()
+{
+	super.OnReceiveFocus();
+	
+	UpdateLabel();
+}
+
+simulated function OnLoseFocus()
+{
+	super.OnLoseFocus();
+
+	UpdateLabel();
+}
+
+simulated function OnMouseEvent(int cmd, array<string> args)
+{
+	super.OnMouseEvent(cmd, args);
+
+	switch (cmd)
 	{
-		if (class'XComEngine'.static.GetHQPres().StrategyMap2D.m_eUIState != eSMS_Flight)
-		{
-			// Cannot open screen during flight
-			class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
-		}
-
-		return true;
+	case class'UIUtilities_Input'.const.FXS_L_MOUSE_UP:
+	case class'UIUtilities_Input'.const.FXS_L_MOUSE_DOUBLE_UP:
+		class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
+		break;
 	}
+}
 
-	return false;
+simulated event Removed()
+{
+	super.Removed();
+
+	UnsubscribeFromAllEvents();
+}
+
+/////////////////////////////
+/// Geoscape flight event ///
+/////////////////////////////
+
+simulated protected function SubscribeToEvents()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+    ThisObj = self;
+
+	EventManager.RegisterForEvent(ThisObj, 'GeoscapeFlightModeUpdate', OnGeoscapeFlightModeUpdate); // Relies on CHL #358, will be avaliable in v1.17
+}
+
+simulated protected function UnsubscribeFromAllEvents()
+{
+    local Object ThisObj;
+
+    ThisObj = self;
+    `XEVENTMGR.UnRegisterFromAllEvents(ThisObj);
+}
+
+simulated protected function EventListenerReturn OnGeoscapeFlightModeUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UIStrategyMap StrategyMap;
+
+	StrategyMap = UIStrategyMap(GetParent(class'UIStrategyMap', true));
+	SetVisible(!StrategyMap.IsInFlightMode());
+
+	return ELR_NoInterrupt;
+}
+
+defaultproperties
+{
+	bIsNavigable = false;
+	bProcessesMouseEvents = true;
 }

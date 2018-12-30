@@ -3,7 +3,7 @@ CovertActions_GlobalActionsMax="Maximum number of Covert Actions are in progress
 CovertActions_FactionActionMax="Maximum number of Covert Actions for this faction's influence are in progress."
 
 [UIStrategyMap_CAButton]
-CovertActionButtonLabel=COVERT ACTIONS
+strLabel=COVERT OPS
 
 [UICovertActionsGeoscape]
 strRewardHeader=Reward
