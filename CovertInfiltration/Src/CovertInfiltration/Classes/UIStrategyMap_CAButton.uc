@@ -1,11 +1,20 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
 //  PURPOSE: New Geoscape button, positioned above the factions "triangle" at the bottom
+//
+//  Potential improvements:
+//   - Use X2BladeBG instead of X2MenuBG (as the latter has border around it) but the
+//     former needs to be rotated by 90 degrees - will need to rework layout logic 
+//   - If hovering changes size of the box (eg. 1 row -> 2 rows) the previous size is
+//     used for 1 frame, making a visible "jump"
+//   - Add a background glow, similar to chosen and orders buttons at at the top
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class UIStrategyMap_CAButton extends UIPanel;
+
+var UIStrategyMap StrategyMap;
 
 var UIPanel BG;
 var UIText Label;
@@ -16,6 +25,8 @@ var localized string strLabel;
 simulated function InitCAButton()
 {
 	InitPanel('CovertActionButton');
+	
+	StrategyMap = UIStrategyMap(GetParent(class'UIStrategyMap', true));
 
 	BG = Spawn(class'UIPanel', self);
 	BG.InitPanel('BG', 'X2MenuBG');
@@ -46,8 +57,6 @@ simulated function InitCAButton()
 	UpdateLabel();
 	SubscribeToEvents();
 }
-
-// TODO: (3) jump
 
 simulated protected function RealizeLayout()
 {
@@ -101,9 +110,18 @@ simulated function OnMouseEvent(int cmd, array<string> args)
 	{
 	case class'UIUtilities_Input'.const.FXS_L_MOUSE_UP:
 	case class'UIUtilities_Input'.const.FXS_L_MOUSE_DOUBLE_UP:
-		class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
+		OnClicked();
 		break;
 	}
+}
+
+simulated protected function OnClicked()
+{
+	if (Movie.Pres.ScreenStack.GetCurrentScreen() != StrategyMap) return;
+	if (StrategyMap.IsInFlightMode()) return;
+
+	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape();
+	OnLoseFocus();
 }
 
 simulated event Removed()
@@ -138,9 +156,6 @@ simulated protected function UnsubscribeFromAllEvents()
 
 simulated protected function EventListenerReturn OnGeoscapeFlightModeUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local UIStrategyMap StrategyMap;
-
-	StrategyMap = UIStrategyMap(GetParent(class'UIStrategyMap', true));
 	SetVisible(!StrategyMap.IsInFlightMode());
 
 	return ELR_NoInterrupt;
