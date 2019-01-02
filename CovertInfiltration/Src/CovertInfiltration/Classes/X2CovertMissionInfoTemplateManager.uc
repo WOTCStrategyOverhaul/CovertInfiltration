@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2CovertMissionInfoTemplateManager extends X2StrategyElementTemplateManager;
+class X2CovertMissionInfoTemplateManager extends X2DataTemplateManager;
 
 static function X2CovertMissionInfoTemplateManager GetCovertMissionInfoTemplateManager()
 {
@@ -17,19 +17,41 @@ function X2CovertMissionInfoTemplate GetCovertMissionInfoTemplateFromCA(name Tem
 {
 	return X2CovertMissionInfoTemplate(FindDataTemplate(class'X2CovertMissionInfo'.static.GetCovertMissionInfoName(TemplateName)));
 }
+/*
+function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
+{
+	local X2StrategyElementTemplateManager StratMgr;
 
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	return X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionSource));
+}
+
+function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
+{
+	local array<X2RewardTemplate> Rewards;
+	local int i;
+	local X2StrategyElementTemplateManager StratMgr;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
+	{
+		Rewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionRewards[i])));
+	}
+
+	return Rewards;
+}
+*/
 function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
 {
 	return X2MissionSourceTemplate(FindDataTemplate(MissionInfo.MissionSource));
 }
 
-function array<X2RewardTemplate> GetCovertMissionRewards(name TemplateName)
+function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
 {
-	local X2CovertMissionInfoTemplate MissionInfo;
 	local array<X2RewardTemplate> Rewards;
 	local int i;
-
-	MissionInfo = X2CovertMissionInfoTemplate(FindDataTemplate(class'X2CovertMissionInfo'.static.GetCovertMissionInfoName(TemplateName)));
 
 	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
 	{

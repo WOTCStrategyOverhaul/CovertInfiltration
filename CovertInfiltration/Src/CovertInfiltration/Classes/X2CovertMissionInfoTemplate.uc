@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2CovertMissionInfoTemplate extends X2StrategyElementTemplate;
+class X2CovertMissionInfoTemplate extends X2DataTemplate;
 
 //var array<X2RewardTemplate> MissionRewards;
 //var X2MissionSourceTemplate MissionSource;

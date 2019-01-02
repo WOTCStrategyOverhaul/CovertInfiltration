@@ -106,7 +106,7 @@ function ApplyInfiltration(XComGameState NewGameState)
 
 		RegionState = GetWorldRegion();
 
-		RewardTemplates = InfilMgr.GetCovertMissionRewards(CovertMission.DataName);
+		RewardTemplates = InfilMgr.GetCovertMissionRewards(CovertMission);
 		MissionRewards.Length = 0;
 		for (index = 0; index < RewardTemplates.length; index++)
 		{
