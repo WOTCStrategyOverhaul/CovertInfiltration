@@ -43,24 +43,6 @@ function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemp
 	return Rewards;
 }
 */
-function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
-{
-	return X2MissionSourceTemplate(FindDataTemplate(MissionInfo.MissionSource));
-}
-
-function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
-{
-	local array<X2RewardTemplate> Rewards;
-	local int i;
-
-	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
-	{
-		Rewards.AddItem(X2RewardTemplate(FindDataTemplate(MissionInfo.MissionRewards[i])));
-	}
-
-	return Rewards;
-}
-
 DefaultProperties
 {
 	TemplateDefinitionClass=class'X2CovertMissionInfo'
