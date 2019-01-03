@@ -15,11 +15,41 @@ class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContent
 static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
+	CreateGoldenPathActions(StartState);
 }
 
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
+	CreateGoldenPathActions(none);
+}
+
+static protected function CreateGoldenPathActions(XComGameState NewGameState)
+{
+	local XComGameState_ResistanceFaction FactionState;
+	local bool bSubmitLocally;
+
+	if (NewGameState == none)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating Golden Path actions");
+		bSubmitLocally = true;
+
+		// Add all factions to the new state
+		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+		{
+			NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID);
+		}
+	}
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+	{
+		FactionState.CreateGoldenPathActions(NewGameState);
+	}
+
+	if (bSubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
 }
 
 /////////////////
