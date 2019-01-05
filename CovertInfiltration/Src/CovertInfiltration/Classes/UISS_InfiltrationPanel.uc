@@ -76,6 +76,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 {
+	local UISS_InfiltrationItem Item;
 	local array<string> RiskStrings;
 	local int idx;
 
@@ -83,7 +84,14 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 
 	for (idx = 0; idx < RiskStrings.Length; idx++)
 	{
-		GetRiskLabel(idx).SetText(RiskStrings[idx]);
+		Item = GetRiskLabel(idx);
+		Item.SetText(RiskStrings[idx]);
+		Item.Show();
+	}
+
+	for (idx = idx /* Keep going but help the compiler understand what we want to do */; idx < RiskLabels.Length; idx++)
+	{
+		GetRiskLabel(idx).Hide();
 	}
 }
 
