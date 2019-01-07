@@ -271,7 +271,7 @@ simulated protected function OnLaunch()
 
 	SquadSelect = none;
 	UnsubscribeFromAllEvents();
-	
+
 	GetAction().ConfirmAction();
 	CovertOpsScreen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
 	CovertOpsScreen.MakeMapProperlyShow();
@@ -285,18 +285,25 @@ simulated protected function OnLaunch()
 
 simulated protected function ApplyDeterrenceToRisks()
 {
+	local XComGameState NewGameState;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_CovertAction CovertAction;
 	local int SquadDeterrence, idx;
 
-	CovertAction = GetAction();
 	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
-
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply deterrence modifiers");
+	
+	CovertAction = GetAction();
+	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
+	
+	`log("Applying deterrence to CA risks",, 'CI');
 	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
 	{
 		CovertAction.Risks[idx].ChanceToOccurModifier -= SquadDeterrence;
+		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
 	}
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
 simulated protected function SubscribeToEvents()
