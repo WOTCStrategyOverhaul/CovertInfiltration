@@ -267,11 +267,12 @@ simulated protected function bool CanClickLaunch()
 
 simulated protected function OnLaunch()
 {
+	ApplyDeterrenceToRisks();
+
 	SquadSelect = none;
 	UnsubscribeFromAllEvents();
-
-	GetAction().ConfirmAction();
 	
+	GetAction().ConfirmAction();
 	CovertOpsScreen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
 	CovertOpsScreen.MakeMapProperlyShow();
 
@@ -281,6 +282,22 @@ simulated protected function OnLaunch()
 ////////////////////////////////////
 /// Event interaction management ///
 ////////////////////////////////////
+
+simulated protected function ApplyDeterrenceToRisks()
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_CovertAction CovertAction;
+	local int SquadDeterrence, idx;
+
+	CovertAction = GetAction();
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
+
+	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
+	{
+		CovertAction.Risks[idx].ChanceToOccurModifier -= SquadDeterrence;
+	}
+}
 
 simulated protected function SubscribeToEvents()
 {
