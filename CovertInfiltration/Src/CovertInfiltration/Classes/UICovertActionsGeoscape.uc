@@ -993,7 +993,7 @@ simulated function UndoDeterrenceModifer()
 	CovertAction = GetAction();
 	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
 
-	`log("Applying SquadDeterrence: " $ SquadDeterrence $ " to CA risks",, 'CI');
+	`log("Removing SquadDeterrence: " $ SquadDeterrence $ " from CA risks",, 'CI');
 	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
 	{
 		CovertAction.Risks[idx].ChanceToOccurModifier += SquadDeterrence;
