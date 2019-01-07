@@ -83,7 +83,7 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 			continue;
 		}
 
-		RiskStrings.AddItem(GetRiskDifficultyColouredString(GetAltRiskLevel(Risk)) $ " - " $ RiskTemplate.RiskName);
+		RiskStrings.AddItem(GetRiskDifficultyColouredString(GetAdjustedRiskLevel(Risk)) $ " - " $ RiskTemplate.RiskName);
 	}
 
 	return RiskStrings;
@@ -116,7 +116,8 @@ protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertAc
 		return 0;
 }
 
-protected static function int GetAltRiskLevel(CovertActionRisk Risk)
+// superficially changing the risks level for squad loadout UI
+protected static function int GetAdjustedRiskLevel(CovertActionRisk Risk)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
 	
