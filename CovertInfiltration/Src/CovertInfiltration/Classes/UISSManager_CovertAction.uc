@@ -297,12 +297,13 @@ simulated protected function ApplyDeterrenceToRisks()
 	CovertAction = GetAction();
 	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
 	
-	`log("Applying deterrence to CA risks",, 'CI');
+	`log("Applying SquadDeterrence: " $ SquadDeterrence $ " to CA risks",, 'CI');
 	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
 	{
 		CovertAction.Risks[idx].ChanceToOccurModifier -= SquadDeterrence;
 		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
 	}
+
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
