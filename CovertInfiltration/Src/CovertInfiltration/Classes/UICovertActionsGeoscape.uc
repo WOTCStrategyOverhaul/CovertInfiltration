@@ -910,6 +910,7 @@ simulated function OnReceiveFocus()
 			// Note that we need to kick units from action, otherwise they will be considered busy and kicked from squad (which will actually kick them from the action)
 			// This way they will get re-added as soon as the UISS screen initializes
 			ClearUnitsFromAction();
+			UndoDeterrenceModifer();
 			OpenLoadoutForCurrentAction(true);
 		}
 
@@ -974,6 +975,22 @@ simulated function ClearUnitsFromAction()
 	{
 		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
 		StaffSlot.EmptySlot(); // This is noop if the slot is empty
+	}
+}
+
+simulated function UndoDeterrenceModifer()
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_CovertAction CovertAction;
+	local int SquadDeterrence, idx;
+
+	CovertAction = GetAction();
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
+
+	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
+	{
+		CovertAction.Risks[idx].ChanceToOccurModifier += SquadDeterrence;
 	}
 }
 
