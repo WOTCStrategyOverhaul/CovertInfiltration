@@ -83,7 +83,7 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 			continue;
 		}
 
-		RiskStrings.AddItem(GetRiskDifficultyColouredString(Risk.Level) $ " - " $ RiskTemplate.RiskName);
+		RiskStrings.AddItem(GetRiskDifficultyColouredString(GetAdjustedRiskLevel(Risk)) $ " - " $ RiskTemplate.RiskName);
 	}
 
 	return RiskStrings;
@@ -95,14 +95,14 @@ static function string GetRiskDifficultyColouredString(int RiskLevel)
 	local eUIState ColorState;
 
 	Text = class'X2StrategyGameRulesetDataStructures'.default.CovertActionRiskLabels[RiskLevel];
-
+	
 	switch (RiskLevel)
 	{
 	case 0: ColorState = eUIState_Warning;     break;
 	case 1: ColorState = eUIState_Warning2;   break;
 	case 2: ColorState = eUIState_Bad;		break;
 	}
-
+	
 	return class'UIUtilities_Text'.static.GetColoredText(Text, ColorState);
 }
 
@@ -114,6 +114,31 @@ protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertAc
 		return -1;
 	else
 		return 0;
+}
+
+// superficially changing the risks level for squad loadout UI
+protected static function int GetAdjustedRiskLevel(CovertActionRisk Risk)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	
+	local array<int> RiskThresholds;
+	local int TotalChanceToOccur, Threshold;
+	local int SquadDeterrence, iThreshold;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
+	RiskThresholds = class'X2StrategyGameRulesetDataStructures'.default.RiskThresholds;
+	TotalChanceToOccur = Risk.ChanceToOccur + Risk.ChanceToOccurModifier - SquadDeterrence;
+
+	foreach RiskThresholds(Threshold, iThreshold)
+	{
+		if (TotalChanceToOccur <= Threshold)
+		{
+			break;
+		}
+	}
+
+	return iThreshold;
 }
 
 // Does same thing as UIUtilities_Strategy::GetStrategyCostString but doesn't colour the text

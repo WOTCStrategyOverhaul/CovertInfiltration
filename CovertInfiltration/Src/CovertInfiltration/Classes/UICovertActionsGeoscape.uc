@@ -910,6 +910,7 @@ simulated function OnReceiveFocus()
 			// Note that we need to kick units from action, otherwise they will be considered busy and kicked from squad (which will actually kick them from the action)
 			// This way they will get re-added as soon as the UISS screen initializes
 			ClearUnitsFromAction();
+			UndoCovertActionModifiers();
 			OpenLoadoutForCurrentAction(true);
 		}
 
@@ -975,6 +976,49 @@ simulated function ClearUnitsFromAction()
 		StaffSlot = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
 		StaffSlot.EmptySlot(); // This is noop if the slot is empty
 	}
+}
+
+simulated protected function UndoCovertActionModifiers()
+{
+	local XComGameState NewGameState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_CovertAction CovertAction;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Undo covert action modifiers");
+
+	CovertAction = GetAction();
+	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
+
+	UndoDeterrenceModifier(XComHQ, CovertAction);
+	UndoInfiltrationModifier(XComHQ, CovertAction);
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+simulated protected function UndoDeterrenceModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
+{
+	local int SquadDeterrence, idx;
+
+	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
+
+	`log("Removing SquadDeterrence: " @ SquadDeterrence @ " from CA risks",, 'CI');
+	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
+	{
+		CovertAction.Risks[idx].ChanceToOccurModifier += SquadDeterrence;
+		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
+	}
+}
+
+simulated protected function UndoInfiltrationModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
+{
+	local int SquadDuration;
+
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
+	
+	`log("Removing SquadInfiltration:" @ SquadDuration @ "from duration:" @ CovertAction.HoursToComplete);
+	CovertAction.HoursToComplete -= SquadDuration;
+	`log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours");
 }
 
 simulated function ClearUnaffordableCostSlots()

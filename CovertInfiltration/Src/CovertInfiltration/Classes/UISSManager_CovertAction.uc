@@ -267,11 +267,12 @@ simulated protected function bool CanClickLaunch()
 
 simulated protected function OnLaunch()
 {
+	ApplyCovertActionModifiers();
+
 	SquadSelect = none;
 	UnsubscribeFromAllEvents();
 
 	GetAction().ConfirmAction();
-	
 	CovertOpsScreen.FocusCameraOnCurrentAction(); // Look at covert action instead of region
 	CovertOpsScreen.MakeMapProperlyShow();
 
@@ -281,6 +282,49 @@ simulated protected function OnLaunch()
 ////////////////////////////////////
 /// Event interaction management ///
 ////////////////////////////////////
+
+simulated protected function ApplyCovertActionModifiers()
+{
+	local XComGameState NewGameState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_CovertAction CovertAction;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply covert action modifiers");
+
+	CovertAction = GetAction();
+	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
+
+	ApplyDeterrenceModifier(XComHQ, CovertAction);
+	ApplyInfiltrationModifier(XComHQ, CovertAction);
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+simulated protected function ApplyDeterrenceModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
+{
+	local int SquadDeterrence, idx;
+
+	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
+
+	`log("Applying SquadDeterrence: " @ SquadDeterrence @ " to CA risks",, 'CI');
+	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
+	{
+		CovertAction.Risks[idx].ChanceToOccurModifier -= SquadDeterrence;
+		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
+	}
+}
+
+simulated protected function ApplyInfiltrationModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
+{
+	local int SquadDuration;
+
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
+	
+	`log("Applying SquadInfiltration:" @ SquadDuration @ "to duration:" @ CovertAction.HoursToComplete,, 'CI');
+	CovertAction.HoursToComplete += SquadDuration;
+	`log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours",, 'CI');
+}
 
 simulated protected function SubscribeToEvents()
 {
