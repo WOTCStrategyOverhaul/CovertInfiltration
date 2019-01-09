@@ -978,7 +978,7 @@ simulated function ClearUnitsFromAction()
 	}
 }
 
-	simulated protected function UndoCovertActionModifiers()
+simulated protected function UndoCovertActionModifiers()
 {
 	local XComGameState NewGameState;
 	local XComGameState_HeadquartersXCom XComHQ;
