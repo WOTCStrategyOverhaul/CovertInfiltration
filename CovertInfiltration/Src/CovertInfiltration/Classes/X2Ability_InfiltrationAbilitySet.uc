@@ -8,15 +8,15 @@
 class X2Ability_InfiltrationAbilitySet extends X2Ability_ItemGrantedAbilitySet config(GameCore);
 
 var config int CIVILIAN_DISGUISE_MOBILITY_BONUS;
-var config int CIVILIAN_DISGUISE_DETECTION_MODIFIER;
+var config float CIVILIAN_DISGUISE_DETECTION_MODIFIER;
 
 var config int ADVENT_DISGUISE_HEALTH_BONUS;
 var config int ADVENT_DISGUISE_MOBILITY_BONUS;
-var config int ADVENT_DISGUISE_DETECTION_MODIFIER;
+var config float ADVENT_DISGUISE_DETECTION_MODIFIER;
 
 var config int HOLOGRAPHIC_DISGUISE_HEALTH_BONUS;
 var config int HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS;
-var config int HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER;
+var config float HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
