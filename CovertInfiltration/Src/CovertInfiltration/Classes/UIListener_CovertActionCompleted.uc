@@ -8,19 +8,19 @@
 
 class UIListener_CovertActionCompleted extends UIScreenListener config(Infiltration);
 
-//values from config represent a percentage to be removed from total will
+//values from config represent a percentage to be removed from total will e.g.(0.25 = 25%, 0.50 = 50%)
 var config float MIN_WILL_LOSS;
 var config float MAX_WILL_LOSS;
 
 event OnInit(UIScreen Screen)
 {
 	local XComGameState_CovertAction CovertAction;
-	local StateObjectReference Action;
+	local StateObjectReference CovertActionReport;
 
-	if (Screen != UICovertActionReport(Screen)) return;
+	CovertActionReport = UICovertActionReport(Screen);
+	if (CovertActionReport == none) return;
 	
-	Action = UICovertActionReport(Screen).ActionRef;
-	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(Action.ObjectID));
+	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(CovertActionReport.ActionRef.ObjectID));
 
 	ApplyWillLossToSoldiers(CovertAction);
 }
