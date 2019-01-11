@@ -43,9 +43,8 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction)
 		if (SlotState.IsSlotFilled() && UnitState.IsSoldier())
 		{
 			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState.GetMaxStat(eStat_Will)));
-			UnitState.UpdateMentalState();
-
 			UpdateWillRecovery(NewGameState, UnitState);
+			UnitState.UpdateMentalState();
 		}
 	}
 
