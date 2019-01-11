@@ -15,7 +15,7 @@ var config float MAX_WILL_LOSS;
 event OnInit(UIScreen Screen)
 {
 	local XComGameState_CovertAction CovertAction;
-	local StateObjectReference CovertActionReport;
+	local UICovertActionReport CovertActionReport;
 
 	CovertActionReport = UICovertActionReport(Screen);
 	if (CovertActionReport == none) return;
