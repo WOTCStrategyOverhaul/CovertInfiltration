@@ -59,7 +59,7 @@ function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitS
 	
 	History = `XCOMHISTORY;
 	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
-
+	
 	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
 	{
 		if(WillProject.ProjectFocus == UnitState.GetReference())
