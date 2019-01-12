@@ -121,6 +121,7 @@ function ApplyInfiltration(XComGameState NewGameState)
 		MissionState.BuildMission(MissionSource, RegionState.GetRandom2DLocationInRegion(), RegionState.GetReference(), MissionRewards, true);
 		//MissionState.SetMissionData(CovertMission.MissionRewards[0], false, 1);
 		MissionState.ResistanceFaction = Faction;
+		MissionState.UpdateSelectedMissionData();
 	}
 	else
 	{
@@ -182,20 +183,35 @@ simulated public function InfiltratedPopup()
 	local CI_XComGameState_CovertAction ActionState;
 	local X2CovertMissionInfoTemplate CovertMission;
 	local TDialogueBoxData DialogData;
+	
+	local XComHQPresentationLayer HQPres;
+	local UIMission_Infiltrated MissionUI;
+
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	//local X2CovertMissionInfoTemplate CovertMission;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Toggle Action Complete Popup");
 	ActionState = CI_XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', self.ObjectID));
 	ActionState.bNeedsInfiltratedPopup = false;
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	
-	DialogData.eType = eDialog_Normal;
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
+
+	/*DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = "Covert Infiltration Complete";
 	DialogData.strText = "Our troopers have successfully infiltrated the enemy and have informed us they are ready to strike.";
 	DialogData.strAccept = "Launch Mission";
 	DialogData.strCancel = "Return to Avenger";
 	DialogData.fnCallback = LaunchInfiltration;
-	`HQPRES.UIRaiseDialog(DialogData);
+	`HQPRES.UIRaiseDialog(DialogData);*/
 	
+	HQPres = `HQPRES;
+	
+	MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
+	MissionUI.MissionRef = GetMission(CovertMission.MissionSource).GetReference();
+	HQPres.ScreenStack.Push(MissionUI);
+
 	`GAME.GetGeoscape().Pause();
 }
 

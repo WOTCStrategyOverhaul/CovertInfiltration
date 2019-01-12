@@ -69,6 +69,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIMapToCovertActionsForcer.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIMission_Infiltrated.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationItem.uc">
       <SubType>Content</SubType>
     </Content>
