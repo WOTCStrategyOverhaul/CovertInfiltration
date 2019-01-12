@@ -67,7 +67,7 @@ static function X2DataTemplate CreatePrepareRaidMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareRaid'));
 
 	Template.MissionSource = 'MissionSource_SupplyRaid';
-	Template.MissionRewards.AddItem('Reward_Supplies');
+	Template.MissionRewards.AddItem('Reward_None');
 
 	return Template;
 }

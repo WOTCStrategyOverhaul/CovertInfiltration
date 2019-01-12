@@ -187,3 +187,47 @@ exec function RemoveEmptyWildcardSlot()
 		`XCOMHISTORY.CleanupPendingGamestate(NewGameState);
 	}
 }
+
+exec function SpawnCovertAction(name TemplateName, optional name FactionTemplateName = '')
+{
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	local XComGameState_ResistanceFaction FactionState;
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2CovertActionTemplate ActionTemplate;
+	local array<name> ActionExclusionList;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ActionTemplate = X2CovertActionTemplate(StratMgr.FindStrategyElementTemplate(TemplateName));
+
+	if (ActionTemplate == none)
+	{
+		`REDSCREEN("Cannot execute SpawnCovertAction cheat - invalid template name");
+		return;
+	}
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: CreateCovertAction" @ TemplateName);
+
+	// Find first faction
+	foreach History.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+	{
+		if (FactionTemplateName == '' || FactionState.GetMyTemplateName() == FactionTemplateName)
+		{
+			FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
+			break;
+		}
+	}
+
+	if (FactionState == none)
+	{
+		`REDSCREEN("Cannot execute SpawnCovertAction cheat - invalid faction template name");
+		History.CleanupPendingGameState(NewGameState);
+	}
+	else
+	{
+		FactionState.AddCovertAction(NewGameState, ActionTemplate, ActionExclusionList);
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+}

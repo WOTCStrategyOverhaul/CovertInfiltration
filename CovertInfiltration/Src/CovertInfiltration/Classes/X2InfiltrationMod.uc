@@ -51,11 +51,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	return Templates;
 }
 
-static function name GetInfilName(name ItemName)
-{
-	return name(default.INFILPREFIX $ ItemName);
-}
-
 defaultproperties
 {
 	INFILPREFIX = "InfilMod_"

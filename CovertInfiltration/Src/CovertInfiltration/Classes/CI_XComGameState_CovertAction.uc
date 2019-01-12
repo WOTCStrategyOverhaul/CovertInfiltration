@@ -106,15 +106,14 @@ function ApplyInfiltration(XComGameState NewGameState)
 
 		RegionState = GetWorldRegion();
 
-		RewardTemplates = InfilMgr.GetCovertMissionRewards(CovertMission);
-		MissionRewards.Length = 0;
+		RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(CovertMission);
 		for (index = 0; index < RewardTemplates.length; index++)
 		{
 			RewardState = RewardTemplates[index].CreateInstanceFromTemplate(NewGameState);
 			MissionRewards.AddItem(RewardState);
 		}
 
-		MissionSource = InfilMgr.GetCovertMissionSource(CovertMission);
+		MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(CovertMission);
 
 		MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
 
