@@ -6,7 +6,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> CovertActions;
 	
-	CovertActions.AddItem(CreatePrepareGOpTemplate());
+	//CovertActions.AddItem(CreatePrepareGOpTemplate());
 	CovertActions.AddItem(CreatePrepareRaidTemplate());
 
 	return CovertActions;
