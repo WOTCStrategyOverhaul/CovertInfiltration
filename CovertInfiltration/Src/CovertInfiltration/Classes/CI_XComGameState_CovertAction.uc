@@ -44,8 +44,14 @@ function bool Update(XComGameState NewGameState)
 			// If the end date time has passed, this action has completed
 			if (bStarted && class'X2StrategyGameRulesetDataStructures'.static.LessThan(EndDateTime, GetCurrentTime()))
 			{
-				ApplyRisks(NewGameState);
 				ApplyInfiltration(NewGameState);
+				
+				if (!bInfiltrated)
+				{
+					// Infiltrations cannot have risks, period
+					ApplyRisks(NewGameState);
+				} 
+				
 				if (bAmbushed || bInfiltrated)
 				{
 					// Flag XComHQ as expecting an ambush, so we can ensure the Covert Action rewards are only granted after it is completed
@@ -76,51 +82,23 @@ function bool Update(XComGameState NewGameState)
 
 function ApplyInfiltration(XComGameState NewGameState)
 {
-	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local XComGameState_MissionSiteInfiltration MissionState;
-	local XComGameState_WorldRegion RegionState;
-	local XComGameState_Reward RewardState;
-	local array<X2RewardTemplate> RewardTemplates;
-	local X2MissionSourceTemplate MissionSource;
-	local array<XComGameState_Reward> MissionRewards;
-	local X2CovertMissionInfoTemplate CovertMission;
-	local Vector2D MissionLocation;
-	local int index;
 
-	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
-	CovertMission = InfilMgr.GetCovertMissionInfoTemplateFromCA(GetMyTemplateName());
-
-	if (CovertMission != none)
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(self))
 	{
-		`log("Spawning infiltration mission" @ CovertMission.MissionSource @ "for" @ m_TemplateName,, 'CI');
+		`log("Spawning infiltration mission for" @ m_TemplateName,, 'CI');
 
 		bInfiltrated = true;
 		bNeedsInfiltratedPopup = true;
 
 		// It's an infiltration! Commence mission spawning as defined by the X2CovertMissionInfo template
 
-		RegionState = GetWorldRegion();
-
-		RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(CovertMission);
-		for (index = 0; index < RewardTemplates.length; index++)
-		{
-			RewardState = RewardTemplates[index].CreateInstanceFromTemplate(NewGameState);
-			MissionRewards.AddItem(RewardState);
-		}
-
-		MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(CovertMission);
-		MissionLocation.X = Location.X;
-		MissionLocation.Y = Location.Y;
-
 		MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
-		MissionState.ResistanceFaction = Faction;
-		MissionState.CovertActionRef = self.GetReference();
-		MissionState.BuildMission(MissionSource, MissionLocation, RegionState.GetReference(), MissionRewards, true);
-		MissionState.UpdateSelectedMissionData();
+		MissionState.SetupFromAction(self, NewGameState);
 	}
 	else
 	{
-		`log(m_TemplateName @ "is not an infiltration",, 'CI');
+		`log(m_TemplateName @ "finished, it was not an infiltration",, 'CI');
 	}
 }
 

@@ -22,6 +22,37 @@ function bool RequiresAvenger()
 	return false;
 }
 
+function SetupFromAction(XComGameState_CovertAction Action, XComGameState NewGameState)
+{
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate MissionInfo;
+	local XComGameState_Reward RewardState;
+	local array<X2RewardTemplate> RewardTemplates;
+	local X2MissionSourceTemplate MissionSource;
+	local array<XComGameState_Reward> MissionRewards;
+	local Vector2D MissionLocation;
+	local int i;
+
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
+	MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo);
+	
+	for (i = 0; i < RewardTemplates.length; i++)
+	{
+		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
+		MissionRewards.AddItem(RewardState);
+	}
+
+	// Set the location - required for camera pan to work properly
+	MissionLocation.X = Action.Location.X;
+	MissionLocation.Y = Action.Location.Y;
+
+	//ResistanceFaction = Faction;
+	CovertActionRef = Action.GetReference();
+	BuildMission(MissionSource, MissionLocation, Region, MissionRewards, true);
+}
+
 function SelectSquad()
 {
 	local XComGameStateHistory History;

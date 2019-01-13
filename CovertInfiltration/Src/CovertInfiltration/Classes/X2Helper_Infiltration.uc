@@ -168,3 +168,14 @@ static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionI
 
 	return Rewards;
 }
+
+static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
+{
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate MissionInfo;
+
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+
+	return MissionInfo != none;
+}
