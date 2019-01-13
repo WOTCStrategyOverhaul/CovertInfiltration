@@ -96,3 +96,14 @@ function bool Update(XComGameState NewGameState)
 
 	return bModified;
 }
+
+function GiveRewards(XComGameState NewGameState)
+{
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(self))
+	{
+		// The reward is the mission, you greedy
+		return;
+	}
+
+	super.GiveRewards(NewGameState);
+}

@@ -83,13 +83,23 @@ function SelectSquad()
 {
 	local XComGameStateHistory History;
 	local XComGameState NewGameState;
+
 	local XComGameState_HeadquartersXCom XComHQ;
+	local StateObjectReference SoldierRef;
+	local XComGameState_Unit Soldier;
 	
 	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Set up Infiltrating squad");
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Set up infiltrating squad");
 	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
 	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
 	
+	// Soldiers are no longer on covert action
+	foreach SoldiersOnMission(SoldierRef)
+	{
+		Soldier = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
+		Soldier.SetStatus(eStatus_Active);
+	}
+
 	// Replace the squad with the soldiers who were on the Covert Action
 	XComHQ.Squad = SoldiersOnMission;
 	
@@ -104,7 +114,9 @@ function StartMission()
 	
 	StrategyGame = `GAME;
 	StrategyGame.PrepareTacticalBattle(ObjectID);
-	ConfirmMission(); // Transfer directly to the mission, no squad select. Squad is set up based on the covert action soldiers.
+	
+	// Transfer directly to the mission, no squad select. Squad is set up based on the covert action soldiers.
+	ConfirmMission();
 }
 
 function UpdateGameBoard()
