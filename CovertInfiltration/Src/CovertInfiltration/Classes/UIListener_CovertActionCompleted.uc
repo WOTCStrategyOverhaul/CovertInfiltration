@@ -19,16 +19,16 @@ event OnInit(UIScreen Screen)
 
 	CovertActionReport = UICovertActionReport(Screen);
 	if (CovertActionReport == none) return;
-	
+
 	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(CovertActionReport.ActionRef.ObjectID));
 
-	ApplyWillLossToSoldiers(CovertAction);
+	ApplyWillLossToSoldiers(CovertAction, CovertActionReport);
 }
 
-function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction)
+function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICovertActionReport CovertActionReport)
 {
 	local XComGameState NewGameState;
-	local XComGameState_StaffSlot SlotState;
+	local XComGameState_StaffSlot StaffSlotState;
 	local XComGameState_Unit UnitState;
 
 	local int idx;
@@ -37,18 +37,24 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction)
 
 	for (idx = 0; idx < CovertAction.StaffSlots.Length; idx++)
 	{
-		SlotState = CovertAction.GetStaffSlot(idx);
-		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SlotState.GetAssignedStaff().ObjectID));
+		StaffSlotState = CovertAction.GetStaffSlot(idx);
+		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
 
-		if (SlotState.IsSlotFilled() && UnitState.IsSoldier())
+		if (StaffSlotState.IsSlotFilled() && UnitState.IsSoldier())
 		{
 			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState.GetMaxStat(eStat_Will)));
 			UpdateWillRecovery(NewGameState, UnitState);
 			UnitState.UpdateMentalState();
+			ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
 		}
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+function int GetWillLoss(int TotalWill)
+{
+	return int(TotalWill - (RandRange(MIN_WILL_LOSS, MAX_WILL_LOSS) * TotalWill));
 }
 
 function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitState)
@@ -76,7 +82,17 @@ function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitS
 	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
-function int GetWillLoss(int TotalWill)
+function ShowTiredOnReport(UICovertActionReport CovertActionReport, XComGameState_StaffSlot StaffSlotState, XComGameState_Unit UnitState, int idx)
 {
-	return int(TotalWill - (RandRange(MIN_WILL_LOSS, MAX_WILL_LOSS) * TotalWill));
+	local UICovertActionSlot ActionSlot;
+	local string Label, RankImage, ClassImage, Value4;
+	
+	ActionSlot = CovertActionReport.SlotContainer.ActionSlots[idx];
+	RankImage = UnitState.IsSoldier() ? class'UIUtilities_Image'.static.GetRankIcon(UnitState.GetRank(), UnitState.GetSoldierClassTemplateName()) : "";
+	ClassImage = UnitState.IsSoldier() ? UnitState.GetSoldierClassIcon() : UnitState.GetMPCharacterTemplate().IconImage;
+
+	Label = StaffSlotState.GetNameDisplayString();
+	Value4 = class'UIUtilities_Text'.static.GetColoredText("Tired", eUIState_Warning);
+
+	CovertActionReport.AS_SetSlotData(idx, ActionSlot.eState, "", RankImage, ClassImage, Label, ActionSlot.PromoteLabel, ActionSlot.Value1, ActionSlot.Value2, ActionSlot.Value3, Value4);
 }
