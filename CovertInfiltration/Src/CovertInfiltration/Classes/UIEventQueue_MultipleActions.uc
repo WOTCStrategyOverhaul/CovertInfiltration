@@ -58,25 +58,27 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 
 	if (Events.Length > 0 && !bIsInStrategyMap || (`HQPRES.StrategyMap2D != none && `HQPRES.StrategyMap2D.m_eUIState != eSMS_Flight))
 	{
-		// The standard HQ Events list contains a single mock "hey, let's start a covert action" item.
-		// We want to move this to the bottom of the queue (if it exists. Or more).
-		for(i = Events.Length - 1; i >= 0; i--)
-		{
-			if (Events[i].bActionEvent && Events[i].Hours == -1)
-			{
-				MockEvent = Events[i];
-				Events.Remove(i, 1);
-				Events.AddItem(MockEvent);
-			}
-		}
-
 		if(bIsExpanded)
 		{
 			NumItemsToShow = Events.Length;
 		}
 		else
 		{
-			NumItemsToShow = 1; // Events.Length is > 0
+			NumItemsToShow = Min(3, Events.Length);
+		}
+
+		// The standard HQ Events list contains a single mock "hey, let's start a covert action" item.
+		// We want to move this to the bottom of the queue
+		for(i = Events.Length - 1; i >= 0; i--)
+		{
+			if (Events[i].bActionEvent && Events[i].Hours == -1)
+			{
+				MockEvent = Events[i];
+				Events.Remove(i, 1);
+				// Push it to the lowest visible position
+				Events.InsertItem(NumItemsToShow - 1, MockEvent);
+				break;
+			}
 		}
 
 		// We need to clear the items if the list has more than we need;
