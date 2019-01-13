@@ -9,12 +9,7 @@
 
 class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite;
 
-var() StateObjectReference CovertActionRef;
-
-function bool ShouldBeVisible()
-{
-	return false;
-}
+var array<StateObjectReference> SoldiersOnMission;
 
 function bool RequiresAvenger()
 {
@@ -22,7 +17,7 @@ function bool RequiresAvenger()
 	return false;
 }
 
-function SetupFromAction(XComGameState_CovertAction Action, XComGameState NewGameState)
+function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction Action)
 {
 	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local X2CovertMissionInfoTemplate MissionInfo;
@@ -49,8 +44,39 @@ function SetupFromAction(XComGameState_CovertAction Action, XComGameState NewGam
 	MissionLocation.Y = Action.Location.Y;
 
 	//ResistanceFaction = Faction;
-	CovertActionRef = Action.GetReference();
 	BuildMission(MissionSource, MissionLocation, Region, MissionRewards, true);
+	SetSoldiersFromAction(Action);
+}
+
+protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
+{
+	local XComGameState_StaffSlot SlotState;
+	local int idx;
+
+	// Just in case somebody was here before
+	SoldiersOnMission.Length = 0;
+
+	for (idx = 0; idx < Action.StaffSlots.Length; idx++)
+	{
+		SlotState = Action.GetStaffSlot(idx);
+
+		if (SlotState != none && SlotState.IsSoldierSlot() && SlotState.IsSlotFilled())
+		{
+			SoldiersOnMission.AddItem(SlotState.GetAssignedStaffRef());
+		}
+	}
+}
+
+function SetSoldiersAsOnAction(XComGameState NewGameState)
+{
+	local StateObjectReference SoldierRef;
+	local XComGameState_Unit Soldier;
+
+	foreach SoldiersOnMission(SoldierRef)
+	{
+		Soldier = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
+		Soldier.SetStatus(eStatus_CovertAction);
+	}
 }
 
 function SelectSquad()
@@ -58,35 +84,14 @@ function SelectSquad()
 	local XComGameStateHistory History;
 	local XComGameState NewGameState;
 	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_CovertAction ActionState;
-	local XComGameState_StaffSlot SlotState;
-	local array<StateObjectReference> MissionSoldiers;
-	local int idx, NumSoldiers;
 	
 	History = `XCOMHISTORY;
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	ActionState = XComGameState_CovertAction(History.GetGameStateForObjectID(CovertActionRef.ObjectID));
-
-	NumSoldiers = class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission(self);
-
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Set up Infiltrating squad");
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
 	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
 	
-	for (idx = 0; idx < NumSoldiers; idx++)
-	{
-		// If the Covert Action has a soldier in one of its staff slots, add them to the Ambush soldier list
-		if (idx < ActionState.StaffSlots.Length)
-		{
-			SlotState = ActionState.GetStaffSlot(idx);
-			if (SlotState != none && SlotState.IsSoldierSlot() && SlotState.IsSlotFilled())
-			{
-				MissionSoldiers.AddItem(SlotState.GetAssignedStaffRef());
-			}
-		}
-	}
-	
 	// Replace the squad with the soldiers who were on the Covert Action
-	XComHQ.Squad = MissionSoldiers;
+	XComHQ.Squad = SoldiersOnMission;
 	
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
@@ -100,4 +105,22 @@ function StartMission()
 	StrategyGame = `GAME;
 	StrategyGame.PrepareTacticalBattle(ObjectID);
 	ConfirmMission(); // Transfer directly to the mission, no squad select. Squad is set up based on the covert action soldiers.
+}
+
+function UpdateGameBoard()
+{
+	local XComHQPresentationLayer HQPres;
+	local UIMission_Infiltrated MissionUI;
+	local UIStrategyMap StrategyMap;
+	
+	HQPres = `HQPRES;
+	StrategyMap = HQPres.StrategyMap2D;
+	
+	// Don't popup anything while the Avenger or Skyranger are flying
+	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
+	{
+		MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
+		MissionUI.MissionRef = GetReference();
+		HQPres.ScreenStack.Push(MissionUI);
+	}
 }
