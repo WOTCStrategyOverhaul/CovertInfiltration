@@ -147,53 +147,6 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 }
 
 //---------------------------------------------------------------------------------------
-function GetCovertActionEvents(out array<HQEvent> arrEvents)
-{
-	local XComGameStateHistory History;
-	local XComGameState_CovertAction ActionState;
-	local HQEvent kEvent;
-	local bool bActionFound;
-
-	History = `XCOMHISTORY;
-	
-	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
-	{
-		if (ActionState.bStarted)
-		{
-			kEvent.Data = ActionState.GetDisplayName();
-			kEvent.Hours = ActionState.GetNumHoursRemaining();
-			kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-			kEvent.ActionRef = ActionState.GetReference();
-			kEvent.bActionEvent = true;
-			//Add directly to the end of the events list, not sorted by hours. 
-			arrEvents.AddItem(kEvent);
-			bActionFound = true;
-		}
-	}
-	
-	if (!bActionFound)
-	{
-		kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
-
-		kEvent.Hours = -1;
-		kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-		kEvent.bActionEvent = true;
-		arrEvents.AddItem(kEvent);
-	}
-}
-
-function GetCovertActionWarning(out array<HQEvent> arrEvents)
-{
-	local HQEvent kEvent;
-
-	kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
-	kEvent.Hours = -1;
-	kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-	kEvent.bActionEvent = true;
-	arrEvents.AddItem(kEvent);
-}
-
-//---------------------------------------------------------------------------------------
 
 function int EventSorting(HQEvent A, HQEvent B)
 {
