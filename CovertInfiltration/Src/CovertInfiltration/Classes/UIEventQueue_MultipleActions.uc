@@ -149,10 +149,3 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 	
 	RefreshDateTime();
 }
-
-//---------------------------------------------------------------------------------------
-
-function int EventSorting(HQEvent A, HQEvent B)
-{
-    return A.Hours > B.Hours ? -1 : 0;
-}
