@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  (Integrated from BountyGiver's mod)
-//           Adapted for overhaul by NotSoLoneWolf
+//           Adapted for overhaul by NotSoLoneWolf, robojumper
 //  PURPOSE: This class is a replacement for base game's UIEventQueue
 //           which allows multiple covert actions to be shown.
 //           Modified to shift Covert Actions into the regular queue,
@@ -9,7 +9,9 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIEventQueue_MultipleActions extends UIEventQueue;
+class UIEventQueue_MultipleActions extends UIEventQueue config(UI);
+
+var config int MaxEntriesWhenCollapsed;
 
 simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool EnableEditControls)
 {
@@ -64,7 +66,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 		}
 		else
 		{
-			NumItemsToShow = Min(3, Events.Length);
+			NumItemsToShow = Min(MaxEntriesWhenCollapsed, Events.Length);
 		}
 
 		// The standard HQ Events list contains a single mock "hey, let's start a covert action" item.
