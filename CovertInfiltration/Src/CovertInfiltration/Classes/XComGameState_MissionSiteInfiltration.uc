@@ -11,6 +11,11 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite;
 
 var() StateObjectReference CovertActionRef;
 
+function bool ShouldBeVisible()
+{
+	return false;
+}
+
 function bool RequiresAvenger()
 {
 	// Does not require the Avenger at the mission site

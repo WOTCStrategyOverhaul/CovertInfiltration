@@ -19,8 +19,8 @@ var bool bChosenVOPlayed;
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
-	local XComGameState NewGameState;
-	local XComGameState_AdventChosen ChosenState;
+	/*local XComGameState NewGameState;
+	local XComGameState_AdventChosen ChosenState;*/
 	
 	super.InitScreen(InitController, InitMovie, InitName);
 
@@ -32,13 +32,16 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 
 	if (!bChosenVOPlayed)
 	{
-		ChosenState = GetChosen();
+		//ChosenState = GetChosen();
 		//NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Trigger Event: On Chosen Ambush");
 		//`XEVENTMGR.TriggerEvent(ChosenState.GetAmbushCommentEvent(), , , NewGameState);
 		//`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 
 		bChosenVOPlayed = true;
 	}
+
+	//`XSTRATEGYSOUNDMGR.SetSwitch('StrategyScreen', 'Avenger');
+	//`XSTRATEGYSOUNDMGR.SetSwitch('HQChapter', 'Chapter03');
 }
 
 simulated function Name GetLibraryID()
@@ -224,6 +227,15 @@ simulated function OnLaunchClicked(UIButton button)
 	
 	CloseScreen();
 
+	// TODO: Music. The geoscape music in dropship sounds very weird but the start of SS music is also rather not fitting.
+	// Maybe move it to when the screen opens? But happens then if player exits to avenger and then back?
+	`XSTRATEGYSOUNDMGR.PlaySquadSelectMusic();
+
+	// Let's try stage 3 avenger music - it's also pretty tense but not as grand/epic as squad select
+	// Welp, this just kills all music :(
+	//`XSTRATEGYSOUNDMGR.SetSwitch('StrategyScreen', 'Avenger');
+	//`XSTRATEGYSOUNDMGR.SetSwitch('HQChapter', 'Chapter03');
+
 	MissionSite = XComGameState_MissionSiteInfiltration(GetMission());
 	MissionSite.SelectSquad();
 	MissionSite.StartMission();
@@ -246,14 +258,14 @@ simulated function bool CanBackOut()
 
 simulated function OnReceiveFocus()
 {
-	local XComGameState NewGameState;
-	local XComGameState_AdventChosen ChosenState;
+	/*local XComGameState NewGameState;
+	local XComGameState_AdventChosen ChosenState;*/
 
 	super.OnReceiveFocus();
 
 	if (!bChosenVOPlayed)
 	{
-		ChosenState = GetChosen();
+		//ChosenState = GetChosen();
 		//NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Trigger Event: On Chosen Ambush");
 		//`XEVENTMGR.TriggerEvent(ChosenState.GetAmbushCommentEvent(), , , NewGameState);
 		//`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
