@@ -16,6 +16,9 @@ static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	CreateGoldenPathActions(StartState);
+
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M0_FirstCovertActionTutorial');
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M1_SecondCovertActionTutorial');
 }
 
 static event OnLoadedSavedGame()
