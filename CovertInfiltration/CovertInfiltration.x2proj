@@ -32,6 +32,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComUI.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk" />
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>

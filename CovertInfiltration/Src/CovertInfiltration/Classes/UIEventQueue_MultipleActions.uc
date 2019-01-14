@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  (Integrated from BountyGiver's mod)
-//           Adapted for overhaul by NotSoLoneWolf
+//           Adapted for overhaul by NotSoLoneWolf, robojumper
 //  PURPOSE: This class is a replacement for base game's UIEventQueue
 //           which allows multiple covert actions to be shown.
 //           Modified to shift Covert Actions into the regular queue,
@@ -9,13 +9,17 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIEventQueue_MultipleActions extends UIEventQueue;
+class UIEventQueue_MultipleActions extends UIEventQueue config(UI);
+
+var config int MaxEntriesWhenCollapsed;
 
 simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool EnableEditControls)
 {
-	local bool bIsInStrategyMap, WasWarningRemoved;
-	local int i, j, NumItemsToShow, NumCovert, NumCovertItem;
+	local bool bIsInStrategyMap;
+	local int i, NumItemsToShow;
 	local UIEventQueue_ListItem ListItem;
+	local bool MustClear;
+	local HQEvent MockEvent;
 
 	bIsExpanded = bExpand;
 
@@ -54,119 +58,84 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 	//`log("DETECTED IN STRATEGY MAP", bIsInStrategyMap, 'MultCovertActions');
 	//`log("List is expanded", bIsExpanded, 'MultCovertActions');
 
-	//When you scan and the supply drop happens
-	//And you go back to world map
-	//The entry for 1 covert op I had running
-	//Gets messed up
-	//Going to covert op screen and back fixes it though
-
 	if (Events.Length > 0 && !bIsInStrategyMap || (`HQPRES.StrategyMap2D != none && `HQPRES.StrategyMap2D.m_eUIState != eSMS_Flight))
 	{
-		// Remove the one covert action in the event queue already
-		for(i = 0; i < Events.Length; i++)
-		{
-			if (Events[i].bActionEvent)
-			{
-				Events.Remove(i, 1);
-				i--;
-			}
-		}
-
-		//`log("Removed covert actions, new length:" @ Events.Length,, 'MultCovertActions');
-
-		// Add ALL active covert actions to the end of the queue
-		GetCovertActionEvents(Events); 
-
-		//`log("Re-added all covert actions, new length:" @ Events.Length,, 'MultCovertActions');
-
-		// Properly sort the events by hours instead of having the Covert Events at the bottom
-		Events.sort(EventSorting);
-
-		// Unfortunately since the warning has -1 hours, it goes to the top.
-		// So we must remove it and re-add it again to get it to the bottom.
-		WasWarningRemoved = false;
-		for(i = 0; i < Events.Length; i++)
-		{
-			if (Events[i].bActionEvent && Events[i].Hours == -1)
-			{
-				Events.Remove(i, 1);
-				i--;
-				WasWarningRemoved = true;
-			}
-		}
-		if(WasWarningRemoved)
-		{
-			GetCovertActionWarning(Events);
-		}
-
-		NumCovert = 0;
-
-		for (i = 0; i < Events.Length; i++)
-		{
-			if (Events[i].bActionEvent)
-			{
-				NumCovert++;
-			}
-		}
-
 		if(bIsExpanded)
 		{
 			NumItemsToShow = Events.Length;
 		}
 		else
 		{
-			NumItemsToShow = 1;
+			NumItemsToShow = Min(MaxEntriesWhenCollapsed, Events.Length);
 		}
 
-		for(i = 0; i < List.ItemCount; i++)
+		// The standard HQ Events list contains a single mock "hey, let's start a covert action" item.
+		// We want to move this to the bottom of the queue
+		for(i = Events.Length - 1; i >= 0; i--)
 		{
-			if (UIEventQueue_CovertActionListItem(List.GetItem(i)) != none)
-				NumCovertItem++;
+			if (Events[i].bActionEvent && Events[i].Hours == -1)
+			{
+				MockEvent = Events[i];
+				Events.Remove(i, 1);
+				// Push it to the lowest visible position
+				Events.InsertItem(NumItemsToShow - 1, MockEvent);
+				break;
+			}
 		}
-		
-		//`log("Refreshing list list_length:" @ List.ItemCount $ ", num item to show:" @ NumItemsToShow,, 'MultCovertActions');
-		//`log("Num Covert:" @ NumCovert $ ", Num Covert Item:" @ NumCovertItem,, 'MultCovertActions');
 
-		if(List.ItemCount != NumItemsToShow || NumCovert != NumCovertItem)
+		// We need to clear the items if the list has more than we need;
+		MustClear = NumItemsToShow < List.ItemCount;
+		// Otherwise, check if every list item class that already exists matches the class we need
+		// Warning: This interacts unfavorably with ModClassOverrides, but doesn't break
+		// it in any way -- MustClear will always be true with ModClassOverrides.
+		for (i = 0; i < Min(NumItemsToShow, List.ItemCount) && !MustClear; i++)
+		{
+			if(Events[i].bActionEvent)
+			{
+				if(Events[i].Hours == -1)
+					MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_CovertActionListItem_CI';
+				else
+					MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_MaskedCovertActionListItem';
+			}
+			else
+				MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_ListItem';
+		}
+
+		if (MustClear)
+		{
 			List.ClearItems();
+		}
 
 		//Look through all events
-		j = 0;
-		for(i = 0; i < Events.Length; i++)
+		for(i = 0; i < NumItemsToShow; i++)
 		{
-			// Display the number of items to show 
-			if(i < NumItemsToShow)
+			if(i >= List.ItemCount)
 			{
-				if(List.ItemCount <= j)
+				if(Events[i].bActionEvent)
 				{
-					if(Events[i].bActionEvent)
-					{
-						if(Events[i].Hours == -1)
-						{
-							ListItem = Spawn(class'UIEventQueue_CovertActionListItem_CI', List.itemContainer).InitListItem();
-						} else {
-							ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
-						}
-					} else {
-						ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
-					}
-
-					ListItem.OnUpButtonClicked = OnUpButtonClicked;
-					ListItem.OnDownButtonClicked = OnDownButtonClicked;
-					ListItem.OnCancelButtonClicked = OnCancelButtonClicked;
-					//`log("New List entry:" @ i,, 'MultCovertActions');
+					if(Events[i].Hours == -1)
+						ListItem = Spawn(class'UIEventQueue_CovertActionListItem_CI', List.itemContainer).InitListItem();
+					else
+						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 				}
 				else
-					ListItem = UIEventQueue_ListItem(List.GetItem(j));
+					ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
 
-				ListItem.UpdateData(Events[i]);
-
-				// determine which buttons the item should show based on it's location in the list 
-				ListItem.AS_SetButtonsEnabled(EnableEditControls && j > 0,
-											  EnableEditControls && j < (NumItemsToShow - 1),
-											  EnableEditControls);
-				j++;
+				ListItem.OnUpButtonClicked = OnUpButtonClicked;
+				ListItem.OnDownButtonClicked = OnDownButtonClicked;
+				ListItem.OnCancelButtonClicked = OnCancelButtonClicked;
 			}
+			else
+			{
+				ListItem = UIEventQueue_ListItem(List.GetItem(i));
+			}
+
+			ListItem.UpdateData(Events[i]);
+
+			// determine which buttons the item should show based on it's location in the list 
+			ListItem.AS_SetButtonsEnabled(EnableEditControls && i > 0,
+										  EnableEditControls && i < (NumItemsToShow - 1),
+										  EnableEditControls);
 		}
 
 		List.SetY(-List.ShrinkToFit() - 10);
@@ -179,58 +148,4 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 	}
 	
 	RefreshDateTime();
-}
-
-//---------------------------------------------------------------------------------------
-function GetCovertActionEvents(out array<HQEvent> arrEvents)
-{
-	local XComGameStateHistory History;
-	local XComGameState_CovertAction ActionState;
-	local HQEvent kEvent;
-	local bool bActionFound;
-
-	History = `XCOMHISTORY;
-	
-	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
-	{
-		if (ActionState.bStarted)
-		{
-			kEvent.Data = ActionState.GetDisplayName();
-			kEvent.Hours = ActionState.GetNumHoursRemaining();
-			kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-			kEvent.ActionRef = ActionState.GetReference();
-			kEvent.bActionEvent = true;
-			//Add directly to the end of the events list, not sorted by hours. 
-			arrEvents.AddItem(kEvent);
-			bActionFound = true;
-		}
-	}
-	
-	if (!bActionFound)
-	{
-		kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
-
-		kEvent.Hours = -1;
-		kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-		kEvent.bActionEvent = true;
-		arrEvents.AddItem(kEvent);
-	}
-}
-
-function GetCovertActionWarning(out array<HQEvent> arrEvents)
-{
-	local HQEvent kEvent;
-
-	kEvent.Data = class'XComGameState_HeadquartersXCom'.default.CovertActionsSelectOp;
-	kEvent.Hours = -1;
-	kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Resistance;
-	kEvent.bActionEvent = true;
-	arrEvents.AddItem(kEvent);
-}
-
-//---------------------------------------------------------------------------------------
-
-function int EventSorting(HQEvent A, HQEvent B)
-{
-    return A.Hours > B.Hours ? -1 : 0;
 }
