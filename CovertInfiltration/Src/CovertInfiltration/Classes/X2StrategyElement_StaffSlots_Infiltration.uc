@@ -12,11 +12,17 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> StaffSlots;
 
+	StaffSlots.AddItem(CreateInfiltrationActionSlotTemplate());
+
 	// Completely replace the ring staff slot. This way other mods can OPTC our slot
 	StaffSlots.AddItem(CreateResistanceRingStaffSlotTemplate());
 
 	return StaffSlots;
 }
+
+////////////
+/// Ring ///
+////////////
 
 static function X2DataTemplate CreateResistanceRingStaffSlotTemplate()
 {
@@ -126,4 +132,84 @@ static function string GetResistanceRingBonusDisplayString(XComGameState_StaffSl
 	}
 
 	return GetBonusDisplayString(SlotState, "%AVENGERBONUS", Contribution);
+}
+
+////////////////////
+/// Infiltration ///
+////////////////////
+
+static function X2DataTemplate CreateInfiltrationActionSlotTemplate()
+{
+	local X2StaffSlotTemplate Template;
+
+	Template = CreateStaffSlotTemplate('InfiltrationStaffSlot');
+
+	// Same as default slot
+	Template.bPreventFilledPopup = true;
+	Template.bSoldierSlot = true;
+	Template.FillFn = class'X2StrategyElement_XpackStaffSlots'.static.FillCovertActionSlot;
+	Template.CanStaffBeMovedFn = class'X2StrategyElement_XpackStaffSlots'.static.CanStaffBeMovedCovertActions;
+	Template.GetNameDisplayStringFn = class'X2StrategyElement_XpackStaffSlots'.static.GetCovertActionSoldierNameDisplayString;
+	Template.IsUnitValidForSlotFn = class'X2StrategyElement_XpackStaffSlots'.static.IsUnitValidForCovertActionSoldierSlot;
+	
+	// Custom
+	Template.EmptyFn = EmptyInfiltrationSlot;
+	Template.GetLocationDisplayStringFn = GetInfiltrationLocationString;
+
+	return Template;
+}
+
+static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectReference SlotRef)
+{
+	local XComGameState_Unit NewUnitState;
+	local XComGameState_StaffSlot NewSlotState;
+	local XComGameState_CovertAction NewActionState;
+
+	EmptySlot(NewGameState, SlotRef, NewSlotState, NewUnitState);
+
+	if (NewSlotState.GetCovertAction().bCompleted)
+	{
+		// This is an inflitration that is ready to go
+		NewUnitState.SetStatus(eStatus_Active);
+		return;
+	}
+	
+	// Otherwise ee are still in loadout, so do the default things
+	// The code below is copy-paste from X2StrategyElement_XpackStaffSlots::EmptyCovertActionSlot
+
+	// Only set a unit status back to normal if they are still listed as being on the covert action
+	// Since this means they weren't killed, wounded, or captured on the mission
+	if (NewUnitState.GetStatus() == eStatus_CovertAction)
+	{
+		NewUnitState.SetStatus(eStatus_Active);
+
+		// Don't change super soldier loadouts since they have specialized gear
+		if (NewUnitState.IsSoldier() && !NewUnitState.bIsSuperSoldier)
+		{
+			// First try to upgrade the soldier's primary weapons, in case a tier upgrade happened while
+			// they were away on the CA. This is needed to make sure weapon upgrades and customization transfer properly.
+			// Issue #230 start
+			//CheckToUpgradePrimaryWeapons(NewGameState, NewUnitState);
+			class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, NewUnitState);
+			// Issue #230 end
+
+			// Then try to equip the rest of the old items
+			if (!class'CHHelpers'.default.bDontUnequipCovertOps) // Issue #153
+			{
+				NewUnitState.EquipOldItems(NewGameState);
+			}
+
+			// Try to restart any psi training projects
+			class'XComGameStateContext_StrategyGameRule'.static.PostMissionUpdatePsiOperativeTraining(NewGameState, NewUnitState);
+		}
+	}
+
+	NewActionState = GetNewCovertActionState(NewGameState, NewSlotState);
+	NewActionState.UpdateNegatedRisks(NewGameState);
+	NewActionState.UpdateDurationForBondmates(NewGameState);
+}
+
+static function string GetInfiltrationLocationString(XComGameState_StaffSlot SlotState)
+{
+	return "Infiltration";
 }

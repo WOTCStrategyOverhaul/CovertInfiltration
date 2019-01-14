@@ -107,3 +107,50 @@ function GiveRewards(XComGameState NewGameState)
 
 	super.GiveRewards(NewGameState);
 }
+
+function RemoveEntity(XComGameState NewGameState)
+{
+	local XComGameState_ResistanceFaction FactionState;
+	local bool SubmitLocally;
+
+	if (NewGameState == None)
+	{
+		SubmitLocally = true;
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Covert Action Despawned");
+	}
+
+	// The only change: do not kick people from finished infiltration
+	if (bStarted && class'X2Helper_Infiltration'.static.IsInfiltrationAction(self))
+	{
+		// Do not remove people from slots - we will do it later
+	}
+	else
+	{
+		EmptyAllStaffSlots(NewGameState);
+	}
+	
+	// clean up the rewards for this action if it wasn't started
+	if (!bStarted)
+	{
+		CleanUpRewards(NewGameState);
+	}
+
+	// Remove the action from the list stored by the Faction, so it can't be modified after it has been completed
+	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
+	FactionState.RemoveCovertAction(GetReference());
+
+	// remove this action from the history
+	NewGameState.RemoveStateObject(ObjectID);
+
+	if (!bNeedsLocationUpdate && `HQPRES != none && `HQPRES.StrategyMap2D != none)
+	{
+		// Only remove map pin if it was generated
+		bAvailable = false;
+		RemoveMapPin(NewGameState);
+	}
+
+	if (SubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+}

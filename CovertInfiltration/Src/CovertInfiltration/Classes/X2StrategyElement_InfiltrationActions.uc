@@ -23,10 +23,10 @@ static function X2DataTemplate CreatePrepareGOpTemplate()
 	
 	Template.Narratives.AddItem('CovertActionNarrative_PrepareGOp');
 
-	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
 	Template.Rewards.AddItem('Reward_CAGuerillaOp');
 
@@ -44,10 +44,10 @@ static function X2DataTemplate CreatePrepareRaidTemplate()
 
 	Template.Narratives.AddItem('CovertActionNarrative_PrepareRaid');
 
-	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 
 	Template.Rewards.AddItem('Reward_CASupplyRaid');
 

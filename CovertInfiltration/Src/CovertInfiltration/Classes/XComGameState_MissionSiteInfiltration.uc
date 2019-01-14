@@ -85,6 +85,7 @@ function SelectSquad()
 	local XComGameState NewGameState;
 
 	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_StaffSlot SlotState;
 	local StateObjectReference SoldierRef;
 	local XComGameState_Unit Soldier;
 	
@@ -97,7 +98,8 @@ function SelectSquad()
 	foreach SoldiersOnMission(SoldierRef)
 	{
 		Soldier = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
-		Soldier.SetStatus(eStatus_Active);
+		SlotState = XComGameState_StaffSlot(NewGameState.ModifyStateObject(class'XComGameState_StaffSlot', Soldier.StaffingSlot.ObjectID));
+		SlotState.EmptySlot(NewGameState);
 	}
 
 	// Replace the squad with the soldiers who were on the Covert Action
