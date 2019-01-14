@@ -40,10 +40,9 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 		StaffSlotState = CovertAction.GetStaffSlot(idx);
 		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
 
-		// TODO: Skip this if unit was wounder or captured (or otherwise isn't ready for next mission)
-		if (StaffSlotState.IsSlotFilled() && UnitState.IsSoldier())
+		if (StaffSlotState.IsSlotFilled() && UnitState.IsSoldier() && !UnitState.IsInjured() && !UnitState.bCaptured)
 		{
-			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState.GetMaxStat(eStat_Will)));
+			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
 			UpdateWillRecovery(NewGameState, UnitState);
 			UnitState.UpdateMentalState();
 			ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
@@ -53,9 +52,20 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-function int GetWillLoss(int TotalWill)
+	function int GetWillLoss(XComGameState_Unit UnitState)
 {
-	return int(TotalWill - (RandRange(MIN_WILL_LOSS, MAX_WILL_LOSS) * TotalWill));
+	local int WillToLose, LowestWill;
+
+	WillToLose = int(UnitState.GetMaxStat(eStat_Will) * RandRange(MIN_WILL_LOSS, MAX_WILL_LOSS));
+	LowestWill = int((UnitState.GetMaxStat(eStat_Will) * 0.33) + 1);
+	
+	//never put the soldier into shaken state from covertactions
+	if (UnitState.GetMaxStat(eStat_Will) - WillToLose < LowestWill)
+	{
+		return LowestWill;
+	}
+
+	return UnitState.GetMaxStat(eStat_Will) - WillToLose;
 }
 
 function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitState)
