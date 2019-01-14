@@ -122,7 +122,7 @@ function RemoveEntity(XComGameState NewGameState)
 	// The only change: do not kick people from finished infiltration
 	if (bStarted && class'X2Helper_Infiltration'.static.IsInfiltrationAction(self))
 	{
-		// Do not remove people from slots - we will do it later
+		// Do not remove people from slots - we will do it right before launching the mission
 	}
 	else
 	{

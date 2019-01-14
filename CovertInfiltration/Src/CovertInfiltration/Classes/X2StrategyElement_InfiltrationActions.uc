@@ -9,6 +9,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	//CovertActions.AddItem(CreatePrepareGOpTemplate());
 	CovertActions.AddItem(CreatePrepareRaidTemplate());
 
+	// Using supply raid for testing mission init. We will need to create CAs for missions that we ant to be infltratable
+
 	return CovertActions;
 }
 
@@ -21,14 +23,15 @@ static function X2DataTemplate CreatePrepareGOpTemplate()
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
+	// TODO both
 	Template.Narratives.AddItem('CovertActionNarrative_PrepareGOp');
+	Template.Rewards.AddItem('Reward_CAGuerillaOp');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
-	Template.Rewards.AddItem('Reward_CAGuerillaOp');
 
 	return Template;
 }
@@ -52,31 +55,6 @@ static function X2DataTemplate CreatePrepareRaidTemplate()
 	Template.Rewards.AddItem('Reward_CASupplyRaid');
 
 	return Template;
-}
-
-private static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass)
-{
-	local CovertActionSlot SoldierSlot;
-
-	SoldierSlot.StaffSlot = SlotName;
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostHP');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostAim');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostMobility');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostDodge');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostWill');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostHacking');
-	SoldierSlot.Rewards.AddItem('Reward_RankUp');
-	SoldierSlot.iMinRank = iMinRank;
-	SoldierSlot.bChanceFame = false;
-	SoldierSlot.bRandomClass = bRandomClass;
-	SoldierSlot.bFactionClass = bFactionClass;
-
-	if (SlotName == 'CovertActionRookieStaffSlot')
-	{
-		SoldierSlot.bChanceFame = false;
-	}
-
-	return SoldierSlot;
 }
 
 private static function CovertActionSlot CreateDefaultStaffSlot(name SlotName)
