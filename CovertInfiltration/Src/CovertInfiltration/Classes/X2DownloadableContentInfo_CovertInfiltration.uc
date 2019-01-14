@@ -16,15 +16,13 @@ static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	CreateGoldenPathActions(StartState);
-
-	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M0_FirstCovertActionTutorial');
-	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M1_SecondCovertActionTutorial');
 }
 
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	CreateGoldenPathActions(none);
+	CompleteTutorial(StartState);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -53,6 +51,12 @@ static protected function CreateGoldenPathActions(XComGameState NewGameState)
 	{
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
+}
+
+static function CompleteTutorial(XComGameState StartState)
+{
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M0_FirstCovertActionTutorial');
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M1_SecondCovertActionTutorial');
 }
 
 /////////////////
