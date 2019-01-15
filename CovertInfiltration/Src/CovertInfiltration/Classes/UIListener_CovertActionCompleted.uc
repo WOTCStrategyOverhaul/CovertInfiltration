@@ -60,10 +60,7 @@ function int GetWillLoss(XComGameState_Unit UnitState)
 {
 	local int WillToLose, LowestWill;
 
-	do
-		WillToLose = `SYNC_RAND(MAX_WILL_LOSS);
-	until (WillToLose > MIN_WILL_LOSS);
-	
+	WillToLose = MIN_WILL_LOSS + `SYNC_RAND(MAX_WILL_LOSS - MIN_WILL_LOSS);
 	WillToLose *= UnitState.GetMaxStat(eStat_Will) / 100;
 
 	LowestWill = (UnitState.GetMaxStat(eStat_Will) * class'X2StrategyGameRulesetDataStructures'.default.MentalStatePercents[eMentalState_Shaken] / 100) + 1;
