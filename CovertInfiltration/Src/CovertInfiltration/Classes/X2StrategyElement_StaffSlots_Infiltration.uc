@@ -211,5 +211,6 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 
 static function string GetInfiltrationLocationString(XComGameState_StaffSlot SlotState)
 {
+	// TODO: Empty space in armory, nothing shows up
 	return "Infiltration";
 }
