@@ -119,7 +119,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 				}
 				else
-					ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
+					ListItem = Spawn(class'UIEventQueue_ListItem_CI', List.itemContainer).InitListItem();
 
 				ListItem.OnUpButtonClicked = OnUpButtonClicked;
 				ListItem.OnDownButtonClicked = OnDownButtonClicked;
