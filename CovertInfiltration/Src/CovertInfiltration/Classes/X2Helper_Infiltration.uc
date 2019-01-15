@@ -143,3 +143,39 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 
 	return UnitDeterrence;
 }
+
+static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	return X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionSource));
+}
+
+static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
+{
+	local array<X2RewardTemplate> Rewards;
+	local int i;
+	local X2StrategyElementTemplateManager StratMgr;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
+	{
+		Rewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionRewards[i])));
+	}
+
+	return Rewards;
+}
+
+static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
+{
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate MissionInfo;
+
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+
+	return MissionInfo != none;
+}

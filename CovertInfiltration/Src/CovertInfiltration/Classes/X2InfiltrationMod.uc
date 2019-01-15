@@ -25,6 +25,11 @@ struct InfiltrationModifier
 
 var config array<InfiltrationModifier> InfilModifiers;
 
+static function name GetInfilName(name ItemName)
+{
+	return name(default.INFILPREFIX $ ItemName);
+}
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -44,11 +49,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	}
 
 	return Templates;
-}
-
-static function name GetInfilName(name ItemName)
-{
-	return name(default.INFILPREFIX $ ItemName);
 }
 
 defaultproperties
