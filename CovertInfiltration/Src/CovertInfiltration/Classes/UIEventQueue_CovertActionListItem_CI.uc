@@ -24,7 +24,7 @@ simulated function UpdateData(HQEvent Event)
 	ActionRef = Event.ActionRef;
 
 	DaysToHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_TO_HOURS);
-	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);;
+	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);
 
 	if(!DaysToHours)
 	{

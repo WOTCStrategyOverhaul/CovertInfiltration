@@ -12,8 +12,13 @@ var config int CONFIG_VERSION;
 var config bool DAYS_TO_HOURS;
 var config int DAYS_BEFORE_HOURS;
 
-var MCM_API_Checkbox DaysToHours;
-var MCM_API_Slider DaysBeforeHours;
+// localized strings
+var localized string PageTitle;
+var localized string GroupTitle;
+var localized string DaysToHoursDesc;
+var localized string DaysToHoursTooltip;
+var localized string DaysBeforeHoursDesc;
+var localized string DaysBeforeHoursTooltip;
 
 event OnInit(UIScreen Screen)
 {
@@ -31,13 +36,13 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	LoadSavedSettings();
 
 	Page = ConfigAPI.NewSettingsPage("Covert Infiltration");
-	Page.SetPageTitle("Covert Infiltration");
+	Page.SetPageTitle(PageTitle);
 	Page.SetSaveHandler(SaveButtonClicked);
 
-	Group = Page.AddGroup('Group1', "Various Settings");
+	Group = Page.AddGroup('Group1', GroupTitle);
 
-	Group.AddCheckBox('checkbox', "Hours instead of days", "Display hours instead of days in the EventQueue", DAYS_TO_HOURS, CheckboxSaveHandler);
-	Group.AddSlider('slider', "Days before hours", "How many days left before displaying hours instead", 1, 3, 1, DAYS_BEFORE_HOURS, SliderSaveHandler);
+	Group.AddCheckBox('checkbox', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, CheckboxSaveHandler);
+	Group.AddSlider('slider', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, SliderSaveHandler);
 
 	Page.ShowSettings();
 }
@@ -53,18 +58,8 @@ simulated function LoadSavedSettings()
 `MCM_API_BasicCheckboxSaveHandler(CheckboxSaveHandler, DAYS_TO_HOURS)
 `MCM_API_BasicSliderSaveHandler(SliderSaveHandler, DAYS_BEFORE_HOURS)
 
-simulated function CheckboxChangeHandler(MCM_API_Setting Setting, bool Value)
-{
-		DaysBeforeHours.SetEditable(Value);
-}
-
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {
     self.CONFIG_VERSION = `MCM_CH_GetCompositeVersion();
     self.SaveConfig();
-}
-
-defaultproperties
-{
-	ScreenClass=none
 }

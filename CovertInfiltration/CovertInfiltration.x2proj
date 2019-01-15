@@ -34,6 +34,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComModConfigMenu_Defaults.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
@@ -53,6 +56,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
@@ -72,6 +78,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_CovertActionCompleted.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_ModConfigMenu.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_NextCovertAction.uc">

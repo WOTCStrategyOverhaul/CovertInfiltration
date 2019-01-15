@@ -10,11 +10,6 @@ simulated function UIEventQueue_ListItem InitListItem()
 	return self; 
 }
 
-simulated function OnInit()
-{
-	super.OnInit();
-}
-
 simulated function UpdateData(HQEvent Event)
 {
 	local string TimeValue, TimeLabel, Desc;
@@ -25,7 +20,7 @@ simulated function UpdateData(HQEvent Event)
 	Desc = Event.Data;
 
 	DaysToHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_TO_HOURS);
-	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);;
+	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);
 
 	if(!DaysToHours)
 	{
@@ -50,5 +45,4 @@ simulated function UpdateData(HQEvent Event)
 	SetDaysLabel(TimeLabel);
 	SetDaysValue(TimeValue);
 	SetIconImage(Event.ImagePath);
-
 }
