@@ -16,13 +16,14 @@ static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	CreateGoldenPathActions(StartState);
+	CompleteTutorial(StartState);
 }
 
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	CreateGoldenPathActions(none);
-	CompleteTutorial(StartState);
+	CompleteTutorial(none);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -53,10 +54,23 @@ static protected function CreateGoldenPathActions(XComGameState NewGameState)
 	}
 }
 
-static function CompleteTutorial(XComGameState StartState)
+static function CompleteTutorial(XComGameState NewGameState)
 {
-	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M0_FirstCovertActionTutorial');
-	class'XComGameState_Objective'.static.CompleteObjectiveByName(StartState, 'XP2_M1_SecondCovertActionTutorial');
+	local bool bSubmitLocally;
+
+	if (NewGameState == none)
+	{
+		bSubmitLocally = true;
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Disabling Covert Action Tutorial");
+	}
+
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'XP2_M0_FirstCovertActionTutorial');
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'XP2_M1_SecondCovertActionTutorial');
+	
+	if(bSubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
 }
 
 /////////////////
