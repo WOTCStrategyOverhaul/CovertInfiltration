@@ -7,25 +7,28 @@
 
 class UIEventQueue_CovertActionListItem_CI extends UIEventQueue_CovertActionListItem;
 
+`include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
+
 var StateObjectReference ActionRef;
+
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.VERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
 simulated function UpdateData(HQEvent Event)
 {
-	local string ActionLabel, TimeValue, TimeLabel, Desc;
+	local string TimeValue, TimeLabel, Desc;
 	
-	//TODO: mcm/config these?
+	local bool DaysToHours;
 	local int DaysBeforeHours;
-	local bool ShowHours;
 
 	Desc = Event.Data;
 	ActionRef = Event.ActionRef;
 
-	DaysBeforeHours = 0;
-	ShowHours = True;
+	DaysToHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_TO_HOURS);
+	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);;
 
-	if(ShowHours)
+	if(!DaysToHours)
 	{
-		DaysBeforeHours = 2;
+		DaysBeforeHours = 0;
 	}
 
 	class'UIUtilities_Text'.static.GetTimeValueAndLabel(Event.Hours, TimeValue, TimeLabel, DaysBeforeHours);
@@ -48,7 +51,6 @@ simulated function UpdateData(HQEvent Event)
 	SetIconImage(Event.ImagePath);
 
 	UpdateSlotData(ActionRef);
-	AS_SetLabel(ActionLabel);
 }
 
 simulated function OpenCovertActionScreen()
