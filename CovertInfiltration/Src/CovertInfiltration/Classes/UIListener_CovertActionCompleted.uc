@@ -8,9 +8,9 @@
 
 class UIListener_CovertActionCompleted extends UIScreenListener config(Infiltration);
 
-//values from config represent a percentage to be removed from total will e.g.(0.25 = 25%, 0.50 = 50%)
-var config float MIN_WILL_LOSS;
-var config float MAX_WILL_LOSS;
+//values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
+var config int MIN_WILL_LOSS;
+var config int MAX_WILL_LOSS;
 
 event OnInit(UIScreen Screen)
 {
@@ -45,21 +45,30 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
 			UpdateWillRecovery(NewGameState, UnitState);
 			UnitState.UpdateMentalState();
+			
+			if (UnitState.GetMentalState() == eMentalState_Tired)
+			{
 			ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
+			}
 		}
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-	function int GetWillLoss(XComGameState_Unit UnitState)
+function int GetWillLoss(XComGameState_Unit UnitState)
 {
 	local int WillToLose, LowestWill;
 
-	WillToLose = int(UnitState.GetMaxStat(eStat_Will) * RandRange(MIN_WILL_LOSS, MAX_WILL_LOSS));
-	LowestWill = int((UnitState.GetMaxStat(eStat_Will) * 0.33) + 1);
+	do
+		WillToLose = `SYNC_RAND(MAX_WILL_LOSS);
+	until (WillToLose > MIN_WILL_LOSS);
 	
-	//never put the soldier into shaken state from covertactions
+	WillToLose *= UnitState.GetMaxStat(eStat_Will) / 100;
+
+	LowestWill = (UnitState.GetMaxStat(eStat_Will) * class'X2StrategyGameRulesetDataStructures'.default.MentalStatePercents[eMentalState_Shaken] / 100) + 1;
+	
+	//never put the soldier into shaken state from covert actions
 	if (UnitState.GetMaxStat(eStat_Will) - WillToLose < LowestWill)
 	{
 		return LowestWill;
