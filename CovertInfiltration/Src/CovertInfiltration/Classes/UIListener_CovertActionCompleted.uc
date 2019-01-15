@@ -48,7 +48,7 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 			
 			if (UnitState.GetMentalState() == eMentalState_Tired)
 			{
-			ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
+				ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
 			}
 		}
 	}
