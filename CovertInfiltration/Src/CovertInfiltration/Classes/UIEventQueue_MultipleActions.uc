@@ -29,7 +29,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 		ExpandButton.Hide();
 		bIsExpanded = true;
 	}
-	else if(Events.Length > 1) 
+	else if(Events.Length > MaxEntriesWhenCollapsed) 
 	{
 		ExpandButton.Show();
 
