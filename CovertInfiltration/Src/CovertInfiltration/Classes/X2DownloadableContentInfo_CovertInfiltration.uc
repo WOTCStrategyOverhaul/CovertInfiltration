@@ -8,6 +8,8 @@
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
+var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
+
 static event UpdateDLC()
 {
 	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
@@ -200,6 +202,91 @@ static protected function RemoveSquadSizeUpgrades()
 
 	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIUnlock');
 	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIIUnlock');
+}
+
+/// ////////////// ///
+/// DLC (HL) HOOKS ///
+/// ////////////// ///
+
+/// <summary>
+/// Called from X2TacticalGameRuleset:state'CreateTacticalGame':UpdateTransitionMap / 
+/// XComPlayerController:SetupDropshipMatinee for both PreMission/PostMission.
+/// You may fill out the `OverrideMapName` parameter to override the transition map.
+/// If `UnitState != none`, return whether this unit should have cosmetic attachments (gear) on the transition map.
+/// </summary>
+static function bool LoadingScreenOverrideTransitionMap(optional out string OverrideMapName, optional XComGameState_Unit UnitState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_BattleData BattleData;
+	local XComGameState_MissionSite MissionSiteState;
+
+	// Code adapted from LW2
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	MissionSiteState = XComGameState_MissionSite(History.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	if (XComGameState_MissionSiteInfiltration(MissionSiteState) != none)
+	{
+		if (`TACTICALRULES != none)
+		{
+			switch (MissionSiteState.GeneratedMission.Plot.strType)
+			{
+				case "CityCenter":
+				case "Rooftops":
+				case "Slums":
+				case "Facility":
+					OverrideMapName = "CIN_Loading_Infiltration_CityCenter";
+					break;
+				case "Shanty":
+				case "SmallTown":
+				case "Wilderness":
+					OverrideMapName = "CIN_Loading_Infiltration_SmallTown";
+					break;
+				// FIXME: Evalutate, create an Abandoned intro?
+				case "Abandoned":
+				case "Tunnels_Sewer":
+				case "Stronghold":
+				case "Tunnels_Subway":
+				default:
+					OverrideMapName = "CIN_Loading_Infiltration_CityCenter";
+					break;
+			}
+
+			// We want cosmetic attachments!
+			return true;
+		}
+	}
+
+	return false; 
+}
+
+/// <summary>
+/// Called from XComTacticalMissionManager:GetActiveMissionIntroDefinition before it returns the Default.
+/// Notable changes from LW2: Called even if the mission/plot/plot type has an override.
+/// OverrideType is -1 for default, 0 for Mission override, 1 for Plot override, 2 for Plot Type override.
+/// OverrideTag contains the Mission name / Plot name / Plot type, respectively
+/// Return true to use.
+/// </summary>
+static function bool UseAlternateMissionIntroDefinition(MissionDefinition ActiveMission, int OverrideType, string OverrideTag, out MissionIntroDefinition MissionIntro)
+{
+	local XComGameStateHistory History;
+	local XComGameState_BattleData BattleData;
+	local XComGameState_MissionSite MissionSiteState;
+
+	// Code adapted from LW2
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	MissionSiteState = XComGameState_MissionSite(History.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	// We assume that any Infiltration mission doesn't need a special intro. In particular, we assume important
+	// story missions like the Network Tower, Final Mission, Chosen Base Assaults, Avenger Defense etc. can't be infiltrated.
+	// This wasn't true in LW2, and needs to be changed here when we get more things to infiltrate.
+	if (XComGameState_MissionSiteInfiltration(MissionSiteState) != none)
+	{
+		MissionIntro = default.InfiltrationMissionIntroDefinition;
+		return true;
+	}
+	return false;
 }
 
 /// /////// ///
