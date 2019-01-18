@@ -8,11 +8,15 @@ var int CurrentWorkRate;
 var int NextSpawnAt; // In work units
 
 var const config array<int> GameStartWork; // How much work to add when the campaign starts
+
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
+var const config bool bStaringRegionContributesToWork;
+
 var const config array<int> WorkRequiredForP1;
 var const config array<int> WorkRequiredForP1Variance;
+
 var const config array<name> ActionsToSpawn;
 
 static function Update();
@@ -37,15 +41,22 @@ function SetCurrentWorkRate()
 
 static function GetNumContactsAndRelays(out int Contacts, out int Relays)
 {
+	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_WorldRegion Region;
 	local XComGameStateHistory History;
 
 	History = `XCOMHISTORY;
+	XComHQ = `XCOMHQ;
 	Contacts = 0;
 	Relays = 0;
 
 	foreach History.IterateByClassType(class'XComGameState_WorldRegion', Region)
 	{
+		if (!bStaringRegionContributesToWork && XComHQ.StartingRegion.ObjectID == Region.ObjectID)
+		{
+			continue;
+		}
+
 		if (Region.ResistanceLevel == eResLevel_Contact)
 		{
 			Contacts++;
@@ -67,7 +78,7 @@ function SetNextSpawnAt()
 	WorkRequired = `ScaleStrategyArrayInt(WorkRequiredForP1);
 	Variance = `SYNC_RAND(`ScaleStrategyArrayInt(WorkRequiredForP1Variance));
 
-	bVarianceHigher = `SYNC_RAND(2) > 1;
+	bVarianceHigher = `SYNC_RAND(2) < 1;
 	if (!bVarianceHigher) Variance *= -1;
 
 	NextSpawnAt = WorkRequired + Variance;
