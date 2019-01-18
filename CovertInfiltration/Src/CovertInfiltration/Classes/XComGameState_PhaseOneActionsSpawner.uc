@@ -196,9 +196,10 @@ function SpawnAction(XComGameState NewGameState)
 	Faction.CovertActions.AddItem(NewActionRef);
 
 	// TODO: Popup
+	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ClientMessage("CI: Spawned P1 action - " $ ActionTemplate.name,, 10.0);
 }
 
-static function X2CovertActionTemplate PickActionToSpawn()
+function X2CovertActionTemplate PickActionToSpawn()
 {
 	local X2StrategyElementTemplateManager Manager;
 	local name PickedActionName;
