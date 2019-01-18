@@ -7,13 +7,12 @@ var protectedwrite TDateTime PreviousWorkSubmittedAt;
 var protectedwrite int CurrentWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
-var const config array<int> GameStartWork; // How much work to add when the campaign starts
-
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
 var const config bool bStaringRegionContributesToWork;
 
+var const config array<int> GameStartWork; // How much work to add when the campaign starts
 var const config array<int> WorkRequiredForP1;
 var const config array<int> WorkRequiredForP1Variance;
 
