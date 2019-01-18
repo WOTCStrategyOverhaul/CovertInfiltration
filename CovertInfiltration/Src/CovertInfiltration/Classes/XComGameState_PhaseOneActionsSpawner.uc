@@ -62,6 +62,10 @@ static function Update()
 	}
 }
 
+///////////////////
+/// Bookkeeping ///
+///////////////////
+
 function bool ShouldSpawnAction()
 {
 	local float WorkDone;
@@ -69,12 +73,6 @@ function bool ShouldSpawnAction()
 	WorkDone = PreviousWork + GetWorkDoneInCurrentPeriod();
 
 	return WorkDone >= NextSpawnAt;
-}
-
-function SpawnAction(XComGameState NewGameState)
-{
-	// TODO: Spawn
-	// TODO: Popup
 }
 
 function ResetProgress()
@@ -161,6 +159,75 @@ function SetNextSpawnAt()
 	if (!bVarianceHigher) Variance *= -1;
 
 	NextSpawnAt = WorkRequired + Variance;
+}
+
+////////////////
+/// Spawning ///
+////////////////
+
+function SpawnAction(XComGameState NewGameState)
+{
+	local X2CovertActionTemplate ActionTemplate;
+	local XComGameState_ResistanceFaction Faction;
+	local StateObjectReference NewActionRef;
+
+	// TODO: Better logic for picking location/faction of action:
+	// 1) Get a random contacted region that has the least infiltrations right now
+	// 2) Get a faction that controls that region
+	// 3) If said faction isn't met pick one that has the least infiltrations currently
+
+	ActionTemplate = PickActionToSpawn();
+	Faction = GetFactionForNewAction();
+
+	if (ActionTemplate == none)
+	{
+		`RedScreen("CI: Cannot spawn P1 actions - the template is none");
+		return;
+	}
+	if (Faction == none)
+	{
+		`RedScreen("CI: Cannot spawn P1 actions - no faction that met XCom");
+		return;
+	}
+
+	// Spawn
+	Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
+	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
+	Faction.CovertActions.AddItem(NewActionRef);
+
+	// TODO: Popup
+}
+
+static function X2CovertActionTemplate PickActionToSpawn()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local name PickedActionName;
+
+	if (default.ActionsToSpawn.Length == 0)
+	{
+		`RedScreen("CI: Cannot spawn P1 actions - ActionsToSpawn is empty");
+		return none;
+	}
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	PickedActionName = default.ActionsToSpawn[`SYNC_RAND(default.ActionsToSpawn.Length)];
+
+	return X2CovertActionTemplate(Manager.FindStrategyElementTemplate(PickedActionName));
+}
+
+static function XComGameState_ResistanceFaction GetFactionForNewAction()
+{
+	local XComGameState_ResistanceFaction Faction;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', Faction)
+	{
+		if (Faction.bMetXCom)
+		{
+			return Faction;
+		}
+	}
+
+	return none;
 }
 
 ///////////////////////////
