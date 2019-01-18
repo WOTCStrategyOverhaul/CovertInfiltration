@@ -8,6 +8,11 @@
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
+static event UpdateDLC()
+{
+	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+}
+
 ///////////////////////
 /// Loaded/new game ///
 ///////////////////////
