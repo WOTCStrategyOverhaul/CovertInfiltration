@@ -1,5 +1,9 @@
 //---------------------------------------------------------------------------------------
-//  ModConfigMenu Defaults
+//  AUTHOR:  statusNone
+//  PURPOSE: Required class for MCM to point to default values of all
+//	MCM adjustable values
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 class ModConfigMenu_Defaults extends Object config(ModConfigMenu_Defaults);
 

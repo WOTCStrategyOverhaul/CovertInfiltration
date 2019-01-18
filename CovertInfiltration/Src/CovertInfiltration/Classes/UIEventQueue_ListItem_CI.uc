@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  statusNone
+//  PURPOSE: Simple class to Override UIEventQueue_ListItem::UpdateData() in order to
+//	show Event Queue items as hours instead of days
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
 
 class UIEventQueue_ListItem_CI extends UIEventQueue_ListItem;
 
