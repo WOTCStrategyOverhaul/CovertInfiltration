@@ -25,3 +25,11 @@ strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign orders
+
+[UIListener_ModConfigMenu]
+PageTitle="Covert Infiltration"
+GroupTitle="Various Settings"
+DaysToHoursDesc="Hours instead of days"
+DaysToHoursTooltip="Display hours instead of days in the EventQueue"
+DaysBeforeHoursDesc="Days before hours"
+DaysBeforeHoursTooltip="How many days left before displaying hours instead"

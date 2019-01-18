@@ -98,7 +98,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 					MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_MaskedCovertActionListItem';
 			}
 			else
-				MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_ListItem';
+				MustClear = MustClear || List.GetItem(i).Class != class'UIEventQueue_ListItem_CI';
 		}
 
 		if (MustClear)
@@ -119,7 +119,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 						ListItem = Spawn(class'UIEventQueue_MaskedCovertActionListItem', List.itemContainer).InitListItem();
 				}
 				else
-					ListItem = Spawn(class'UIEventQueue_ListItem', List.itemContainer).InitListItem();
+					ListItem = Spawn(class'UIEventQueue_ListItem_CI', List.itemContainer).InitListItem();
 
 				ListItem.OnUpButtonClicked = OnUpButtonClicked;
 				ListItem.OnDownButtonClicked = OnDownButtonClicked;
@@ -127,7 +127,7 @@ simulated function UpdateEventQueue(array<HQEvent> Events, bool bExpand, bool En
 			}
 			else
 			{
-				ListItem = UIEventQueue_ListItem(List.GetItem(i));
+				ListItem = UIEventQueue_ListItem_CI(List.GetItem(i));
 			}
 
 			ListItem.UpdateData(Events[i]);

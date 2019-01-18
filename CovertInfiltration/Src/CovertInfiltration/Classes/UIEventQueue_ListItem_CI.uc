@@ -1,17 +1,21 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
-//  PURPOSE: Small behaviour change to open our new covert ops screen
+//  AUTHOR:  statusNone
+//  PURPOSE: Simple class to Override UIEventQueue_ListItem::UpdateData() in order to
+//	show Event Queue items as hours instead of days
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIEventQueue_CovertActionListItem_CI extends UIEventQueue_CovertActionListItem;
+class UIEventQueue_ListItem_CI extends UIEventQueue_ListItem;
 
 `include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
-
-var StateObjectReference ActionRef;
-
 `MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.VERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
+simulated function UIEventQueue_ListItem InitListItem()
+{
+	super.InitPanel(); // must do this before adding children or setting data
+	return self; 
+}
 
 simulated function UpdateData(HQEvent Event)
 {
@@ -21,7 +25,6 @@ simulated function UpdateData(HQEvent Event)
 	local int DaysBeforeHours;
 
 	Desc = Event.Data;
-	ActionRef = Event.ActionRef;
 
 	DaysToHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_TO_HOURS);
 	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);
@@ -49,22 +52,4 @@ simulated function UpdateData(HQEvent Event)
 	SetDaysLabel(TimeLabel);
 	SetDaysValue(TimeValue);
 	SetIconImage(Event.ImagePath);
-
-	UpdateSlotData(ActionRef);
-}
-
-simulated function OpenCovertActionScreen()
-{
-	if (Movie.Stack.HasInstanceOf(class'UIStrategyMap'))
-	{
-		if (Movie.Stack.IsCurrentScreen(class'UIStrategyMap'.Name))
-		{
-			class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(ActionRef);
-		}
-	}
-	else
-	{
-		class'UIMapToCovertActionsForcer'.static.ForceCAOnNextMapInit(ActionRef);
-		XComHQPresentationLayer(Movie.Pres).m_kAvengerHUD.NavHelp.HotlinkToGeoscape();
-	}
 }
