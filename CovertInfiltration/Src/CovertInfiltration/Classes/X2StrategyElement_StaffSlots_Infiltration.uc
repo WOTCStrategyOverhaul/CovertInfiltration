@@ -154,7 +154,6 @@ static function X2DataTemplate CreateInfiltrationActionSlotTemplate()
 	
 	// Custom
 	Template.EmptyFn = EmptyInfiltrationSlot;
-	Template.GetLocationDisplayStringFn = GetInfiltrationLocationString;
 
 	return Template;
 }
@@ -174,7 +173,7 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 		return;
 	}
 	
-	// Otherwise ee are still in loadout, so do the default things
+	// Otherwise we are still in loadout, so do the default things
 	// The code below is copy-paste from X2StrategyElement_XpackStaffSlots::EmptyCovertActionSlot
 
 	// Only set a unit status back to normal if they are still listed as being on the covert action
@@ -207,10 +206,4 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 	NewActionState = GetNewCovertActionState(NewGameState, NewSlotState);
 	NewActionState.UpdateNegatedRisks(NewGameState);
 	NewActionState.UpdateDurationForBondmates(NewGameState);
-}
-
-static function string GetInfiltrationLocationString(XComGameState_StaffSlot SlotState)
-{
-	// TODO: Empty space in armory, nothing shows up
-	return "Infiltration";
 }
