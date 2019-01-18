@@ -31,7 +31,6 @@ var localized string strPlusDaysAndHours;
 
 simulated function InitRisks(optional int InitWidth = 375, optional int InitHeight = 450, optional int InitX = -375, optional int InitY = 0)
 {
-	
 	InitPanel('UISS_InfiltrationPanel');
 	AnchorTopRight();
 	SetSize(InitWidth, InitHeight);
@@ -76,10 +75,8 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	{
 		RisksTitle.hide();
 	}
-	else
-	{
-		UpdateRiskLabels(CurrentAction);
-	}
+	
+	UpdateRiskLabels(CurrentAction);
 }
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
@@ -88,11 +85,13 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 	local array<string> RiskStrings;
 	local int idx;
 
-	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
-	
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction))
 	{
 		RiskStrings.Length = 0;
+	}
+	else
+	{
+		RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
 	}
 
 	for (idx = 0; idx < RiskStrings.Length; idx++)
