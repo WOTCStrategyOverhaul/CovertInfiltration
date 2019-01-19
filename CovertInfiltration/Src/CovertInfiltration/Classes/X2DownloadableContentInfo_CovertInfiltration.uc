@@ -13,6 +13,11 @@ static event UpdateDLC()
 	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
 }
 
+static event OnLoadedSavedGameToStrategy()
+{
+	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
+}
+
 ///////////////////////
 /// Loaded/new game ///
 ///////////////////////
@@ -20,6 +25,7 @@ static event UpdateDLC()
 static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
+	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
 }
@@ -27,6 +33,7 @@ static event InstallNewCampaign(XComGameState StartState)
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
+	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
 }
@@ -256,4 +263,10 @@ exec function SpawnCovertAction(name TemplateName, optional name FactionTemplate
 		FactionState.AddCovertAction(NewGameState, ActionTemplate, ActionExclusionList);
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
+}
+
+exec function PrintP1SpawnerDebugInfo()
+{
+	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ConsoleCommand("UnSuppress CI_P1Spawner");
+	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
 }

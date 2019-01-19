@@ -4,7 +4,7 @@ var protectedwrite float PreviousWork;
 var protectedwrite TDateTime PreviousWorkSubmittedAt;
 
 // Work rate is meaured in hours
-var protectedwrite int CurrentWorkRate;
+var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
 var const config array<int> WorkRateXcom;
@@ -34,21 +34,25 @@ static function Update()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: XComGameState_PhaseOneActionsSpawner update");
 	Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.ModifyStateObject(class'XComGameState_PhaseOneActionsSpawner', Spawner.ObjectID));
 
-	// STEP 1: we check if we are due spawning an action at CurrentWorkRate
+	// STEP 1: we check if we are due spawning an action at CachedWorkRate
 	if (Spawner.ShouldSpawnAction())
 	{
+		`log("Enough work for P1, staring spawning",, 'CI_P1Spawner');
 		bDirty = true;
+		
 		Spawner.SpawnAction(NewGameState);
 		Spawner.ResetProgress();
 		Spawner.SetNextSpawnAt();
 	}
 
 	// STEP 2: See if we need to adjust current work rate
-	if (Spawner.CurrentWorkRate != GetCurrentWorkRate())
+	if (Spawner.CachedWorkRate != GetCurrentWorkRate())
 	{
+		`log("Cached work rate (" $ Spawner.CachedWorkRate $ ") doesn't match current, submitting work done and caching new work rate",, 'CI_P1Spawner');
 		bDirty = true;
+		
 		Spawner.SubmitWorkDone();
-		Spawner.SetCurrentWorkRate();
+		Spawner.SetCachedWorkRate();
 	}
 
 	if (bDirty)
@@ -76,6 +80,8 @@ function bool ShouldSpawnAction()
 
 function ResetProgress()
 {
+	`log("Reset progress for P1",, 'CI_P1Spawner');
+
 	PreviousWork = 0;
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
 }
@@ -84,6 +90,8 @@ function SubmitWorkDone()
 {
 	PreviousWork += GetWorkDoneInCurrentPeriod();
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
+
+	`log("Submitted work done, now" $ PreviousWork,, 'CI_P1Spawner');
 }
 
 function float GetWorkDoneInCurrentPeriod()
@@ -94,7 +102,7 @@ function float GetWorkDoneInCurrentPeriod()
 	MinutesSinceLastSubmission = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInMinutes(`STRATEGYRULES.GameTime, PreviousWorkSubmittedAt);
 	HoursSinceLastSubmission = MinutesSinceLastSubmission / 60;
 	
-	return CurrentWorkRate * HoursSinceLastSubmission;
+	return fmax(CachedWorkRate * HoursSinceLastSubmission, 0);
 }
 
 static function int GetCurrentWorkRate()
@@ -110,9 +118,10 @@ static function int GetCurrentWorkRate()
 	return WorkRate;
 }
 
-function SetCurrentWorkRate()
+function SetCachedWorkRate()
 {
-	CurrentWorkRate = GetCurrentWorkRate();
+	CachedWorkRate = GetCurrentWorkRate();
+	`log("New cached work rate - " $ CachedWorkRate,, 'CI_P1Spawner');
 }
 
 static function GetNumContactsAndRelays(out int Contacts, out int Relays)
@@ -158,6 +167,8 @@ function SetNextSpawnAt()
 	if (!bVarianceHigher) Variance *= -1;
 
 	NextSpawnAt = WorkRequired + Variance;
+
+	`log("Next P1 at" @ NextSpawnAt @ "work",, 'CI_P1Spawner');
 }
 
 ////////////////
@@ -189,6 +200,8 @@ function SpawnAction(XComGameState NewGameState)
 		return;
 	}
 
+	`log("All inputs ok, spawning action",, 'CI_P1Spawner');
+
 	// Spawn
 	Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
 	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
@@ -198,7 +211,7 @@ function SpawnAction(XComGameState NewGameState)
 	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ClientMessage("CI: Spawned P1 action - " $ ActionTemplate.name,, 10.0);
 }
 
-function X2CovertActionTemplate PickActionToSpawn()
+static function X2CovertActionTemplate PickActionToSpawn()
 {
 	local X2StrategyElementTemplateManager Manager;
 	local name PickedActionName;
@@ -210,7 +223,7 @@ function X2CovertActionTemplate PickActionToSpawn()
 	}
 
 	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	PickedActionName = default.ActionsToSpawn[`SYNC_RAND(default.ActionsToSpawn.Length)];
+	PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length)];
 
 	return X2CovertActionTemplate(Manager.FindStrategyElementTemplate(PickedActionName));
 }
@@ -249,7 +262,7 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner = XComGameState_PhaseOneActionsSpawner(StartState.CreateNewStateObject(class'XComGameState_PhaseOneActionsSpawner'));
 		Spawner.PreviousWork = `ScaleStrategyArrayInt(default.GameStartWork);
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
-		Spawner.SetCurrentWorkRate();
+		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 	}
 	// Do not create if already exists
@@ -259,7 +272,7 @@ static function CreateSpawner(optional XComGameState StartState)
 	
 		Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.CreateNewStateObject(class'XComGameState_PhaseOneActionsSpawner'));
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
-		Spawner.SetCurrentWorkRate();
+		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 		
 		`XCOMHISTORY.AddGameStateToHistory(NewGameState);
@@ -269,4 +282,25 @@ static function CreateSpawner(optional XComGameState StartState)
 static protected function TDateTime GetGameTimeFromHistory()
 {
 	return XComGameState_GameTime(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_GameTime')).CurrentTime;
+}
+
+/////////////////////
+/// Debug helpers ///
+/////////////////////
+
+static function PrintDebugInfo()
+{
+	local XComGameState_PhaseOneActionsSpawner Spawner;
+	Spawner = GetSpawner(true);
+
+	if (Spawner == none)
+	{
+		`log("PrintDebugInfo - no spawner found in history",, 'CI_P1Spawner');
+		return;
+	}
+
+	`log("Submitted work - " $ Spawner.PreviousWork,, 'CI_P1Spawner'); // TODO: Figure out how to concatenate TDateTime
+	`log("Next spawn at" @ Spawner.NextSpawnAt,, 'CI_P1Spawner');
+	`log("Cached work rate - " $ Spawner.CachedWorkRate,, 'CI_P1Spawner');
+	`log("Current work rate - " $ Spawner.GetCurrentWorkRate(),, 'CI_P1Spawner');
 }
