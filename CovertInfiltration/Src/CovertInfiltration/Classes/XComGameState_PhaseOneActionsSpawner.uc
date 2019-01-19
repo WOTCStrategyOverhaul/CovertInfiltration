@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Replacement for base game MissionCalendar which instead spawns CAs based on
+///          "work" done by XCom (base) and contacted regions and relays built (bonus)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_PhaseOneActionsSpawner extends XComGameState_BaseObject config(Infiltration);
 
 var protectedwrite float PreviousWork;
