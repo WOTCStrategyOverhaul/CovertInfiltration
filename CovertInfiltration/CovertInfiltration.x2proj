@@ -28,6 +28,9 @@
     <Content Include="Config\XComContent.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComGameBoard.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComGameCore.ini">
       <SubType>Content</SubType>
     </Content>
@@ -196,6 +199,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationRewards.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
