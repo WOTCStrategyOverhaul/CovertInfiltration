@@ -208,3 +208,34 @@ static function CamRingView(float InterpTime)
 
 	`HQPRES.CAMLookAtRoom(FacilityState.GetRoom(), InterpTime);
 }
+
+static function InfiltrationActionAvaliable(StateObjectReference ActionRef, optional XComGameState NewGameState)
+{
+	local XComHQPresentationLayer HQPres;
+	local DynamicPropertySet PropertySet;
+
+	HQPres = `HQPRES;
+
+	HQPres.BuildUIAlert(PropertySet, 'eAlert_CovertActions', InfiltrationActionAvaliableCB, 'NewInfiltrationPopup', "Geoscape_NewResistOpsMissions", NewGameState == none);
+	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicIntProperty(PropertySet, 'ActionObjectID', ActionRef.ObjectID);
+	HQPres.QueueDynamicPopup(PropertySet, NewGameState);
+}
+
+simulated protected function InfiltrationActionAvaliableCB(Name eAction, out DynamicPropertySet AlertData, optional bool bInstant = false)
+{
+	local XComHQPresentationLayer HQPres;
+	local StateObjectReference ActionRef;
+
+	ActionRef.ObjectID = class'X2StrategyGameRulesetDataStructures'.static.GetDynamicIntProperty(AlertData, 'ActionObjectID');
+	HQPres = `HQPRES;
+
+	if (eAction == 'eUIAction_Accept')
+	{
+		UICovertActionsGeoscape(ActionRef);
+
+		if (`GAME.GetGeoscape().IsScanning())
+		{
+			HQPres.StrategyMap2D.ToggleScan();
+		}
+	}
+}
