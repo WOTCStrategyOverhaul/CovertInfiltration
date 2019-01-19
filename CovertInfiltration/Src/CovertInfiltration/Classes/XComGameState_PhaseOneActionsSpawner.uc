@@ -207,8 +207,8 @@ function SpawnAction(XComGameState NewGameState)
 	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
 	Faction.CovertActions.AddItem(NewActionRef);
 
-	// TODO: Popup
-	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ClientMessage("CI: Spawned P1 action - " $ ActionTemplate.name,, 10.0);
+	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
+	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
 }
 
 static function X2CovertActionTemplate PickActionToSpawn()
