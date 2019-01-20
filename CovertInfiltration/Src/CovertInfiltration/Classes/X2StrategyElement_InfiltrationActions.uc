@@ -28,9 +28,7 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
-	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent_R');
-	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent_S');
-	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent_T');
+	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent');
 	Template.Rewards.AddItem('Reward_P1DarkEvent');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -50,9 +48,7 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
-	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid_R');
-	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid_S');
-	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid_T');
+	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid');
 	Template.Rewards.AddItem('Reward_P1SupplyRaid');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -72,9 +68,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
-	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak_R');
-	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak_S');
-	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak_T');
+	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak');
 	Template.Rewards.AddItem('Reward_P1Jailbreak');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
