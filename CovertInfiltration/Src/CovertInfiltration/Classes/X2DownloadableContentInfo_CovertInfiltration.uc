@@ -93,6 +93,7 @@ static event OnPostTemplatesCreated()
 {
 	PatchResistanceRing();
 	RemoveNoCovertActionNags();
+	RemoveSquadSizeUpgrades();
 }
 
 static protected function PatchResistanceRing()
@@ -184,6 +185,18 @@ static protected function RemoveNoCovertActionNags()
 			i--; // The array is shifted, so we need to account for that
 		}
 	}
+}
+
+static protected function RemoveSquadSizeUpgrades()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2FacilityTemplate FacilityTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	FacilityTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
+
+	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIUnlock');
+	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIIUnlock');
 }
 
 /// /////// ///
