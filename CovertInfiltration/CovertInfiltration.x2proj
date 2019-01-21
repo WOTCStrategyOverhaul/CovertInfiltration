@@ -37,6 +37,9 @@
     <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComrobojumperSquadSelect_NullConfig.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
