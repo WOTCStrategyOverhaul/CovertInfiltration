@@ -91,7 +91,7 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 	}
 	else
 	{
-		RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
+		RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction, true);
 	}
 
 	for (idx = 0; idx < RiskStrings.Length; idx++)
