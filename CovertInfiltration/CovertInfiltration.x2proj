@@ -61,6 +61,12 @@
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\PCPs\SLM_Street_IntBlvd_08x16_01.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\PCPs\SLM_Street_T_08x08_01.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\PCPs\TWN_Blvd_Str_16x16_03.umap">
       <SubType>Content</SubType>
     </Content>
