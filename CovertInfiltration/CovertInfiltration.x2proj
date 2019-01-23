@@ -12,8 +12,9 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Content\Maps" />
+    <Folder Include="Content\Maps\PCPs" />
     <Folder Include="Content\MissingUncooked" />
-    <Folder Include="Localization\" />
+	<Folder Include="Localization\" />
     <Folder Include="Content" />
     <Folder Include="Src\" />
     <Folder Include="Src\CovertInfiltration\" />
@@ -39,6 +40,12 @@
     <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComPCPs.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComPlots.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
@@ -52,6 +59,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\PCPs\TWN_Blvd_Str_16x16_03.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\PCPs\TWN_Street_Str_08x08_01.umap">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk" />
