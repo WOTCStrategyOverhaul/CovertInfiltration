@@ -89,12 +89,6 @@
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetLineOfPlayEndpoint.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetObjectiveParcelLocation.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
