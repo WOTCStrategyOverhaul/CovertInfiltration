@@ -303,12 +303,12 @@ simulated function AddExpiration(StateObjectReference ActionRef)
 	Expiration = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 	ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
 	
-	class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, EXPIRATION_BASE_TIME*24 + CreateVariance());
+	class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, EXPIRATION_BASE_TIME*24 + CreateExpirationVariance());
 
 	ActionExpirationManager.AddActionExpiration(ActionRef, Expiration);
 }
 
-simulated function int CreateVariance()
+simulated function int CreateExpirationVariance()
 {
 	local int OneOrNot, Variance;
 

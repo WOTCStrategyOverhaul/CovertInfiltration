@@ -98,3 +98,21 @@ function RemoveActionExpiration(ExpiringAction CurrentAction)
 {
 	ExpiringActions.RemoveItem(CurrentAction);
 }
+
+function static bool IsActionExpiring(StateObjectReference ActionRef)
+{
+	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
+	local ExpiringAction CurrentAction;
+	
+	ActionExpirationManager = GetExpirationManager();
+
+	foreach ActionExpirationManager.ExpiringActions(CurrentAction)
+	{
+		if (CurrentAction.ActionRef == ActionRef)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}

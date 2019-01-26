@@ -879,7 +879,7 @@ simulated protected function UpdateProgressBar()
 		ActionProgressBar.Show();
 		ActionProgressBar.SetPercent(1 - RemainingDuration / TotalDuration);
 	}
-	else if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction))
+	else if (class'XComGameState_CovertActionExpirationManager'.static.IsActionExpiring(CurrentAction.GetReference()))
 	{
 		UpdateExpirationBar();
 	}
