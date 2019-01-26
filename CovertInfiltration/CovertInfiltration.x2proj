@@ -12,9 +12,9 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Content\Maps" />
-    <Folder Include="Content\Maps\PCPs" />
+    <Folder Include="Content\Maps\Missions" />
     <Folder Include="Content\MissingUncooked" />
-	<Folder Include="Localization\" />
+    <Folder Include="Localization\" />
     <Folder Include="Content" />
     <Folder Include="Src\" />
     <Folder Include="Src\CovertInfiltration\" />
@@ -40,10 +40,13 @@
     <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComPCPs.ini">
+    <Content Include="Config\XComMissionDefs.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComPlots.ini">
+      <SubType>Content</SubType>
+    </Content>
+	<Content Include="Config\XComSchedules.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComUI.ini">
@@ -58,19 +61,10 @@
     <Content Include="Content\Maps\CIN_SkyrangerIntros_Infiltration.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\PCPs\SLM_Street_IntBlvd_08x16_01.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\PCPs\SLM_Street_T_08x08_01.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\PCPs\TWN_Blvd_Str_16x16_03.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\PCPs\TWN_Street_Str_08x08_01.umap">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk" />
@@ -93,6 +87,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetLineOfPlayEndpoint.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetObjectiveParcelLocation.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
