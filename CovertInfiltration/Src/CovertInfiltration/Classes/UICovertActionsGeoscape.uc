@@ -919,6 +919,7 @@ simulated function OnReceiveFocus()
 			SSManager = none;
 			GetAction().bNewAction = false;
 			UpdateList();
+			AttemptSelectAction(ActionRef);
 		} 
 		else
 		{
