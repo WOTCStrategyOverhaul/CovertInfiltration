@@ -917,6 +917,7 @@ simulated function OnReceiveFocus()
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 			SSManager = none;
+			GetAction().bNewAction = false;
 			UpdateList();
 		} 
 		else
@@ -934,38 +935,6 @@ simulated function OnReceiveFocus()
 	else
 	{
 		ClearUnitsFromAction();
-	}
-}
-
-simulated function OnLoseFocus()
-{
-	local XComGameStateHistory History;
-	local XComGameState NewGameState;
-	local XComGameState_CovertAction ActionState;
-	local bool bModified;
-	
-	super.OnLoseFocus();
-
-	// Turn off the "Now Available" flag for any new covert actions
-	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off new Covert Action Now Available flag");
-	foreach arrActions(ActionState)
-	{
-		if( ActionState.bNewAction)
-		{
-			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
-			ActionState.bNewAction = false;
-			bModified = true;
-		}
-	}
-
-	if(bModified)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		History.CleanupPendingGameState(NewGameState);
 	}
 }
 
@@ -1173,7 +1142,34 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 simulated function OnRemoved()
 {
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+	local bool bModified;
+
 	super.OnRemoved();
+
+	// Turn off the "Now Available" flag for any new covert actions
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off new Covert Action Now Available flag");
+	foreach arrActions(ActionState)
+	{
+		if( ActionState.bNewAction)
+		{
+			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+			ActionState.bNewAction = false;
+			bModified = true;
+		}
+	}
+
+	if(bModified)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
 
 	GetHQPres().CAMRestoreSavedLocation();
 	GetHQPres().StrategyMap2D.ShowCursor();
