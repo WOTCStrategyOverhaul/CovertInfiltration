@@ -7,13 +7,7 @@
 
 class XComGameState_CovertActionExpirationManager extends XComGameState_BaseObject;
 
-struct ExpiringAction
-{
-	var() StateObjectReference	ActionRef;
-	var() TDateTime				Expiration;
-	var() TDateTime				OriginTime;
-};
-var() array<ExpiringAction>		ExpiringActions;
+var array<ActionExpirationInfo> ActionExpirationInfoList;
 
 static function CreateExpirationManager(optional XComGameState StartState)
 {
@@ -22,14 +16,14 @@ static function CreateExpirationManager(optional XComGameState StartState)
 	// create a manager on new campaign
 	if (StartState != none)
 	{
-		XComGameState_CovertActionExpirationManager(StartState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager'));
+		StartState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager');
 	}
 	// seems this never runs cuz reasons
 	if (GetExpirationManager(true) == none)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating expiration manager singleton");
 
-		XComGameState_CovertActionExpirationManager(NewGameState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager'));
+		NewGameState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager');
 
 		`XCOMHISTORY.AddGameStateToHistory(NewGameState);
 	}
@@ -41,27 +35,51 @@ static function Update()
 	local XComGameState_CovertAction CovertAction;
 	local XComGameState NewGameState;
 
-	local ExpiringAction CurrentAction;
+	local ActionExpirationInfo ExpirationInfo;
+	local bool bDirty;
 
-	ActionExpirationManager = GetExpirationManager();
-
-	foreach ActionExpirationManager.ExpiringActions(CurrentAction)
+	ActionExpirationManager = GetExpirationManager(true); 
+	if (ActionExpirationManager == none)
 	{
-		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(CurrentAction.ActionRef.ObjectID));
+		`RedScreenOnce("CI: Failed to fetch XComGameState_CovertActionExpirationManager for ticking");
+		return;
+	}
 
-		// if expiration has passed remove the covert infiltration
-		if (CovertAction.bStarted || class'X2StrategyGameRulesetDataStructures'.static.LessThan(CurrentAction.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime()))
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Covert Action Expirations");
+	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
+
+	foreach ActionExpirationManager.ActionExpirationInfoList(ExpirationInfo)
+	{
+		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ExpirationInfo.ActionRef.ObjectID));
+
+		if (CovertAction == none)
 		{
-			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Covert Action Expirations");
-			
-			if (!CovertAction.bStarted)
-			{
-				CovertAction.RemoveEntity(NewGameState);
-			}
-
-			ActionExpirationManager.RemoveActionExpiration(CurrentAction);
-			`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+			bDirty = true;
+			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
+			`log("Expiration manager removed action that no longer exists",, 'CI');
 		}
+		// if action started remove from expiration manager
+		else if (CovertAction.bStarted)
+		{
+			bDirty = true;
+			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
+		}
+		// if expiration has passed remove from expiration manager and delete the covert action
+		else if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime()))
+		{
+			bDirty = true;
+			CovertAction.RemoveEntity(NewGameState);
+			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
+		}
+	}			
+	
+	if (bDirty)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
 	}
 }
 
@@ -70,49 +88,37 @@ static function XComGameState_CovertActionExpirationManager GetExpirationManager
 	return XComGameState_CovertActionExpirationManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CovertActionExpirationManager', AllowNull));
 }
 
-function ExpiringAction GetActionExpiration(StateObjectReference ActionRef)
-{
-	local ExpiringAction CurrentAction;
-
-	foreach ExpiringActions(CurrentAction)
-	{
-		if (CurrentAction.ActionRef == ActionRef)
-		{
-			return CurrentAction;
-		}
-	}
-}
-
-function AddActionExpiration(StateObjectReference ActionRef, TDateTime Expiration)
-{
-	local ExpiringAction CurrentAction;
-
-	CurrentAction.ActionRef = ActionRef;
-	CurrentAction.Expiration = Expiration;
-	CurrentAction.OriginTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
-
-	ExpiringActions.AddItem(CurrentAction);
-}
-
-function RemoveActionExpiration(ExpiringAction CurrentAction)
-{
-	ExpiringActions.RemoveItem(CurrentAction);
-}
-
-function static bool IsActionExpiring(StateObjectReference ActionRef)
+function static bool GetActionExpirationInfo(StateObjectReference ActionRef, optional out ActionExpirationInfo RequestedAction)
 {
 	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
-	local ExpiringAction CurrentAction;
-	
+	local ActionExpirationInfo ExpirationInfo;
+
 	ActionExpirationManager = GetExpirationManager();
 
-	foreach ActionExpirationManager.ExpiringActions(CurrentAction)
+	foreach ActionExpirationManager.ActionExpirationInfoList(ExpirationInfo)
 	{
-		if (CurrentAction.ActionRef == ActionRef)
+		if (ExpirationInfo.ActionRef == ActionRef)
 		{
+			RequestedAction = ExpirationInfo;
 			return true;
 		}
 	}
 
 	return false;
+}
+
+function AddActionExpirationInfo(StateObjectReference ActionRef, TDateTime Expiration)
+{
+	local ActionExpirationInfo ExpirationInfo;
+
+	ExpirationInfo.ActionRef = ActionRef;
+	ExpirationInfo.Expiration = Expiration;
+	ExpirationInfo.OriginTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+
+	ActionExpirationInfoList.AddItem(ExpirationInfo);
+}
+
+function RemoveActionExpirationInfo(ActionExpirationInfo ExpirationInfo)
+{
+	ActionExpirationInfoList.RemoveItem(ExpirationInfo);
 }

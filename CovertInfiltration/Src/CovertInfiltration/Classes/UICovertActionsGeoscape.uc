@@ -879,7 +879,7 @@ simulated protected function UpdateProgressBar()
 		ActionProgressBar.Show();
 		ActionProgressBar.SetPercent(1 - RemainingDuration / TotalDuration);
 	}
-	else if (class'XComGameState_CovertActionExpirationManager'.static.IsActionExpiring(CurrentAction.GetReference()))
+	else if (class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(CurrentAction.GetReference()))
 	{
 		UpdateExpirationBar();
 	}
@@ -891,16 +891,13 @@ simulated protected function UpdateProgressBar()
 
 simulated protected function UpdateExpirationBar()
 {
-	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
-	local TDateTime Expiration, OriginTime;
+	local ActionExpirationInfo ExpirationInfo;
 	local float TotalTime, RemainingTime, Percentage;
 
-	ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
-	Expiration = ActionExpirationManager.GetActionExpiration(GetAction().GetReference()).Expiration;
-	OriginTime = ActionExpirationManager.GetActionExpiration(GetAction().GetReference()).OriginTime;
-
-	TotalTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(Expiration, OriginTime);
-	RemainingTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
+	class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo);
+	
+	TotalTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationInfo.Expiration, ExpirationInfo.OriginTime);
+	RemainingTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
 
 	Percentage = 1 - RemainingTime / TotalTime;
 

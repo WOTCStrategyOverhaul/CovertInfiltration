@@ -217,7 +217,7 @@ function SpawnAction(XComGameState NewGameState)
 	Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
 	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
 	Faction.CovertActions.AddItem(NewActionRef);
-	AddExpiration(NewActionRef);
+	AddExpiration(NewGameState, NewActionRef);
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
 	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
@@ -295,17 +295,18 @@ static protected function TDateTime GetGameTimeFromHistory()
 	return XComGameState_GameTime(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_GameTime')).CurrentTime;
 }
 
-simulated function AddExpiration(StateObjectReference ActionRef)
+simulated function AddExpiration(XComGameState NewGameState, StateObjectReference ActionRef)
 {
 	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
 	local TDateTime Expiration;
 
 	Expiration = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 	ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
-	
+	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
+
 	class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, EXPIRATION_BASE_TIME*24 + CreateExpirationVariance());
 
-	ActionExpirationManager.AddActionExpiration(ActionRef, Expiration);
+	ActionExpirationManager.AddActionExpirationInfo(ActionRef, Expiration);
 }
 
 simulated function int CreateExpirationVariance()
@@ -315,7 +316,7 @@ simulated function int CreateExpirationVariance()
 	Variance = `SYNC_RAND(EXPIRATION_VARIANCE);
 	OneOrNot = `SYNC_RAND(2);
 	
-	// Roll for positive or negative variance
+	// positive or negative variance
 	if (OneOrNot != 1)
 	{
 		Variance = 0 - Variance;
