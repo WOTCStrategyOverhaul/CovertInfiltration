@@ -8,6 +8,7 @@ strLabel=COVERT OPS
 [UICovertActionsGeoscape]
 strRewardHeader=Reward
 strSlotsHeader="Deployable resources"
+strInfiltration="INFILTRATION MISSION"
 strOpenLoadout="Go to loadout"
 strCloseScreen="Close covert ops"
 strRisksHeader=Risks
