@@ -648,6 +648,7 @@ simulated function PopulateList()
 
 		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
 		Item.InitCovertAction(arrActions[idx]);
+		Item.NeedsAttention(class'X2Helper_Infiltration'.static.IsInfiltrationAction(arrActions[idx]));
 
 		if (ActionsList.GetSelectedItem() == none)
 		{
