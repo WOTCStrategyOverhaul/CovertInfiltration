@@ -904,6 +904,9 @@ simulated protected function UpdateProgressBar()
 
 simulated function OnReceiveFocus()
 {
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+
 	super.OnReceiveFocus();
 	
 	// Came back from UISquadSelect or the confirmation alert
@@ -917,7 +920,15 @@ simulated function OnReceiveFocus()
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 			SSManager = none;
-			GetAction().bNewAction = false;
+
+			if (GetAction().bNewAction)
+			{			
+				NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
+				ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+				ActionState.bNewAction = false;
+				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+			}
+
 			UpdateList();
 			AttemptSelectAction(ActionRef);
 		} 
@@ -1143,16 +1154,26 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 
 simulated function OnRemoved()
 {
+	super.OnRemoved();
+
+	SetActionsAsSeen();
+
+	GetHQPres().CAMRestoreSavedLocation();
+	GetHQPres().StrategyMap2D.ShowCursor();
+	OnRemoveRestoreResistanceNetwork();
+
+	class'UIUtilities_Sound'.static.PlayCloseSound();
+}
+
+simulated protected function SetActionsAsSeen()
+{
 	local XComGameStateHistory History;
 	local XComGameState NewGameState;
 	local XComGameState_CovertAction ActionState;
 	local bool bModified;
 
-	super.OnRemoved();
-
-	// Turn off the "Now Available" flag for any new covert actions
 	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off new Covert Action Now Available flag");
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
 	foreach arrActions(ActionState)
 	{
 		if( ActionState.bNewAction)
@@ -1171,12 +1192,6 @@ simulated function OnRemoved()
 	{
 		History.CleanupPendingGameState(NewGameState);
 	}
-
-	GetHQPres().CAMRestoreSavedLocation();
-	GetHQPres().StrategyMap2D.ShowCursor();
-	OnRemoveRestoreResistanceNetwork();
-
-	class'UIUtilities_Sound'.static.PlayCloseSound();
 }
 
 //////////////////////////////////////////
