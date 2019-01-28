@@ -41,7 +41,7 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 		if (StaffSlotState.IsSlotFilled())
 		{
 			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
-			if (UnitState.IsSoldier() && !UnitState.IsInjured() && !UnitState.bCaptured)
+			if (UnitState.IsSoldier() && UnitState.UsesWillSystem() && !UnitState.IsInjured() && !UnitState.bCaptured)
 			{
 				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
 				UpdateWillRecovery(NewGameState, UnitState);
