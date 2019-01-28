@@ -341,7 +341,7 @@ simulated protected function BuildActionSlots()
 	InfiltrationMissionLabel.bAnimateOnInit = false;
 	InfiltrationMissionLabel.InitText('InfiltrationMissionLabel');
 	InfiltrationMissionLabel.SetSize(ActionSlotsContainer.Width, 55);
-	InfiltrationMissionLabel.SetPosition(0, 130);
+	InfiltrationMissionLabel.SetPosition(0, 100);
 	InfiltrationMissionLabel.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strInfiltration, bIsIn3D, true));
 
 	ActionSlotRows = Spawn(class'UIList', ActionSlotsContainer);
@@ -648,7 +648,6 @@ simulated function PopulateList()
 
 		Item = Spawn(class'UICovertActionsGeoscape_CovertAction', ActionsList.itemContainer);
 		Item.InitCovertAction(arrActions[idx]);
-		Item.NeedsAttention(class'X2Helper_Infiltration'.static.IsInfiltrationAction(arrActions[idx]));
 
 		if (ActionsList.GetSelectedItem() == none)
 		{
@@ -766,10 +765,19 @@ simulated protected function UpdateSlots()
 	local UICovertActionsGeoscape_Slot SlotUI;
 	local int iCurrentSlot, iCurrentRow;
 	local int TotalNeededRows;
+	local bool DisplayInfiltrationLabel;
 		
 	CurrentAction = GetAction();
 
-	InfiltrationMissionLabel.SetVisible(class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction) && !CurrentAction.bStarted);
+	DisplayInfiltrationLabel = class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction) && !CurrentAction.bStarted;
+	
+	InfiltrationMissionLabel.SetVisible(DisplayInfiltrationLabel);	
+	ActionSlotRows.SetVisible(!DisplayInfiltrationLabel);
+
+	if (DisplayInfiltrationLabel)
+	{
+		return; // action slot rows are hidden, so no need to update them
+	}
 
 	TotalNeededRows = FCeil(CurrentSlots.Length / float(ACTION_SLOTS_PER_ROW));
 
@@ -906,6 +914,7 @@ simulated function OnReceiveFocus()
 {
 	local XComGameState NewGameState;
 	local XComGameState_CovertAction ActionState;
+	local StateObjectReference LaunchedActionRef;
 
 	super.OnReceiveFocus();
 	
@@ -929,8 +938,9 @@ simulated function OnReceiveFocus()
 				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 			}
 
+			LaunchedActionRef = ActionRef;
 			UpdateList();
-			AttemptSelectAction(ActionRef);
+			AttemptSelectAction(LaunchedActionRef);
 		} 
 		else
 		{
@@ -1176,7 +1186,7 @@ simulated protected function SetActionsAsSeen()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
 	foreach arrActions(ActionState)
 	{
-		if( ActionState.bNewAction)
+		if(ActionState.bNewAction)
 		{
 			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
 			ActionState.bNewAction = false;
