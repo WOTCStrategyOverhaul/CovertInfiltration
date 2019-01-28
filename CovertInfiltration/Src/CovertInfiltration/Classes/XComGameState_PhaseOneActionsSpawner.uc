@@ -311,16 +311,14 @@ simulated function AddExpiration(XComGameState NewGameState, StateObjectReferenc
 
 simulated function int CreateExpirationVariance()
 {
-	local int OneOrNot, Variance;
+	local int Variance;
+	local bool bNegVariance;
 
 	Variance = `SYNC_RAND(EXPIRATION_VARIANCE);
-	OneOrNot = `SYNC_RAND(2);
-	
-	// positive or negative variance
-	if (OneOrNot != 1)
-	{
-		Variance = 0 - Variance;
-	}
+
+	// roll chance for negative variance
+	bNegVariance = `SYNC_RAND(2) < 1;
+	if (bNegVariance) Variance *= -1;
 
 	return Variance;
 }
