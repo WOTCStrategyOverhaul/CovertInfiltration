@@ -1,4 +1,10 @@
-// 
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  NotSoLoneWolf
+//  PURPOSE: This class contains all the Covert Action templates
+//           required for the mod, both Phase 1 and Phase 2
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
 
 class X2StrategyElement_InfiltrationActions extends X2StrategyElement;
 
@@ -30,7 +36,9 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent');
 	Template.Rewards.AddItem('Reward_P1DarkEvent');
-
+	
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
@@ -53,6 +61,8 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 
@@ -73,6 +83,8 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
@@ -91,6 +103,8 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_P2DarkEvent');
 	Template.Rewards.AddItem('Reward_P2DarkEvent');
 
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
@@ -131,6 +145,8 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
@@ -151,6 +167,8 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
@@ -169,6 +187,8 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_P2DarkVIP');
 	Template.Rewards.AddItem('Reward_P2DarkVIP');
 
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
