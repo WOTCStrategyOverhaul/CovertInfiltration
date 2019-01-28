@@ -38,17 +38,19 @@ function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICove
 	for (idx = 0; idx < CovertAction.StaffSlots.Length; idx++)
 	{
 		StaffSlotState = CovertAction.GetStaffSlot(idx);
-		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
-
-		if (StaffSlotState.IsSlotFilled() && UnitState.IsSoldier() && !UnitState.IsInjured() && !UnitState.bCaptured)
+		if (StaffSlotState.IsSlotFilled())
 		{
-			UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
-			UpdateWillRecovery(NewGameState, UnitState);
-			UnitState.UpdateMentalState();
-			
-			if (UnitState.GetMentalState() == eMentalState_Tired)
+			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
+			if (UnitState.IsSoldier() && !UnitState.IsInjured() && !UnitState.bCaptured)
 			{
-				ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
+				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
+				UpdateWillRecovery(NewGameState, UnitState);
+				UnitState.UpdateMentalState();
+			
+				if (UnitState.GetMentalState() == eMentalState_Tired)
+				{
+					ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
+				}
 			}
 		}
 	}
