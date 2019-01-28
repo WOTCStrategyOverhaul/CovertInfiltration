@@ -48,6 +48,7 @@ var UIImage ActionSlotsHeaderBG;
 var UIText ActionSlotsHeader;
 var UIPanel ActionSlotsTextBG;
 var UIList ActionSlotRows;
+var UIText InfiltrationMissionLabel;
 
 // UI - faction info
 var UIPanel FactionInfoConatiner;
@@ -97,6 +98,7 @@ var protected bool bDontUpdateData;
 // Localization strings
 var localized string strRewardHeader;
 var localized string strSlotsHeader;
+var localized string strInfiltration;
 var localized string strOpenLoadout;
 var localized string strCloseScreen;
 var localized string strRisksHeader;
@@ -334,6 +336,13 @@ simulated protected function BuildActionSlots()
 	ActionSlotsHeader.InitText('ActionSlotsHeader');
 	ActionSlotsHeader.SetSize(ActionSlotsContainer.Width, 55);
 	ActionSlotsHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strSlotsHeader, bIsIn3D, true));
+
+	InfiltrationMissionLabel = Spawn(class'UIText', ActionSlotsContainer);
+	InfiltrationMissionLabel.bAnimateOnInit = false;
+	InfiltrationMissionLabel.InitText('InfiltrationMissionLabel');
+	InfiltrationMissionLabel.SetSize(ActionSlotsContainer.Width, 55);
+	InfiltrationMissionLabel.SetPosition(0, 100);
+	InfiltrationMissionLabel.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strInfiltration, bIsIn3D, true));
 
 	ActionSlotRows = Spawn(class'UIList', ActionSlotsContainer);
 	ActionSlotRows.bAnimateOnInit = false;
@@ -750,11 +759,25 @@ simulated function UpdateCovertActionInfo()
 
 simulated protected function UpdateSlots()
 {
+	local XComGameState_CovertAction CurrentAction;
 	local UICovertActionsGeoscape_SlotInfo SlotInfo;
 	local UICovertActionsGeoscape_SlotRow Row;
 	local UICovertActionsGeoscape_Slot SlotUI;
 	local int iCurrentSlot, iCurrentRow;
 	local int TotalNeededRows;
+	local bool DisplayInfiltrationLabel;
+		
+	CurrentAction = GetAction();
+
+	DisplayInfiltrationLabel = class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction) && !CurrentAction.bStarted;
+	
+	InfiltrationMissionLabel.SetVisible(DisplayInfiltrationLabel);	
+	ActionSlotRows.SetVisible(!DisplayInfiltrationLabel);
+
+	if (DisplayInfiltrationLabel)
+	{
+		return; // action slot rows are hidden, so no need to update them
+	}
 
 	TotalNeededRows = FCeil(CurrentSlots.Length / float(ACTION_SLOTS_PER_ROW));
 
@@ -889,6 +912,10 @@ simulated protected function UpdateProgressBar()
 
 simulated function OnReceiveFocus()
 {
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+	local StateObjectReference LaunchedActionRef;
+
 	super.OnReceiveFocus();
 	
 	// Came back from UISquadSelect or the confirmation alert
@@ -902,7 +929,18 @@ simulated function OnReceiveFocus()
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 			SSManager = none;
+
+			if (GetAction().bNewAction)
+			{			
+				NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
+				ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+				ActionState.bNewAction = false;
+				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+			}
+
+			LaunchedActionRef = ActionRef;
 			UpdateList();
+			AttemptSelectAction(LaunchedActionRef);
 		} 
 		else
 		{
@@ -1128,11 +1166,42 @@ simulated function OnRemoved()
 {
 	super.OnRemoved();
 
+	SetActionsAsSeen();
+
 	GetHQPres().CAMRestoreSavedLocation();
 	GetHQPres().StrategyMap2D.ShowCursor();
 	OnRemoveRestoreResistanceNetwork();
 
 	class'UIUtilities_Sound'.static.PlayCloseSound();
+}
+
+simulated protected function SetActionsAsSeen()
+{
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+	local bool bModified;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
+	foreach arrActions(ActionState)
+	{
+		if(ActionState.bNewAction)
+		{
+			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+			ActionState.bNewAction = false;
+			bModified = true;
+		}
+	}
+
+	if(bModified)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
 }
 
 //////////////////////////////////////////
