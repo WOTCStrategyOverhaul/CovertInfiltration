@@ -26,6 +26,9 @@ var const config array<int> WorkRequiredForP1Variance;
 
 var const config array<name> ActionsToSpawn;
 
+var config int EXPIRATION_BASE_TIME;
+var config int EXPIRATION_VARIANCE;
+
 static function Update()
 {
 	local XComGameState_PhaseOneActionsSpawner Spawner;
@@ -214,6 +217,7 @@ function SpawnAction(XComGameState NewGameState)
 	Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
 	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
 	Faction.CovertActions.AddItem(NewActionRef);
+	AddExpiration(NewGameState, NewActionRef);
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
 	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
@@ -274,10 +278,9 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner.SetNextSpawnAt();
 	}
 	// Do not create if already exists
-	else if (GetSpawner(true) != none)
+	else if (GetSpawner(true) == none)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating P1 Spawner singleton");
-	
 		Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.CreateNewStateObject(class'XComGameState_PhaseOneActionsSpawner'));
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
 		Spawner.SetCachedWorkRate();
@@ -290,6 +293,34 @@ static function CreateSpawner(optional XComGameState StartState)
 static protected function TDateTime GetGameTimeFromHistory()
 {
 	return XComGameState_GameTime(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_GameTime')).CurrentTime;
+}
+
+simulated function AddExpiration(XComGameState NewGameState, StateObjectReference ActionRef)
+{
+	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
+	local TDateTime Expiration;
+
+	Expiration = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
+	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
+
+	class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, EXPIRATION_BASE_TIME*24 + CreateExpirationVariance());
+
+	ActionExpirationManager.AddActionExpirationInfo(ActionRef, Expiration);
+}
+
+simulated function int CreateExpirationVariance()
+{
+	local int Variance;
+	local bool bNegVariance;
+
+	Variance = `SYNC_RAND(EXPIRATION_VARIANCE);
+
+	// roll chance for negative variance
+	bNegVariance = `SYNC_RAND(2) < 1;
+	if (bNegVariance) Variance *= -1;
+
+	return Variance;
 }
 
 /////////////////////

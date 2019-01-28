@@ -11,6 +11,7 @@ class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContent
 static event UpdateDLC()
 {
 	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+	class'XComGameState_CovertActionExpirationManager'.static.Update();
 }
 
 static event OnLoadedSavedGameToStrategy()
@@ -26,6 +27,7 @@ static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner(StartState);
+	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
 }
@@ -34,6 +36,7 @@ static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner();
+	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
 }

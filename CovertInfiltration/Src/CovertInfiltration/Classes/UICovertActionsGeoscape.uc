@@ -897,13 +897,49 @@ simulated protected function UpdateProgressBar()
 		TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CurrentAction.EndDateTime, CurrentAction.StartDateTime);
 		RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CurrentAction.EndDateTime, CurrentAction.GetCurrentTime());
 
+		ActionProgressBar.SetColor(class'UIUtilities_Colors'.const.COVERT_OPS_HTML_COLOR);
+		ActionProgressBar.SetBgColor(class'UIUtilities_Colors'.const.DISABLED_HTML_COLOR);
 		ActionProgressBar.Show();
 		ActionProgressBar.SetPercent(1 - RemainingDuration / TotalDuration);
+	}
+	else if (class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(CurrentAction.GetReference()))
+	{
+		UpdateExpirationBar();
 	}
 	else
 	{
 		ActionProgressBar.Hide();
 	}
+}
+
+simulated protected function UpdateExpirationBar()
+{
+	local ActionExpirationInfo ExpirationInfo;
+	local float TotalTime, RemainingTime, Percentage;
+
+	class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo);
+	
+	TotalTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationInfo.Expiration, ExpirationInfo.OriginTime);
+	RemainingTime = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
+
+	Percentage = 1 - RemainingTime / TotalTime;
+
+	ActionProgressBar.SetColor(class'UIUtilities_Colors'.const.DISABLED_HTML_COLOR);
+	if (Percentage > 0.66)
+	{
+		ActionProgressBar.SetBGColor(class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
+	}
+	else if (Percentage > 0.33)
+	{
+		ActionProgressBar.SetBGColor(class'UIUtilities_Colors'.const.WARNING_HTML_COLOR);
+	}
+	else
+	{
+		ActionProgressBar.SetBGColor(class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+	}
+
+	ActionProgressBar.Show();
+	ActionProgressBar.SetPercent(Percentage);
 }
 
 //////////////////////////////////////
