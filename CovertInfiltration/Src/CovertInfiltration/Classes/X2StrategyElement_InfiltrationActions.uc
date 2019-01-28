@@ -9,13 +9,13 @@ static function array<X2DataTemplate> CreateTemplates()
 	CovertActions.AddItem(CreateP1DarkEventTemplate());
 	CovertActions.AddItem(CreateP1SupplyRaidTemplate());
 	CovertActions.AddItem(CreateP1JailbreakTemplate());
-	/*
+	
 	CovertActions.AddItem(CreateP2DarkEventTemplate());
 	CovertActions.AddItem(CreateP2SupplyRaidTemplate());
 	CovertActions.AddItem(CreateP2EngineerTemplate());
 	CovertActions.AddItem(CreateP2ScientistTemplate());
 	CovertActions.AddItem(CreateP2DarkVIPTemplate());
-	*/
+	
 	return CovertActions;
 }
 
@@ -109,7 +109,7 @@ static function X2DataTemplate CreateP2SupplyRaidTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2SupplyRaid');
-	Template.Rewards.AddItem('Reward_P2SupplyRaid');
+	Template.Rewards.AddItem('Reward_SupplyRaid');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
