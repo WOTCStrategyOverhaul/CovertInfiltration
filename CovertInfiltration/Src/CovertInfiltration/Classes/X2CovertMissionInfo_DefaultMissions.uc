@@ -13,31 +13,114 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	Templates.AddItem(CreatePrepareGOpMission());
-	Templates.AddItem(CreatePrepareRaidMission());
+	Templates.AddItem(CreateP1DarkEventMission());
+	Templates.AddItem(CreateP1SupplyRaidMission());
+	Templates.AddItem(CreateP1JailbreakMission());
+
+	Templates.AddItem(CreateP2DarkVIPMission());
+	//Templates.AddItem(CreateP2SupplyRaidMission());
+	Templates.AddItem(CreateP2EngineerMission());
+	Templates.AddItem(CreateP2ScientistMission());
+	Templates.AddItem(CreateP2DarkEventMission());
 
 	return Templates;
 }
 
-static function X2DataTemplate CreatePrepareGOpMission()
+static function X2DataTemplate CreateP1DarkEventMission()
 {
 	local X2CovertMissionInfoTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareGOp'));
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1DarkEvent'));
+
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_None');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP1SupplyRaidMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1SupplyRaid'));
+	
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_None');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP1JailbreakMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1Jailbreak'));
+	
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_None');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP2DarkEventMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2DarkEvent'));
+	
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	//Template.MissionRewards.AddItem('Reward_Supplies');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP2DarkVIPMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2DarkVIP'));
+
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_Intel');
+
+	return Template;
+}
+/*
+static function X2DataTemplate CreateP2SupplyRaidMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2SupplyRaid'));
 
 	Template.MissionSource = 'MissionSource_GuerillaOp';
 	Template.MissionRewards.AddItem('Reward_Supplies');
 
 	return Template;
 }
-
-static function X2DataTemplate CreatePrepareRaidMission()
+*/
+static function X2DataTemplate CreateP2EngineerMission()
 {
 	local X2CovertMissionInfoTemplate Template;
-	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_PrepareRaid'));
 
-	Template.MissionSource = 'MissionSource_SupplyRaid';
-	Template.MissionRewards.AddItem('Reward_None');
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2Engineer'));
+	
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_Engineer');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP2ScientistMission()
+{
+	local X2CovertMissionInfoTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2Scientist'));
+	
+	// Need custom MissionSource
+	Template.MissionSource = 'MissionSource_GuerillaOp';
+	Template.MissionRewards.AddItem('Reward_Scientist');
 
 	return Template;
 }

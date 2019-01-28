@@ -6,54 +6,174 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> CovertActions;
 	
-	//CovertActions.AddItem(CreatePrepareGOpTemplate());
-	CovertActions.AddItem(CreatePrepareRaidTemplate());
-
-	// Using supply raid for testing mission init. We will need to create CAs for missions that we ant to be infltratable
-
+	CovertActions.AddItem(CreateP1DarkEventTemplate());
+	CovertActions.AddItem(CreateP1SupplyRaidTemplate());
+	CovertActions.AddItem(CreateP1JailbreakTemplate());
+	
+	CovertActions.AddItem(CreateP2DarkEventTemplate());
+	CovertActions.AddItem(CreateP2SupplyRaidTemplate());
+	CovertActions.AddItem(CreateP2EngineerTemplate());
+	CovertActions.AddItem(CreateP2ScientistTemplate());
+	CovertActions.AddItem(CreateP2DarkVIPTemplate());
+	
 	return CovertActions;
 }
 
-static function X2DataTemplate CreatePrepareGOpTemplate()
+static function X2DataTemplate CreateP1DarkEventTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_PrepareGOp');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1DarkEvent');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
-	// TODO both
-	Template.Narratives.AddItem('CovertActionNarrative_PrepareGOp');
-	Template.Rewards.AddItem('Reward_CAGuerillaOp');
+	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent');
+	Template.Rewards.AddItem('Reward_P1DarkEvent');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	
+	return Template;
+}
+
+static function X2DataTemplate CreateP1SupplyRaidTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1SupplyRaid');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid');
+	Template.Rewards.AddItem('Reward_P1SupplyRaid');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 
 	return Template;
 }
 
-static function X2DataTemplate CreatePrepareRaidTemplate()
+static function X2DataTemplate CreateP1JailbreakTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_PrepareRaid');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1Jailbreak');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
-	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
-
-	Template.Narratives.AddItem('CovertActionNarrative_PrepareRaid');
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak');
+	Template.Rewards.AddItem('Reward_P1Jailbreak');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	
+	return Template;
+}
 
-	Template.Rewards.AddItem('Reward_CASupplyRaid');
+static function X2DataTemplate CreateP2DarkEventTemplate()
+{
+	local X2CovertActionTemplate Template;
 
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2DarkEvent');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P2DarkEvent');
+	Template.Rewards.AddItem('Reward_P2DarkEvent');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	
+	return Template;
+}
+
+static function X2DataTemplate CreateP2SupplyRaidTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2SupplyRaid');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P2SupplyRaid');
+	Template.Rewards.AddItem('Reward_SupplyRaid');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+
+	return Template;
+}
+
+static function X2DataTemplate CreateP2EngineerTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2Engineer');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P2Engineer');
+	Template.Rewards.AddItem('Reward_P2Engineer');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	
+	return Template;
+}
+
+static function X2DataTemplate CreateP2ScientistTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2Scientist');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P2Scientist');
+	Template.Rewards.AddItem('Reward_P2Scientist');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	
+	return Template;
+}
+
+static function X2DataTemplate CreateP2DarkVIPTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2DarkVIP');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	
+	Template.Narratives.AddItem('CovertActionNarrative_P2DarkVIP');
+	Template.Rewards.AddItem('Reward_P2DarkVIP');
+
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+	
 	return Template;
 }
 
