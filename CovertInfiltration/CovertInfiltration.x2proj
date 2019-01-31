@@ -11,6 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Config\" />
+    <Folder Include="Content\Maps" />
+    <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
     <Folder Include="Src\" />
@@ -38,6 +40,18 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComUI.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\CIN_Loading_Infiltration_CityCenter.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\CIN_Loading_Infiltration_SmallTown.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\CIN_SkyrangerIntros_Infiltration.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\UILibrary_CovertInfiltration.upk" />
