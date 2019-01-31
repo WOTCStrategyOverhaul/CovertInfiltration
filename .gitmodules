@@ -1,0 +1,6 @@
+[submodule "X2WOTCCommunityHighlander"]
+	path = X2WOTCCommunityHighlander
+	url = https://github.com/WOTCStrategyOverhaul/X2WOTCCommunityHighlander.git
+[submodule "SquadSelectAnyTime"]
+	path = SquadSelectAnyTime
+	url = https://github.com/WOTCStrategyOverhaul/SquadSelectAnyTime.git
