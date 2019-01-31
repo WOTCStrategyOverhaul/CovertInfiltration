@@ -4,7 +4,8 @@ Param(
     [string]$sdkPath, # the path to your SDK installation ending in "XCOM 2 War of the Chosen SDK"
     [string]$gamePath, # the path to your XCOM 2 installation ending in "XCOM 2"
     [string[]]$includes, # any additional source files to include in the build
-    [string[]]$clean # mods to remove from SDK/XComGame/Mods because they throw the compiler out of whack
+    [string[]]$clean, # mods to remove from SDK/XComGame/Mods because they throw the compiler out of whack
+	[switch]$debug
 )
 
 function WriteModMetadata([string]$mod, [string]$sdkPath, [int]$publishedId, [string]$title, [string]$description) {
@@ -239,7 +240,12 @@ if ($forceFullBuild) {
 
 # build the base game scripts
 Write-Host "Compiling base game scripts..."
-Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -nopause -unattended" $sdkPath $modSrcRoot
+if ($debug -eq $true)
+{
+    Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -debug -nopause -unattended" $sdkPath $modSrcRoot
+} else {
+    Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -nopause -unattended" $sdkPath $modSrcRoot
+}
 if ($LASTEXITCODE -ne 0)
 {
     throw "Failed to compile base game scripts!"
@@ -248,7 +254,12 @@ Write-Host "Compiled base game scripts."
 
 # build the mod's scripts
 Write-Host "Compiling mod scripts..."
-Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -nopause -mods $modNameCanonical $stagingPath" $sdkPath $modSrcRoot
+if ($debug -eq $true)
+{
+    Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -debug -nopause -mods $modNameCanonical $stagingPath" $sdkPath $modSrcRoot
+} else {
+    Invoke-Make "$sdkPath/binaries/Win64/XComGame.com" "make -nopause -mods $modNameCanonical $stagingPath" $sdkPath $modSrcRoot
+}
 if ($LASTEXITCODE -ne 0)
 {
     throw "Failed to compile mod scripts!"

@@ -266,16 +266,20 @@
     <ModsDir>$(XCOM2_UserPath)\Mods\</ModsDir>
     <OutputDir>$(ModsDir)$(SafeName)\</OutputDir>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
   <Target Name="BuildCustom">
     <PropertyGroup>
       <GameInstallPath>$(XCOM2_GamePath)..\\</GameInstallPath>
       <SDKInstallPath>$(XCOM2_UserPath)..\\</SDKInstallPath>
-	  <SolutionRoot>$(MSBuildProjectDirectory)\..\\</SolutionRoot>
-	  <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
+      <SolutionRoot>$(MSBuildProjectDirectory)\..\\</SolutionRoot>
+      <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
+      <PowershellBuildCommand>powershell.exe –NonInteractive –ExecutionPolicy Unrestricted  -file "$(ScriptsDir)build.ps1" -mod "CovertInfiltration" -srcDirectory "$(SolutionRoot)" -sdkPath "$(SDKInstallPath)" -gamePath "$(GameInstallPath)" -includes "SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime" -clean "SquadSelectAtAnyTime"</PowershellBuildCommand>
+      <PowershellBuildCommand Condition="'$(Configuration)'=='Debug'">$(PowershellBuildCommand) -debug</PowershellBuildCommand>
     </PropertyGroup>
-  
-    <Message Text="Starting custom build" />
-    <Exec Command="powershell.exe –NonInteractive –ExecutionPolicy Unrestricted  -file &quot;$(ScriptsDir)build.ps1&quot; -mod &quot;CovertInfiltration&quot; -srcDirectory &quot;$(SolutionRoot)&quot; -sdkPath &quot;$(SDKInstallPath)&quot; -gamePath &quot;$(GameInstallPath)&quot; -includes &quot;SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime&quot; -clean &quot;SquadSelectAtAnyTime&quot;" />
+    <Message Text="Starting custom build $(Configuration)" />
+    <Exec Command="$(PowershellBuildCommand)" />
   </Target>
   <Target Name="Default" DependsOnTargets="BuildCustom">
     <!-- Do nothing. All actual work is done in the "BuildCustom" task. -->
