@@ -13,6 +13,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	Templates.AddItem(CreateGeoscapeListeners());
 	Templates.AddItem(CreateAvengerHUDListeners());
+	Templates.AddItem(CreateEventQueueListeners());
 
 	return Templates;
 }
@@ -70,6 +71,36 @@ static protected function EventListenerReturn ShortcutsResistanceButtonVisible(O
 
 	// NEVAH!!!
 	Tuple.Data[0].b = false;
+	
+	return ELR_NoInterrupt;
+}
+
+///////////////////
+/// Event Queue ///
+///////////////////
+
+static function CHEventListenerTemplate CreateEventQueueListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_EventQueue');
+	Template.AddCHEvent('GetCovertActionEvents_Settings', GetCovertActionEvents_Settings, ELD_Immediate); // Relies on CHL #391, will be avaliable in v1.18
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn GetCovertActionEvents_Settings(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'GetCovertActionEvents_Settings') return ELR_NoInterrupt;
+
+	// Show all of them
+	Tuple.Data[0].b = true;
+	// Insert it sorted
+	Tuple.Data[1].b = true;
 	
 	return ELR_NoInterrupt;
 }
