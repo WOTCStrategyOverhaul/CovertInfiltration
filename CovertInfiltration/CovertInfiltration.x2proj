@@ -12,6 +12,7 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Content\Maps" />
+    <Folder Include="Content\Maps\Missions" />
     <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
@@ -39,6 +40,15 @@
     <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComMissionDefs.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComPlots.ini">
+      <SubType>Content</SubType>
+    </Content>
+	<Content Include="Config\XComSchedules.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
@@ -49,6 +59,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\Maps\CIN_SkyrangerIntros_Infiltration.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">

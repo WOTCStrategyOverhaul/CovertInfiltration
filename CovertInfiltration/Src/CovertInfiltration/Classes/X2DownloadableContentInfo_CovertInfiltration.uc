@@ -9,6 +9,7 @@
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
 var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
+var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 
 static event UpdateDLC()
 {
@@ -99,6 +100,7 @@ static event OnPostTemplatesCreated()
 	PatchResistanceRing();
 	RemoveNoCovertActionNags();
 	RemoveSquadSizeUpgrades();
+	MarkPlotsForCovertEscape();
 }
 
 static protected function PatchResistanceRing()
@@ -202,6 +204,22 @@ static protected function RemoveSquadSizeUpgrades()
 
 	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIUnlock');
 	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIIUnlock');
+}
+
+static protected function MarkPlotsForCovertEscape()
+{
+	local XComParcelManager ParcelManager;
+	local int i;
+
+	ParcelManager = `PARCELMGR;
+
+	for (i = 0; i < ParcelManager.arrPlots.Length; i++)
+	{
+		if (default.arrAdditionalPlotsForCovertEscape.Find(ParcelManager.arrPlots[i].MapName) != INDEX_NONE)
+		{
+			ParcelManager.arrPlots[i].ObjectiveTags.AddItem("CovertEscape");
+		}
+	}
 }
 
 /// ////////////// ///
