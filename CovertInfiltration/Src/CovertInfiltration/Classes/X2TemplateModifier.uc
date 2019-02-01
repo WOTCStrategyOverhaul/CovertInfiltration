@@ -16,10 +16,9 @@ struct SingleBuildItem
 
 var config array<SingleBuildItem> SingleBuildItems;
 
-const BITFIELD_GAMEAREA_Rookie				= 32;   // WARNING: Do NOT edit this value!
-
 function ModifyTemplates()
 {
+	local array<X2DataTemplate> DifficultyVariants;
 	local X2ItemTemplateManager TemplateManager;
 	local X2SchematicTemplate Schematic;
 	local X2ItemTemplate Template;
@@ -36,19 +35,25 @@ function ModifyTemplates()
 		if (Schematic != none && Schematic.bShouldCreateDifficultyVariants)
 		{
 			// cycle through and modify each difficulty variant for this template
-			for (index = 0; index < 4; index++)
+			TemplateManager.FindDataTemplateAllDifficulties(Item.SchematicName, DifficultyVariants);
+			for (index = 0; index < DifficultyVariants.Length; index++)
 			{
-				Schematic = X2SchematicTemplate(FindDifficultyVariant(TemplateManager, Item.SchematicName, index));
-				Template = FindDifficultyVariant(TemplateManager, Schematic.ReferenceItemTemplate, index);
-
+				Schematic = X2SchematicTemplate(DifficultyVariants[index]);
+				
 				Schematic.bSquadUpgrade = false;
 				Schematic.OnBuiltFn = BuildItem;
 				Schematic.HideIfPurchased = '';
 				Schematic.bOneTimeBuild = false;
 				Schematic.Cost = Item.Costs[index];
-			
-				Template.HideInInventory = false;
-				Template.bInfiniteItem = false;
+
+				// only assign item template varaints if nessecary
+				if (Template.bShouldCreateDifficultyVariants || index == 0)
+				{
+					Template = TemplateManager.FindItemTemplate(Schematic.ReferenceItemTemplate);
+
+					Template.HideInInventory = false;
+					Template.bInfiniteItem = false;
+				}
 			}
 		}
 		else if (Template != none && Template.CreatorTemplateName != '')
@@ -70,24 +75,6 @@ function ModifyTemplates()
 				Template.Requirements = Schematic.Requirements;
 				Template.Cost = Item.Costs[0];
 			}
-		}
-	}
-}
-
-function X2ItemTemplate FindDifficultyVariant(X2ItemTemplateManager TemplateManager, Name DataName, int index)
-{
-	local array<X2DataTemplate> Templates;
-	local X2DataTemplate Template;
-	local int Bitfield;
-
-	Bitfield = BITFIELD_GAMEAREA_Rookie * (1 << index);
-	TemplateManager.FindDataTemplateAllDifficulties(DataName, Templates);
-
-	foreach Templates(Template)
-	{
-		if((Template.TemplateAvailability & Bitfield) != 0)
-		{
-			return X2ItemTemplate(Template);
 		}
 	}
 }
