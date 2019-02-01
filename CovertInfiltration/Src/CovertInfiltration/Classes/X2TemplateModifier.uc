@@ -1,3 +1,9 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  statusNone
+//  PURPOSE: Modifys Templates in order to make infinite items single build instead
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
 class X2TemplateModifier extends Object config (SingleBuildItems);
 
 struct SingleBuildItem
@@ -63,7 +69,6 @@ function ModifyTemplates()
 				Template.CreatorTemplateName = 'None';
 				Template.Requirements = Schematic.Requirements;
 				Template.Cost = Item.Costs[0];
-				`log(string(Item.SchematicName) @ "schematic created",, 'CI');
 			}
 		}
 	}
