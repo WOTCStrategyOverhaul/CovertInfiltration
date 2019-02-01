@@ -96,20 +96,20 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 
 static function string GetRiskDifficultyColouredString(int RiskLevel)
 {
-	local string Text, Color;
+	local string Text, TextColor;
 
 	Text = class'X2StrategyGameRulesetDataStructures'.default.CovertActionRiskLabels[RiskLevel];
 	
 	switch (RiskLevel)
 	{
-	case 0: Color = "fdce2b";	break; // yellow
-	case 1: Color = "e6af31";   break; // yellow-orange
-	case 2: Color = "e69831";	break; // orange
-	case 3: Color = "e66d31";   break; // orange-red
-	case 4: Color = "bf1e2e";	break; // red
+	case 0: TextColor = "fdce2b";	break; // yellow
+	case 1: TextColor = "e6af31";   break; // yellow-orange
+	case 2: TextColor = "e69831";	break; // orange
+	case 3: TextColor = "e66d31";   break; // orange-red
+	case 4: TextColor = "bf1e2e";	break; // red
 	}
 	
-	return ColourText(Text, Color);
+	return ColourText(Text, TextColor);
 }
 
 protected static function int SortRisksByDifficulty(CovertActionRisk a, CovertActionRisk b)

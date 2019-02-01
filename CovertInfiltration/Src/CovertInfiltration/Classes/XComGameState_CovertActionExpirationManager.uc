@@ -68,7 +68,7 @@ static function Update()
 		else if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime()))
 		{
 			bDirty = true;
-			CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertActionger', CovertAction.ObjectID));
+			CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
 			CovertAction.RemoveEntity(NewGameState);
 
 			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);

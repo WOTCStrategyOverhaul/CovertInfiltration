@@ -47,7 +47,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Page.ShowSettings();
 }
 
-`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.VERSION, CONFIG_VERSION)
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, CONFIG_VERSION)
 
 simulated function LoadSavedSettings()
 {

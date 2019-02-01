@@ -9,7 +9,7 @@
 class UIEventQueue_ListItem_CI extends UIEventQueue_ListItem;
 
 `include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
-`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.VERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
 simulated function UIEventQueue_ListItem InitListItem()
 {

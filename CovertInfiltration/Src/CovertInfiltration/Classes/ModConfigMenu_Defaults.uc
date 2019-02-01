@@ -10,4 +10,5 @@ class ModConfigMenu_Defaults extends Object config(ModConfigMenu_Defaults);
 var config bool DAYS_TO_HOURS_DEFAULT;
 var config int DAYS_BEFORE_HOURS_DEFAULT;
 
-var config int VERSION;
+// "i" added to prevent case warnings
+var config int iVERSION;

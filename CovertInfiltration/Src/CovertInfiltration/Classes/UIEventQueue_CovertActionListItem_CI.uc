@@ -11,7 +11,7 @@ class UIEventQueue_CovertActionListItem_CI extends UIEventQueue_CovertActionList
 
 var StateObjectReference ActionRef;
 
-`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.VERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
 simulated function UpdateData(HQEvent Event)
 {
