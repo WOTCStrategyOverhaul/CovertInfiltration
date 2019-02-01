@@ -40,6 +40,9 @@
     <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComSingleBuildItems.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
@@ -208,6 +211,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2TemplateModifier.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CovertActionExpirationManager.uc">
