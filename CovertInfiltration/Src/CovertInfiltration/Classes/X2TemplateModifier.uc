@@ -32,7 +32,7 @@ function ModifyTemplates()
 		Schematic = X2SchematicTemplate(TemplateManager.FindItemTemplate(Item.SchematicName));
 		Template = TemplateManager.FindItemTemplate(Item.SchematicName);
 
-		if (Schematic != none && Schematic.bShouldCreateDifficultyVariants)
+		if (Schematic != none)
 		{
 			// cycle through and modify each difficulty variant for this template
 			TemplateManager.FindDataTemplateAllDifficulties(Item.SchematicName, DifficultyVariants);
@@ -53,6 +53,12 @@ function ModifyTemplates()
 
 					Template.HideInInventory = false;
 					Template.bInfiniteItem = false;
+				}
+
+				// if we only need to modify one schematic stop here
+				if (!Schematic.bShouldCreateDifficultyVariants)
+				{
+					break;
 				}
 			}
 		}
