@@ -23,7 +23,7 @@ function ModifyTemplates()
 	local X2SchematicTemplate Schematic;
 	local X2ItemTemplate Template;
 	local SingleBuildItem Item;
-	local int index;
+	local int index, ValidIndex;
 
 	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	
@@ -31,34 +31,34 @@ function ModifyTemplates()
 	{
 		Schematic = X2SchematicTemplate(TemplateManager.FindItemTemplate(Item.SchematicName));
 		Template = TemplateManager.FindItemTemplate(Item.SchematicName);
-
 		if (Schematic != none)
 		{
 			// cycle through and modify each difficulty variant for this template
 			TemplateManager.FindDataTemplateAllDifficulties(Item.SchematicName, DifficultyVariants);
-			for (index = 0; index < DifficultyVariants.Length; index++)
+			for (index = 0; index < DifficultyVariants.Length - 1; index++)
 			{
 				Schematic = X2SchematicTemplate(DifficultyVariants[index]);
+				
+				ValidIndex = index;
+				// if no cost value was set for this difficulty variant use next highest value
+				while (ValidIndex > 0 && Item.Costs[ValidIndex].ResourceCosts.Length == 0)
+				{
+					ValidIndex--;
+				}
 				
 				Schematic.bSquadUpgrade = false;
 				Schematic.OnBuiltFn = BuildItem;
 				Schematic.HideIfPurchased = '';
 				Schematic.bOneTimeBuild = false;
-				Schematic.Cost = Item.Costs[index];
+				Schematic.Cost = Item.Costs[ValidIndex];
 
-				// only assign item template varaints if nessecary
+				// only assign item template varaints on first pass or if nessecary
 				if (Template.bShouldCreateDifficultyVariants || index == 0)
 				{
 					Template = TemplateManager.FindItemTemplate(Schematic.ReferenceItemTemplate);
 
 					Template.HideInInventory = false;
 					Template.bInfiniteItem = false;
-				}
-
-				// if we only need to modify one schematic stop here
-				if (!Schematic.bShouldCreateDifficultyVariants)
-				{
-					break;
 				}
 			}
 		}
