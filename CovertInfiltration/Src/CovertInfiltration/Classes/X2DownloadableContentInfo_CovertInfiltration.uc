@@ -97,15 +97,7 @@ static event OnPostTemplatesCreated()
 	PatchResistanceRing();
 	RemoveNoCovertActionNags();
 	RemoveSquadSizeUpgrades();
-	CreateSingleBuildItems();
-}
-
-static protected function CreateSingleBuildItems()
-{
-	local X2TemplateModifier TemplateModifier;
-
-	TemplateModifier = new class'X2TemplateModifier';
-	TemplateModifier.ModifyTemplates();
+	class'X2TemplateModifier'.static.ModifyTemplates();
 }
 
 static protected function PatchResistanceRing()

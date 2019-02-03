@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  statusNone
-//  PURPOSE: Modifys Templates in order to make infinite items single build instead
+//  PURPOSE: Modifies Templates in order to make infinite items single build instead
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ struct SingleBuildItem
 
 var config array<SingleBuildItem> SingleBuildItems;
 
-function ModifyTemplates()
+static function ModifyTemplates()
 {
 	local array<X2DataTemplate> DifficultyVariants;
 	local X2ItemTemplateManager TemplateManager;
@@ -29,8 +29,9 @@ function ModifyTemplates()
 	
 	foreach default.SingleBuildItems(Item)
 	{
-		Schematic = X2SchematicTemplate(TemplateManager.FindItemTemplate(Item.SchematicName));
 		Template = TemplateManager.FindItemTemplate(Item.SchematicName);
+		Schematic = X2SchematicTemplate(Template);
+
 		if (Schematic != none)
 		{
 			// cycle through and modify each difficulty variant for this template
@@ -85,7 +86,7 @@ function ModifyTemplates()
 	}
 }
 
-function BuildItem(XComGameState NewGameState, XComGameState_Item ItemState)
+static function BuildItem(XComGameState NewGameState, XComGameState_Item ItemState)
 {
 	local X2ItemTemplateManager TemplateManager;
 	local XComGameState_HeadquartersXCom XComHQ;
@@ -112,7 +113,7 @@ function BuildItem(XComGameState NewGameState, XComGameState_Item ItemState)
 
 	if(XComHQ.GetNumItemInInventory(ItemTemplate.DataName) > 0)
 	{
-		NewItem = XComHQ.GetItemByName(ItemTemplate.DataName);
+		NewItem = XComGameState_Item(NewGameState.ModifyStateObject(class'XComGameState_Item', XComHQ.GetItemByName(ItemTemplate.DataName).ObjectID));
 		NewItem.Quantity++;
 	}
 	else
@@ -121,6 +122,4 @@ function BuildItem(XComGameState NewGameState, XComGameState_Item ItemState)
 		NewItem.Quantity = 1;
 		XComHQ.PutItemInInventory(NewGameState, NewItem);
 	}
-	
-	NewGameState.AddStateObject(NewItem);
 }
