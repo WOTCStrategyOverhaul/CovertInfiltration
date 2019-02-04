@@ -97,7 +97,7 @@ static event OnPostTemplatesCreated()
 	PatchResistanceRing();
 	RemoveNoCovertActionNags();
 	RemoveSquadSizeUpgrades();
-	class'X2TemplateModifier'.static.ModifyTemplates();
+	class'X2Helper_CI_OPTC'.static.ModifyTemplates();
 }
 
 static protected function PatchResistanceRing()

@@ -186,6 +186,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_UI.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Helper_CI_OPTC.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>
@@ -211,9 +214,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2TemplateModifier.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CovertActionExpirationManager.uc">

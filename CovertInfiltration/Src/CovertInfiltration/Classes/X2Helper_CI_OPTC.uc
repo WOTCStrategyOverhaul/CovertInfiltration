@@ -4,7 +4,7 @@
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
-class X2TemplateModifier extends Object config (SingleBuildItems);
+class X2Helper_CI_OPTC extends Object config (SingleBuildItems);
 
 struct SingleBuildItem
 {
@@ -41,7 +41,7 @@ static function ModifyTemplates()
 				Schematic = X2SchematicTemplate(DifficultyVariants[index]);
 				
 				ValidIndex = index;
-				// if no cost value was set for this difficulty variant use next highest value
+				// if no cost value was set for this difficulty find the last useable value
 				while (ValidIndex > 0 && Item.Costs[ValidIndex].ResourceCosts.Length == 0)
 				{
 					ValidIndex--;
@@ -68,7 +68,7 @@ static function ModifyTemplates()
 			// TODO: create difficulty variants for these schematics
 			Schematic = X2SchematicTemplate(TemplateManager.FindItemTemplate(Template.CreatorTemplateName));
 			
-			// make sure we actually have a creator schematic for this template
+			// make sure we actually have a creator template for this schematic
 			if (Schematic != none)
 			{
 				Template.HideInInventory = false;
@@ -108,6 +108,8 @@ static function BuildItem(XComGameState NewGameState, XComGameState_Item ItemSta
 
 	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	
+	// get the ItemTemplate by referencing from the SchematicTemplate
+	// otherwise it won't add the item to the armory when you build it
 	Schematic = X2SchematicTemplate(ItemState.GetMyTemplate());
 	ItemTemplate = TemplateManager.FindItemTemplate(Schematic.ReferenceItemTemplate);
 
