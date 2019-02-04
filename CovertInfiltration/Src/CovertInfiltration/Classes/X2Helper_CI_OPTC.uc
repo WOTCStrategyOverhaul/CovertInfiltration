@@ -32,8 +32,10 @@ static function ModifyTemplates()
 		Template = TemplateManager.FindItemTemplate(Item.SchematicName);
 		Schematic = X2SchematicTemplate(Template);
 
+		// look for a SchematicTemplate from the config array
 		if (Schematic != none)
 		{
+			// check if this schematic is flagged to require difficulty variants
 			// cycle through and modify each difficulty variant for this template
 			TemplateManager.FindDataTemplateAllDifficulties(Item.SchematicName, DifficultyVariants);
 			for (index = 0; index < DifficultyVariants.Length - 1; index++)
@@ -53,7 +55,7 @@ static function ModifyTemplates()
 				Schematic.bOneTimeBuild = false;
 				Schematic.Cost = Item.Costs[ValidIndex];
 
-				// only assign item template varaints on first pass or if nessecary
+				// only modify item template varaints on first pass or if nessecary
 				if (Template.bShouldCreateDifficultyVariants || index == 0)
 				{
 					Template = TemplateManager.FindItemTemplate(Schematic.ReferenceItemTemplate);
@@ -63,12 +65,13 @@ static function ModifyTemplates()
 				}
 			}
 		}
+		// didn't find a SchematicTemplate, check for an ItemTemplate (faction armors & spark bits)
+		// also check if it has a CreatorTemplateName (we need this to make it buildable in workshop)
 		else if (Template != none && Template.CreatorTemplateName != '')
 		{
-			// TODO: create difficulty variants for these schematics
 			Schematic = X2SchematicTemplate(TemplateManager.FindItemTemplate(Template.CreatorTemplateName));
 			
-			// make sure we actually have a creator template for this schematic
+			// double check CreatorTemplate was properly assigned as the Schematic
 			if (Schematic != none)
 			{
 				Template.HideInInventory = false;
@@ -83,6 +86,10 @@ static function ModifyTemplates()
 				Template.Cost = Item.Costs[0];
 			}
 		}
+		else
+		{
+			`log(string(Item.SchematicName) $ ": unable to find a Template with this name, skipping..",, 'CI');
+		}
 	}
 }
 
@@ -94,17 +101,7 @@ static function BuildItem(XComGameState NewGameState, XComGameState_Item ItemSta
 	local X2ItemTemplate ItemTemplate;
 	local XComGameState_Item NewItem;
 
-	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
-	{
-		break;
-	}
-	
-	if (XComHQ == none)
-	{
-		XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-		XComHQ = XComGameState_HeadquartersXCom(NewGameState.CreateStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-		NewGameState.AddStateObject(XComHQ);
-	}
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
 
 	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	
