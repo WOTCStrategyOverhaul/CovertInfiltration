@@ -24,6 +24,7 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P1SupplyRaid');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -33,6 +34,7 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P1DarkEvent');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -42,6 +44,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P1Jailbreak');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -51,6 +54,7 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P2DarkVIP');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -69,6 +73,7 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P2DarkEvent');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -78,6 +83,7 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P2Engineer');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
 }
@@ -87,6 +93,13 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 	local X2RewardTemplate Template;
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P2Scientist');
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
 
 	return Template;
+}
+
+static protected function bool RewardNotAvaliable(optional XComGameState NewGameState, optional StateObjectReference AuxRef)
+{
+	// Since these rewards are only used for display purposes, we flag them as unavaliable to prevent P1/P2 CAs from randomly spawning
+	return false;
 }
