@@ -29,7 +29,7 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1DarkEvent');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P1DarkEvent');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -51,7 +51,7 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1SupplyRaid');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P1SupplyRaid');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -73,7 +73,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P1Jailbreak');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P1Jailbreak');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -95,7 +95,7 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2DarkEvent');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P2DarkEvent');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -135,7 +135,7 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2Engineer');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P2Engineer');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -157,7 +157,7 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2Scientist');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P2Scientist');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -179,7 +179,7 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_P2DarkVIP');
+	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, 'CovertAction_P2DarkVIP');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops

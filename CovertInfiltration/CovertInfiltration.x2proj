@@ -46,7 +46,7 @@
     <Content Include="Config\XComPlots.ini">
       <SubType>Content</SubType>
     </Content>
-	<Content Include="Config\XComSchedules.ini">
+    <Content Include="Config\XComSchedules.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComUI.ini">
@@ -186,6 +186,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2CovertInfiltrationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2CovertMissionInfo.uc">
