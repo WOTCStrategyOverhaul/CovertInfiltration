@@ -57,6 +57,6 @@ Please keep the following guidelines in mind:
 * If your class derives from `UIScreenListener` (even if not directly), it needs to be named `UIListener_*`
 * If your class is an UI element (screen, panel or some auxiliary class), it needs to be named `UI*`
 * Event listeners **templates** should go inside `X2EventListener_Infiltration` and `X2EventListener_Infiltration_UI`, not other classes
-* If your class derives from some class that derives from `X2DataSet`, it needs to be named in same mananner as base game classes that create same templates
+* If your class derives from some class that derives from `X2DataSet`, it needs to be named in same manner as base game classes that create same templates
 
 You will find some places which do not follow these guidelines - they are generally remnants of project's early days. We hope to fix them at some point, but it's not a priority. If you have any questions, please ask them in discord chat
