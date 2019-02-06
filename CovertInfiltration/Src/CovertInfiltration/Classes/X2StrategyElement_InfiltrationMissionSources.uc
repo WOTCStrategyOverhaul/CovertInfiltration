@@ -30,7 +30,7 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	Template.bIncreasesForceLevel = false;
 	Template.bShowRewardOnPin = true;
 	Template.OnSuccessFn = GatherLeadOnSuccess;
-	//Template.OnFailureFn = GuerillaOpOnFailure;
+	Template.OnFailureFn = GatherLeadOnFailure;
 	//Template.OnExpireFn = GuerillaOpOnExpire;
 	Template.DifficultyValue = 1;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
@@ -61,7 +61,19 @@ static function GatherLeadOnSuccess(XComGameState NewGameState, XComGameState_Mi
 	GiveRewards(NewGameState, MissionState);
 	//SpawnPointOfInterest(NewGameState, MissionState); // No POIs here
 	//CleanUpGuerillaOps(NewGameState, MissionState.ObjectID);
+	
+	MissionState.RemoveEntity(NewGameState);
+	`XEVENTMGR.TriggerEvent('GuerillaOpComplete', , , NewGameState);
+	
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsCompleted');
+}
+
+static function GatherLeadOnFailure(XComGameState NewGameState, XComGameState_MissionSite MissionState)
+{
+	MissionState.RemoveEntity(NewGameState);
+	`XEVENTMGR.TriggerEvent('GuerillaOpComplete', , , NewGameState);
+	
+	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsFailed');
 }
 
 static function X2DataTemplate CreateDarkEventTemplate()
