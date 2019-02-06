@@ -33,7 +33,7 @@ static function X2DataTemplate CreateP1DarkEventMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1DarkEvent'));
 
 	Template.MissionSource = 'MissionSource_GatherLead';
-	//Template.MissionRewards.AddItem('Reward_None');
+	Template.MissionRewards.AddItem('Reward_GatherLeadDarkEvent');
 
 	return Template;
 }

@@ -24,7 +24,7 @@ static function array<X2DataTemplate> CreateTemplates()
 static function X2DataTemplate CreateGatherLeadTemplate()
 {
 	local X2MissionSourceTemplate Template;
-	local RewardDeckEntry DeckEntry;
+	//local RewardDeckEntry DeckEntry;
 
 	`CREATE_X2TEMPLATE(class'X2MissionSourceTemplate', Template, 'MissionSource_GatherLead');
 	Template.bIncreasesForceLevel = false;
@@ -38,11 +38,10 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	Template.GetMissionDifficultyFn = GetMissionDifficultyFromMonth;
 	//Template.SpawnMissionsFn = SpawnGuerillaOpsMissions;
 	//Template.MissionPopupFn = GuerillaOpsPopup;
-	Template.WasMissionSuccessfulFn = StrategyObjectivePlusSweepCompleted;
-	Template.GetMissionRegionFn = GetGuerillaOpRegions;
-	Template.GetSitRepsFn = GetGuerillaOpsSitReps;
+	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
+	Template.GetSitRepsFn = GetSitrepsGeneric;
 
-	DeckEntry.RewardName = 'Reward_Supplies';
+	/*DeckEntry.RewardName = 'Reward_Supplies';
 	DeckEntry.Quantity = 1;
 	Template.RewardDeck.AddItem(DeckEntry);
 	DeckEntry.RewardName = 'Reward_Soldier';
@@ -50,7 +49,7 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	Template.RewardDeck.AddItem(DeckEntry);
 	DeckEntry.RewardName = 'Reward_Intel';
 	DeckEntry.Quantity = 2;
-	Template.RewardDeck.AddItem(DeckEntry);
+	Template.RewardDeck.AddItem(DeckEntry);*/
 
 	return Template;
 }
@@ -60,8 +59,8 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 static function GatherLeadOnSuccess(XComGameState NewGameState, XComGameState_MissionSite MissionState)
 {
 	GiveRewards(NewGameState, MissionState);
-	SpawnPointOfInterest(NewGameState, MissionState);
-	CleanUpGuerillaOps(NewGameState, MissionState.ObjectID);
+	//SpawnPointOfInterest(NewGameState, MissionState); // No POIs here
+	//CleanUpGuerillaOps(NewGameState, MissionState.ObjectID);
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsCompleted');
 }
 

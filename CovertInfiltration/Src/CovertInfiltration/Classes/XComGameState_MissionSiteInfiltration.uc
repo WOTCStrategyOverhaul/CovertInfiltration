@@ -43,6 +43,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 	MissionLocation.X = Action.Location.X;
 	MissionLocation.Y = Action.Location.Y;
 
+	// TODO: Region is messed up
 	//ResistanceFaction = Faction;
 	BuildMission(MissionSource, MissionLocation, Region, MissionRewards, true);
 	SetSoldiersFromAction(Action);
@@ -67,6 +68,7 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 	}
 }
 
+// TODO: Is this needed after the staff slot change?
 function SetSoldiersAsOnAction(XComGameState NewGameState)
 {
 	local StateObjectReference SoldierRef;
