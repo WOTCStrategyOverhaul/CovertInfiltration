@@ -54,7 +54,7 @@ static function MakeItemsBuildable()
 			ItemTemplate.bInfiniteItem = false;
 			ItemTemplate.CreatorTemplateName = '';
 
-			`log(ItemTemplate.Name @ ItemTemplate.ValidateTemplate @ "was made single-buildable",, 'CI_SingleBuildItems');
+			`log(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length),, 'CI_SingleBuildItems');
 		}
 	}
 }
