@@ -95,6 +95,9 @@
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>

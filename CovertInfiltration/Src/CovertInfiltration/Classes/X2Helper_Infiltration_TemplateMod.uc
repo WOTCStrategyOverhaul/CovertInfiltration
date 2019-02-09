@@ -130,7 +130,7 @@ static function KillItems()
 	}
 }
 
-static protected function DisableLockAndBreakthrough()
+static function DisableLockAndBreakthrough()
 {
 	local X2StrategyElementTemplateManager Manager;
 	local array<X2DataTemplate> DifficulityVariants;
