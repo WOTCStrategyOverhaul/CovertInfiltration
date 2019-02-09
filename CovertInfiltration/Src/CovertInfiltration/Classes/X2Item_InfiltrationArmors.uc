@@ -44,7 +44,6 @@ static function X2DataTemplate CreateCivilianDisguise()
 static function X2DataTemplate CreateAdventDisguise()
 {
 	local X2ArmorTemplate Template;
-	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'AdventDisguise');
 	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Ivn_Disguise_Advent";
@@ -62,20 +61,6 @@ static function X2DataTemplate CreateAdventDisguise()
 	Template.AkAudioSoldierArmorSwitch = 'Predator';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Conventional";
 
-	// Requirements
-	Template.Requirements.RequiredTechs.AddItem('AutopsyFaceless');
-	Template.Requirements.RequiredEngineeringScore = 10;
-	Template.Requirements.bVisibleIfPersonnelGatesNotMet = true;
-
-	// Cost
- 	Resources.ItemTemplateName = 'Supplies';
- 	Resources.Quantity = 7;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
-	Resources.ItemTemplateName = 'EleriumDust';
-	Resources.Quantity = 2;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.ADVENT_DISGUISE_HEALTH_BONUS, true);
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, class'X2Ability_InfiltrationAbilitySet'.default.ADVENT_DISGUISE_MOBILITY_BONUS);
 
@@ -85,7 +70,6 @@ static function X2DataTemplate CreateAdventDisguise()
 static function X2DataTemplate CreateHolographicDisguise()
 {
 	local X2ArmorTemplate Template;
-	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'HolographicDisguise');
 	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Warden_Armor";
@@ -102,24 +86,6 @@ static function X2DataTemplate CreateHolographicDisguise()
 	Template.Tier = 3;
 	Template.AkAudioSoldierArmorSwitch = 'Warden';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Powered";
-
-	// Requirements
-	Template.Requirements.RequiredTechs.AddItem('PoweredArmor');
-	Template.Requirements.RequiredEngineeringScore = 20;
-	Template.Requirements.bVisibleIfPersonnelGatesNotMet = true;
-
-	// Cost
- 	Resources.ItemTemplateName = 'Supplies';
- 	Resources.Quantity = 12;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
-	Resources.ItemTemplateName = 'AlienAlloy';
-	Resources.Quantity = 3;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
-	Resources.ItemTemplateName = 'EleriumDust';
-	Resources.Quantity = 2;
-	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.HOLOGRAPHIC_DISGUISE_HEALTH_BONUS, true);
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, class'X2Ability_InfiltrationAbilitySet'.default.HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS);

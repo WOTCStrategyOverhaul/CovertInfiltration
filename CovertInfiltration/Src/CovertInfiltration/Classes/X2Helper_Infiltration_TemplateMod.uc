@@ -122,6 +122,8 @@ static function KillItems()
 			ItemTemplate.OnBuiltFn = none;
 			ItemTemplate.Cost.ResourceCosts.Length = 0;
 			ItemTemplate.Cost.ArtifactCosts.Length = 0;
+
+			`log(ItemTemplate.Name,, 'CI_SingleBuildItems');
 		}
 	}
 }
