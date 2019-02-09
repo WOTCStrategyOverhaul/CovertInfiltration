@@ -68,6 +68,8 @@ static function MakeItemsBuildable()
 			ItemTemplate.CanBeBuilt = true;
 			ItemTemplate.bInfiniteItem = false;
 			ItemTemplate.CreatorTemplateName = '';
+
+			`log(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length),, 'CI_SingleBuildItems');
 		}
 	}
 }
@@ -123,7 +125,7 @@ static function KillItems()
 			ItemTemplate.Cost.ResourceCosts.Length = 0;
 			ItemTemplate.Cost.ArtifactCosts.Length = 0;
 
-			`log(ItemTemplate.Name,, 'CI_SingleBuildItems');
+			`log(ItemTemplate.Name @ "was killed",, 'CI_SingleBuildItems');
 		}
 	}
 }
