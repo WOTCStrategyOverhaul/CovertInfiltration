@@ -100,3 +100,8 @@ static function X2DataTemplate CreateHolographicDisguise()
 	
 	return Template;
 }
+
+defaultproperties
+{
+	bShouldCreateDifficultyVariants = true
+}

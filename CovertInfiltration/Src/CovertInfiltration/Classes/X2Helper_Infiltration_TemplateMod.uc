@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Class designed to flag items in order to give them difficulty variants,
+//  make them single buildable from the ItemTemplate and kill their SchematicTemplate
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2Helper_Infiltration_TemplateMod extends Object config(Game);
 
 var config array<name> arrDataSetsToForceVariants;
