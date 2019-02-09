@@ -129,3 +129,26 @@ static function KillItems()
 		}
 	}
 }
+
+static protected function DisableLockAndBreakthrough()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Manager.FindDataTemplateAllDifficulties('BreakthroughReuseWeaponUpgrades', DifficulityVariants);
+	
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+
+		if (TechTemplate != none)
+		{
+			TechTemplate.Requirements.RequiredScienceScore = 999999;
+			TechTemplate.Requirements.bVisibleifPersonnelGatesNotMet = false;
+			TechTemplate.Requirements.SpecialRequirementsFn = class'X2Helper_Infiltration'.static.ReturnFalse;
+		}
+	}
+}

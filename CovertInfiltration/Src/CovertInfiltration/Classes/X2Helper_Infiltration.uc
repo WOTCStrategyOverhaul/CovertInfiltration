@@ -179,3 +179,8 @@ static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
 
 	return MissionInfo != none;
 }
+
+static function bool ReturnFalse()
+{
+	return false;
+}
