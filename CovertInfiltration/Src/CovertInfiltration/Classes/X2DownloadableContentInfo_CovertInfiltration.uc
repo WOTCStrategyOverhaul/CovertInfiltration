@@ -95,12 +95,21 @@ static function CompleteTutorial(XComGameState NewGameState)
 /// Templates ///
 /////////////////
 
+static function OnPreCreateTemplates()
+{
+	class'X2Helper_Infiltration_TemplateMod'.static.ForceDifficultyVariants();
+}
+
 static event OnPostTemplatesCreated()
 {
 	PatchResistanceRing();
 	RemoveNoCovertActionNags();
 	RemoveSquadSizeUpgrades();
 	MarkPlotsForCovertEscape();
+
+	class'X2Helper_Infiltration_TemplateMod'.static.MakeItemsBuildable();
+	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
+	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
 }
 
 static protected function PatchResistanceRing()
