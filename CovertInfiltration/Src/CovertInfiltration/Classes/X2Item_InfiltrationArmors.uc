@@ -44,15 +44,15 @@ static function X2DataTemplate CreateCivilianDisguise()
 static function X2DataTemplate CreateAdventDisguise()
 {
 	local X2ArmorTemplate Template;
+	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'AdventDisguise');
 	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Ivn_Disguise_Advent";
 	Template.ItemCat = 'armor';
-	//Template.bAddsUtilitySlot = true;
 	Template.StartingItem = false;
-	Template.CanBeBuilt = false;
-	Template.bInfiniteItem = true;
-	Template.TradingPostValue = 15;
+	Template.CanBeBuilt = true;
+	Template.bInfiniteItem = false;
+	Template.TradingPostValue = 3;
 	Template.PointsToComplete = 0;
 	Template.Abilities.AddItem('AdventDisguiseStats');
 	Template.Abilities.AddItem('Phantom');
@@ -62,8 +62,19 @@ static function X2DataTemplate CreateAdventDisguise()
 	Template.AkAudioSoldierArmorSwitch = 'Predator';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Conventional";
 
-	Template.CreatorTemplateName = 'AdventDisguise_Schematic'; // The schematic which creates this item
-	Template.BaseItem = 'CivilianDisguise'; // Which item this will be upgraded from
+	// Requirements
+	Template.Requirements.RequiredTechs.AddItem('AutopsyFaceless');
+	Template.Requirements.RequiredEngineeringScore = 10;
+	Template.Requirements.bVisibleIfPersonnelGatesNotMet = true;
+
+	// Cost
+ 	Resources.ItemTemplateName = 'Supplies';
+ 	Resources.Quantity = 7;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+
+	Resources.ItemTemplateName = 'EleriumDust';
+	Resources.Quantity = 2;
+	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.ADVENT_DISGUISE_HEALTH_BONUS, true);
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, class'X2Ability_InfiltrationAbilitySet'.default.ADVENT_DISGUISE_MOBILITY_BONUS);
@@ -74,15 +85,15 @@ static function X2DataTemplate CreateAdventDisguise()
 static function X2DataTemplate CreateHolographicDisguise()
 {
 	local X2ArmorTemplate Template;
+	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'HolographicDisguise');
 	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Warden_Armor";
 	Template.ItemCat = 'armor';
-	//Template.bAddsUtilitySlot = true;
-	Template.StartingItem = false; // false
-	Template.CanBeBuilt = false;
-	Template.bInfiniteItem = true;
-	Template.TradingPostValue = 50;
+	Template.StartingItem = false;
+	Template.CanBeBuilt = true;
+	Template.bInfiniteItem = false;
+	Template.TradingPostValue = 6;
 	Template.PointsToComplete = 0;
 	Template.Abilities.AddItem('HolographicDisguiseStats');
 	Template.Abilities.AddItem('Phantom');
@@ -92,8 +103,23 @@ static function X2DataTemplate CreateHolographicDisguise()
 	Template.AkAudioSoldierArmorSwitch = 'Warden';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Powered";
 
-	Template.CreatorTemplateName = 'HolographicDisguise_Schematic'; // The schematic which creates this item
-	Template.BaseItem = 'AdventDisguise'; // Which item this will be upgraded from
+	// Requirements
+	Template.Requirements.RequiredTechs.AddItem('PoweredArmor');
+	Template.Requirements.RequiredEngineeringScore = 20;
+	Template.Requirements.bVisibleIfPersonnelGatesNotMet = true;
+
+	// Cost
+ 	Resources.ItemTemplateName = 'Supplies';
+ 	Resources.Quantity = 12;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+
+	Resources.ItemTemplateName = 'AlienAlloy';
+	Resources.Quantity = 3;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+
+	Resources.ItemTemplateName = 'EleriumDust';
+	Resources.Quantity = 2;
+	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.HOLOGRAPHIC_DISGUISE_HEALTH_BONUS, true);
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, class'X2Ability_InfiltrationAbilitySet'.default.HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS);

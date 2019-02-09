@@ -108,6 +108,7 @@ static event OnPostTemplatesCreated()
 	MarkPlotsForCovertEscape();
 
 	class'X2Helper_Infiltration_TemplateMod'.static.MakeItemsBuildable();
+	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
 }
 

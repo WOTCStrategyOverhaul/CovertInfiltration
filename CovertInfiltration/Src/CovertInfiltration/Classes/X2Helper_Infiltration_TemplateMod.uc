@@ -8,9 +8,16 @@
 
 class X2Helper_Infiltration_TemplateMod extends Object config(Game);
 
+struct TradingPostValueModifier
+{
+	var name ItemName;
+	var int NewValue;
+};
+
 var config array<name> arrDataSetsToForceVariants;
 var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
+var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 
 static function ForceDifficultyVariants()
 {
@@ -61,9 +68,23 @@ static function MakeItemsBuildable()
 			ItemTemplate.CanBeBuilt = true;
 			ItemTemplate.bInfiniteItem = false;
 			ItemTemplate.CreatorTemplateName = '';
-
-			`log(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length),, 'CI_SingleBuildItems');
 		}
+	}
+}
+
+static function ApplyTradingPostModifiers()
+{
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+	local TradingPostValueModifier ValueModifier;
+
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	foreach default.arrTradingPostModifiers(ValueModifier)
+	{
+		ItemTemplate = ItemTemplateManager.FindItemTemplate(ValueModifier.ItemName);
+
+		ItemTemplate.TradingPostValue = ValueModifier.NewValue;
 	}
 }
 
@@ -101,8 +122,6 @@ static function KillItems()
 			ItemTemplate.OnBuiltFn = none;
 			ItemTemplate.Cost.ResourceCosts.Length = 0;
 			ItemTemplate.Cost.ArtifactCosts.Length = 0;
-
-			`log(ItemTemplate.Name @ "was killed",, 'CI_SingleBuildItems');
 		}
 	}
 }

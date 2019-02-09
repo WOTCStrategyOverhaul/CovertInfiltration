@@ -234,9 +234,6 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationArmors.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationSchematics.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
       <SubType>Content</SubType>
     </Content>
