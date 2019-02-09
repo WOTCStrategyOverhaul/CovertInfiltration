@@ -33,7 +33,7 @@ static function X2DataTemplate CreateP1DarkEventMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1DarkEvent'));
 
 	Template.MissionSource = 'MissionSource_GatherLead';
-	Template.MissionRewards.AddItem('Reward_GatherLeadDarkEvent');
+	Template.MissionRewards.AddItem('Reward_GatherLeadActivity');
 
 	return Template;
 }
@@ -44,7 +44,7 @@ static function X2DataTemplate CreateP1SupplyRaidMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1SupplyRaid'));
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
-	//Template.MissionRewards.AddItem('Reward_None');
+	Template.MissionRewards.AddItem('Reward_GatherLeadTarget');
 
 	return Template;
 }
@@ -55,7 +55,7 @@ static function X2DataTemplate CreateP1JailbreakMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P1Jailbreak'));
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
-	//Template.MissionRewards.AddItem('Reward_None');
+	Template.MissionRewards.AddItem('Reward_GatherLeadPersonnel');
 
 	return Template;
 }
@@ -67,7 +67,7 @@ static function X2DataTemplate CreateP2DarkEventMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2DarkEvent'));
 	
 	Template.MissionSource = 'MissionSource_DarkEvent';
-	//Template.MissionRewards.AddItem('Reward_Supplies');
+	Template.MissionRewards.AddItem('Reward_Supplies');
 
 	return Template;
 }
@@ -79,7 +79,7 @@ static function X2DataTemplate CreateP2DarkVIPMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2DarkVIP'));
 
 	Template.MissionSource = 'MissionSource_DarkVIP';
-	//Template.MissionRewards.AddItem('Reward_Intel');
+	Template.MissionRewards.AddItem('Reward_Intel');
 
 	return Template;
 }
@@ -102,7 +102,7 @@ static function X2DataTemplate CreateP2EngineerMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2Engineer'));
 	
 	Template.MissionSource = 'MissionSource_Engineer';
-	//Template.MissionRewards.AddItem('Reward_Engineer');
+	Template.MissionRewards.AddItem('Reward_Engineer');
 
 	return Template;
 }
@@ -114,7 +114,7 @@ static function X2DataTemplate CreateP2ScientistMission()
 	`CREATE_X2TEMPLATE(class'X2CovertMissionInfoTemplate', Template, GetCovertMissionInfoName('CovertAction_P2Scientist'));
 	
 	Template.MissionSource = 'MissionSource_Scientist';
-	//Template.MissionRewards.AddItem('Reward_Scientist');
+	Template.MissionRewards.AddItem('Reward_Scientist');
 
 	return Template;
 }
