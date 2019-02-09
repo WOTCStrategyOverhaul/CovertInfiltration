@@ -289,6 +289,4 @@ static function RemoveWeaponUpgrade(UIArmory_WeaponUpgradeItem Slot)
 
 	UpgradeScreen.UpdateSlots();
 	UpgradeScreen.WeaponStats.PopulateData(Slot.Weapon);
-
-	`XSTRATEGYSOUNDMGR.PlaySoundEvent("Weapon_Attachement_Upgrade_Select");
 }

@@ -156,5 +156,34 @@ static protected function EventListenerReturn WeaponUpgrade_SlotsUpdated(Object 
 
 static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local UIArmory_WeaponUpgrade Screen;
+	local UINavigationHelp NavHelp;
+
+	if (!`ISCONTROLLERACTIVE)
+	{
+		// We add the indicator only if using controller
+		return ELR_NoInterrupt;
+	}
+
+	Screen = UIArmory_WeaponUpgrade(EventSource);
+	NavHelp = UINavigationHelp(EventData);
+
+	if (NavHelp == none)
+	{
+		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but data isn't UINavigationHelp");
+		return ELR_NoInterrupt;
+	}
+
+	if (Screen == none)
+	{
+		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but source isn't UIArmory_WeaponUpgrade");
+		return ELR_NoInterrupt;
+	}
+
+	if (Screen.ActiveList == Screen.SlotsList)
+	{
+		NavHelp.AddLeftHelp("Drop upgrade", class'UIUtilities_Input'.const.ICON_X_SQUARE);
+	}
+
 	return ELR_NoInterrupt;
 }

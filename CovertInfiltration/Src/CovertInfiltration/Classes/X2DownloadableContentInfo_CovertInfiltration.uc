@@ -134,6 +134,16 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.DisableLockAndBreakthrough();
+
+	PatchUIWeaponUpgradeItem();
+}
+
+static protected function PatchUIWeaponUpgradeItem()
+{
+	local UIArmory_WeaponUpgradeItem ItemCDO;
+
+	ItemCDO = UIArmory_WeaponUpgradeItem(class'XComEngine'.static.GetClassDefaultObject(class'UIArmory_WeaponUpgradeItem'));
+	ItemCDO.bProcessesMouseEvents = false;
 }
 
 static protected function PatchResistanceRing()
