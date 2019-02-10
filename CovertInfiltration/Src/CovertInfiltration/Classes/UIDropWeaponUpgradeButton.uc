@@ -1,6 +1,15 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Custom decorator around DropItemButton in flash to allow dropping weapon
+//           upgardes without MCOing UIArmory_WeaponUpgradeItem
+//  SEE ALSO: X2DownloadableContentInfo_CovertInfiltration::PatchUIWeaponUpgradeItem
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIDropWeaponUpgradeButton extends UIPanel;
 
-var UIArmory_WeaponUpgradeItem Slot;
+var protectedwrite UIArmory_WeaponUpgradeItem Slot;
 
 simulated function InitDropButton()
 {

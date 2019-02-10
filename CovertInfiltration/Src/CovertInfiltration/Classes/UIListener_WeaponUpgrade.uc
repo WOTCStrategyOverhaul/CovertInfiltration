@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Controller input handler for dropping weapon mods
+//  TODO: Add "Drop all" button (ala LW2)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIListener_WeaponUpgrade extends UIScreenListener;
 
 ///////////////////////////////////////////

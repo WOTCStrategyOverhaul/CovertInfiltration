@@ -144,6 +144,10 @@ static protected function PatchUIWeaponUpgradeItem()
 
 	ItemCDO = UIArmory_WeaponUpgradeItem(class'XComEngine'.static.GetClassDefaultObject(class'UIArmory_WeaponUpgradeItem'));
 	ItemCDO.bProcessesMouseEvents = false;
+
+	 // UIArmory_WeaponUpgradeItem doesn't need to process input - the BG does it
+	 // However, it that flag is set then we don't get mouse events for children
+	 // which breaks the "drop item" button
 }
 
 static protected function PatchResistanceRing()

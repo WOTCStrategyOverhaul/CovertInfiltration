@@ -1,4 +1,12 @@
-class UIListner_SSManageEquipment extends UIScreenListener;
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Adds a button to Squad Select Manage Equipment menu to allow to make all
+//           weapon upgrades avaliable when using controller
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
+class UIListener_SSManageEquipment extends UIScreenListener;
 
 event OnInit(UIScreen Screen)
 {

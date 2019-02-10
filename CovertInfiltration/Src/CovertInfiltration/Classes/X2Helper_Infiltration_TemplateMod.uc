@@ -146,6 +146,7 @@ static function DisableLockAndBreakthrough()
 
 		if (TechTemplate != none)
 		{
+			TechTemplate.bBreakthrough = false;
 			TechTemplate.Requirements.RequiredScienceScore = 999999;
 			TechTemplate.Requirements.bVisibleifPersonnelGatesNotMet = false;
 			TechTemplate.Requirements.SpecialRequirementsFn = class'X2Helper_Infiltration'.static.ReturnFalse;
