@@ -239,10 +239,13 @@ simulated protected function InfiltrationActionAvaliableCB(Name eAction, out Dyn
 	}
 }
 
+////////////////////////////////
+/// Removing weapon upgrades ///
+////////////////////////////////
+// Code "inspired" by BG's RemoveWeaponUpgradesWOTC
+
 static function RemoveWeaponUpgrade(UIArmory_WeaponUpgradeItem Slot)
 {
-	// Code "inspired" by BG's RemoveWeaponUpgradesWOTC
-
 	local UIArmory_WeaponUpgrade UpgradeScreen;
 	local X2WeaponUpgradeTemplate UpgradeTemplate;
 	local XComGameState_Item Weapon;
@@ -289,4 +292,96 @@ static function RemoveWeaponUpgrade(UIArmory_WeaponUpgradeItem Slot)
 
 	UpgradeScreen.UpdateSlots();
 	UpgradeScreen.WeaponStats.PopulateData(Slot.Weapon);
+}
+
+static function OnStripWeaponUpgrades()
+{
+	local TDialogueBoxData DialogData;
+	
+	DialogData.eType = eDialog_Normal;
+	DialogData.strTitle = "AreYouSure?";
+	DialogData.strText = "123";
+	DialogData.fnCallback = OnStripUpgradesDialogCallback;
+	DialogData.strAccept = class'UIDialogueBox'.default.m_strDefaultAcceptLabel;
+	DialogData.strCancel = class'UIDialogueBox'.default.m_strDefaultCancelLabel;
+
+	`HQPRES.UIRaiseDialog(DialogData);
+}
+
+static function OnStripUpgradesDialogCallback(Name eAction)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Unit UnitState;
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Item ItemState, UpgradeItem;
+	local int idx;
+	local array<X2WeaponUpgradeTemplate> EquippedUpgrades;
+	local X2WeaponUpgradeTemplate UpgradeTemplate;
+	local array<StateObjectReference> Inventory;
+	local StateObjectReference ItemRef;
+	local XComGameState UpdateState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2WeaponTemplate WeaponTemplate;
+
+	if(eAction == 'eUIAction_Accept')
+	{
+		History = `XCOMHISTORY;
+		UpdateState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Strip Upgrades");
+		XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class' XComGameState_HeadquartersXCom'));
+		XComHQ = XComGameState_HeadquartersXCom(UpdateState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+
+		Inventory = XComHQ.Inventory;
+
+		foreach Inventory(ItemRef)
+		{
+			ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(ItemRef.ObjectID));
+			WeaponTemplate = X2WeaponTemplate(ItemState.GetMyTemplate());
+			if (WeaponTemplate != none && ItemState.GetMyTemplate().iItemSize > 0 && 
+				WeaponTemplate.InventorySlot == eInvSlot_PrimaryWeapon && 
+				WeaponTemplate.NumUpgradeSlots > 0 && ItemState.HasBeenModified())
+			{
+				ItemState = XComGameState_Item(UpdateState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
+				EquippedUpgrades = ItemState.GetMyWeaponUpgradeTemplates();
+				ItemState.WipeUpgradeTemplates();
+				foreach EquippedUpgrades(UpgradeTemplate)
+				{
+					UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
+					XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
+				}
+
+				if (!ItemState.HasBeenModified() && !WeaponTemplate.bAlwaysUnique)
+				{
+					if (WeaponTemplate.bInfiniteItem)
+					{
+						XComHQ.Inventory.RemoveItem(ItemRef);
+					}
+				}
+			}
+		}
+
+		Soldiers = XComHQ.GetSoldiers(true, true);
+
+		for(idx = 0; idx < Soldiers.Length; idx++)
+		{
+			UnitState = XComGameState_Unit(UpdateState.ModifyStateObject(class'XComGameState_Unit', Soldiers[idx].ObjectID));
+			if (UnitState != none)
+			{
+				ItemState = UnitState.GetItemInSlot(eInvSlot_PrimaryWeapon);
+				WeaponTemplate = X2WeaponTemplate(ItemState.GetMyTemplate());
+				if (WeaponTemplate != none && WeaponTemplate.NumUpgradeSlots > 0)
+				{
+					ItemState = XComGameState_Item(UpdateState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
+					EquippedUpgrades = ItemState.GetMyWeaponUpgradeTemplates();
+					ItemState.WipeUpgradeTemplates();
+					foreach EquippedUpgrades(UpgradeTemplate)
+					{
+						UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
+						XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
+					}
+				}
+			}
+		}
+
+		`GAMERULES.SubmitGameState(UpdateState);
+	}
 }

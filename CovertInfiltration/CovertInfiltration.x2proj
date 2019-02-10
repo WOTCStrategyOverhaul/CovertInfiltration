@@ -128,6 +128,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_WeaponUpgrade.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListner_SSManageEquipment.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIMapToCovertActionsForcer.uc">
       <SubType>Content</SubType>
     </Content>
