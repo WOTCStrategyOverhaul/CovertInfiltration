@@ -8,6 +8,13 @@
 
 class UIUtilities_Infiltration extends Object;
 
+var localized string strDropUpgrade;
+
+var localized string strStripUpgrades;
+var localized string strStripUpgradesTooltip;
+var localized string strStripUpgradesConfirm;
+var localized string strStripUpgradesConfirmDesc;
+
 //////////////////
 /// Game state ///
 //////////////////
@@ -299,8 +306,8 @@ static function OnStripWeaponUpgrades()
 	local TDialogueBoxData DialogData;
 	
 	DialogData.eType = eDialog_Normal;
-	DialogData.strTitle = "AreYouSure?";
-	DialogData.strText = "123";
+	DialogData.strTitle = default.strStripUpgradesConfirm;
+	DialogData.strText = default.strStripUpgradesConfirmDesc;
 	DialogData.fnCallback = OnStripUpgradesDialogCallback;
 	DialogData.strAccept = class'UIDialogueBox'.default.m_strDefaultAcceptLabel;
 	DialogData.strCancel = class'UIDialogueBox'.default.m_strDefaultCancelLabel;

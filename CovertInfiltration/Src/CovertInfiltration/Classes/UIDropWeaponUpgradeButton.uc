@@ -27,8 +27,11 @@ simulated function InitDropButton()
 		Slot.MC.FunctionVoid("realize");
 	}
 
-	// FixMe - doesn't work
-	SetTooltipText("Drop item");
+	CachedTooltipId = Movie.Pres.m_kTooltipMgr.AddNewTooltipTextBox(
+		class'UIUtilities_Infiltration'.default.strDropUpgrade,
+		0, 0, MCPath $ ".bg"
+	);
+	bHasTooltip = true;
 }
 
 // Cannot use UIPanel version since we are eventually parented to UIList

@@ -183,7 +183,7 @@ static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Objec
 
 	if (Screen.ActiveList == Screen.SlotsList)
 	{
-		NavHelp.AddLeftHelp("Drop upgrade", class'UIUtilities_Input'.const.ICON_X_SQUARE);
+		NavHelp.AddLeftHelp(class'UIUtilities_Infiltration'.default.strDropUpgrade, class'UIUtilities_Input'.const.ICON_X_SQUARE);
 	}
 
 	return ELR_NoInterrupt;
@@ -215,7 +215,11 @@ static protected function EventListenerReturn SSNavHelpUpdate(Object EventData, 
 	}
 
 	NavHelp = UINavigationHelp(EventData);
-	NavHelp.AddCenterHelp("Make weapon upgrades avaliable",, class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades);
+	NavHelp.AddCenterHelp(
+		class'UIUtilities_Infiltration'.default.strStripUpgrades,,
+		class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades,,
+		class'UIUtilities_Infiltration'.default.strStripUpgradesTooltip
+	);
 
 	return ELR_NoInterrupt;
 }

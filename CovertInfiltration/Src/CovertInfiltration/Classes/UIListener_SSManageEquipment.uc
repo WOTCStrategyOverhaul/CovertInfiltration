@@ -22,7 +22,7 @@ event OnInit(UIScreen Screen)
 
 	if (SecondScreen != none && SecondScreen.IsA(class'UISquadSelect'.Name))
 	{
-		ManageEquipment.AddItem("Remove weapon upgrades", class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades);
+		ManageEquipment.AddItem(class'UIUtilities_Infiltration'.default.strStripUpgrades, class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades);
 		//ManageEquipment.List.SetHeight(ManageEquipment.List.ShrinkToFit() + 10); // Does jack shit
 	}
 }

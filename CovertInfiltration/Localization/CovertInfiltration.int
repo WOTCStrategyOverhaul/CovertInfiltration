@@ -34,3 +34,10 @@ DaysToHoursDesc="Hours instead of days"
 DaysToHoursTooltip="Display hours instead of days in the EventQueue"
 DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
+
+[UIUtilities_Infiltration]
+strDropUpgrade=Remove Upgrade
+strStripUpgrades=MAKE UPGRADES AVAILABLE
+strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
+strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
+strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
