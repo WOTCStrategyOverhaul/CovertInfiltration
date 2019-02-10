@@ -1,5 +1,7 @@
 class X2StrategyElement_InfiltrationRewards extends X2StrategyElement;
 
+var localized string GatherLeadText;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -87,7 +89,7 @@ static function X2RewardTemplate CreateGatherLeadPersonnelReward()
 
 static protected function string GatherLeadString(XComGameState_Reward RewardState)
 {
-	return "Gather Lead";
+	return default.GatherLeadText;
 }
 
 static protected function GiveGatherLeadActivity(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
@@ -99,7 +101,7 @@ static protected function GiveGatherLeadActivity(XComGameState NewGameState, XCo
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(AuxRef, NewGameState);
+	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
 }
 
 static protected function GiveGatherLeadTarget(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
@@ -111,7 +113,7 @@ static protected function GiveGatherLeadTarget(XComGameState NewGameState, XComG
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2SupplyRaid');
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkVIP');
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(AuxRef, NewGameState);
+	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
 }
 
 static protected function GiveGatherLeadPersonnel(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
@@ -123,7 +125,7 @@ static protected function GiveGatherLeadPersonnel(XComGameState NewGameState, XC
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2Engineer');
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2Scientist');
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(AuxRef, NewGameState);
+	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
 }
 
 static function StateObjectReference FindRandomMetFaction()
@@ -165,7 +167,7 @@ static function X2DataTemplate CreateP2SupplyRaidReward()
 {
 	local X2RewardTemplate Template;
 
-	`CREATE_X2Reward_TEMPLATE(Template, 'ActionReward_P2SupplyRaid');
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_P2SupplyRaid');
 
 	Template.GiveRewardFn = GiveSupplyRaidReward;
 	Template.GetRewardStringFn = GetMissionRewardString;
