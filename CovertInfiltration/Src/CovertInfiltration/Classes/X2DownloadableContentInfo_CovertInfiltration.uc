@@ -33,6 +33,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
+	ForceLockAndLoad(StartState);
 }
 
 static event OnLoadedSavedGame()
@@ -42,6 +43,7 @@ static event OnLoadedSavedGame()
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
+	ForceLockAndLoad(none);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -91,9 +93,30 @@ static function CompleteTutorial(XComGameState NewGameState)
 	}
 }
 
+static protected function ForceLockAndLoad(XComGameState NewGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local bool bSubmitLocally;
+
+	if (NewGameState == none)
+	{
+		bSubmitLocally = true;
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Forcing Lock And Load");
+	}
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.bReuseUpgrades = true;
+
+	if(bSubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+}
+
 /////////////////
 /// Templates ///
 /////////////////
+// TODO: Move everything to X2Helper_Infiltration_TemplateMod
 
 static function OnPreCreateTemplates()
 {
@@ -110,6 +133,21 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.MakeItemsBuildable();
 	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
+	class'X2Helper_Infiltration_TemplateMod'.static.DisableLockAndBreakthrough();
+
+	PatchUIWeaponUpgradeItem();
+}
+
+static protected function PatchUIWeaponUpgradeItem()
+{
+	local UIArmory_WeaponUpgradeItem ItemCDO;
+
+	ItemCDO = UIArmory_WeaponUpgradeItem(class'XComEngine'.static.GetClassDefaultObject(class'UIArmory_WeaponUpgradeItem'));
+	ItemCDO.bProcessesMouseEvents = false;
+
+	 // UIArmory_WeaponUpgradeItem doesn't need to process input - the BG does it
+	 // However, it that flag is set then we don't get mouse events for children
+	 // which breaks the "drop item" button
 }
 
 static protected function PatchResistanceRing()

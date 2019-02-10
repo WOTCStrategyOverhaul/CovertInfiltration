@@ -14,6 +14,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateGeoscapeListeners());
 	Templates.AddItem(CreateAvengerHUDListeners());
 	Templates.AddItem(CreateEventQueueListeners());
+	Templates.AddItem(CreateArmoryListeners());
+	Templates.AddItem(CreateSquadSelectListeners());
 
 	return Templates;
 }
@@ -102,5 +104,122 @@ static protected function EventListenerReturn GetCovertActionEvents_Settings(Obj
 	// Insert it sorted
 	Tuple.Data[1].b = true;
 	
+	return ELR_NoInterrupt;
+}
+
+//////////////
+/// Armory ///
+//////////////
+
+static function CHEventListenerTemplate CreateArmoryListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
+	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
+	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn WeaponUpgrade_SlotsUpdated(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UIDropWeaponUpgradeButton DropButton;
+	local UIArmory_WeaponUpgradeItem Slot;
+	local UIList SlotsList;
+	local UIPanel Panel;
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		// We add the button only if using mouse
+		return ELR_NoInterrupt;
+	}
+
+	SlotsList = UIList(EventData);
+	if (SlotsList == none)
+	{
+		`RedScreen("Recived UIArmory_WeaponUpgrade_SlotsUpdated but data isn't UIList");
+		return ELR_NoInterrupt;
+	}
+
+	foreach SlotsList.ItemContainer.ChildPanels(Panel)
+	{
+		Slot = UIArmory_WeaponUpgradeItem(Panel);
+		if (Slot == none || Slot.UpgradeTemplate == none || Slot.bIsDisabled) continue;
+
+		DropButton = Slot.Spawn(class'UIDropWeaponUpgradeButton', Slot);
+		DropButton.InitDropButton();
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UIArmory_WeaponUpgrade Screen;
+	local UINavigationHelp NavHelp;
+
+	if (!`ISCONTROLLERACTIVE)
+	{
+		// We add the indicator only if using controller
+		return ELR_NoInterrupt;
+	}
+
+	Screen = UIArmory_WeaponUpgrade(EventSource);
+	NavHelp = UINavigationHelp(EventData);
+
+	if (NavHelp == none)
+	{
+		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but data isn't UINavigationHelp");
+		return ELR_NoInterrupt;
+	}
+
+	if (Screen == none)
+	{
+		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but source isn't UIArmory_WeaponUpgrade");
+		return ELR_NoInterrupt;
+	}
+
+	if (Screen.ActiveList == Screen.SlotsList)
+	{
+		NavHelp.AddLeftHelp(class'UIUtilities_Infiltration'.default.strDropUpgrade, class'UIUtilities_Input'.const.ICON_X_SQUARE);
+	}
+
+	return ELR_NoInterrupt;
+}
+
+////////////////////
+/// Squad Select ///
+////////////////////
+
+static function CHEventListenerTemplate CreateSquadSelectListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_SquadSelect');
+	Template.AddCHEvent('UISquadSelect_NavHelpUpdate', SSNavHelpUpdate, ELD_Immediate);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn SSNavHelpUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UINavigationHelp NavHelp;
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		// We add the button only if using mouse
+		return ELR_NoInterrupt;
+	}
+
+	NavHelp = UINavigationHelp(EventData);
+	NavHelp.AddCenterHelp(
+		class'UIUtilities_Infiltration'.default.strStripUpgrades,,
+		class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades,,
+		class'UIUtilities_Infiltration'.default.strStripUpgradesTooltip
+	);
+
 	return ELR_NoInterrupt;
 }
