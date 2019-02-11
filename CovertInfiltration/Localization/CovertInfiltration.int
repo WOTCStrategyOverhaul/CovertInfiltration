@@ -41,3 +41,24 @@ strStripUpgrades=MAKE UPGRADES AVAILABLE
 strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
 strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
 strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
+
+[CovertAction_P1DarkEvent X2CovertInfiltrationTemplate]
+ActionObjective="Recover Activity Leads"
+
+[CovertAction_P1SupplyRaid X2CovertInfiltrationTemplate]
+ActionObjective="Recover Target Leads"
+
+[CovertAction_P1Jailbreak X2CovertInfiltrationTemplate]
+ActionObjective="Recover Personnel Leads"
+
+[CovertAction_P2DarkEvent X2CovertInfiltrationTemplate]
+ActionObjective="Counter Dark Event"
+
+[CovertAction_P2Engineer X2CovertInfiltrationTemplate]
+ActionObjective="Rescue Engineer"
+
+[CovertAction_P2Scientist X2CovertInfiltrationTemplate]
+ActionObjective="Rescue Scientist"
+
+[CovertAction_P2DarkVIP X2CovertInfiltrationTemplate]
+ActionObjective="Neutralize VIP"
