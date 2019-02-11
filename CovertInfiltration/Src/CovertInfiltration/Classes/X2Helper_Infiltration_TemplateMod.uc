@@ -153,3 +153,114 @@ static function DisableLockAndBreakthrough()
 		}
 	}
 }
+
+static function PatchRetailationMissionSource()
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2MissionSourceTemplate MissionSource;
+	local array<X2DataTemplate> DifficultyVariants;
+	local X2DataTemplate DataTemplate;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	StratMgr.FindDataTemplateAllDifficulties('MissionSource_Retaliation', DifficultyVariants);
+
+	foreach DifficultyVariants(DataTemplate)
+	{
+		MissionSource = X2MissionSourceTemplate(DataTemplate);
+		MissionSource.SpawnMissionsFn = SpawnRetaliationMission;
+	}
+}
+
+static protected function SpawnRetaliationMission(XComGameState NewGameState, int MissionMonthIndex)
+{
+	local XComGameState_Objective ObjectiveState; // Added
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_WorldRegion RegionState;
+	local XComGameState_Reward RewardState;
+	local array<XComGameState_WorldRegion> PossibleRegions;
+	local float MissionDuration;
+	local int iReward;
+	local XComGameState_MissionCalendar CalendarState;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	CalendarState = class'X2StrategyElement_DefaultMissionSources'.static.GetMissionCalendar(NewGameState);
+
+	// Set Popup flag
+	CalendarState.MissionPopupSources.AddItem('MissionSource_Retaliation');
+
+	// Calculate Mission Expiration timer
+	MissionDuration = float((class'X2StrategyElement_DefaultMissionSources'.default.MissionMinDuration + `SYNC_RAND_STATIC(class'X2StrategyElement_DefaultMissionSources'.default.MissionMaxDuration - class'X2StrategyElement_DefaultMissionSources'.default.MissionMinDuration + 1)) * 3600);
+
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', CalendarState.CurrentMissionMonth[MissionMonthIndex].Missions[0].ObjectID));
+	MissionState.Available = true;
+	MissionState.Expiring = true;
+	MissionState.TimeUntilDespawn = MissionDuration;
+	MissionState.TimerStartDateTime = `STRATEGYRULES.GameTime;
+	MissionState.SetProjectedExpirationDateTime(MissionState.TimerStartDateTime);
+	PossibleRegions = MissionState.GetMissionSource().GetMissionRegionFn(NewGameState);
+	RegionState = PossibleRegions[0];
+	MissionState.Region = RegionState.GetReference();
+	MissionState.Location = RegionState.GetRandomLocationInRegion();
+
+	// Generate Rewards
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	for(iReward = 0; iReward < MissionState.Rewards.Length; iReward++)
+	{
+		RewardState = XComGameState_Reward(NewGameState.ModifyStateObject(class'XComGameState_Reward', MissionState.Rewards[iReward].ObjectID));
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), MissionState.Region);
+	}
+
+	// Changed: If first on non-narrative
+	if(!(XComGameState_CampaignSettings(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CampaignSettings')).bXPackNarrativeEnabled) &&
+	   !CalendarState.HasCreatedMissionOfSource('MissionSource_Retaliation'))
+	{
+		// Change 1: force chosen even if no ResistanceOps were completed yet
+		ObjectiveState = class'XComGameState_HeadquartersXCom'.static.GetObjective('XP1_M0_ActivateChosen');
+		if (ObjectiveState != none && ObjectiveState.GetStateOfObjective() == eObjectiveState_InProgress)
+		{
+			ObjectiveState.CompleteObjective(NewGameState);
+		}
+
+		// Change 2: force the xpack retal instead of vanilla one
+		// xymanek - I want the first retal not to be so penalizing (first chosen is very hard)
+		// TODO: Remove the intro voiceline ("One of chosen is leading an assault")
+		MissionState.ExcludeMissionFamilies.AddItem("Terror");
+	}
+
+	// Set Mission Data
+	MissionState.SetMissionData(MissionState.GetRewardType(), false, 0);
+
+	MissionState.PickPOI(NewGameState);
+
+	// Flag AlienHQ as having spawned a Retaliation mission
+	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersAlien', AlienHQ)
+	{
+		break;
+	}
+
+	if (AlienHQ == none)
+	{
+		AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+		AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
+	}
+
+	AlienHQ.bHasSeenRetaliation = true;
+	CalendarState.CreatedMissionSources.AddItem('MissionSource_Retaliation');
+
+	// Add tactical tags to upgrade the civilian militia if the force level has been met and the tags have not been previously added
+	XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	if (AlienHQ.ForceLevel >= 14 && XComHQ.TacticalGameplayTags.Find('UseTier3Militia') == INDEX_NONE)
+	{
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		XComHQ.TacticalGameplayTags.AddItem('UseTier3Militia');
+	}
+	else if (AlienHQ.ForceLevel >= 8 && XComHQ.TacticalGameplayTags.Find('UseTier2Militia') == INDEX_NONE)
+	{
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		XComHQ.TacticalGameplayTags.AddItem('UseTier2Militia');
+	}
+
+	`XEVENTMGR.TriggerEvent('RetaliationMissionSpawned', MissionState, MissionState, NewGameState);
+}
