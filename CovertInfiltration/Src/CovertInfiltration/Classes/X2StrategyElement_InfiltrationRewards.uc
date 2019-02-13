@@ -98,29 +98,27 @@ static protected function GiveGatherLeadActivity(XComGameState NewGameState, XCo
 	local XComGameState_CovertAction ActionState;
 	local XComGameState_Reward NewRewardState;
 	local array<StateObjectReference> DarkEvents;
+	local int idx;
 
 	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FindRandomMetFaction().ObjectID));
 	DarkEvents = GetRandomDarkEvents(2);
 
+	for (idx = 0; idx < DarkEvents.Length; idx++)
+	{
+		ActionState = SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
+		NewRewardState = XComGameState_Reward(NewGameState.GetGameStateForObjectID(ActionState.RewardRefs[0].ObjectID));
+		NewRewardState.RewardObjectReference = DarkEvents[idx];
+	}
+	
 	if(DarkEvents.Length == 0)
 	{
 		`RedScreen("CI: NO PENDING DARK EVENTS TO COUNTER, CANNOT SPAWN P2s");
 		return;
 	}
-
-	ActionState = SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
-	NewRewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(ActionState.RewardRefs[0].ObjectID));
-	NewRewardState.RewardObjectReference = DarkEvents[0];
-	
-	if(DarkEvents.Length == 1)
+	else if(DarkEvents.Length == 1)
 	{
-		`RedScreen("CI: ONLY ONE DARK EVENTS TO COUNTER, CANNOT SPAWN SECOND P2");
-		return;
+		`RedScreen("CI: ONLY ONE DARK EVENT TO COUNTER, CANNOT SPAWN SECOND P2");
 	}
-
-	ActionState = SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
-	NewRewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(ActionState.RewardRefs[0].ObjectID));
-	NewRewardState.RewardObjectReference = DarkEvents[1];
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
 }
