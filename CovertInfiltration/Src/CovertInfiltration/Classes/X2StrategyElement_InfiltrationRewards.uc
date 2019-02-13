@@ -95,11 +95,32 @@ static protected function string GatherLeadString(XComGameState_Reward RewardSta
 static protected function GiveGatherLeadActivity(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
 {
 	local XComGameState_ResistanceFaction FactionState;
+	local XComGameState_CovertAction ActionState;
+	local XComGameState_Reward NewRewardState;
+	local array<StateObjectReference> DarkEvents;
 
 	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FindRandomMetFaction().ObjectID));
+	DarkEvents = GetRandomDarkEvents(2);
 
-	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
-	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
+	if(DarkEvents.Length == 0)
+	{
+		`RedScreen("CI: NO PENDING DARK EVENTS TO COUNTER, CANNOT SPAWN P2s");
+		return;
+	}
+
+	ActionState = SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
+	NewRewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(ActionState.RewardRefs[0].ObjectID));
+	NewRewardState.RewardObjectReference = DarkEvents[0];
+	
+	if(DarkEvents.Length == 1)
+	{
+		`RedScreen("CI: ONLY ONE DARK EVENTS TO COUNTER, CANNOT SPAWN SECOND P2");
+		return;
+	}
+
+	ActionState = SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkEvent');
+	NewRewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(ActionState.RewardRefs[0].ObjectID));
+	NewRewardState.RewardObjectReference = DarkEvents[1];
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
 }
@@ -151,19 +172,56 @@ static function StateObjectReference FindRandomMetFaction()
 	return FactionState.GetReference();
 }
 
-static protected function SpawnCovertAction(XComGameState NewGameState, XComGameState_ResistanceFaction FactionState, name ActionTemplateName)
+static protected function XComGameState_CovertAction SpawnCovertAction(XComGameState NewGameState, XComGameState_ResistanceFaction FactionState, name ActionTemplateName)
 {
 	local X2StrategyElementTemplateManager StrategyTemplateManager;
 	local X2CovertActionTemplate ActionTemplate;
-	local array<Name> ExclusionList;
+	local XComGameState_CovertAction ActionState;
+	local StateObjectReference ActionRef;
 	
 	StrategyTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ActionTemplate = X2CovertActionTemplate(StrategyTemplateManager.FindStrategyElementTemplate(ActionTemplateName));
 	
-	FactionState.AddCovertAction(NewGameState, ActionTemplate, ExclusionList);
+	ActionRef = FactionState.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
+	FactionState.CovertActions.AddItem(ActionRef);
+
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID));
+
+	return ActionState;
 }
 
-static function X2DataTemplate CreateP2SupplyRaidReward()
+static function array<StateObjectReference> GetRandomDarkEvents(int NumToSelect)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local array<StateObjectReference> DarkEvents;
+	local array<StateObjectReference> Results;
+	local int Index, RandIndex;
+
+	History = `XCOMHISTORY;
+	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	DarkEvents = AlienHQ.ChosenDarkEvents;
+
+	// Favored Chosen Dark Event can't be cancelled, appears at end of ChosenDarkEvents list
+	if(AlienHQ.HaveChosenActionDarkEvent())
+	{
+		DarkEvents.Remove((DarkEvents.Length - 1), 1);
+	}
+
+	for(Index = 0; Index < NumToSelect; Index++)
+	{
+		if(DarkEvents.Length > 0)
+		{
+			RandIndex = `SYNC_RAND_STATIC(DarkEvents.Length);
+			Results.AddItem(DarkEvents[RandIndex]);
+			DarkEvents.Remove(RandIndex, 1);
+		}
+	}
+
+	return Results;
+}
+
+static function X2RewardTemplate CreateP2SupplyRaidReward()
 {
 	local X2RewardTemplate Template;
 

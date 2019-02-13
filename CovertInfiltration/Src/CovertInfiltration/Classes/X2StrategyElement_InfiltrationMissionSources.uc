@@ -118,7 +118,10 @@ static function DarkEventOnSuccess(XComGameState NewGameState, XComGameState_Mis
 	}
 
 	GiveRewards(NewGameState, MissionState);
-	CleanUpGuerillaOps(NewGameState, MissionState.ObjectID);
+	
+	MissionState.RemoveEntity(NewGameState);
+	`XEVENTMGR.TriggerEvent('GuerillaOpComplete', , , NewGameState);
+
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsCompleted');
 }
 

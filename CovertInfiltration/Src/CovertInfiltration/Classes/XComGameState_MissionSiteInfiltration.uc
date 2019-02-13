@@ -21,7 +21,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 {
 	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local X2CovertMissionInfoTemplate MissionInfo;
-	local XComGameState_Reward RewardState;
+	local XComGameState_Reward RewardState, ActionReward;
 	local array<X2RewardTemplate> RewardTemplates;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
@@ -38,6 +38,9 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
 		MissionRewards.AddItem(RewardState);
 	}
+
+	ActionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
+	DarkEvent = ActionReward.RewardObjectReference;
 
 	// Set the location - required for camera pan to work properly
 	MissionLocation.X = Action.Location.X;

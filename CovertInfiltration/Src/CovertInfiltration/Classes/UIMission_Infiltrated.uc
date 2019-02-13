@@ -131,7 +131,7 @@ simulated function BuildOptionsPanel()
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionButtonBlade");
 	LibraryPanel.MC.QueueString("INFILTRATION"); // m_strResOpsMission
 	LibraryPanel.MC.QueueString(m_strLaunchMission);
-	LibraryPanel.MC.QueueString("Return to avenger"); // m_strIgnore
+	LibraryPanel.MC.QueueString("Return to Avenger"); // m_strIgnore
 	LibraryPanel.MC.EndOp();
 }
 

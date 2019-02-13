@@ -154,3 +154,31 @@ function RemoveEntity(XComGameState NewGameState)
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 }
+
+function string GetNarrative()
+{
+	local XComGameState_ResistanceFaction FactionState;
+	local XGParamTag kTag;
+
+	FactionState = GetFaction();
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = FactionState.GetFactionName();
+	kTag.StrValue1 = FactionState.GetRivalChosen().GetChosenName();
+	kTag.StrValue2 = FactionState.GetRivalChosen().GetChosenClassName();
+	kTag.StrValue3 = GetContinent().GetMyTemplate().DisplayName;
+	kTag.StrValue4 = GetDarkEventString();
+
+	return `XEXPAND.ExpandString(GetMyNarrativeTemplate().ActionPreNarrative);
+}
+
+function string GetDarkEventString()
+{
+	local XComGameState_Reward RewardState;
+	local XComGameState_DarkEvent DarkEventState;
+
+	RewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(RewardRefs[0].ObjectID));
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	return DarkEventState.GetMyTemplate().DisplayName;
+}
