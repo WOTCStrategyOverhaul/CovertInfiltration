@@ -15,6 +15,8 @@ var protectedwrite TDateTime PreviousWorkSubmittedAt;
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
+var name LastActionSpawned;
+
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
@@ -54,7 +56,7 @@ static function Update()
 		`log("Enough work for P1, staring spawning",, 'CI_P1Spawner');
 		bDirty = true;
 		
-		Spawner.SpawnAction(NewGameState);
+		Spawner.LastActionSpawned = Spawner.SpawnAction(NewGameState);
 		Spawner.ResetProgress();
 		Spawner.SetNextSpawnAt();
 	}
@@ -189,7 +191,7 @@ function SetNextSpawnAt()
 /// Spawning ///
 ////////////////
 
-function SpawnAction(XComGameState NewGameState)
+function name SpawnAction(XComGameState NewGameState)
 {
 	local X2CovertActionTemplate ActionTemplate;
 	local XComGameState_ResistanceFaction Faction;
@@ -206,12 +208,12 @@ function SpawnAction(XComGameState NewGameState)
 	if (ActionTemplate == none)
 	{
 		`RedScreen("CI: Cannot spawn P1 actions - the template is none");
-		return;
+		return '';
 	}
 	if (Faction == none)
 	{
 		`RedScreen("CI: Cannot spawn P1 actions - no faction that met XCom");
-		return;
+		return '';
 	}
 
 	`log("All inputs ok, spawning action",, 'CI_P1Spawner');
@@ -224,9 +226,11 @@ function SpawnAction(XComGameState NewGameState)
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
 	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
+
+	return ActionTemplate.DataName;
 }
 
-static function X2CovertActionTemplate PickActionToSpawn()
+function X2CovertActionTemplate PickActionToSpawn()
 {
 	local X2StrategyElementTemplateManager Manager;
 	local XComGameState_HeadquartersXCom XComHQ;
@@ -244,37 +248,60 @@ static function X2CovertActionTemplate PickActionToSpawn()
 		return none;
 	}
 
-	if(class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() || class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded())
+	//`LOG(LastActionSpawned);
+
+	if((
+		class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() ||
+		class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded()) &&
+		LastActionSpawned != 'CovertAction_P1Jailbreak')
 	{
 		PickedActionName = 'CovertAction_P1Jailbreak';
-		`LOG("PERSONNEL NEEDED");
+		//`LOG("PERSONNEL NEEDED");
 	}
-	else if(DarkEvents.Length > 1)
+	else if(DarkEvents.Length > 1 && LastActionSpawned != 'CovertAction_P1DarkEvent')
 	{
 		PickedActionName = 'CovertAction_P1DarkEvent';
-		`LOG("ACTIVITY NEEDED");
+		//`LOG("ACTIVITY NEEDED");
 	}
-	else if(!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Supplies'), default.MinSupplies) || !XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel))
+	else if((
+		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Supplies'), default.MinSupplies) || 
+		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel)) &&
+		LastActionSpawned != 'CovertAction_P1SupplyRaid')
 	{
 		PickedActionName = 'CovertAction_P1SupplyRaid';
-		`LOG("RESOURCES NEEDED");
+		//`LOG("RESOURCES NEEDED");
 	}
 	else
 	{
+		//`LOG("RANDOM SPAWN");
 		if(DarkEvents.Length == 0)
 		{
-			PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length - 1)];
+			PickedActionName = ExclusionRoll(LastActionSpawned, true);
 		}
 		else
 		{
-			PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length)];
+			PickedActionName = ExclusionRoll(LastActionSpawned, false);
 		}
-		`LOG("RANDOM SPAWN");
 	}
 	
 	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	return X2CovertActionTemplate(Manager.FindStrategyElementTemplate(PickedActionName));
+}
+
+static function name ExclusionRoll(name Exclude, bool NoDarkEvent)
+{
+	local array<name> RefinedList;
+
+	RefinedList = default.ActionsToSpawn;
+	RefinedList.RemoveItem(Exclude);
+
+	if(NoDarkEvent && Exclude != 'CovertAction_P1DarkEvent')
+	{
+		RefinedList.RemoveItem('CovertAction_P1DarkEvent');
+	}
+
+	return RefinedList[`SYNC_RAND_STATIC(RefinedList.Length)];
 }
 
 static function XComGameState_ResistanceFaction GetFactionForNewAction()
