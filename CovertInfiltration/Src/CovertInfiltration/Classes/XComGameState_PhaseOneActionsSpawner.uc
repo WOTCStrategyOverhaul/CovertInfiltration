@@ -247,8 +247,6 @@ function X2CovertActionTemplate PickActionToSpawn()
 		return none;
 	}
 
-	//`LOG(LastActionSpawned);
-
 	if(
 		(
 		class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() ||
@@ -415,5 +413,7 @@ static function PrintDebugInfo()
 
 defaultproperties
 {
-	ActionsToSpawn = {'CovertAction_P1Jailbreak', 'CovertAction_P1DarkEvent', 'CovertAction_P1SupplyRaid'};
+	ActionsToSpawn[0] = "CovertAction_P1Jailbreak"
+	ActionsToSpawn[1] = "CovertAction_P1DarkEvent"
+	ActionsToSpawn[2] = "CovertAction_P1SupplyRaid"
 }
