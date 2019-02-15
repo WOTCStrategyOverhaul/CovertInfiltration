@@ -35,7 +35,7 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P1DarkEvent');
-	Template.Rewards.AddItem('Reward_P1DarkEvent');
+	Template.Rewards.AddItem('ActionReward_P1DarkEvent');
 	
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -57,7 +57,7 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P1SupplyRaid');
-	Template.Rewards.AddItem('Reward_P1SupplyRaid');
+	Template.Rewards.AddItem('ActionReward_P1SupplyRaid');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -79,7 +79,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak');
-	Template.Rewards.AddItem('Reward_P1Jailbreak');
+	Template.Rewards.AddItem('ActionReward_P1Jailbreak');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -101,7 +101,7 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2DarkEvent');
-	Template.Rewards.AddItem('Reward_P2DarkEvent');
+	Template.Rewards.AddItem('ActionReward_P2DarkEvent');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -141,7 +141,7 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2Engineer');
-	Template.Rewards.AddItem('Reward_P2Engineer');
+	Template.Rewards.AddItem('ActionReward_P2Engineer');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -163,7 +163,7 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2Scientist');
-	Template.Rewards.AddItem('Reward_P2Scientist');
+	Template.Rewards.AddItem('ActionReward_P2Scientist');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
@@ -185,7 +185,7 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2DarkVIP');
-	Template.Rewards.AddItem('Reward_P2DarkVIP');
+	Template.Rewards.AddItem('ActionReward_P2DarkVIP');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));

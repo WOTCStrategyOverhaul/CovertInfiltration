@@ -15,6 +15,9 @@ var protectedwrite TDateTime PreviousWorkSubmittedAt;
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
+var const array<name> ActionsToSpawn;
+var name LastActionSpawned;
+
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
@@ -24,7 +27,8 @@ var const config array<int> GameStartWork; // How much work to add when the camp
 var const config array<int> WorkRequiredForP1;
 var const config array<int> WorkRequiredForP1Variance;
 
-var const config array<name> ActionsToSpawn;
+var config int MinSupplies;
+var config int MinIntel;
 
 var config int EXPIRATION_BASE_TIME;
 var config int EXPIRATION_VARIANCE;
@@ -221,12 +225,21 @@ function SpawnAction(XComGameState NewGameState)
 
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
 	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
+
+	LastActionSpawned = ActionTemplate.DataName;
 }
 
-static function X2CovertActionTemplate PickActionToSpawn()
+function X2CovertActionTemplate PickActionToSpawn()
 {
 	local X2StrategyElementTemplateManager Manager;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2ItemTemplateManager ItemTemplateManager;
 	local name PickedActionName;
+	local array<StateObjectReference> DarkEvents;
+
+	DarkEvents = class'X2StrategyElement_InfiltrationRewards'.static.GetRandomDarkEvents(4);
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
 	if (default.ActionsToSpawn.Length == 0)
 	{
@@ -234,10 +247,64 @@ static function X2CovertActionTemplate PickActionToSpawn()
 		return none;
 	}
 
+	if(
+		(
+		class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() ||
+		class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded()
+		) && 
+		LastActionSpawned != 'CovertAction_P1Jailbreak'
+	)
+	{
+		PickedActionName = 'CovertAction_P1Jailbreak';
+		//`LOG("PERSONNEL NEEDED");
+	}
+	else if(DarkEvents.Length > 1 && LastActionSpawned != 'CovertAction_P1DarkEvent')
+	{
+		PickedActionName = 'CovertAction_P1DarkEvent';
+		//`LOG("ACTIVITY NEEDED");
+	}
+	else if(
+		(
+		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Supplies'), default.MinSupplies) || 
+		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel)
+		) &&
+		LastActionSpawned != 'CovertAction_P1SupplyRaid'
+	)
+	{
+		PickedActionName = 'CovertAction_P1SupplyRaid';
+		//`LOG("RESOURCES NEEDED");
+	}
+	else
+	{
+		//`LOG("RANDOM SPAWN");
+		if(DarkEvents.Length == 0)
+		{
+			PickedActionName = ExclusionRoll(LastActionSpawned, true);
+		}
+		else
+		{
+			PickedActionName = ExclusionRoll(LastActionSpawned, false);
+		}
+	}
+	
 	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length)];
 
 	return X2CovertActionTemplate(Manager.FindStrategyElementTemplate(PickedActionName));
+}
+
+static function name ExclusionRoll(name Exclude, bool NoDarkEvent)
+{
+	local array<name> RefinedList;
+
+	RefinedList = default.ActionsToSpawn;
+	RefinedList.RemoveItem(Exclude);
+
+	if(NoDarkEvent && Exclude != 'CovertAction_P1DarkEvent')
+	{
+		RefinedList.RemoveItem('CovertAction_P1DarkEvent');
+	}
+
+	return RefinedList[`SYNC_RAND_STATIC(RefinedList.Length)];
 }
 
 static function XComGameState_ResistanceFaction GetFactionForNewAction()
@@ -342,4 +409,11 @@ static function PrintDebugInfo()
 	`log("Next spawn at" @ Spawner.NextSpawnAt,, 'CI_P1Spawner');
 	`log("Cached work rate - " $ Spawner.CachedWorkRate,, 'CI_P1Spawner');
 	`log("Current work rate - " $ Spawner.GetCurrentWorkRate(),, 'CI_P1Spawner');
+}
+
+defaultproperties
+{
+	ActionsToSpawn[0] = "CovertAction_P1Jailbreak"
+	ActionsToSpawn[1] = "CovertAction_P1DarkEvent"
+	ActionsToSpawn[2] = "CovertAction_P1SupplyRaid"
 }

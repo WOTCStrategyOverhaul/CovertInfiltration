@@ -21,7 +21,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 {
 	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local X2CovertMissionInfoTemplate MissionInfo;
-	local XComGameState_Reward RewardState;
+	local XComGameState_Reward RewardState, ActionReward;
 	local array<X2RewardTemplate> RewardTemplates;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
@@ -39,10 +39,15 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 		MissionRewards.AddItem(RewardState);
 	}
 
+	ActionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
+	if(ActionReward.GetMyTemplateName() == 'ActionReward_P2DarkEvent')
+		DarkEvent = ActionReward.RewardObjectReference;
+
 	// Set the location - required for camera pan to work properly
 	MissionLocation.X = Action.Location.X;
 	MissionLocation.Y = Action.Location.Y;
 
+	// TODO: Region is messed up
 	//ResistanceFaction = Faction;
 	BuildMission(MissionSource, MissionLocation, Region, MissionRewards, true);
 	SetSoldiersFromAction(Action);
@@ -67,6 +72,7 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 	}
 }
 
+// TODO: Is this needed after the staff slot change?
 function SetSoldiersAsOnAction(XComGameState NewGameState)
 {
 	local StateObjectReference SoldierRef;

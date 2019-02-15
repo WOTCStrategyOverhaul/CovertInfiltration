@@ -215,7 +215,7 @@ static function CamRingView(float InterpTime)
 	`HQPRES.CAMLookAtRoom(FacilityState.GetRoom(), InterpTime);
 }
 
-static function InfiltrationActionAvaliable(StateObjectReference ActionRef, optional XComGameState NewGameState)
+static function InfiltrationActionAvaliable(optional StateObjectReference ActionRef, optional XComGameState NewGameState)
 {
 	local XComHQPresentationLayer HQPres;
 	local DynamicPropertySet PropertySet;
