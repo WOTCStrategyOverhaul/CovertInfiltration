@@ -40,7 +40,8 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 	}
 
 	ActionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
-	DarkEvent = ActionReward.RewardObjectReference;
+	if(ActionReward.GetMyTemplateName() == 'ActionReward_P2DarkEvent')
+		DarkEvent = ActionReward.RewardObjectReference;
 
 	// Set the location - required for camera pan to work properly
 	MissionLocation.X = Action.Location.X;
