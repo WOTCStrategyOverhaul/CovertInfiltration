@@ -15,6 +15,7 @@ var protectedwrite TDateTime PreviousWorkSubmittedAt;
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
+var const array<name> ActionsToSpawn;
 var name LastActionSpawned;
 
 var const config array<int> WorkRateXcom;
@@ -25,8 +26,6 @@ var const config bool bStaringRegionContributesToWork;
 var const config array<int> GameStartWork; // How much work to add when the campaign starts
 var const config array<int> WorkRequiredForP1;
 var const config array<int> WorkRequiredForP1Variance;
-
-var const config array<name> ActionsToSpawn;
 
 var config int MinSupplies;
 var config int MinIntel;
@@ -56,7 +55,7 @@ static function Update()
 		`log("Enough work for P1, staring spawning",, 'CI_P1Spawner');
 		bDirty = true;
 		
-		Spawner.LastActionSpawned = Spawner.SpawnAction(NewGameState);
+		Spawner.SpawnAction(NewGameState);
 		Spawner.ResetProgress();
 		Spawner.SetNextSpawnAt();
 	}
@@ -191,7 +190,7 @@ function SetNextSpawnAt()
 /// Spawning ///
 ////////////////
 
-function name SpawnAction(XComGameState NewGameState)
+function SpawnAction(XComGameState NewGameState)
 {
 	local X2CovertActionTemplate ActionTemplate;
 	local XComGameState_ResistanceFaction Faction;
@@ -208,12 +207,12 @@ function name SpawnAction(XComGameState NewGameState)
 	if (ActionTemplate == none)
 	{
 		`RedScreen("CI: Cannot spawn P1 actions - the template is none");
-		return '';
+		return;
 	}
 	if (Faction == none)
 	{
 		`RedScreen("CI: Cannot spawn P1 actions - no faction that met XCom");
-		return '';
+		return;
 	}
 
 	`log("All inputs ok, spawning action",, 'CI_P1Spawner');
@@ -227,7 +226,7 @@ function name SpawnAction(XComGameState NewGameState)
 	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
 	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
 
-	return ActionTemplate.DataName;
+	LastActionSpawned = ActionTemplate.DataName;
 }
 
 function X2CovertActionTemplate PickActionToSpawn()
@@ -250,10 +249,13 @@ function X2CovertActionTemplate PickActionToSpawn()
 
 	//`LOG(LastActionSpawned);
 
-	if((
+	if(
+		(
 		class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() ||
-		class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded()) &&
-		LastActionSpawned != 'CovertAction_P1Jailbreak')
+		class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded()
+		) && 
+		LastActionSpawned != 'CovertAction_P1Jailbreak'
+	)
 	{
 		PickedActionName = 'CovertAction_P1Jailbreak';
 		//`LOG("PERSONNEL NEEDED");
@@ -263,10 +265,13 @@ function X2CovertActionTemplate PickActionToSpawn()
 		PickedActionName = 'CovertAction_P1DarkEvent';
 		//`LOG("ACTIVITY NEEDED");
 	}
-	else if((
+	else if(
+		(
 		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Supplies'), default.MinSupplies) || 
-		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel)) &&
-		LastActionSpawned != 'CovertAction_P1SupplyRaid')
+		!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel)
+		) &&
+		LastActionSpawned != 'CovertAction_P1SupplyRaid'
+	)
 	{
 		PickedActionName = 'CovertAction_P1SupplyRaid';
 		//`LOG("RESOURCES NEEDED");
@@ -406,4 +411,9 @@ static function PrintDebugInfo()
 	`log("Next spawn at" @ Spawner.NextSpawnAt,, 'CI_P1Spawner');
 	`log("Cached work rate - " $ Spawner.CachedWorkRate,, 'CI_P1Spawner');
 	`log("Current work rate - " $ Spawner.GetCurrentWorkRate(),, 'CI_P1Spawner');
+}
+
+defaultproperties
+{
+	ActionsToSpawn = {'CovertAction_P1Jailbreak', 'CovertAction_P1DarkEvent', 'CovertAction_P1SupplyRaid'};
 }
