@@ -26,6 +26,9 @@ var const config array<int> WorkRequiredForP1Variance;
 
 var const config array<name> ActionsToSpawn;
 
+var config int MinSupplies;
+var config int MinIntel;
+
 var config int EXPIRATION_BASE_TIME;
 var config int EXPIRATION_VARIANCE;
 
@@ -226,7 +229,14 @@ function SpawnAction(XComGameState NewGameState)
 static function X2CovertActionTemplate PickActionToSpawn()
 {
 	local X2StrategyElementTemplateManager Manager;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2ItemTemplateManager ItemTemplateManager;
 	local name PickedActionName;
+	local array<StateObjectReference> DarkEvents;
+
+	DarkEvents = class'X2StrategyElement_InfiltrationRewards'.static.GetRandomDarkEvents(4);
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
 	if (default.ActionsToSpawn.Length == 0)
 	{
@@ -234,8 +244,35 @@ static function X2CovertActionTemplate PickActionToSpawn()
 		return none;
 	}
 
+	if(class'X2StrategyElement_DefaultRewards'.static.IsEngineerRewardNeeded() || class'X2StrategyElement_DefaultRewards'.static.IsScientistRewardNeeded())
+	{
+		PickedActionName = 'CovertAction_P1Jailbreak';
+		`LOG("PERSONNEL NEEDED");
+	}
+	else if(DarkEvents.Length > 1)
+	{
+		PickedActionName = 'CovertAction_P1DarkEvent';
+		`LOG("ACTIVITY NEEDED");
+	}
+	else if(!XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Supplies'), default.MinSupplies) || !XComHQ.HasItem(ItemTemplateManager.FindItemTemplate('Intel'), default.MinIntel))
+	{
+		PickedActionName = 'CovertAction_P1SupplyRaid';
+		`LOG("RESOURCES NEEDED");
+	}
+	else
+	{
+		if(DarkEvents.Length == 0)
+		{
+			PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length - 1)];
+		}
+		else
+		{
+			PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length)];
+		}
+		`LOG("RANDOM SPAWN");
+	}
+	
 	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	PickedActionName = default.ActionsToSpawn[`SYNC_RAND_STATIC(default.ActionsToSpawn.Length)];
 
 	return X2CovertActionTemplate(Manager.FindStrategyElementTemplate(PickedActionName));
 }

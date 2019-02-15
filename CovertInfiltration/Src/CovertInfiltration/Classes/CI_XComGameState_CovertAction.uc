@@ -180,5 +180,7 @@ function string GetDarkEventString()
 	RewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(RewardRefs[0].ObjectID));
 	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 
+	if(DarkEventState == none) return "<Missing DE>";
+
 	return DarkEventState.GetMyTemplate().DisplayName;
 }

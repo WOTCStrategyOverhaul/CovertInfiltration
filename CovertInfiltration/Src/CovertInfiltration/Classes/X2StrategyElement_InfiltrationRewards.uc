@@ -183,7 +183,7 @@ static protected function XComGameState_CovertAction SpawnCovertAction(XComGameS
 	ActionRef = FactionState.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
 	FactionState.CovertActions.AddItem(ActionRef);
 
-	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID));
+	ActionState = XComGameState_CovertAction(NewGameState.GetGameStateForObjectID(ActionRef.ObjectID));
 
 	return ActionState;
 }
