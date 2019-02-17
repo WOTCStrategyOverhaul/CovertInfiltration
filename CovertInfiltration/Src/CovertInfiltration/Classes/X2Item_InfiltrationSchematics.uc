@@ -25,7 +25,7 @@ static function X2DataTemplate CreateTemplate_AdventDisguise_Schematic()
 	`CREATE_X2TEMPLATE(class'X2SchematicTemplate', Template, 'AdventDisguise_Schematic');
 
 	Template.ItemCat = 'armor';
-	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Ivn_Disguise_Advent";
+	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Inv_Disguise_Advent";
 	Template.PointsToComplete = 0;
 	Template.Tier = 1;
 	Template.OnBuiltFn = UpgradeItems;
@@ -57,7 +57,7 @@ static function X2DataTemplate CreateTemplate_HolographicDisguise_Schematic()
 	`CREATE_X2TEMPLATE(class'X2SchematicTemplate', Template, 'HolographicDisguise_Schematic');
 
 	Template.ItemCat = 'armor';
-	Template.strImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Warden_Armor";
+	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Inv_Disguise_Holo";
 	Template.PointsToComplete = 0;
 	Template.Tier = 2;
 	Template.OnBuiltFn = UpgradeItems;
@@ -66,7 +66,9 @@ static function X2DataTemplate CreateTemplate_HolographicDisguise_Schematic()
 	Template.ReferenceItemTemplate = 'HolographicDisguise';
 
 	// Requirements
-	Template.Requirements.RequiredTechs.AddItem('PoweredArmor');
+	Template.Requirements.RequiredTechs.AddItem('AutopsyAdventTrooper');
+	Template.Requirements.RequiredTechs.AddItem('AutopsyFaceless');
+	Template.Requirements.RequiredTechs.AddItem('AutopsySpectre');
 
 	// Cost
  	Resources.ItemTemplateName = 'Supplies';
