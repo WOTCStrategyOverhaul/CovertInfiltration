@@ -10,6 +10,9 @@ class X2CovertMissionInfoTemplate extends X2DataTemplate;
 
 var array<name> MissionRewards;
 var name MissionSource;
+var Delegate<InitInfilDelegate> InitMissionFn;
+
+delegate InitInfilDelegate(XComGameState NewGameState, XComGameState_CovertAction Action, XComGameState_MissionSiteInfiltration MissionSite);
 
 defaultproperties
 {
