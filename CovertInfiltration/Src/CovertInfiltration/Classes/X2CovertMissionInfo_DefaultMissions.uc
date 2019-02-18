@@ -34,6 +34,7 @@ static function X2DataTemplate CreateP1DarkEventMission()
 
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadActivity');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
 }
@@ -45,6 +46,7 @@ static function X2DataTemplate CreateP1SupplyRaidMission()
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadTarget');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
 }
@@ -56,6 +58,7 @@ static function X2DataTemplate CreateP1JailbreakMission()
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadPersonnel');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
 }
@@ -68,6 +71,7 @@ static function X2DataTemplate CreateP2DarkEventMission()
 	
 	Template.MissionSource = 'MissionSource_DarkEvent';
 	Template.MissionRewards.AddItem('Reward_Supplies');
+	Template.InitMissionFn = DarkEventInitMission;
 
 	return Template;
 }
@@ -80,6 +84,7 @@ static function X2DataTemplate CreateP2DarkVIPMission()
 
 	Template.MissionSource = 'MissionSource_DarkVIP';
 	Template.MissionRewards.AddItem('Reward_Intel');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
 }
@@ -103,6 +108,7 @@ static function X2DataTemplate CreateP2EngineerMission()
 	
 	Template.MissionSource = 'MissionSource_Engineer';
 	Template.MissionRewards.AddItem('Reward_Engineer');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
 }
@@ -115,6 +121,74 @@ static function X2DataTemplate CreateP2ScientistMission()
 	
 	Template.MissionSource = 'MissionSource_Scientist';
 	Template.MissionRewards.AddItem('Reward_Scientist');
+	Template.InitMissionFn = GenericInitMission;
 
 	return Template;
+}
+
+static function GenericInitMission(XComGameState NewGameState, XComGameState_CovertAction Action, XComGameState_MissionSiteInfiltration MissionSite)
+{
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate MissionInfo;
+	local XComGameState_Reward RewardState;
+	local array<X2RewardTemplate> RewardTemplates;
+	local X2MissionSourceTemplate MissionSource;
+	local array<XComGameState_Reward> MissionRewards;
+	local Vector2D MissionLocation;
+	local int i;
+
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
+	MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo);
+	
+	for (i = 0; i < RewardTemplates.length; i++)
+	{
+		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
+		RewardState.GenerateReward(NewGameState);
+		MissionRewards.AddItem(RewardState);
+	}
+
+	// Set the location - required for camera pan to work properly
+	MissionLocation.X = Action.Location.X;
+	MissionLocation.Y = Action.Location.Y;
+
+	// TODO: Region is messed up
+	//ResistanceFaction = Faction;
+	MissionSite.BuildMission(MissionSource, MissionLocation, MissionSite.Region, MissionRewards, true);
+}
+
+static function DarkEventInitMission(XComGameState NewGameState, XComGameState_CovertAction Action, XComGameState_MissionSiteInfiltration MissionSite)
+{
+	local X2CovertMissionInfoTemplateManager InfilMgr;
+	local X2CovertMissionInfoTemplate MissionInfo;
+	local XComGameState_Reward RewardState, ActionReward;
+	local array<X2RewardTemplate> RewardTemplates;
+	local X2MissionSourceTemplate MissionSource;
+	local array<XComGameState_Reward> MissionRewards;
+	local Vector2D MissionLocation;
+	local int i;
+
+	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
+	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
+	MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo);
+	
+	for (i = 0; i < RewardTemplates.length; i++)
+	{
+		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
+		RewardState.GenerateReward(NewGameState, 0.5); // Halve the reward size
+		MissionRewards.AddItem(RewardState);
+	}
+
+	ActionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
+	MissionSite.DarkEvent = ActionReward.RewardObjectReference;
+
+	// Set the location - required for camera pan to work properly
+	MissionLocation.X = Action.Location.X;
+	MissionLocation.Y = Action.Location.Y;
+
+	// TODO: Region is messed up
+	//ResistanceFaction = Faction;
+	MissionSite.BuildMission(MissionSource, MissionLocation, MissionSite.Region, MissionRewards, true);
 }
