@@ -134,6 +134,7 @@ static function GenericInitMission(XComGameState NewGameState, XComGameState_Cov
 	local array<X2RewardTemplate> RewardTemplates;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
+	local StateObjectReference RegionRef;
 	local Vector2D MissionLocation;
 	local int i;
 
@@ -141,11 +142,12 @@ static function GenericInitMission(XComGameState NewGameState, XComGameState_Cov
 	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
 	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
 	MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo);
+	RegionRef = Action.Region;
 	
 	for (i = 0; i < RewardTemplates.length; i++)
 	{
 		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
-		RewardState.GenerateReward(NewGameState);
+		RewardState.GenerateReward(NewGameState,, RegionRef);
 		MissionRewards.AddItem(RewardState);
 	}
 
@@ -153,9 +155,8 @@ static function GenericInitMission(XComGameState NewGameState, XComGameState_Cov
 	MissionLocation.X = Action.Location.X;
 	MissionLocation.Y = Action.Location.Y;
 
-	// TODO: Region is messed up
 	//ResistanceFaction = Faction;
-	MissionSite.BuildMission(MissionSource, MissionLocation, MissionSite.Region, MissionRewards, true);
+	MissionSite.BuildMission(MissionSource, MissionLocation, RegionRef, MissionRewards, true);
 }
 
 static function DarkEventInitMission(XComGameState NewGameState, XComGameState_CovertAction Action, XComGameState_MissionSiteInfiltration MissionSite)
@@ -166,6 +167,7 @@ static function DarkEventInitMission(XComGameState NewGameState, XComGameState_C
 	local array<X2RewardTemplate> RewardTemplates;
 	local X2MissionSourceTemplate MissionSource;
 	local array<XComGameState_Reward> MissionRewards;
+	local StateObjectReference RegionRef;
 	local Vector2D MissionLocation;
 	local int i;
 
@@ -173,11 +175,12 @@ static function DarkEventInitMission(XComGameState NewGameState, XComGameState_C
 	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
 	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
 	MissionSource = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo);
+	RegionRef = Action.Region;
 	
 	for (i = 0; i < RewardTemplates.length; i++)
 	{
 		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
-		RewardState.GenerateReward(NewGameState, 0.5); // Halve the reward size
+		RewardState.GenerateReward(NewGameState, 0.5, RegionRef); // Halve the reward size
 		MissionRewards.AddItem(RewardState);
 	}
 
@@ -188,7 +191,6 @@ static function DarkEventInitMission(XComGameState NewGameState, XComGameState_C
 	MissionLocation.X = Action.Location.X;
 	MissionLocation.Y = Action.Location.Y;
 
-	// TODO: Region is messed up
 	//ResistanceFaction = Faction;
-	MissionSite.BuildMission(MissionSource, MissionLocation, MissionSite.Region, MissionRewards, true);
+	MissionSite.BuildMission(MissionSource, MissionLocation, RegionRef, MissionRewards, true);
 }

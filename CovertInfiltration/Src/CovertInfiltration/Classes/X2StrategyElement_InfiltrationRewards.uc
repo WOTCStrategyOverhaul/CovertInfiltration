@@ -238,6 +238,7 @@ static function GiveSupplyRaidReward(XComGameState NewGameState, XComGameState_R
 {
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_WorldRegion RegionState;
+	local XComGameState_CovertAction ActionState;
 	local XComGameState_Reward MissionRewardState;
 	local X2RewardTemplate RewardTemplate;
 	local X2StrategyElementTemplateManager StratMgr;
@@ -246,7 +247,8 @@ static function GiveSupplyRaidReward(XComGameState NewGameState, XComGameState_R
 	local float MissionDuration;
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	RegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(AuxRef.ObjectID));	
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(AuxRef.ObjectID));
+	RegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(ActionState.Region.ObjectID));	
 
 	MissionRewards.Length = 0;
 	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_None'));

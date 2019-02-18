@@ -123,7 +123,7 @@ static function X2DataTemplate CreateP2SupplyRaidTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P2SupplyRaid');
-	Template.Rewards.AddItem('Reward_SupplyRaid');
+	Template.Rewards.AddItem('Reward_P2SupplyRaid');
 
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
