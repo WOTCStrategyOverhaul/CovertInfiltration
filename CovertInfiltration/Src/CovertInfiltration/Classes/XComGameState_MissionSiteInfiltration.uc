@@ -27,6 +27,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 
 	MissionInfo.InitMissionFn(NewGameState, Action, self);
 	SetSoldiersFromAction(Action);
+	RegisterForEvents();
 }
 
 protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
@@ -105,10 +106,25 @@ function StartMission()
 
 function UpdateGameBoard()
 {
-	local XComHQPresentationLayer HQPres;
+	`RedScreen(class.name @ "is ticking!!!!! Alarm!!!!");
+}
+
+function RemoveEntity(XComGameState NewGameState)
+{
+	super.RemoveEntity(NewGameState);
+	UnRegisterFromEvents();
+}
+
+protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
 	local UIMission_Infiltrated MissionUI;
+	local XComHQPresentationLayer HQPres;
 	local UIStrategyMap StrategyMap;
-	
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'PreventGeoscapeTick') return ELR_NoInterrupt;
+
 	HQPres = `HQPRES;
 	StrategyMap = HQPres.StrategyMap2D;
 	
@@ -118,5 +134,36 @@ function UpdateGameBoard()
 		MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
 		MissionUI.MissionRef = GetReference();
 		HQPres.ScreenStack.Push(MissionUI);
+
+		Tuple.Data[0].b = true;
+		return ELR_InterruptListeners;
 	}
+
+	return ELR_NoInterrupt;
+}
+
+////////////////////////
+/// Event management ///
+////////////////////////
+
+protected function RegisterForEvents()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick);
+}
+
+protected function UnRegisterFromEvents()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.UnRegisterFromAllEvents(ThisObj);
 }

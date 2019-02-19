@@ -6,28 +6,94 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIMapToCovertActionsForcer extends UIScreenListener;
+class UIMapToCovertActionsForcer extends UIPanel;
 
-var protected bool ForceCovertActions;
 var protected StateObjectReference ActionRef;
 
-static function ForceCAOnNextMapInit(StateObjectReference InActionRef)
+static function ForceCAOnNextMapTick(optional StateObjectReference InActionRef)
 {
-	local UIMapToCovertActionsForcer CDO;
+	local UIMapToCovertActionsForcer Forcer;
+	local XComHQPresentationLayer HQPres;
+	local UIAvengerHUD HUD;
 
-	CDO = UIMapToCovertActionsForcer(class'XComEngine'.static.GetClassDefaultObject(class'UIMapToCovertActionsForcer'));
+	HQPres = `HQPRES;
+	HUD = HQPres.m_kAvengerHUD;
+	Forcer = UIMapToCovertActionsForcer(HUD.GetChildByName(default.MCName, false));
 
-	CDO.ForceCovertActions = true;
-	CDO.ActionRef = InActionRef;
+	if (Forcer == none)
+	{
+		Forcer = HUD.Spawn(class'UIMapToCovertActionsForcer', HUD);
+		Forcer.InitPanel();
+	}
+
+	Forcer.ActionRef = InActionRef;
 }
 
-event OnInit(UIScreen Screen)
+simulated function UIPanel InitPanel(optional name InitName, optional name InitLibID)
 {
-	if (!ForceCovertActions) return;
-	if (!Screen.IsA(class'UIStrategyMap'.name)) return;
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	super.InitPanel(InitName, InitLibID);
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick);
+
+	return self;
+}
+
+simulated protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'PreventGeoscapeTick') return ELR_NoInterrupt;
+
+	Tuple.Data[0].b = true;
+
+	if (!IsTimerActive(nameof(OpenScreenConditionally)))
+	{
+		// Set a short timer to make sure that nothing is going on when the map opens. Example: golden path mission reveal on map
+		SetTimer(0.1f, false, nameof(OpenScreenConditionally));
+	}
+
+	return ELR_InterruptListeners;
+}
+
+simulated protected function OpenScreenConditionally()
+{
+	local XComHQPresentationLayer HQPres;
+	local XGGeoscape Geoscape;
+
+	HQPres = XComHQPresentationLayer(Movie.Pres);
+	Geoscape =`GAME.GetGeoscape();
+
+	if (Geoscape.IsPaused() || HQPres.ScreenStack.GetCurrentScreen() != HQPres.StrategyMap2D || HQPres.CAMIsBusy())
+	{
+		// Something is going on - allow next tick to handle it
+		return;
+	}
 
 	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(ActionRef);
+	Remove();
+}
 
-	ForceCovertActions = false;
-	ActionRef.ObjectID = 0;
+simulated event Removed()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	super.Removed();
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.UnRegisterFromAllEvents(ThisObj);
+}
+
+defaultproperties
+{
+	MCName = "UIMapToCovertActionsForcer";
 }

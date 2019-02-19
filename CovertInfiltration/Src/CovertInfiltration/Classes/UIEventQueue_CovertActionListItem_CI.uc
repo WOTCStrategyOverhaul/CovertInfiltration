@@ -64,7 +64,7 @@ simulated function OpenCovertActionScreen()
 	}
 	else
 	{
-		class'UIMapToCovertActionsForcer'.static.ForceCAOnNextMapInit(ActionRef);
+		class'UIMapToCovertActionsForcer'.static.ForceCAOnNextMapTick(ActionRef);
 		XComHQPresentationLayer(Movie.Pres).m_kAvengerHUD.NavHelp.HotlinkToGeoscape();
 	}
 }
