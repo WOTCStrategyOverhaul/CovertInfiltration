@@ -126,7 +126,6 @@ static function OnPreCreateTemplates()
 static event OnPostTemplatesCreated()
 {
 	PatchResistanceRing();
-	PatchGuerillaTacticsSchool();
 	RemoveNoCovertActionNags();
 	RemoveSquadSizeUpgrades();
 	MarkPlotsForCovertEscape();
@@ -136,6 +135,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.DisableLockAndBreakthrough();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 
 	PatchUIWeaponUpgradeItem();
 }
@@ -214,25 +214,6 @@ static protected function bool ResistanceRingNeedsAttention(StateObjectReference
 {	
 	// Highlight the ring if it was just built and the player needs to assign orders
 	return !class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment;
-}
-
-static protected function PatchGuerillaTacticsSchool()
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2FacilityTemplate GTSTemplate;
-	local StaffSlotDefinition StaffSlotDef;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	GTSTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
-
-	if (GTSTemplate == none)
-	{
-		`REDSCREEN("CI: Failed to find GTS template");
-		return;
-	}
-	
-	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
-	GTSTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
 }
 
 static protected function RemoveNoCovertActionNags()

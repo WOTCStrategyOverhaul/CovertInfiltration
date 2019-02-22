@@ -264,3 +264,22 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 
 	`XEVENTMGR.TriggerEvent('RetaliationMissionSpawned', MissionState, MissionState, NewGameState);
 }
+
+static function PatchGuerillaTacticsSchool()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2FacilityTemplate GTSTemplate;
+	local StaffSlotDefinition StaffSlotDef;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	GTSTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
+
+	if (GTSTemplate == none)
+	{
+		`REDSCREEN("CI: Failed to find GTS template");
+		return;
+	}
+	
+	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
+	GTSTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
+}
