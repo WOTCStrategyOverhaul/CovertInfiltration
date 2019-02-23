@@ -276,6 +276,21 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 	`XEVENTMGR.TriggerEvent('RetaliationMissionSpawned', MissionState, MissionState, NewGameState);
 }
 
+static function PatchNewRetaliationNarrative()
+{
+	local X2MissionNarrativeTemplateManager TemplateManager;
+	local X2MissionNarrativeTemplate Template;
+
+	TemplateManager = class'X2MissionNarrativeTemplateManager'.static.GetMissionNarrativeTemplateManager();
+	Template = TemplateManager.FindMissionNarrativeTemplate("ChosenRetaliation");
+
+	// This is the intro VO which refers to "chosen leading the assault". We don't want that since
+	// (1) it will be played before player meets the first chosen
+	// (2) it plays if there is no chosen on this mission
+	// (3) it plays even after all chosen are defated
+	Template.NarrativeMoments[10] = "";
+}
+
 //////////////////
 /// Objectives ///
 //////////////////
