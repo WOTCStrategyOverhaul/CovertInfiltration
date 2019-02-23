@@ -87,6 +87,11 @@ function SelectSquad()
 
 	// Replace the squad with the soldiers who were on the Covert Action
 	XComHQ.Squad = SoldiersOnMission;
+
+	// This isn't needed to properly spawn units into battle, but without this
+	// the transition screen shows last selection in streategy, not people on this mission
+	XComHQ.AllSquads.Length = 1;
+	XComHQ.AllSquads[0].SquadMembers = SoldiersOnMission;
 	
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
