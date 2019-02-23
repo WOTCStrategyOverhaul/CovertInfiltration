@@ -135,6 +135,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.DisableLockAndBreakthrough();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 
 	PatchUIWeaponUpgradeItem();
 }
