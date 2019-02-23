@@ -116,7 +116,6 @@ static protected function ForceLockAndLoad(XComGameState NewGameState)
 /////////////////
 /// Templates ///
 /////////////////
-// TODO: Move everything to X2Helper_Infiltration_TemplateMod
 
 static function OnPreCreateTemplates()
 {
@@ -125,11 +124,8 @@ static function OnPreCreateTemplates()
 
 static event OnPostTemplatesCreated()
 {
-	PatchResistanceRing();
-	RemoveNoCovertActionNags();
-	RemoveSquadSizeUpgrades();
-	MarkPlotsForCovertEscape();
-
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchResistanceRing();
+	class'X2Helper_Infiltration_TemplateMod'.static.RemoveNoCovertActionNags();
 	class'X2Helper_Infiltration_TemplateMod'.static.MakeItemsBuildable();
 	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
 	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
@@ -137,6 +133,8 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 
+	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
+	MarkPlotsForCovertEscape();
 	PatchUIWeaponUpgradeItem();
 }
 
@@ -150,109 +148,6 @@ static protected function PatchUIWeaponUpgradeItem()
 	 // UIArmory_WeaponUpgradeItem doesn't need to process input - the BG does it
 	 // However, it that flag is set then we don't get mouse events for children
 	 // which breaks the "drop item" button
-}
-
-static protected function PatchResistanceRing()
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2FacilityTemplate RingTemplate;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	RingTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('ResistanceRing'));
-
-	if (RingTemplate == none)
-	{
-		`REDSCREEN("CI: Failed to find resistance ring template");
-		return;
-	}
-
-	RingTemplate.OnFacilityBuiltFn = OnResistanceRingBuilt;
-	RingTemplate.GetQueueMessageFn = GetRingQueueMessage;
-	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
-	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
-}
-
-static protected function OnResistanceRingBuilt(StateObjectReference FacilityRef)
-{
-	// Removed action-generating things since the ring is now about orders
-
-	local XComGameStateHistory History;
-	local XComGameState_ResistanceFaction FactionState;
-	local XComGameState_FacilityXCom FacilityState;
-	local XComGameState NewGameState;
-
-	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("On Resistance Ring Built");
-	FacilityState = XComGameState_FacilityXCom(NewGameState.ModifyStateObject(class'XComGameState_FacilityXCom', FacilityRef.ObjectID));
-
-	foreach History.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
-	{
-		if (FactionState.bMetXCom)
-		{
-			// Turn on the Faction plaque in the Ring if they have already been met
-			if (!FacilityState.ActivateUpgrade(NewGameState, FactionState.GetRingPlaqueUpgradeName()))
-			{
-				`RedScreen("@jweinhoffer Tried to activate Faction Plaque in the Ring, but failed.");
-			}
-		}
-	}
-	
-	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-static protected function string GetRingQueueMessage(StateObjectReference FacilityRef)
-{
-	if (ResistanceRingNeedsAttention(FacilityRef))
-	{
-		return class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_ResitanceRing'.default.strAssingOrdersOverlay, eUIState_Bad);
-	}
-
-	return "";
-}
-
-static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
-{	
-	// Highlight the ring if it was just built and the player needs to assign orders
-	return !class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment;
-}
-
-static protected function RemoveNoCovertActionNags()
-{
-	// Remove the warning about no covert action running since those refernce the ring
-
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2ObjectiveTemplate Template;
-	local int i;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('CEN_ToDoWarnings'));
-
-	if (Template == none)
-	{
-		`REDSCREEN("CI: Failed to find CEN_ToDoWarnings template - cannot remove no covert action nags");
-		return;
-	}
-
-	for (i = 0; i < Template.NarrativeTriggers.Length; i++)
-	{
-		if (Template.NarrativeTriggers[i].NarrativeDeck == 'CentralCovertActionNags')
-		{
-			Template.NarrativeTriggers.Remove(i, 1);
-			i--; // The array is shifted, so we need to account for that
-		}
-	}
-}
-
-static protected function RemoveSquadSizeUpgrades()
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2FacilityTemplate FacilityTemplate;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	FacilityTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
-
-	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIUnlock');
-	FacilityTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIIUnlock');
 }
 
 static protected function MarkPlotsForCovertEscape()
