@@ -408,8 +408,12 @@ static function PatchGuerillaTacticsSchool()
 	// Add 2nd training slot
 	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
 	GTSTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
-
+	
 	// Remove squad size upgrades
 	GTSTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIUnlock');
 	GTSTemplate.SoldierUnlockTemplates.RemoveItem('SquadSizeIIUnlock');
+
+	// Add infiltration size upgrades
+	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize1');
+	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize2');
 }

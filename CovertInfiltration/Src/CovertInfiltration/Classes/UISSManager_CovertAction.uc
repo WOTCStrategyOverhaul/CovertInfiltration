@@ -20,6 +20,7 @@ var protected UISS_InfiltrationPanel InfoDisplay;
 var protected UISS_CostSlotsContainer CostSlots;
 
 var localized string strSlotOptionalNote;
+var localized string strSlotPenaltyNote;
 var localized string strSlotRequiredPrefix;
 
 simulated function OpenSquadSelect()
@@ -80,6 +81,8 @@ simulated protected function BuildConfiguration()
 		// have explicit rank names set up, it'll use the standard code path of falling back to the default ranks.
 		if (StaffSlotState.RequiredMinRank > 0) Slots[i].Notes.AddItem(CreateRankNote(StaffSlotState.RequiredMinRank, StaffSlotState.RequiredClass));
 		
+		if (i == 4 && !`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1')) Slots[i].Notes.AddItem(CreatePenaltyNote());
+		if (i == 5 && !`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2')) Slots[i].Notes.AddItem(CreatePenaltyNote());
 
 		// Change the slot type if needed
 		if (StaffSlotState.IsEngineerSlot())
@@ -155,6 +158,17 @@ static function SSAAT_SlotNote CreateOptionalNote()
 	Note.Text = default.strSlotOptionalNote; // The localized text reads "OPTIONAL:"
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreatePenaltyNote()
+{
+	local SSAAT_SlotNote Note;
+	
+	Note.Text = default.strSlotPenaltyNote;
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.BAD_HTML_COLOR;
 
 	return Note;
 }

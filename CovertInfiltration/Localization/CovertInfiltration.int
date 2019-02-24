@@ -15,6 +15,7 @@ strRisksHeader=Risks
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
+strSlotPenaltyNote="Overload Penalty"
 strSlotRequiredPrefix="Required:"
 
 [UISS_InfiltrationPanel]
