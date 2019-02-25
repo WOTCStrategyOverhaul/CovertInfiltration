@@ -8,9 +8,6 @@
 
 class UIListener_CovertActionCompleted extends UIScreenListener config(Infiltration);
 
-//values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
-var config int MIN_WILL_LOSS;
-var config int MAX_WILL_LOSS;
 
 event OnInit(UIScreen Screen)
 {
@@ -22,83 +19,28 @@ event OnInit(UIScreen Screen)
 
 	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(CovertActionReport.ActionRef.ObjectID));
 
-	ApplyWillLossToSoldiers(CovertAction, CovertActionReport);
+	CheckForTiredSoldiers(CovertAction, CovertActionReport);
 }
 
-function ApplyWillLossToSoldiers(XComGameState_CovertAction CovertAction, UICovertActionReport CovertActionReport)
+function CheckForTiredSoldiers(XComGameState_CovertAction CovertAction, UICovertActionReport CovertActionReport)
 {
-	local XComGameState NewGameState;
 	local XComGameState_StaffSlot StaffSlotState;
 	local XComGameState_Unit UnitState;
 
 	local int idx;
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Applying will loss to soldiers");
 
 	for (idx = 0; idx < CovertAction.StaffSlots.Length; idx++)
 	{
 		StaffSlotState = CovertAction.GetStaffSlot(idx);
 		if (StaffSlotState.IsSlotFilled())
 		{
-			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', StaffSlotState.GetAssignedStaff().ObjectID));
-			if (UnitState.UsesWillSystem() && !UnitState.IsInjured() && !UnitState.bCaptured)
+			UnitState = StaffSlotState.GetAssignedStaff();
+			if (UnitState.GetMentalState() == eMentalState_Tired)
 			{
-				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
-				UpdateWillRecovery(NewGameState, UnitState);
-				UnitState.UpdateMentalState();
-			
-				if (UnitState.GetMentalState() == eMentalState_Tired)
-				{
-					ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
-				}
+				ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
 			}
 		}
 	}
-
-	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-function int GetWillLoss(XComGameState_Unit UnitState)
-{
-	local int WillToLose, LowestWill;
-
-	WillToLose = MIN_WILL_LOSS + `SYNC_RAND(MAX_WILL_LOSS - MIN_WILL_LOSS);
-	WillToLose *= UnitState.GetMaxStat(eStat_Will) / 100;
-
-	LowestWill = (UnitState.GetMaxStat(eStat_Will) * class'X2StrategyGameRulesetDataStructures'.default.MentalStatePercents[eMentalState_Shaken] / 100) + 1;
-	
-	//never put the soldier into shaken state from covert actions
-	if (UnitState.GetMaxStat(eStat_Will) - WillToLose < LowestWill)
-	{
-		return LowestWill;
-	}
-
-	return UnitState.GetMaxStat(eStat_Will) - WillToLose;
-}
-
-function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitState)
-{
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_HeadquartersProjectRecoverWill WillProject;
-	
-	History = `XCOMHISTORY;
-	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
-	
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
-	{
-		if(WillProject.ProjectFocus == UnitState.GetReference())
-		{
-			XComHQ.Projects.RemoveItem(WillProject.GetReference());
-			NewGameState.RemoveStateObject(WillProject.ObjectID);
-			break;
-		}
-	}
-
-	WillProject = XComGameState_HeadquartersProjectRecoverWill(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectRecoverWill'));
-	WillProject.SetProjectFocus(UnitState.GetReference(), NewGameState);
-
-	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
 function ShowTiredOnReport(UICovertActionReport CovertActionReport, XComGameState_StaffSlot StaffSlotState, XComGameState_Unit UnitState, int idx)
