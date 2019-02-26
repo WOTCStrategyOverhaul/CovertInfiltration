@@ -30,7 +30,7 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 			UnitState = SlotState.GetAssignedStaff();
 			if (UnitState.IsSoldier())	
 			{
-				CurrentSquad.AddItem(SlotState.GetAssignedStaff().GetReference());
+				CurrentSquad.AddItem(UnitState.GetReference());
 			}
 		}
 	}
@@ -166,6 +166,37 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 	UnitDeterrence += default.RANKS_DETER[UnitState.GetSoldierRank()];
 
 	return UnitDeterrence;
+}
+
+static function DestroyWillRecoveryProject(XComGameState NewGameState, StateObjectReference UnitRef)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+
+	History = `XCOMHISTORY;
+	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
+	
+	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
+	{
+		if(WillProject.ProjectFocus == UnitRef)
+		{
+			XComHQ.Projects.RemoveItem(WillProject.GetReference());
+			NewGameState.RemoveStateObject(WillProject.ObjectID);
+		}
+	}
+}
+
+static function CreateWillRecoveryProject(XComGameState NewGameState, XComGameState_Unit UnitState)
+{
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
+	WillProject = XComGameState_HeadquartersProjectRecoverWill(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectRecoverWill'));
+	WillProject.SetProjectFocus(UnitState.GetReference(), NewGameState);
+
+	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
 static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)

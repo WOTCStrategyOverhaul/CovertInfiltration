@@ -77,7 +77,7 @@ static function UpdateSquadWill(XComGameState_CovertAction CovertAction, XComGam
 			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SlotState.GetAssignedStaff().ObjectID));
 			if (UnitState.UsesWillSystem() && !UnitState.IsInjured() && !UnitState.bCaptured)
 			{
-				UpdateWillRecovery(NewGameState, UnitState);
+				class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, UnitState);
 				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
 				UnitState.UpdateMentalState();
 			}
@@ -101,32 +101,6 @@ static function int GetWillLoss(XComGameState_Unit UnitState)
 
 	return UnitState.GetCurrentStat(eStat_Will) - WillToLose;
 }
-
-static function UpdateWillRecovery(XComGameState NewGameState, XComGameState_Unit UnitState)
-{
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_HeadquartersProjectRecoverWill WillProject;
-	
-	History = `XCOMHISTORY;
-	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
-	
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
-	{
-		if(WillProject.ProjectFocus == UnitState.GetReference())
-		{
-			XComHQ.Projects.RemoveItem(WillProject.GetReference());
-			NewGameState.RemoveStateObject(WillProject.ObjectID);
-			break;
-		}
-	}
-
-	WillProject = XComGameState_HeadquartersProjectRecoverWill(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectRecoverWill'));
-	WillProject.SetProjectFocus(UnitState.GetReference(), NewGameState);
-
-	XComHQ.Projects.AddItem(WillProject.GetReference());
-}
-
 
 ////////////////
 /// Tactical ///

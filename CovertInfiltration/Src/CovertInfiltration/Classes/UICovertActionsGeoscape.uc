@@ -1042,6 +1042,7 @@ simulated function PostActionDeployed()
 	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Post Action Deployed");
 
+	//if we launched while the mission was still flagged as 'new' we need to unflag or it will be stuck
 	if (CovertAction.bNewAction)
 	{
 		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
@@ -1050,32 +1051,14 @@ simulated function PostActionDeployed()
 
 	foreach CurrentSquad(UnitRef)
 	{
+		//make sure soldier actually uses will system before we nuke it cuz reasons
 		if (XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)).UsesWillSystem())
 		{
-			DestroySoldierWillProject(NewGameState, UnitRef);
+			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
 		}
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-simulated protected function DestroySoldierWillProject(XComGameState NewGameState, StateObjectReference UnitRef)
-{
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_HeadquartersProjectRecoverWill WillProject;
-
-	History = `XCOMHISTORY;
-	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
-	
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
-	{
-		if(WillProject.ProjectFocus == UnitRef)
-		{
-			XComHQ.Projects.RemoveItem(WillProject.GetReference());
-			NewGameState.RemoveStateObject(WillProject.ObjectID);
-		}
-	}
 }
 
 simulated function ClearUnitsFromAction()
