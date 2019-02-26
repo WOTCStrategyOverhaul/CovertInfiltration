@@ -1,4 +1,8 @@
-class X2EventListener_Infiltration extends X2EventListener;
+class X2EventListener_Infiltration extends X2EventListener config(Infiltration);
+
+//values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
+var config int MIN_WILL_LOSS;
+var config int MAX_WILL_LOSS;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -20,6 +24,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Strategy');
 	Template.AddCHEvent('NumCovertActionsToAdd', NumCovertActionToAdd, ELD_Immediate); // Relies on CHL #373, will be avaliable in v1.17
+	Template.AddCHEvent('CovertActionCompleted', UpdateReturningSoldiers, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -39,6 +44,62 @@ static protected function EventListenerReturn NumCovertActionToAdd(Object EventD
 	Tuple.Data[0].i = class'XComGameState_ResistanceFaction'.default.CovertActionsPerInfluence[Faction.Influence];
 
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn UpdateReturningSoldiers(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction CovertAction;
+
+	CovertAction = XComGameState_CovertAction(EventSource);
+
+	if (CovertAction == none || class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		return ELR_NoInterrupt;
+	}
+
+	UpdateSquadWill(CovertAction, GameState);
+	
+	return ELR_NoInterrupt;
+}
+
+static function UpdateSquadWill(XComGameState_CovertAction CovertAction, XComGameState NewGameState)
+{
+	local CovertActionStaffSlot CovertActionSlot;
+	local XComGameState_StaffSlot SlotState;
+	local XComGameState_Unit UnitState;
+	
+
+	foreach CovertAction.StaffSlots(CovertActionSlot)
+	{
+		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		if (SlotState.IsSlotFilled())
+		{
+			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SlotState.GetAssignedStaff().ObjectID));
+			if (UnitState.UsesWillSystem() && !UnitState.IsInjured() && !UnitState.bCaptured)
+			{
+				class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, UnitState);
+				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
+				UnitState.UpdateMentalState();
+			}
+		}
+	}
+}
+
+static function int GetWillLoss(XComGameState_Unit UnitState)
+{
+	local int WillToLose, LowestWill;
+
+	WillToLose = default.MIN_WILL_LOSS + `SYNC_RAND_STATIC(default.MAX_WILL_LOSS - default.MIN_WILL_LOSS);
+	WillToLose *= UnitState.GetMaxStat(eStat_Will) / 100;
+
+	LowestWill = (UnitState.GetMaxStat(eStat_Will) * class'X2StrategyGameRulesetDataStructures'.default.MentalStatePercents[eMentalState_Shaken] / 100) + 1;
+	//never put the soldier into shaken state from covert actions
+	if (UnitState.GetMaxStat(eStat_Will) - WillToLose < LowestWill)
+	{
+		return LowestWill;
+	}
+
+	return UnitState.GetCurrentStat(eStat_Will) - WillToLose;
 }
 
 ////////////////

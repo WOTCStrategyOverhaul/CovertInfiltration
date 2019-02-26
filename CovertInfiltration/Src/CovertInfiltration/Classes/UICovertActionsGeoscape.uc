@@ -948,8 +948,6 @@ simulated protected function UpdateExpirationBar()
 
 simulated function OnReceiveFocus()
 {
-	local XComGameState NewGameState;
-	local XComGameState_CovertAction ActionState;
 	local StateObjectReference LaunchedActionRef;
 
 	super.OnReceiveFocus();
@@ -966,14 +964,7 @@ simulated function OnReceiveFocus()
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 			SSManager = none;
 
-			if (GetAction().bNewAction)
-			{			
-				NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
-				ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
-				ActionState.bNewAction = false;
-				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-			}
-
+			PostActionDeployed();
 			LaunchedActionRef = ActionRef;
 			UpdateList();
 			AttemptSelectAction(LaunchedActionRef);
@@ -1039,6 +1030,36 @@ simulated function MakeMapProperlyShow()
 //////////////////////////////
 /// Gamestate manipulation ///
 //////////////////////////////
+
+simulated function PostActionDeployed()
+{
+	local XComGameState_CovertAction CovertAction;
+	local XComGameState NewGameState;
+	local array<StateObjectReference> CurrentSquad;
+	local StateObjectReference UnitRef;
+
+	CovertAction = GetAction();
+	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Post Action Deployed");
+
+	//if we launched while the mission was still flagged as 'new' we need to unflag or it will be stuck
+	if (CovertAction.bNewAction)
+	{
+		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+		CovertAction.bNewAction = false;
+	}
+
+	foreach CurrentSquad(UnitRef)
+	{
+		//make sure soldier actually uses will system before we nuke it cuz reasons
+		if (XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)).UsesWillSystem())
+		{
+			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
+		}
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
 
 simulated function ClearUnitsFromAction()
 {

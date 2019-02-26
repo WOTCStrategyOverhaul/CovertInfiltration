@@ -14,6 +14,30 @@ var config int PERSONNEL_DETER;
 
 var config array<int> RANKS_DETER;
 
+// useful when squad is not in HQ
+static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
+{
+	local array<StateObjectReference> CurrentSquad;
+	local CovertActionStaffSlot CovertActionSlot;
+	local XComGameState_StaffSlot SlotState;
+	local XComGameState_Unit UnitState;
+	
+	foreach CovertAction.StaffSlots(CovertActionSlot)
+	{
+		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		if (SlotState.IsSlotFilled())
+		{
+			UnitState = SlotState.GetAssignedStaff();
+			if (UnitState.IsSoldier())	
+			{
+				CurrentSquad.AddItem(UnitState.GetReference());
+			}
+		}
+	}
+
+	return CurrentSquad;
+}
+
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
@@ -142,6 +166,37 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 	UnitDeterrence += default.RANKS_DETER[UnitState.GetSoldierRank()];
 
 	return UnitDeterrence;
+}
+
+static function DestroyWillRecoveryProject(XComGameState NewGameState, StateObjectReference UnitRef)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+
+	History = `XCOMHISTORY;
+	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
+	
+	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
+	{
+		if(WillProject.ProjectFocus == UnitRef)
+		{
+			XComHQ.Projects.RemoveItem(WillProject.GetReference());
+			NewGameState.RemoveStateObject(WillProject.ObjectID);
+		}
+	}
+}
+
+static function CreateWillRecoveryProject(XComGameState NewGameState, XComGameState_Unit UnitState)
+{
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
+	WillProject = XComGameState_HeadquartersProjectRecoverWill(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectRecoverWill'));
+	WillProject.SetProjectFocus(UnitState.GetReference(), NewGameState);
+
+	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
 static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
