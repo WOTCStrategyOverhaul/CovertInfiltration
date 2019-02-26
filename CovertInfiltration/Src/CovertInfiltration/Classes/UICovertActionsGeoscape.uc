@@ -948,8 +948,6 @@ simulated protected function UpdateExpirationBar()
 
 simulated function OnReceiveFocus()
 {
-	local XComGameState NewGameState;
-	local XComGameState_CovertAction ActionState;
 	local StateObjectReference LaunchedActionRef;
 
 	super.OnReceiveFocus();
@@ -966,14 +964,7 @@ simulated function OnReceiveFocus()
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 			SSManager = none;
 
-			if (GetAction().bNewAction)
-			{			
-				NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Turn off covert action NEW flag");
-				ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
-				ActionState.bNewAction = false;
-				`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-			}
-
+			PostActionDeployed();
 			LaunchedActionRef = ActionRef;
 			UpdateList();
 			AttemptSelectAction(LaunchedActionRef);
@@ -1039,6 +1030,68 @@ simulated function MakeMapProperlyShow()
 //////////////////////////////
 /// Gamestate manipulation ///
 //////////////////////////////
+
+simulated function PostActionDeployed()
+{
+	local XComGameState_CovertAction CovertAction;
+	local XComGameState NewGameState;
+	local array<StateObjectReference> CurrentSquad;
+	local StateObjectReference UnitRef;
+
+	CovertAction = GetAction();
+	CurrentSquad = GetCovertActionSquad(CovertAction);
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Post Action Deployed");
+
+	if (CovertAction.bNewAction)
+	{
+		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+		CovertAction.bNewAction = false;
+	}
+
+	foreach CurrentSquad(UnitRef)
+	{
+		DestroySoldierWillProject(NewGameState, UnitRef);
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+simulated protected function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
+{
+	local array<StateObjectReference> CurrentSquad;
+	local CovertActionStaffSlot CovertActionSlot;
+	local XComGameState_StaffSlot SlotState;
+	
+	foreach CovertAction.StaffSlots(CovertActionSlot)
+	{
+		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		if (SlotState.GetAssignedStaff().IsSoldier() && SlotState.GetAssignedStaff().UsesWillSystem())
+		{
+			CurrentSquad.AddItem(SlotState.GetAssignedStaff().GetReference());
+		}
+	}
+
+	return CurrentSquad;
+}
+
+simulated protected function DestroySoldierWillProject(XComGameState NewGameState, StateObjectReference UnitRef)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+
+	History = `XCOMHISTORY;
+	XComHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddXComHQ(NewGameState);
+	
+	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
+	{
+		if(WillProject.ProjectFocus == UnitRef)
+		{
+			XComHQ.Projects.RemoveItem(WillProject.GetReference());
+			NewGameState.RemoveStateObject(WillProject.ObjectID);
+		}
+	}
+}
 
 simulated function ClearUnitsFromAction()
 {
