@@ -1039,7 +1039,7 @@ simulated function PostActionDeployed()
 	local StateObjectReference UnitRef;
 
 	CovertAction = GetAction();
-	CurrentSquad = GetCovertActionSquad(CovertAction);
+	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Post Action Deployed");
 
 	if (CovertAction.bNewAction)
@@ -1050,28 +1050,13 @@ simulated function PostActionDeployed()
 
 	foreach CurrentSquad(UnitRef)
 	{
-		DestroySoldierWillProject(NewGameState, UnitRef);
-	}
-
-	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-simulated protected function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
-{
-	local array<StateObjectReference> CurrentSquad;
-	local CovertActionStaffSlot CovertActionSlot;
-	local XComGameState_StaffSlot SlotState;
-	
-	foreach CovertAction.StaffSlots(CovertActionSlot)
-	{
-		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
-		if (SlotState.GetAssignedStaff().IsSoldier() && SlotState.GetAssignedStaff().UsesWillSystem())
+		if (XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)).UsesWillSystem())
 		{
-			CurrentSquad.AddItem(SlotState.GetAssignedStaff().GetReference());
+			DestroySoldierWillProject(NewGameState, UnitRef);
 		}
 	}
 
-	return CurrentSquad;
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
 simulated protected function DestroySoldierWillProject(XComGameState NewGameState, StateObjectReference UnitRef)

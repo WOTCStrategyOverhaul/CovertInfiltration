@@ -14,6 +14,30 @@ var config int PERSONNEL_DETER;
 
 var config array<int> RANKS_DETER;
 
+// useful when squad is not in HQ
+static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
+{
+	local array<StateObjectReference> CurrentSquad;
+	local CovertActionStaffSlot CovertActionSlot;
+	local XComGameState_StaffSlot SlotState;
+	local XComGameState_Unit UnitState;
+	
+	foreach CovertAction.StaffSlots(CovertActionSlot)
+	{
+		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
+		if (SlotState.IsSlotFilled())
+		{
+			UnitState = SlotState.GetAssignedStaff();
+			if (UnitState.IsSoldier())	
+			{
+				CurrentSquad.AddItem(SlotState.GetAssignedStaff().GetReference());
+			}
+		}
+	}
+
+	return CurrentSquad;
+}
+
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
