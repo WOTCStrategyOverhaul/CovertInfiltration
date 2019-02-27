@@ -42,35 +42,46 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
 	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration, FinalInfiltration, SquadSize, MaxSize;
+	local int	TotalInfiltration, FinalInfiltration, SquadSize, MaxSize, CurrentSlot, OverloadSlot;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local float Multiplier;
+
+	XComHQ = `XCOMHQ;
 
 	MaxSize = GetRequiredStaffSlots(CovertAction);
-	MaxSize = MaxSize + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
+	MaxSize += (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
+
+	if (MaxSize < 1) 
+		return 0;
 
 	SquadSize = 0;
 	TotalInfiltration = 0;
 
 	foreach Soldiers(UnitRef)
 	{
-		if(UnitRef.ObjectID != 0) SquadSize += 1;
+		if (UnitRef.ObjectID != 0) 
+			SquadSize += 1;
 		TotalInfiltration += GetSoldierInfiltration(UnitRef);
 	}
 	
+	if (SquadSize < 1) 
+		return 0;
+
 	`LOG("SQUADSIZE:");
 	`LOG(SquadSize);
 	`LOG("THRESHOLD:");
 	`LOG(MaxSize);
-	
-	FinalInfiltration = TotalInfiltration;
 
-	if(SquadSize > MaxSize+1)
+	Multiplier = 1;
+	OverloadSlot = 0;
+
+	for (CurrentSlot = MaxSize + 1; CurrentSlot <= SquadSize; CurrentSlot++)
 	{
-		FinalInfiltration = TotalInfiltration * (default.OVERLOADED_MULT[0] + default.OVERLOADED_MULT[1] + 1);
+		Multiplier += default.OVERLOADED_MULT[OverloadSlot];
+		OverloadSlot++;
 	}
-	else if(SquadSize > MaxSize)
-	{
-		FinalInfiltration = TotalInfiltration * (default.OVERLOADED_MULT[0] + 1);
-	}
+
+	FinalInfiltration = TotalInfiltration * Multiplier;
 
 	return FinalInfiltration;
 }
@@ -280,27 +291,13 @@ static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertActio
 	local int Count, i;
 
 	Count = 0;
-	for(i = 0; i < CovertAction.StaffSlots.Length; i++)
+	for (i = 0; i < CovertAction.StaffSlots.Length; i++)
 	{
-		if(!CovertAction.StaffSlots[i].bOptional) Count++;
+		if (!CovertAction.StaffSlots[i].bOptional)
+			Count++;
 	}
 
 	return Count;
-}
-
-static function int GetSquadInfilExclusive(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
-{
-	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration;
-
-	TotalInfiltration = 0;
-
-	foreach Soldiers(UnitRef)
-	{
-		TotalInfiltration += GetSoldierInfiltration(UnitRef);
-	}
-
-	return TotalInfiltration;
 }
 
 static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
@@ -332,4 +329,9 @@ static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers
 	}
 
 	return OverloadPenalty;
+}
+
+static function int GetSquadInfilExclusive(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+{
+	return GetSquadInfiltration(Soldiers, CovertAction) - GetSquadOverloadPenalty(Soldiers, CovertAction);
 }
