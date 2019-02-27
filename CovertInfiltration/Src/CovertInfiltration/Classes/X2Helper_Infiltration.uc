@@ -11,8 +11,7 @@ class X2Helper_Infiltration extends Object config(Infiltration);
 
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
-var config float OVERLOADED_MULT_1;
-var config float OVERLOADED_MULT_2;
+var config array<float> OVERLOADED_MULT;
 
 var config array<int> RANKS_DETER;
 
@@ -40,58 +39,38 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 	return CurrentSquad;
 }
 
-static function int GetSquadInfiltration(array<StateObjectReference> Soldiers)
+static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
 	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration, FinalInfiltration, SquadSize, i;
-	
-	`LOG(" --- ");
+	local int	TotalInfiltration, FinalInfiltration, SquadSize, MaxSize;
+
+	MaxSize = GetRequiredStaffSlots(CovertAction);
+	MaxSize = MaxSize + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
 
 	SquadSize = 0;
 	TotalInfiltration = 0;
+
 	foreach Soldiers(UnitRef)
 	{
 		if(UnitRef.ObjectID != 0) SquadSize += 1;
 		TotalInfiltration += GetSoldierInfiltration(UnitRef);
 	}
 	
-	`LOG("INFILTRATION DURATION:");
-	`LOG(TotalInfiltration);
+	`LOG("SQUADSIZE:");
+	`LOG(SquadSize);
+	`LOG("THRESHOLD:");
+	`LOG(MaxSize);
 	
 	FinalInfiltration = TotalInfiltration;
 
-	if(SquadSize > 5)
+	if(SquadSize > MaxSize+1)
 	{
-		// 6 soldiers in the squad, if infil size 2 is not purchased then...
-		if(!`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2'))
-		{
-			if(!`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1'))
-			{
-				// Player has neither upgrade so combine both mults
-				FinalInfiltration = TotalInfiltration * (default.OVERLOADED_MULT_1 + default.OVERLOADED_MULT_2 - 1);
-				`LOG("Applying both Mults");
-			}
-			else
-			{
-				// Player has the first upgrade so apply mult 2 only
-				FinalInfiltration = TotalInfiltration * default.OVERLOADED_MULT_2;
-				`LOG("Applying Mult2");
-			}
-		}
+		FinalInfiltration = TotalInfiltration * (default.OVERLOADED_MULT[0] + default.OVERLOADED_MULT[1] + 1);
 	}
-	else if(SquadSize > 4)
+	else if(SquadSize > MaxSize)
 	{
-		// 5 soldiers in the squad, if infil size 1 is not purchased then...
-		if(!`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1'))
-		{
-			// Player doesn't have the upgrade so apply mult 1
-			FinalInfiltration = TotalInfiltration * default.OVERLOADED_MULT_1;
-			`LOG("Applying Mult1");
-		}
+		FinalInfiltration = TotalInfiltration * (default.OVERLOADED_MULT[0] + 1);
 	}
-
-	`LOG(FinalInfiltration);
-	`LOG(" --- ");
 
 	return FinalInfiltration;
 }
@@ -294,4 +273,63 @@ static function RecalculateActionRisks(StateObjectReference ActionRef)
 	ActionState.RecalculateRiskChanceToOccurModifiers();
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertAction)
+{
+	local int Count, i;
+
+	Count = 0;
+	for(i = 0; i < CovertAction.StaffSlots.Length; i++)
+	{
+		if(!CovertAction.StaffSlots[i].bOptional) Count++;
+	}
+
+	return Count;
+}
+
+static function int GetSquadInfilExclusive(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+{
+	local StateObjectReference	UnitRef;
+	local int	TotalInfiltration;
+
+	TotalInfiltration = 0;
+
+	foreach Soldiers(UnitRef)
+	{
+		TotalInfiltration += GetSoldierInfiltration(UnitRef);
+	}
+
+	return TotalInfiltration;
+}
+
+static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+{
+	local StateObjectReference	UnitRef;
+	local int	TotalInfiltration, OverloadPenalty, SquadSize, MaxSize;
+
+	MaxSize = GetRequiredStaffSlots(CovertAction);
+	MaxSize = MaxSize + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
+
+	SquadSize = 0;
+	TotalInfiltration = 0;
+
+	foreach Soldiers(UnitRef)
+	{
+		if(UnitRef.ObjectID != 0) SquadSize += 1;
+		TotalInfiltration += GetSoldierInfiltration(UnitRef);
+	}
+	
+	OverloadPenalty = TotalInfiltration;
+
+	if(SquadSize > MaxSize+1)
+	{
+		OverloadPenalty = TotalInfiltration * (default.OVERLOADED_MULT[0] + default.OVERLOADED_MULT[1]);
+	}
+	else if(SquadSize > MaxSize)
+	{
+		OverloadPenalty = TotalInfiltration * (default.OVERLOADED_MULT[0]);
+	}
+
+	return OverloadPenalty;
 }

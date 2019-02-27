@@ -42,7 +42,7 @@ simulated protected function PostScreenInit()
 	ActionInfo.UpdateData(GetAction());
 	
 	InfoDisplay = SquadSelect.Spawn(class'UISS_InfiltrationPanel', SquadSelect);
-	InfoDisplay.InitRisks();
+	InfoDisplay.InitRisks(GetAction());
 
 	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
 	CostSlots.PostAnySlotStateChanged = UpdateUIElements;
@@ -81,9 +81,6 @@ simulated protected function BuildConfiguration()
 		// have explicit rank names set up, it'll use the standard code path of falling back to the default ranks.
 		if (StaffSlotState.RequiredMinRank > 0) Slots[i].Notes.AddItem(CreateRankNote(StaffSlotState.RequiredMinRank, StaffSlotState.RequiredClass));
 		
-		if (i == 4 && !`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1')) Slots[i].Notes.AddItem(CreatePenaltyNote());
-		if (i == 5 && !`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2')) Slots[i].Notes.AddItem(CreatePenaltyNote());
-
 		// Change the slot type if needed
 		if (StaffSlotState.IsEngineerSlot())
 		{
@@ -320,7 +317,7 @@ simulated protected function ApplyInfiltrationModifier(XComGameState_Headquarter
 {
 	local int SquadDuration;
 
-	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CovertAction);
 	
 	`log("Applying SquadInfiltration:" @ SquadDuration @ "to duration:" @ CovertAction.HoursToComplete,, 'CI');
 	CovertAction.HoursToComplete += SquadDuration;

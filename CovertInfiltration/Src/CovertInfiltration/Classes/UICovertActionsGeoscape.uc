@@ -1107,7 +1107,7 @@ simulated protected function UndoInfiltrationModifier(XComGameState_Headquarters
 {
 	local int SquadDuration;
 
-	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CovertAction);
 	
 	`log("Removing SquadInfiltration:" @ SquadDuration @ "from duration:" @ CovertAction.HoursToComplete);
 	CovertAction.HoursToComplete -= SquadDuration;

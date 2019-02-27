@@ -1,7 +1,5 @@
 class X2StrategyElement_InfiltrationUnlocks extends X2StrategyElement config(Infiltration);
 
-var config int INFILTRATION_1_COST; // 50
-var config int INFILTRATION_2_COST; // 75
 var config int INFILTRATION_1_RANK; // 3
 var config int INFILTRATION_2_RANK; // 5
 
@@ -31,7 +29,7 @@ static function X2SoldierUnlockTemplate CreateInfilSize1Unlock()
 
 	// Cost
 	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = default.INFILTRATION_1_COST;
+	Resources.Quantity = 50;
 	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	return Template;
@@ -50,18 +48,11 @@ static function X2SoldierUnlockTemplate CreateInfilSize2Unlock()
 	// Requirements
 	Template.Requirements.RequiredHighestSoldierRank = default.INFILTRATION_2_RANK;
 	Template.Requirements.bVisibleIfSoldierRankGatesNotMet = true;
-	Template.Requirements.SpecialRequirementsFn = Infiltration2UnlockFn;
 
 	// Cost
 	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = default.INFILTRATION_2_COST;
+	Resources.Quantity = 75;
 	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	return Template;
-}
-
-function bool Infiltration2UnlockFn()
-{
-	// Infil 2 requires Infil 1 to be purchased first
-	return `XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1');
 }
