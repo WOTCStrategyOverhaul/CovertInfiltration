@@ -39,53 +39,6 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 	return CurrentSquad;
 }
 
-static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
-{
-	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration, FinalInfiltration, SquadSize, MaxSize, CurrentSlot, OverloadSlot;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local float Multiplier;
-
-	XComHQ = `XCOMHQ;
-
-	MaxSize = GetRequiredStaffSlots(CovertAction);
-	MaxSize += (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
-
-	if (MaxSize < 1) 
-		return 0;
-
-	SquadSize = 0;
-	TotalInfiltration = 0;
-
-	foreach Soldiers(UnitRef)
-	{
-		if (UnitRef.ObjectID != 0) 
-			SquadSize += 1;
-		TotalInfiltration += GetSoldierInfiltration(UnitRef);
-	}
-	
-	if (SquadSize < 1) 
-		return 0;
-
-	`LOG("SQUADSIZE:");
-	`LOG(SquadSize);
-	`LOG("THRESHOLD:");
-	`LOG(MaxSize);
-
-	Multiplier = 1;
-	OverloadSlot = 0;
-
-	for (CurrentSlot = MaxSize + 1; CurrentSlot <= SquadSize; CurrentSlot++)
-	{
-		Multiplier += default.OVERLOADED_MULT[OverloadSlot];
-		OverloadSlot++;
-	}
-
-	FinalInfiltration = TotalInfiltration * Multiplier;
-
-	return FinalInfiltration;
-}
-
 static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 {
 	local XComGameStateHistory		History;
@@ -300,38 +253,75 @@ static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertActio
 	return Count;
 }
 
-static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+{
+	local int Result;
+	
+	Result = GetSquadInfilWithoutPenalty(Soldiers);
+	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, Result);
+
+	return Result;
+}
+
+static function int GetSquadInfilWithoutPenalty(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration, OverloadPenalty, SquadSize, MaxSize;
+	local int	TotalInfiltration;
 
-	MaxSize = GetRequiredStaffSlots(CovertAction);
-	MaxSize = MaxSize + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (`XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
-
-	SquadSize = 0;
 	TotalInfiltration = 0;
 
 	foreach Soldiers(UnitRef)
 	{
-		if(UnitRef.ObjectID != 0) SquadSize += 1;
 		TotalInfiltration += GetSoldierInfiltration(UnitRef);
 	}
-	
-	OverloadPenalty = TotalInfiltration;
 
-	if(SquadSize > MaxSize+1)
-	{
-		OverloadPenalty = TotalInfiltration * (default.OVERLOADED_MULT[0] + default.OVERLOADED_MULT[1]);
-	}
-	else if(SquadSize > MaxSize)
-	{
-		OverloadPenalty = TotalInfiltration * (default.OVERLOADED_MULT[0]);
-	}
-
-	return OverloadPenalty;
+	return TotalInfiltration;
 }
 
-static function int GetSquadInfilExclusive(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+static function int GetSquadSize(array<StateObjectReference> Soldiers)
 {
-	return GetSquadInfiltration(Soldiers, CovertAction) - GetSquadOverloadPenalty(Soldiers, CovertAction);
+	local StateObjectReference	UnitRef;
+	local int	Size;
+
+	Size = 0;
+
+	foreach Soldiers(UnitRef)
+	{
+		if (UnitRef.ObjectID > 0)
+		{
+			Size++;
+		}
+	}
+
+	return Size;
+}
+
+static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction, int TotalInfiltration)
+{
+	local int	OverloadPenalty, SquadSize, MaxSize, CurrentSlot, OverloadSlot;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local float Multiplier;
+
+	XComHQ = `XCOMHQ;
+
+	MaxSize = GetRequiredStaffSlots(CovertAction);
+	MaxSize += (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
+	
+	SquadSize = GetSquadSize(Soldiers);
+
+	if (MaxSize < 1 || SquadSize < 1) 
+		return 0;
+
+	Multiplier = 0.0;
+	OverloadSlot = 0;
+
+	for (CurrentSlot = MaxSize + 1; CurrentSlot <= SquadSize; CurrentSlot++)
+	{
+		Multiplier += default.OVERLOADED_MULT[OverloadSlot];
+		OverloadSlot++;
+	}
+
+	OverloadPenalty = TotalInfiltration * Multiplier;
+
+	return OverloadPenalty;
 }

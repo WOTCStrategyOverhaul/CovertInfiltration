@@ -32,7 +32,6 @@ var localized string strPlusDaysAndHours;
 
 simulated function InitRisks(XComGameState_CovertAction Action, optional int InitWidth = 375, optional int InitHeight = 450, optional int InitX = -375, optional int InitY = 0)
 {
-	local bool Infil;
 	local string str2, str3;
 
 	InitPanel('UISS_InfiltrationPanel');
@@ -80,7 +79,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 	BaseDuration = CurrentAction.HoursToComplete;
 
-	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CurrentAction);
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfilWithoutPenalty(XComHQ.Squad);
 
 	TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(BaseDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
@@ -90,8 +89,8 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	{
 		RisksTitle.hide();
 		
-		SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfilExclusive(XComHQ.Squad, CurrentAction);
-		OverloadPenalty = class'X2Helper_Infiltration'.static.GetSquadOverloadPenalty(XComHQ.Squad, CurrentAction);
+		SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfilWithoutPenalty(XComHQ.Squad);
+		OverloadPenalty = class'X2Helper_Infiltration'.static.GetSquadOverloadPenalty(XComHQ.Squad, CurrentAction, SquadDuration);
 
 		TotalDurationDisplay.SetInfoValue(GetDaysAndHoursString(OverloadPenalty + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 		BaseDurationDisplay.SetInfoValue(GetDaysAndHoursString(SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
