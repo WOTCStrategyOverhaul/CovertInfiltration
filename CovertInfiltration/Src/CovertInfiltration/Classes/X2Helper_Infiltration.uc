@@ -239,3 +239,15 @@ static function bool ReturnFalse()
 {
 	return false;
 }
+
+static function RecalculateActionRisks(StateObjectReference ActionRef)
+{
+	local XComGameState_CovertAction ActionState;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: recalculate action risk chances");
+	ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+	ActionState.RecalculateRiskChanceToOccurModifiers();
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
