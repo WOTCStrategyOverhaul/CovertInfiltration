@@ -241,7 +241,7 @@ static function RecalculateActionRisks(StateObjectReference ActionRef)
 
 static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertAction)
 {
-	local int Count, i;
+	local int	Count, i;
 
 	Count = 0;
 	for (i = 0; i < CovertAction.StaffSlots.Length; i++)
@@ -255,7 +255,7 @@ static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertActio
 
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
-	local int Result;
+	local int	Result;
 	
 	Result = GetSquadInfilWithoutPenalty(Soldiers);
 	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, Result);
@@ -266,7 +266,7 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, X
 static function int GetSquadInfilWithoutPenalty(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
-	local int	TotalInfiltration;
+	local int					TotalInfiltration;
 
 	TotalInfiltration = 0;
 
@@ -281,7 +281,7 @@ static function int GetSquadInfilWithoutPenalty(array<StateObjectReference> Sold
 static function int GetSquadSize(array<StateObjectReference> Soldiers)
 {
 	local StateObjectReference	UnitRef;
-	local int	Size;
+	local int					Size;
 
 	Size = 0;
 
@@ -298,9 +298,9 @@ static function int GetSquadSize(array<StateObjectReference> Soldiers)
 
 static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction, int TotalInfiltration)
 {
-	local int	SquadSize, MaxSize, CurrentSlot, OverloadSlot;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local float Multiplier;
+	local int								SquadSize, MaxSize, CurrentSlot, OverloadSlot;
+	local XComGameState_HeadquartersXCom	XComHQ;
+	local float								Multiplier;
 
 	XComHQ = `XCOMHQ;
 
