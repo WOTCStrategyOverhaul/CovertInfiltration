@@ -298,7 +298,7 @@ static function int GetSquadSize(array<StateObjectReference> Soldiers)
 
 static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction, int TotalInfiltration)
 {
-	local int	OverloadPenalty, SquadSize, MaxSize, CurrentSlot, OverloadSlot;
+	local int	SquadSize, MaxSize, CurrentSlot, OverloadSlot;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local float Multiplier;
 
@@ -321,7 +321,5 @@ static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers
 		OverloadSlot++;
 	}
 
-	OverloadPenalty = TotalInfiltration * Multiplier;
-
-	return OverloadPenalty;
+	return TotalInfiltration * Multiplier;
 }
