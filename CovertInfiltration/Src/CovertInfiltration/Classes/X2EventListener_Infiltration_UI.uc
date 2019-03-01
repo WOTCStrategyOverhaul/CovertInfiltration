@@ -97,7 +97,7 @@ static protected function EventListenerReturn CovertAction_ActionSelectedOverrid
 	// Open our custom screen
 	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(Action.GetReference());
 
-	// Prevent default bahaviour. TODO: later CHL commit
+	// Prevent default bahaviour
 	Tuple.Data[0].b = true;
 	
 	// Stop other listeners since we opened a screen already

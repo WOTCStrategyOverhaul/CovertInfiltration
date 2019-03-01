@@ -27,7 +27,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted, ELD_Immediate);
 	Template.AddCHEvent('AllowDarkEventRisk', AllowDarkEventRisk, ELD_Immediate);
 	Template.AddCHEvent('CovertActionRisk_AlterChanceModifier', AlterRiskChanceModifier, ELD_Immediate);
-	Template.AddCHEvent('CovertAction_ShouldGiveRewards', ShouldGiveActionRewards, ELD_Immediate); // TODO: Change name
+	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
@@ -161,7 +161,7 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn ShouldGiveActionRewards(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static protected function EventListenerReturn PreventActionRewards(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_CovertAction Action;
 	local XComLWTuple Tuple;
@@ -169,12 +169,12 @@ static protected function EventListenerReturn ShouldGiveActionRewards(Object Eve
 	Action = XComGameState_CovertAction(EventSource);
 	Tuple = XComLWTuple(EventData);
 	
-	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_ShouldGiveRewards') return ELR_NoInterrupt;
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_PreventGiveRewards') return ELR_NoInterrupt;
 
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
 	{
 		// The reward is the mission, you greedy
-		Tuple.Data[0].b = true; // TODO
+		Tuple.Data[0].b = true;
 	}
 
 	return ELR_NoInterrupt;

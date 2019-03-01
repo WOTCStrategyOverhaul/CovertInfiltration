@@ -166,6 +166,7 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 
 	EmptySlot(NewGameState, SlotRef, NewSlotState, NewUnitState);
 
+	// TODO: This check will break when overinfiltration is implemented
 	if (NewSlotState.GetCovertAction().bCompleted)
 	{
 		// This is an inflitration that is ready to go
