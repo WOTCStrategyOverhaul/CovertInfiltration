@@ -29,7 +29,11 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Geoscape');
-	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', GeoscapeResistanceButtonVisible, ELD_Immediate); // Relies on CHL #365, will be avaliable in v1.17
+	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', GeoscapeResistanceButtonVisible, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_CanInteract', CovertAction_CanInteract, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_ShouldBeVisible', CovertAction_ShouldBeVisible, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_ActionSelectedOverride', CovertAction_ActionSelectedOverride, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -47,6 +51,92 @@ static protected function EventListenerReturn GeoscapeResistanceButtonVisible(Ob
 	Tuple.Data[0].b = FacilityState != none && !Tuple.Data[1].b;
 	
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertAction_CanInteract(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_CanInteract') return ELR_NoInterrupt;
+
+	// All CAs can be interacted with
+	Tuple.Data[0].b = true;
+	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertAction_ShouldBeVisible(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_ShouldBeVisible') return ELR_NoInterrupt;
+
+	Tuple.Data[0].b = class'UIUtilities_Infiltration'.static.ShouldShowCovertAction(Action);
+	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertAction_ActionSelectedOverride(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_ActionSelectedOverride') return ELR_NoInterrupt;
+
+	// Open our custom screen
+	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(Action.GetReference());
+
+	// Prevent default bahaviour. TODO: later CHL commit
+	Tuple.Data[0].b = true;
+	
+	// Stop other listeners since we opened a screen already
+	return ELR_InterruptListeners;
+}
+
+static protected function EventListenerReturn CovertAction_ModifyNarrativeParamTag(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XGParamTag Tag;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tag = XGParamTag(EventData);
+	
+	if (Action == none || Tag == none) return ELR_NoInterrupt;
+
+	// There is probably a nicer way to this check...
+	if (Action.GetMyTemplate().Rewards[0] == 'ActionReward_P2DarkEvent')
+	{
+		Tag.StrValue4 = GetDarkEventString(Action);
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function string GetDarkEventString(XComGameState_CovertAction Action)
+{
+	local XComGameState_Reward RewardState;
+	local XComGameState_DarkEvent DarkEventState;
+
+	RewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	if (DarkEventState == none)
+	{
+		return "<Missing DE>";
+	}
+
+	return DarkEventState.GetMyTemplate().DisplayName;
 }
 
 ///////////////////
