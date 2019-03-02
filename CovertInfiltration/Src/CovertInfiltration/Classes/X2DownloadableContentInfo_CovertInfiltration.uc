@@ -336,3 +336,19 @@ exec function PrintP1SpawnerDebugInfo()
 	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ConsoleCommand("UnSuppress CI_P1Spawner");
 	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
 }
+
+exec function SpawnNextP1 ()
+{
+	local XComGameState_PhaseOneActionsSpawner Spawner;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnNextP1");
+	Spawner = class'XComGameState_PhaseOneActionsSpawner'.static.GetSpawner();
+	Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.ModifyStateObject(class'XComGameState_PhaseOneActionsSpawner', Spawner.ObjectID));
+
+	Spawner.SpawnAction(NewGameState);
+	Spawner.ResetProgress();
+	Spawner.SetNextSpawnAt();
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}

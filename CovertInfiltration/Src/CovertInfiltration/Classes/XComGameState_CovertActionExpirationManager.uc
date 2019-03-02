@@ -109,13 +109,14 @@ function static bool GetActionExpirationInfo(StateObjectReference ActionRef, opt
 	return false;
 }
 
-function AddActionExpirationInfo(StateObjectReference ActionRef, TDateTime Expiration)
+function AddActionExpirationInfo(StateObjectReference ActionRef, TDateTime Expiration, optional bool bBlockMonthlyCleanup = true)
 {
 	local ActionExpirationInfo ExpirationInfo;
 
 	ExpirationInfo.ActionRef = ActionRef;
 	ExpirationInfo.Expiration = Expiration;
 	ExpirationInfo.OriginTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	ExpirationInfo.bBlockMonthlyCleanup = bBlockMonthlyCleanup;
 
 	ActionExpirationInfoList.AddItem(ExpirationInfo);
 }

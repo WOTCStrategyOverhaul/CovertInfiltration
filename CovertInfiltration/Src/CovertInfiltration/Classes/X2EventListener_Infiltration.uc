@@ -29,6 +29,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertActionRisk_AlterChanceModifier', AlterRiskChanceModifier, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
+	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -194,6 +195,28 @@ static protected function EventListenerReturn ShouldEmptySlotsOnActionRemoval(Ob
 	{
 		// do not kick people from finished infiltration - we will do it right before launching the mission
 		Tuple.Data[0].b = false;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn ShouldCleanupCovertAction(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local ActionExpirationInfo ExpirationInfo;
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'ShouldCleanupCovertAction') return ELR_NoInterrupt;
+
+	Action = XComGameState_CovertAction(Tuple.Data[0].o);
+
+	if (class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(Action.GetReference(), ExpirationInfo))
+	{
+		if (ExpirationInfo.bBlockMonthlyCleanup)
+		{
+			Tuple.Data[1].b = false;
+		}
 	}
 
 	return ELR_NoInterrupt;
