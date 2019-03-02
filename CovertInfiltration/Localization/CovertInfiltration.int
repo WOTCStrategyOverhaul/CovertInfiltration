@@ -27,6 +27,10 @@ strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign orders
 
+[CI_UIStrategyMapItem_CovertAction]
+strProgress=Progress
+strCovertAction=Covert Action
+
 [UIListener_ModConfigMenu]
 PageTitle="Covert Infiltration"
 GroupTitle="Various Settings"
