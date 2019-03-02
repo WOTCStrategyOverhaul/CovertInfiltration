@@ -251,6 +251,8 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 		}
 	}
 
+	class'X2Helper_Infiltration'.static.RecalculateActionRisks(GetAction().GetReference());
+
 	if (bCreatedUIElements) UpdateUIElements();
 
 	return ELR_NoInterrupt;
@@ -295,24 +297,9 @@ simulated protected function ApplyCovertActionModifiers()
 	CovertAction = GetAction();
 	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
 
-	ApplyDeterrenceModifier(XComHQ, CovertAction);
 	ApplyInfiltrationModifier(XComHQ, CovertAction);
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-simulated protected function ApplyDeterrenceModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
-{
-	local int SquadDeterrence, idx;
-
-	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
-
-	`log("Applying SquadDeterrence: " @ SquadDeterrence @ " to CA risks",, 'CI');
-	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
-	{
-		CovertAction.Risks[idx].ChanceToOccurModifier -= SquadDeterrence;
-		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
-	}
 }
 
 simulated protected function ApplyInfiltrationModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
@@ -337,7 +324,7 @@ simulated protected function SubscribeToEvents()
 	EventManager.RegisterForEvent(ThisObj, 'rjSquadSelect_UpdateData', OnSquadSelectUpdate);
 }
 
-simulated protected function UnsubscribeFromAllEvents()
+simulated function UnsubscribeFromAllEvents()
 {
     local Object ThisObj;
 

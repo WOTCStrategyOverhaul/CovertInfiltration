@@ -23,8 +23,12 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Strategy');
-	Template.AddCHEvent('NumCovertActionsToAdd', NumCovertActionToAdd, ELD_Immediate); // Relies on CHL #373, will be avaliable in v1.17
-	Template.AddCHEvent('CovertActionCompleted', UpdateReturningSoldiers, ELD_Immediate);
+	Template.AddCHEvent('NumCovertActionsToAdd', NumCovertActionToAdd, ELD_Immediate);
+	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted, ELD_Immediate);
+	Template.AddCHEvent('AllowDarkEventRisk', AllowDarkEventRisk, ELD_Immediate);
+	Template.AddCHEvent('CovertActionRisk_AlterChanceModifier', AlterRiskChanceModifier, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -46,29 +50,47 @@ static protected function EventListenerReturn NumCovertActionToAdd(Object EventD
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn UpdateReturningSoldiers(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static protected function EventListenerReturn CovertActionCompleted(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_CovertAction CovertAction;
 
 	CovertAction = XComGameState_CovertAction(EventSource);
 
-	if (CovertAction == none || class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	if (CovertAction == none)
 	{
 		return ELR_NoInterrupt;
 	}
 
-	UpdateSquadWill(CovertAction, GameState);
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		`log(CovertAction.GetMyTemplateName() @ "finished, spawning infiltration ",, 'CI');
+
+		MissionState = XComGameState_MissionSiteInfiltration(GameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
+		MissionState.SetupFromAction(GameState, CovertAction);
+
+		// Do not show the CA report, the mission will show its screen instead
+		CovertAction.bNeedsActionCompletePopup = false;
+
+		// Remove the CA, the mission takes over from here
+		CovertAction.RemoveEntity(GameState);
+	}
+	else
+	{
+		`log(CovertAction.GetMyTemplateName() @ "finished, it was not an infiltration - applying fatigue",, 'CI');
+
+		ApplyPostActionWillLoss(CovertAction, GameState);
+	}
 	
 	return ELR_NoInterrupt;
 }
 
-static function UpdateSquadWill(XComGameState_CovertAction CovertAction, XComGameState NewGameState)
+static protected function ApplyPostActionWillLoss(XComGameState_CovertAction CovertAction, XComGameState NewGameState)
 {
 	local CovertActionStaffSlot CovertActionSlot;
 	local XComGameState_StaffSlot SlotState;
 	local XComGameState_Unit UnitState;
 	
-
 	foreach CovertAction.StaffSlots(CovertActionSlot)
 	{
 		SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(CovertActionSlot.StaffSlotRef.ObjectID));
@@ -85,7 +107,7 @@ static function UpdateSquadWill(XComGameState_CovertAction CovertAction, XComGam
 	}
 }
 
-static function int GetWillLoss(XComGameState_Unit UnitState)
+static protected function int GetWillLoss(XComGameState_Unit UnitState)
 {
 	local int WillToLose, LowestWill;
 
@@ -100,6 +122,81 @@ static function int GetWillLoss(XComGameState_Unit UnitState)
 	}
 
 	return UnitState.GetCurrentStat(eStat_Will) - WillToLose;
+}
+
+static protected function EventListenerReturn AllowDarkEventRisk(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+	
+	if (Action == none || Tuple == none || Tuple.Id != 'AllowDarkEventRisk') return ELR_NoInterrupt;
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	{
+		// Infiltrations cannot get DE risks (at least for now)
+		Tuple.Data[1].b = false;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn AlterRiskChanceModifier(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local array<StateObjectReference> ActionSquad;
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+	
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionRisk_AlterChanceModifier') return ELR_NoInterrupt;
+
+	ActionSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
+	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadDeterrence(ActionSquad);
+	`log("Risk modifier for" @ Tuple.Data[0].n @ "is" @ Tuple.Data[4].i $ ", base chance is" @ Tuple.Data[1].i,, 'CI');
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn PreventActionRewards(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+	
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_PreventGiveRewards') return ELR_NoInterrupt;
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	{
+		// The reward is the mission, you greedy
+		Tuple.Data[0].b = true;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn ShouldEmptySlotsOnActionRemoval(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+	
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_RemoveEntity_ShouldEmptySlots') return ELR_NoInterrupt;
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	{
+		// do not kick people from finished infiltration - we will do it right before launching the mission
+		Tuple.Data[0].b = false;
+	}
+
+	return ELR_NoInterrupt;
 }
 
 ////////////////

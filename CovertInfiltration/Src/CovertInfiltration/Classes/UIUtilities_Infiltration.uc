@@ -68,19 +68,16 @@ static function string MakeFirstCharCapOnly(string strValue)
 	return Caps(Left(strValue, 1)) $ Locs(Right(strValue, Len(strValue) - 1));
 }
 
-static function array<string> GetRisksStringsFor(XComGameState_CovertAction CovertAction, bool ApplySquadDeterrence = false)
+static function array<string> GetRisksStringsFor(XComGameState_CovertAction CovertAction)
 {
 	local X2StrategyElementTemplateManager StratMgr;
-	local XComGameState_HeadquartersXCom XComHQ;
 	local array<string> RiskStrings;
 	local array<CovertActionRisk> Risks;
 	local CovertActionRisk Risk;
 	local X2CovertActionRiskTemplate RiskTemplate;
-	local int SquadDeterrence, RiskChance;
+	local int RiskChance;
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	SquadDeterrence = ApplySquadDeterrence ? class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad) : 0;
 
 	Risks = CovertAction.Risks;
 	Risks.Sort(SortRisksByDifficulty);
@@ -88,7 +85,7 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 	foreach Risks(Risk)
 	{
 		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
-		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier - SquadDeterrence;
+		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
 
 		if (RiskChance <= 0 || RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
 		{

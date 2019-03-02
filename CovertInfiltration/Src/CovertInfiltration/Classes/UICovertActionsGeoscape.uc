@@ -953,6 +953,7 @@ simulated function OnReceiveFocus()
 	super.OnReceiveFocus();
 	
 	// Came back from UISquadSelect or the confirmation alert
+	CleanupSSManager();
 	MakeMapProperlyShow();
 	FocusCameraOnCurrentAction(true);
 	
@@ -962,9 +963,9 @@ simulated function OnReceiveFocus()
 		if (GetAction().bStarted)
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
-			SSManager = none;
-
 			PostActionDeployed();
+
+			// Need to save ActionRef before updating list as it will reset the selected action
 			LaunchedActionRef = ActionRef;
 			UpdateList();
 			AttemptSelectAction(LaunchedActionRef);
@@ -984,6 +985,9 @@ simulated function OnReceiveFocus()
 	else
 	{
 		ClearUnitsFromAction();
+
+		// Need to do this after kicking units as otherwise player will see reduced risks next time he opens this screen
+		class'X2Helper_Infiltration'.static.RecalculateActionRisks(ActionRef);
 	}
 }
 
@@ -1025,6 +1029,15 @@ simulated function OpenLoadoutForCurrentAction(optional bool SkipIntro = false)
 simulated function MakeMapProperlyShow()
 {
 	GetHQPres().GetCamera().ForceEarthViewImmediately(false);
+}
+
+simulated protected function CleanupSSManager()
+{
+	if (SSManager != none)
+	{
+		SSManager.UnsubscribeFromAllEvents();
+		SSManager = none;
+	}
 }
 
 //////////////////////////////
@@ -1085,24 +1098,9 @@ simulated protected function UndoCovertActionModifiers()
 	CovertAction = GetAction();
 	CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
 
-	UndoDeterrenceModifier(XComHQ, CovertAction);
 	UndoInfiltrationModifier(XComHQ, CovertAction);
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
-
-simulated protected function UndoDeterrenceModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)
-{
-	local int SquadDeterrence, idx;
-
-	SquadDeterrence = class'X2Helper_Infiltration'.static.GetSquadDeterrence(XComHQ.Squad);
-
-	`log("Removing SquadDeterrence: " @ SquadDeterrence @ " from CA risks",, 'CI');
-	for (idx = 0; idx < CovertAction.Risks.Length; idx++)
-	{
-		CovertAction.Risks[idx].ChanceToOccurModifier += SquadDeterrence;
-		`log("Risk modifier for" @ CovertAction.Risks[idx].RiskTemplateName @ "is" @ CovertAction.Risks[idx].ChanceToOccurModifier,, 'CI');
-	}
 }
 
 simulated protected function UndoInfiltrationModifier(XComGameState_HeadquartersXCom XComHQ, XComGameState_CovertAction CovertAction)

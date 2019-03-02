@@ -49,19 +49,6 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 	}
 }
 
-// TODO: Is this needed after the staff slot change?
-function SetSoldiersAsOnAction(XComGameState NewGameState)
-{
-	local StateObjectReference SoldierRef;
-	local XComGameState_Unit Soldier;
-
-	foreach SoldiersOnMission(SoldierRef)
-	{
-		Soldier = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SoldierRef.ObjectID));
-		Soldier.SetStatus(eStatus_CovertAction);
-	}
-}
-
 function SelectSquad()
 {
 	local XComGameStateHistory History;

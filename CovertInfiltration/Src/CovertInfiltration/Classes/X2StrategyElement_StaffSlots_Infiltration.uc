@@ -162,11 +162,14 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 {
 	local XComGameState_Unit NewUnitState;
 	local XComGameState_StaffSlot NewSlotState;
-	local XComGameState_CovertAction NewActionState;
+	local XComGameState_CovertAction ActionState;
 
 	EmptySlot(NewGameState, SlotRef, NewSlotState, NewUnitState);
 
-	if (NewSlotState.GetCovertAction().bCompleted)
+	ActionState = NewSlotState.GetCovertAction();
+
+	// The none check is required for cases when history was compressed after the action was deleted
+	if (ActionState == none || ActionState.bCompleted)
 	{
 		// This is an inflitration that is ready to go
 		NewUnitState.SetStatus(eStatus_Active);
@@ -203,7 +206,7 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 		}
 	}
 
-	NewActionState = GetNewCovertActionState(NewGameState, NewSlotState);
-	NewActionState.UpdateNegatedRisks(NewGameState);
-	NewActionState.UpdateDurationForBondmates(NewGameState);
+	ActionState = GetNewCovertActionState(NewGameState, NewSlotState);
+	ActionState.UpdateNegatedRisks(NewGameState);
+	ActionState.UpdateDurationForBondmates(NewGameState);
 }
