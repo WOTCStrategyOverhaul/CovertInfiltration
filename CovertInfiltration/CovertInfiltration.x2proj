@@ -170,9 +170,6 @@
     <Content Include="Src\CovertInfiltration\Classes\UIUtilities_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\CI_XComGameState_CovertAction.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape.uc">
       <SubType>Content</SubType>
     </Content>
