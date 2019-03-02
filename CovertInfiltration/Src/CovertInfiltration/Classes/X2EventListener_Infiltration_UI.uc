@@ -340,6 +340,12 @@ static protected function EventListenerReturn StrategyPolicyInit(Object EventDat
 	StrategyPolicy = UIStrategyPolicy(EventSource);
 	if (StrategyPolicy == none) return ELR_NoInterrupt;
 
+	// Pre-first change - use smooth camera transition instead of instant jump from commander's quaters
+	if (StrategyPolicy.Movie.Stack.Screens[1].IsA(class'UIFacility_CIC'.Name))
+	{
+		StrategyPolicy.bInstantInterp = false;
+	}
+
 	// First and main change - redirect the camera. This cannot be done in UISL as there will be a frame of camera jump
 	class'UIUtilities_Infiltration'.static.CamRingView(StrategyPolicy.bInstantInterp ? float(0) : `HQINTERPTIME);
 
