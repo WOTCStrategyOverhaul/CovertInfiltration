@@ -16,6 +16,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateEventQueueListeners());
 	Templates.AddItem(CreateArmoryListeners());
 	Templates.AddItem(CreateSquadSelectListeners());
+	Templates.AddItem(CreateStrategyPolicyListeners());
 
 	return Templates;
 }
@@ -161,8 +162,8 @@ static protected function EventListenerReturn ShortcutsResistanceButtonVisible(O
 	Tuple = XComLWTuple(EventData);
 	if (Tuple == none || Tuple.Id != 'UIAvengerShortcuts_ShowCQResistanceOrders') return ELR_NoInterrupt;
 
-	// NEVAH!!!
-	Tuple.Data[0].b = false;
+	// Only when the Ring is built
+	Tuple.Data[0].b = `XCOMHQ.GetFacilityByName('ResistanceRing') != none;
 	
 	return ELR_NoInterrupt;
 }
@@ -311,5 +312,66 @@ static protected function EventListenerReturn SSNavHelpUpdate(Object EventData, 
 		class'UIUtilities_Infiltration'.default.strStripUpgradesTooltip
 	);
 
+	return ELR_NoInterrupt;
+}
+
+//////////////////////////
+/// UI Strategy Policy ///
+//////////////////////////
+
+static function CHEventListenerTemplate CreateStrategyPolicyListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_StrategyPolicy');
+	Template.AddCHEvent('UIStrategyPolicy_ScreenInit', StrategyPolicyInit, ELD_Immediate);
+	Template.AddCHEvent('UIStrategyPolicy_ShowCovertActionsOnClose', StrategyPolicy_ShowCovertActionsOnClose, ELD_Immediate);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn StrategyPolicyInit(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo Info;
+	local UIStrategyPolicy StrategyPolicy;
+	local XComGameState NewGameState;
+
+	StrategyPolicy = UIStrategyPolicy(EventSource);
+	if (StrategyPolicy == none) return ELR_NoInterrupt;
+
+	// First and main change - redirect the camera. This cannot be done in UISL as there will be a frame of camera jump
+	class'UIUtilities_Infiltration'.static.CamRingView(StrategyPolicy.bInstantInterp ? float(0) : `HQINTERPTIME);
+
+	// Second change - allow editing cards if did not assign before. This can be done in UISL but why have so many places?
+	if (!StrategyPolicy.bResistanceReport && !class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment)
+	{
+		StrategyPolicy.bResistanceReport = true;
+	}
+
+	// Last change: set bCompletedFirstOrdersAssignment to true. Cannot be inside previous if block as player may build the ring
+	// and then wait until supply drop to assign orders. Can also be in UISL
+	if (!class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Completing first order assignment");
+		
+		Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+		Info = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', Info.ObjectID));
+		Info.bCompletedFirstOrdersAssignment = true;
+		
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+}
+
+static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOnClose(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'UIStrategyPolicy_ShowCovertActionsOnClose') return ELR_NoInterrupt;
+
+	// Never show actions popup after UIStrategyPolicy
+	Tuple.Data[0].b = false;
+	
 	return ELR_NoInterrupt;
 }
