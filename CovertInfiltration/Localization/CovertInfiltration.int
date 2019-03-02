@@ -15,17 +15,19 @@ strRisksHeader=Risks
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
+strSlotPenaltyNote="Overload Penalty"
 strSlotRequiredPrefix="Required:"
 
 [UISS_InfiltrationPanel]
 strTotalDurationTitle="TOTAL DURATION:"
 strBaseDurationTitle="BASE DURATION:"
 strSquadDurationTitle="INFILTRATION MODIFIER:"
+strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
 [UIFacility_ResitanceRing]
-strAssingOrdersOverlay=Assign orders
+strAssingOrdersOverlay=Assign Orders
 
 [UIListener_ModConfigMenu]
 PageTitle="Covert Infiltration"

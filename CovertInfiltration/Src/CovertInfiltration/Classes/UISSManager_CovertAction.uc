@@ -20,6 +20,7 @@ var protected UISS_InfiltrationPanel InfoDisplay;
 var protected UISS_CostSlotsContainer CostSlots;
 
 var localized string strSlotOptionalNote;
+var localized string strSlotPenaltyNote;
 var localized string strSlotRequiredPrefix;
 
 simulated function OpenSquadSelect()
@@ -41,7 +42,7 @@ simulated protected function PostScreenInit()
 	ActionInfo.UpdateData(GetAction());
 	
 	InfoDisplay = SquadSelect.Spawn(class'UISS_InfiltrationPanel', SquadSelect);
-	InfoDisplay.InitRisks();
+	InfoDisplay.InitRisks(GetAction());
 
 	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
 	CostSlots.PostAnySlotStateChanged = UpdateUIElements;
@@ -80,7 +81,6 @@ simulated protected function BuildConfiguration()
 		// have explicit rank names set up, it'll use the standard code path of falling back to the default ranks.
 		if (StaffSlotState.RequiredMinRank > 0) Slots[i].Notes.AddItem(CreateRankNote(StaffSlotState.RequiredMinRank, StaffSlotState.RequiredClass));
 		
-
 		// Change the slot type if needed
 		if (StaffSlotState.IsEngineerSlot())
 		{
@@ -155,6 +155,17 @@ static function SSAAT_SlotNote CreateOptionalNote()
 	Note.Text = default.strSlotOptionalNote; // The localized text reads "OPTIONAL:"
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreatePenaltyNote()
+{
+	local SSAAT_SlotNote Note;
+	
+	Note.Text = default.strSlotPenaltyNote;
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.BAD_HTML_COLOR;
 
 	return Note;
 }
@@ -306,7 +317,7 @@ simulated protected function ApplyInfiltrationModifier(XComGameState_Headquarter
 {
 	local int SquadDuration;
 
-	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad);
+	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CovertAction);
 	
 	`log("Applying SquadInfiltration:" @ SquadDuration @ "to duration:" @ CovertAction.HoursToComplete,, 'CI');
 	CovertAction.HoursToComplete += SquadDuration;
