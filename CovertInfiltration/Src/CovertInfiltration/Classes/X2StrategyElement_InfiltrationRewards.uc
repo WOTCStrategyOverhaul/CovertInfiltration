@@ -1,4 +1,7 @@
-class X2StrategyElement_InfiltrationRewards extends X2StrategyElement;
+class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Infiltration);
+
+var config int P2_EXPIRATION_BASE_TIME;
+var config int P2_EXPIRATION_VARIANCE;
 
 var localized string GatherLeadText;
 
@@ -170,11 +173,10 @@ static function StateObjectReference FindRandomMetFaction()
 	return FactionState.GetReference();
 }
 
-static protected function XComGameState_CovertAction SpawnCovertAction(XComGameState NewGameState, XComGameState_ResistanceFaction FactionState, name ActionTemplateName)
+static protected function XComGameState_CovertAction SpawnCovertAction(XComGameState NewGameState, XComGameState_ResistanceFaction FactionState, name ActionTemplateName, optional bool bExpire = true)
 {
 	local X2StrategyElementTemplateManager StrategyTemplateManager;
 	local X2CovertActionTemplate ActionTemplate;
-	local XComGameState_CovertAction ActionState;
 	local StateObjectReference ActionRef;
 	
 	StrategyTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
@@ -183,9 +185,40 @@ static protected function XComGameState_CovertAction SpawnCovertAction(XComGameS
 	ActionRef = FactionState.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
 	FactionState.CovertActions.AddItem(ActionRef);
 
-	ActionState = XComGameState_CovertAction(NewGameState.GetGameStateForObjectID(ActionRef.ObjectID));
+	if (bExpire)
+	{
+		AddExpiration(NewGameState, ActionRef);
+	}
 
-	return ActionState;
+	return XComGameState_CovertAction(NewGameState.GetGameStateForObjectID(ActionRef.ObjectID));
+}
+
+static protected function AddExpiration(XComGameState NewGameState, StateObjectReference ActionRef)
+{
+	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
+	local TDateTime Expiration;
+
+	Expiration = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
+	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
+
+	class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, default.P2_EXPIRATION_BASE_TIME * 24 + CreateExpirationVariance());
+
+	ActionExpirationManager.AddActionExpirationInfo(ActionRef, Expiration);
+}
+
+static protected function int CreateExpirationVariance()
+{
+	local int Variance;
+	local bool bNegVariance;
+
+	Variance = `SYNC_RAND_STATIC(default.P2_EXPIRATION_VARIANCE);
+
+	// roll chance for negative variance
+	bNegVariance = `SYNC_RAND_STATIC(2) < 1;
+	if (bNegVariance) Variance *= -1;
+
+	return Variance;
 }
 
 static function array<StateObjectReference> GetRandomDarkEvents(int NumToSelect)
