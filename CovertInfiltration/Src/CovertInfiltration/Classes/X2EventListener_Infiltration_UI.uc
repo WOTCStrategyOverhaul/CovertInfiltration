@@ -179,7 +179,8 @@ static function CHEventListenerTemplate CreateAvengerHUDListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_AvengerHUD');
-	Template.AddCHEvent('UIAvengerShortcuts_ShowCQResistanceOrders', ShortcutsResistanceButtonVisible, ELD_Immediate); // Relies on CHL #368, will be avaliable in v1.17
+	Template.AddCHEvent('UIAvengerShortcuts_ShowCQResistanceOrders', ShortcutsResistanceButtonVisible, ELD_Immediate);
+	Template.AddCHEvent('UpdateResources', UpdateResources, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -195,6 +196,39 @@ static protected function EventListenerReturn ShortcutsResistanceButtonVisible(O
 	// Only when the Ring is built
 	Tuple.Data[0].b = `XCOMHQ.GetFacilityByName('ResistanceRing') != none;
 	
+	return ELR_NoInterrupt;
+}
+
+static function EventListenerReturn UpdateResources(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local UIAvengerHUD AvengerHUD;
+	local UIScreenStack ScreenStack;
+
+	local UIScreen CurrentScreen;
+	local UICovertActionsGeoscape CovertActions;
+
+	AvengerHUD = `HQPRES.m_kAvengerHUD;
+	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
+
+	CurrentScreen = ScreenStack.GetCurrentScreen();
+	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+
+	if (CovertActions == none) return ELR_NoInterrupt;
+
+	if (
+		CurrentScreen == CovertActions ||
+		(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name))
+	) {
+		// Just do same thing as done for UICovertActions
+		AvengerHUD.UpdateSupplies();
+		AvengerHUD.UpdateIntel();
+		AvengerHUD.UpdateAlienAlloys();
+		AvengerHUD.UpdateEleriumCrystals();
+
+		// Resource bar is hidden by default, show it
+		AvengerHUD.ShowResources();
+	}
+
 	return ELR_NoInterrupt;
 }
 

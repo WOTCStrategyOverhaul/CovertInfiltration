@@ -119,9 +119,6 @@
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_SlotInfo.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_ResourcesHook.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_AdventOperations.uc">
       <SubType>Content</SubType>
     </Content>
