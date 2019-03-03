@@ -279,6 +279,9 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_PhaseOneActionsSpawner.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\extra_globals.uci">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\LW_Tuple\Classes\LWTuple.uc" />
     <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API.uc">
       <SubType>Content</SubType>

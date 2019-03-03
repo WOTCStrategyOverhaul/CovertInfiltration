@@ -33,7 +33,7 @@ static function ForceDifficultyVariants()
 
 		if (DataSetCDO == none)
 		{
-			`warn(DataSetToPatch @ "is not a valid X2DataSet class",, 'CI');
+			`CI_Warn(DataSetToPatch @ "is not a valid X2DataSet class");
 		}
 		else
 		{
@@ -51,7 +51,7 @@ static function MakeItemsBuildable()
 	local name TemplateName;
 
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-	`log("Making items buildable",, 'CI_SingleBuildItems');
+	`CI_Log("Making items buildable");
 
 	foreach default.arrMakeItemBuildable(TemplateName)
 	{
@@ -64,7 +64,7 @@ static function MakeItemsBuildable()
 
 			if (ItemTemplate == none)
 			{
-				`warn(DataTemplate.Name @ "is not an X2ItemTemplate",, 'CI_SingleBuildItems');
+				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate");
 				continue;
 			}
 
@@ -72,7 +72,7 @@ static function MakeItemsBuildable()
 			ItemTemplate.bInfiniteItem = false;
 			ItemTemplate.CreatorTemplateName = '';
 
-			`log(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length),, 'CI_SingleBuildItems');
+			`CI_Trace(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length));
 		}
 	}
 }
@@ -102,7 +102,7 @@ static function KillItems()
 	local name TemplateName;
 
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-	`log("Killing items",, 'CI_SingleBuildItems');
+	`CI_Log("Killing items");
 
 	foreach default.arrKillItems(TemplateName)
 	{
@@ -115,7 +115,7 @@ static function KillItems()
 
 			if (ItemTemplate == none)
 			{
-				`warn(DataTemplate.Name @ "is not an X2ItemTemplate",, 'CI_SingleBuildItems');
+				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate");
 				continue;
 			}
 
@@ -128,7 +128,7 @@ static function KillItems()
 			ItemTemplate.Cost.ResourceCosts.Length = 0;
 			ItemTemplate.Cost.ArtifactCosts.Length = 0;
 
-			`log(ItemTemplate.Name @ "was killed",, 'CI_SingleBuildItems');
+			`CI_Trace(ItemTemplate.Name @ "was killed");
 		}
 	}
 }

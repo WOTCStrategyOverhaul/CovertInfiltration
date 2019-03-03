@@ -8,6 +8,8 @@
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
+var config(Engine) bool SuppressTraceLogs;
+
 var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 

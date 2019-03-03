@@ -43,9 +43,9 @@ The following code should illustrate all of this:
     	}
     }
 
-**Please aim for you code to be easily readable** - it should clearly convey its purpose/intend/what it is doing. As such please use appropriate tools - comments, spacing/empty lines, specific variable/function/class names, etc.
+** Please aim for you code to be easily readable** - it should clearly convey its purpose/intend/what it is doing. As such please use appropriate tools - comments, spacing/empty lines, specific variable/function/class names, etc.
 
-**Use correct log category** - `CI` (or `CI_*` - eg. `CI_P1Spawner`). Any PR that uses `ScriptLog` (eg. `log("Something")`) __will not be merged__
+** Use custom log macros - `CI_Log`, `CI_Warn` and `CI_Trace`. Any PR that uses `ScriptLog` (eg. `log("Something")`) __will not be merged__
 
 ## Naming files/classes
 
