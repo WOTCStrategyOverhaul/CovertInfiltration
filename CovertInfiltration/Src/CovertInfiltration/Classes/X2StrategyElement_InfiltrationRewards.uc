@@ -1,4 +1,4 @@
-class X2StrategyElement_InfiltrationRewards extends X2StrategyElement  config(Infiltration);
+class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Infiltration);
 
 var config int P2_EXPIRATION_BASE_TIME;
 var config int P2_EXPIRATION_VARIANCE;
