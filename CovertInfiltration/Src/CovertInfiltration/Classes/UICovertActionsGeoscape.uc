@@ -139,7 +139,15 @@ simulated function OnInit()
 
 	FindActions();
 	PopulateList();
-	AttemptSelectAction(ActionToShowOnInitRef);
+	
+	if (ActionToShowOnInitRef.ObjectID != 0)
+	{
+		AttemptSelectAction(ActionToShowOnInitRef);
+	}
+	else
+	{
+		SelectFirstNewAction();
+	}
 
 	bDontUpdateData = false;
 	UpdateData();
@@ -1008,6 +1016,30 @@ simulated function AttemptSelectAction(StateObjectReference ActionToFocus)
 		if (ActionListItem == none) continue;
 
 		if (ActionListItem.Action.ObjectID == ActionToFocus.ObjectID)
+		{
+			ActionsList.SetSelectedItem(ActionListItem);
+			return;
+		}
+	}
+}
+
+simulated function SelectFirstNewAction()
+{
+	local UICovertActionsGeoscape_CovertAction ActionListItem;
+	local XComGameState_CovertAction ActionState;
+	local XComGameStateHistory History;
+	local UIPanel ListItem;
+
+	History = `XCOMHISTORY;
+
+	foreach ActionsList.ItemContainer.ChildPanels(ListItem)
+	{
+		ActionListItem = UICovertActionsGeoscape_CovertAction(ListItem);
+		if (ActionListItem == none) continue;
+
+		ActionState = XComGameState_CovertAction(History.GetGameStateForObjectID(ActionListItem.Action.ObjectID));
+
+		if (ActionState.bNewAction)
 		{
 			ActionsList.SetSelectedItem(ActionListItem);
 			return;

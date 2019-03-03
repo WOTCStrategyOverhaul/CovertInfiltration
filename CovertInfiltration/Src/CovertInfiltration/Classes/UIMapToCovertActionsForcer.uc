@@ -29,6 +29,19 @@ static function ForceCAOnNextMapTick(optional StateObjectReference InActionRef)
 	Forcer.ActionRef = InActionRef;
 }
 
+static function bool IsQueued()
+{
+	local UIMapToCovertActionsForcer Forcer;
+	local XComHQPresentationLayer HQPres;
+	local UIAvengerHUD HUD;
+
+	HQPres = `HQPRES;
+	HUD = HQPres.m_kAvengerHUD;
+	Forcer = UIMapToCovertActionsForcer(HUD.GetChildByName(default.MCName, false));
+
+	return Forcer != none;
+}
+
 simulated function UIPanel InitPanel(optional name InitName, optional name InitLibID)
 {
 	local X2EventManager EventManager;

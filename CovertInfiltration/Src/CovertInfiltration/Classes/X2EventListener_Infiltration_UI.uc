@@ -35,6 +35,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertAction_ShouldBeVisible', CovertAction_ShouldBeVisible, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_ActionSelectedOverride', CovertAction_ActionSelectedOverride, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate);
+	Template.AddCHEvent('OnGeoscapeEntry', OnGeoscapeEntry);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -138,6 +139,35 @@ static protected function string GetDarkEventString(XComGameState_CovertAction A
 	}
 
 	return DarkEventState.GetMyTemplate().DisplayName;
+}
+
+static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo Info;
+	local XComGameState NewGameState;
+	local UIScreenStack ScreenStack;
+
+	Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	ScreenStack = `SCREENSTACK;
+
+	if (Info.bPopupNewActionOnGeoscapeEntrance)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: show new actions avaliable popup");
+		
+		// Turn off the flag
+		Info = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', Info.ObjectID));
+		Info.bPopupNewActionOnGeoscapeEntrance = false;
+
+		// Check that UICovertActionsGeoscape isn't open already or we aren't queued to open it (give preference to clicks from event queue)
+		if (!ScreenStack.HasInstanceOf(class'UICovertActionsGeoscape') && !class'UIMapToCovertActionsForcer'.static.IsQueued())
+		{
+			class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
+		}
+
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+
+	return ELR_NoInterrupt;
 }
 
 ///////////////////

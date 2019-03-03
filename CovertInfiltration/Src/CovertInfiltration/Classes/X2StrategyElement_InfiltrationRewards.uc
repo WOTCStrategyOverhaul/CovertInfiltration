@@ -123,7 +123,7 @@ static protected function GiveGatherLeadActivity(XComGameState NewGameState, XCo
 		`RedScreen("CI: ONLY ONE DARK EVENT TO COUNTER, CANNOT SPAWN SECOND P2");
 	}
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
+	QueueNewActionGeoscapeEntryPopup(NewGameState);
 }
 
 static protected function GiveGatherLeadTarget(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
@@ -135,7 +135,7 @@ static protected function GiveGatherLeadTarget(XComGameState NewGameState, XComG
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2SupplyRaid');
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2DarkVIP');
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
+	QueueNewActionGeoscapeEntryPopup(NewGameState);
 }
 
 static protected function GiveGatherLeadPersonnel(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)
@@ -147,7 +147,7 @@ static protected function GiveGatherLeadPersonnel(XComGameState NewGameState, XC
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2Engineer');
 	SpawnCovertAction(NewGameState, FactionState, 'CovertAction_P2Scientist');
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(, NewGameState);
+	QueueNewActionGeoscapeEntryPopup(NewGameState);
 }
 
 static function StateObjectReference FindRandomMetFaction()
@@ -250,6 +250,15 @@ static function array<StateObjectReference> GetRandomDarkEvents(int NumToSelect)
 	}
 
 	return Results;
+}
+
+static protected function QueueNewActionGeoscapeEntryPopup(XComGameState NewGameState)
+{
+	local XComGameState_CovertInfiltrationInfo Info;
+
+	Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	Info = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', Info.ObjectID));
+	Info.bPopupNewActionOnGeoscapeEntrance = true;
 }
 
 static function X2RewardTemplate CreateP2SupplyRaidReward()
