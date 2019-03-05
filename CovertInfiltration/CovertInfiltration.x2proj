@@ -143,6 +143,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIMission_Infiltrated.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISkyrangerExfiltrate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationItem.uc">
       <SubType>Content</SubType>
     </Content>
@@ -274,6 +277,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_PhaseOneActionsSpawner.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_SquadPickupPoint.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\extra_globals.uci">
