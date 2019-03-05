@@ -110,9 +110,6 @@ var localized string strDialogDataText;
 var localized string strDialogDataAccept;
 var localized string strDialogDataCancel;
 
-var config int BASE_INTEL_COST;
-var config int INTEL_COST_MULTIPLIER;
-
 const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
 
@@ -708,7 +705,7 @@ simulated function UpdateData()
 	PrepareSlotsInfo();
 
 	FocusCameraOnCurrentAction();
-	UpdateExfiltrateOption();
+	UpdateButtons();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 }
@@ -748,15 +745,21 @@ simulated function bool CanOpenLoadout()
 	return true;
 }
 
-simulated function UpdateExfiltrateOption()
+simulated function UpdateButtons()
 {
+	local array<StrategyCostScalar> CostScalars;
+	local bool bHaveIntel;
+
+	CostScalars.Length = 0; // Avoid complier warning
+	bHaveIntel = `XCOMHQ.CanAffordAllStrategyCosts(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
+	
 	if (GetAction().bStarted)
 	{
 		ExfiltrateLabel.Show();
 		ExfiltrateValue.Show();
 		ConfirmButton.SetText(strAbortMission);
 		ConfirmButton.OnClickedDelegate = OnAbortClicked;
-		ConfirmButton.SetDisabled(!HaveEnoughIntel());
+		ConfirmButton.SetDisabled(!bHaveIntel);
 	}
 	else
 	{
@@ -772,7 +775,10 @@ simulated function UpdateExfiltrateOption()
 simulated function UpdateCovertActionInfo()
 {
 	local XComGameState_CovertAction CurrentAction;
+	local array<StrategyCostScalar> CostScalars;
+
 	CurrentAction = GetAction();
+	CostScalars.Length = 0; // Avoid complier warning
 
 	FactionInfoIcon.SetImageStack(CurrentAction.GetFaction().FactionIconData);
 	FactionGenericName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
@@ -805,7 +811,7 @@ simulated function UpdateCovertActionInfo()
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
 
 	ExfiltrateLabel.SetText(strExfilLabel);
-	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(ColoredIntelCost() @ strExfilValue));
+	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars) @ strExfilValue));
 
 	UpdateSlots();
 	UpdateRisks();
@@ -1226,31 +1232,6 @@ simulated function ClearUnaffordableCostSlots()
 	}
 }
 
-simulated function int GetIntelCost()
-{
-	local XComGameState_CovertAction CovertAction;
-	local TDateTime CurrentTime;
-	
-	CovertAction = GetAction();
-	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
-
-	return BASE_INTEL_COST + class'X2StrategyGameRulesetDataStructures'.static.DifferenceInDays(CurrentTime, CovertAction.StartDateTime) * INTEL_COST_MULTIPLIER;
-}
-
-simulated function string ColoredIntelCost()
-{
-	if (HaveEnoughIntel())
-	{
-		return class'UIUtilities_Text'.static.GetColoredText(string(GetIntelCost()), eUIState_Good);
-	}
-	return class'UIUtilities_Text'.static.GetColoredText(string(GetIntelCost()), eUIState_Bad);
-}
-
-simulated function bool HaveEnoughIntel()
-{
-	return `XCOMHQ.GetItemByName('Intel').Quantity >= GetIntelCost();
-}
-
 ///////////////////////
 /// Child callbacks ///
 ///////////////////////
@@ -1291,8 +1272,6 @@ simulated function ConfirmAbortPopup()
 {
 	local TDialogueBoxData DialogData;
 
-	GetAction().BeginInteraction();
-
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = strDialogDataTitle;
 	DialogData.strText = strDialogDataText;
@@ -1305,9 +1284,13 @@ simulated function ConfirmAbortPopup()
 
 simulated function ConfirmAbortPopupCallback(Name eAction)
 {
+	local XComGameState_CovertAction CovertAction;
+
+	CovertAction = GetAction();
+
 	if(eAction == 'eUIAction_Accept')
 	{
-		class'XComGameState_SquadPickupPoint'.static.AbortMission(GetAction(), GetIntelCost());
+		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationCost(CovertAction));
 		CloseScreen();
 	}
 }
@@ -1326,7 +1309,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
-		if (CanOpenLoadout() && !GetAction().bStarted || HaveEnoughIntel() && GetAction().bStarted)
+		if (!ConfirmButton.IsDisabled)
 		{
 			ConfirmButton.OnClickedDelegate(ConfirmButton);
 		}

@@ -27,11 +27,6 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
-	if(Package != class'UIScreen'.default.Package)
-	{
-		`HQPRES.StrategyMap2D.Hide();
-	}
-
 	BindLibraryItem();
 	BuildScreen();
 }
@@ -126,7 +121,7 @@ simulated function BuildScreen()
 
 	`XSTRATEGYSOUNDMGR.PlaySoundEvent("Geoscape_SkyrangerStop");
 	
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Skyranger Aborts Event");
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Building SkyrangerExfiltrate Screen");
 	`XEVENTMGR.TriggerEvent('OnSkyrangerArrives', , , NewGameState);
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 
@@ -166,7 +161,7 @@ simulated function BuildOptionsPanel()
 
 simulated function OnLaunchClicked(UIButton button)
 {
-	`HQPRES.UINarrative(XComNarrativeMoment'X2NarrativeMoments.Strategy.Avenger_Skyranger_Recalled');
+	`HQPRES.UINarrative(XComNarrativeMoment(`CONTENT.RequestGameArchetype("X2NarrativeMoments.Strategy.Avenger_Skyranger_Recalled")));
 	GetPickupPoint().ConfirmExfiltrate();
 	CloseScreen();
 }
