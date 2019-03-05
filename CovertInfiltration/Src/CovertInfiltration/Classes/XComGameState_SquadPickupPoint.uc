@@ -92,39 +92,52 @@ simulated function CancelExfiltrate()
 
 simulated function ConfirmExfiltrate()
 {
+	local XComGameState NewGameState;
+
 	bSquadExfiltrated = true;
 
-	PayThePrice();
-	ClearUnitsFromAction();
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Exfiltration Confirmed");
+
+	PayThePrice(NewGameState);
+	ClearUnitsFromAction(NewGameState);
+	
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	
 	DestroyTheEvidence();
 
 	`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic();
 	InteractionComplete(true);
 }
 
-simulated function PayThePrice()
+simulated function PayThePrice(XComGameState NewGameState)
 {
-	local XComGameState NewGameState;
 	local XComGameState_Item Intel;
 
 	Intel = `XCOMHQ.GetItemByName('Intel');
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Exfiltration Intel Cost");
 
 	Intel = XComGameState_Item(NewGameState.ModifyStateObject(class'XComGameState_Item', Intel.GetReference().ObjectID));
 	Intel.Quantity -= IntelCost;
-
-	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-simulated function ClearUnitsFromAction()
+simulated function ClearUnitsFromAction(XComGameState NewGameState)
 {
 	local XComGameState_CovertAction CovertAction;
 	local XComGameState_StaffSlot StaffSlot;
+	local XComGameState_Unit Unit;
 	local XComGameStateHistory History;
+	local StateObjectReference UnitRef;
+	local array<StateObjectReference> Squad;
 	local CovertActionStaffSlot CovertActionSlot;
 
 	History = `XCOMHISTORY;
 	CovertAction = XComGameState_CovertAction(History.GetGameStateForObjectID(ActionRef.ObjectID));
+	Squad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
+
+	foreach Squad(UnitRef)
+	{
+		Unit = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', UnitRef.ObjectID));
+		class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, Unit);
+	}
 
 	foreach CovertAction.StaffSlots(CovertActionSlot)
 	{

@@ -1326,7 +1326,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
-		if (CanOpenLoadout() && !GetAction().bStarted || HaveEnoughIntel() && GetAction.bStarted)
+		if (CanOpenLoadout() && !GetAction().bStarted || HaveEnoughIntel() && GetAction().bStarted)
 		{
 			ConfirmButton.OnClickedDelegate(ConfirmButton);
 		}
