@@ -122,7 +122,7 @@ simulated function BuildScreen()
 	`XSTRATEGYSOUNDMGR.PlaySoundEvent("Geoscape_SkyrangerStop");
 	
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Building SkyrangerExfiltrate Screen");
-	`XEVENTMGR.TriggerEvent('OnSkyrangerArrives', , , NewGameState);
+	`XEVENTMGR.TriggerEvent('OnSkyrangerExfiltrate', , , NewGameState);
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 
 	BuildSkyrangerPanel();
@@ -221,27 +221,14 @@ simulated function String GetOpName()
 
 simulated function XComGameState_SquadPickupPoint GetPickupPoint()
 {
-	local array<XComGameState_SquadPickupPoint> PickupPoints;
 	local XComGameState_SquadPickupPoint PickupPoint;
-	local XComGameStateHistory History;
 
-	History = `XCOMHISTORY;
-
-	foreach History.IterateByClassType(class'XComGameState_SquadPickupPoint', PickupPoint)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_SquadPickupPoint', PickupPoint)
 	{
-		PickupPoints.AddItem(PickupPoint);
-	}
-
-	if (PickupPoints.Length == 1)
-	{
-		return PickupPoints[0];
-	}
-	else
-	{
-		// shit the bed, exit process and purge
-		`log("Something went horribly wrong somewhere terminating exfiltration operation is the safest option here",, 'CI');
-		class'XComGameState_SquadPickupPoint'.static.Purge();
-		CloseScreen();
+		if (!PickupPoint.bConsumed)
+		{
+			return PickupPoint;
+		}
 	}
 }
 

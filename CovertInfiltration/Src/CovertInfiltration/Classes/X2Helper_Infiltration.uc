@@ -12,8 +12,8 @@ class X2Helper_Infiltration extends Object config(Infiltration);
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
 
-var config int BASE_INTEL_COST;
-var config int INTEL_COST_MULTIPLIER;
+var config int EXFIL_COST_BASEAMOUNT;
+var config int EXFIL_COST_MULTIPLIER;
 
 var config array<float> OVERLOADED_MULT;
 
@@ -207,7 +207,7 @@ static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction Cove
 
 	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 
-	IntelCost.Quantity = default.BASE_INTEL_COST + class'X2StrategyGameRulesetDataStructures'.static.DifferenceInDays(CurrentTime, CovertAction.StartDateTime) * default.INTEL_COST_MULTIPLIER;
+	IntelCost.Quantity = default.EXFIL_COST_BASEAMOUNT + (class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24) * default.EXFIL_COST_MULTIPLIER;
 	IntelCost.ItemTemplateName = 'Intel';
 
 	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);

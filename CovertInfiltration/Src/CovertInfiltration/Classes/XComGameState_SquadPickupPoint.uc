@@ -9,12 +9,13 @@
 class XComGameState_SquadPickupPoint extends XComGameState_GeoscapeEntity;
 
 var StateObjectReference ActionRef;
-var StateObjectReference RegionRef;
 
 var StrategyCost ExfiltrateCost;
 
 var bool bSkyrangerDeployed;
 var bool bSquadExfiltrated;
+// this is a flag to assure we only use it once
+var bool bConsumed;
 
 function bool RequiresAvenger()
 {
@@ -30,7 +31,8 @@ function SetupPickupLocation(XComGameState NewGameState, XComGameState_CovertAct
 {
 	local XComGameState_HeadquartersXCom XComHQ;
 	ActionRef = CovertAction.GetReference();
-	RegionRef = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID)).GetReference();
+	// we're intentionally checking if this Region has a XCGS and assigning none if not
+	Region = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(ActionRef.ObjectID)).GetReference();
 
 	ExfiltrateCost = Cost;
 
@@ -46,9 +48,9 @@ function SetupPickupLocation(XComGameState NewGameState, XComGameState_CovertAct
 function FlyToPickupPoint()
 {
 	// if we have a region fly there
-	if (RegionRef.ObjectID != 0)
+	if (Region.ObjectID != 0)
 	{
-		XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(RegionRef.ObjectID)).ConfirmSelection();
+		XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(Region.ObjectID)).ConfirmSelection();
 	}
 	// if we don't just fly to the mission site
 	else
@@ -59,7 +61,7 @@ function FlyToPickupPoint()
 
 function DestinationReached()
 {
-	if (!bSkyrangerDeployed)
+	if (!bSkyrangerDeployed  && Region.ObjectID == 0)
 	{
 		// cheat the system to deploy a skyranger if we
 		// didn't have region for some weird reason..
@@ -93,13 +95,20 @@ simulated function CancelExfiltrate()
 
 simulated function ConfirmExfiltrate()
 {
+	local XComGameState_SquadPickupPoint PickupPoint;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<StrategyCostScalar> CostScalars;
 	local XComGameState NewGameState;
 
-	bSquadExfiltrated = true;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Exfiltration Confirmed");
+	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', GetReference().ObjectID));
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.GetReference().ObjectID));
 
-	PayThePrice(NewGameState);
+	CostScalars.Length = 0;
+	PickupPoint.bSquadExfiltrated = true;
+
+	`XCOMHQ.PayStrategyCost(NewGameState, ExfiltrateCost, CostScalars);
 	ClearUnitsFromAction(NewGameState);
 	
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
@@ -108,25 +117,6 @@ simulated function ConfirmExfiltrate()
 
 	`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic();
 	InteractionComplete(true);
-}
-
-simulated function PayThePrice(XComGameState NewGameState)
-{
-	local XComGameState_Item Intel;
-	local ArtifactCost Cost;
-
-	Intel = `XCOMHQ.GetItemByName('Intel');
-
-	Intel = XComGameState_Item(NewGameState.ModifyStateObject(class'XComGameState_Item', Intel.GetReference().ObjectID));
-	
-	foreach ExfiltrateCost.ResourceCosts(Cost)
-	{
-		if (Cost.ItemTemplateName == 'Intel')
-		{
-			Intel.Quantity -= Cost.Quantity;
-			break;
-		}
-	}
 }
 
 simulated function ClearUnitsFromAction(XComGameState NewGameState)
@@ -150,7 +140,7 @@ simulated function ClearUnitsFromAction(XComGameState NewGameState)
 			{
 				class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, Unit);
 			}
-			SlotState.EmptySlot();
+			SlotState.EmptySlot(NewGameState);
 		}
 	}
 }
@@ -164,6 +154,7 @@ function DestroyTheEvidence()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: SkyrangerExfiltrate Cleanup");
 
 	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', GetReference().ObjectID));
+	PickupPoint.bConsumed = true;
 	PickupPoint.RemoveEntity(NewGameState);
 
 	if (bSquadExfiltrated)
