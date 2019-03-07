@@ -9,11 +9,11 @@
 
 class UISkyrangerExfiltrate extends UIScreen;
 
-var public localized String strBody;
-var public localized String strSkyrangerExfiltrateTitle;
-var public localized String strSkyrangerExfiltrateSubtitle;
-var public localized String strConfirmExfiltration;
-var public localized String strCancelExfiltration;
+var localized String strBody;
+var localized String strSkyrangerExfiltrateTitle;
+var localized String strSkyrangerExfiltrateSubtitle;
+var localized String strConfirmExfiltration;
+var localized String strCancelExfiltration;
 
 var UIPanel LibraryPanel;
 var UIPanel ButtonGroup; 

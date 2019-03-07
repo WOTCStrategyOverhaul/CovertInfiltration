@@ -5,7 +5,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UICovertActionsGeoscape extends UIScreen config(Infiltration);
+class UICovertActionsGeoscape extends UIScreen;
 
 // UI - list
 var UIList ActionsList;
@@ -100,7 +100,6 @@ var localized string strRewardHeader;
 var localized string strSlotsHeader;
 var localized string strInfiltration;
 var localized string strExfilLabel;
-var localized string strExfilValue;
 var localized string strAbortMission;
 var localized string strOpenLoadout;
 var localized string strCloseScreen;
@@ -811,7 +810,7 @@ simulated function UpdateCovertActionInfo()
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
 
 	ExfiltrateLabel.SetText(strExfilLabel);
-	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars) @ strExfilValue));
+	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
 
 	UpdateSlots();
 	UpdateRisks();

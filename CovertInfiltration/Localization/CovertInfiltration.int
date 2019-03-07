@@ -10,7 +10,6 @@ strRewardHeader=Reward
 strSlotsHeader="Deployable resources"
 strInfiltration="INFILTRATION MISSION"
 strExfilLabel="EXFILTRATION COST:"
-strExfilValue="Intel"
 strOpenLoadout="Go to loadout"
 strAbortMission="Abort Mission"
 strCloseScreen="Close covert ops"
