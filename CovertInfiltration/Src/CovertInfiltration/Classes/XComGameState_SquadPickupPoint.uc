@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class XComGameState_SquadPickupPoint extends XComGameState_MissionSite;
+class XComGameState_SquadPickupPoint extends XComGameState_GeoscapeEntity;
 
 var StateObjectReference ActionRef;
 var StrategyCost ExfiltrateCost;
@@ -16,44 +16,38 @@ var StrategyCost ExfiltrateCost;
 var bool bConsumed;
 var bool bSquadExfiltrated;
 
-function bool RequiresAvenger()
+simulated function SetupPickupLocation(XComGameState NewGameState, XComGameState_CovertAction CovertAction, StrategyCost Cost)
 {
-	return false;
-}
-
-function bool RequiresSquad()
-{
-	return false;
-}
-
-function SetupPickupLocation(XComGameState NewGameState, XComGameState_CovertAction CovertAction, StrategyCost Cost)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	
-	XComHQ = `XCOMHQ;
-
 	ExfiltrateCost = Cost;
 	Location.x = CovertAction.Location.x;
 	Location.y = CovertAction.Location.y;
 	ActionRef = CovertAction.GetReference();
-
-	Region = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(CovertAction.Region.ObjectID)).GetReference();
-	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.GetReference().ObjectID));
-	XComHQ.CrossContinentMission = GetReference();
+	Region = CovertAction.Region;
 }
 
-function FlyToPickupPoint()
+simulated function FlyToPickupPoint()
 {
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState NewGameState;
+
+	XComHQ = `XCOMHQ;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Flying Avenger to PickupPoint");
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.GetReference().ObjectID));
+	XComHQ.CrossContinentMission = GetReference();
+	
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	
 	XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(Region.ObjectID)).ConfirmSelection();
 }
 
-function DestinationReached()
+simulated function DestinationReached()
 {
 	BeginInteraction();
 	DisplaySkyrangerExfiltrate();
 }
 
-function DisplaySkyrangerExfiltrate()
+simulated function DisplaySkyrangerExfiltrate()
 {
 	local XComHQPresentationLayer HQPres;
 	local UISkyrangerExfiltrate kScreen;
@@ -73,7 +67,6 @@ simulated function CancelExfiltrate()
 
 simulated function ConfirmExfiltrate()
 {
-	local XComGameState_SquadPickupPoint PickupPoint;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local array<StrategyCostScalar> CostScalars;
 	local XComGameState NewGameState;
@@ -124,7 +117,7 @@ simulated function ClearUnitsFromAction(XComGameState NewGameState)
 	}
 }
 
-function DestroyTheEvidence()
+simulated function DestroyTheEvidence()
 {
 	local XComGameState_SquadPickupPoint PickupPoint;
 	local XComGameState_CovertAction CovertAction;
@@ -140,36 +133,19 @@ function DestroyTheEvidence()
 
 	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', GetReference().ObjectID));
 	PickupPoint.bConsumed = true;
-	PickupPoint.RemoveEntity(NewGameState);
+	Purge(NewGameState);
 	
-
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-static function Purge()
+simulated function Purge(XComGameState NewGameState)
 {
 	local XComGameState_SquadPickupPoint PickupPoint;
-	local XComGameStateHistory History;
-	local XComGameState NewGameState;
-	local bool bDirty;
 
-	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Purging SquadPickupPoint(s)");
-
-	foreach History.IterateByClassType(class'XComGameState_SquadPickupPoint', PickupPoint)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_SquadPickupPoint', PickupPoint)
 	{
-		bDirty = true;
 		PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', PickupPoint.GetReference().ObjectID));
 		PickupPoint.RemoveEntity(NewGameState);
-	}
-
-	if (bDirty)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		History.CleanupPendingGameState(NewGameState);
 	}
 }
 
@@ -178,9 +154,8 @@ static function PreparePickupSite(XComGameState_CovertAction CovertAction, Strat
 	local XComGameState_SquadPickupPoint PickupPoint;
 	local XComGameState NewGameState;
 	
-	Purge(); // make sure there is never more than one PickupPoint
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Setting up SquadPickupPoint");
-	
+
 	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.CreateNewStateObject(class'XComGameState_SquadPickupPoint'));
 	PickupPoint.SetupPickupLocation(NewGameState, CovertAction, Cost);
 	
