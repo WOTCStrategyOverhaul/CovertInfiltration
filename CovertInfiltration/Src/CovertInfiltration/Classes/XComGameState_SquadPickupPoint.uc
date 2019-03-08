@@ -67,6 +67,7 @@ simulated function CancelExfiltrate()
 
 simulated function ConfirmExfiltrate()
 {
+	local XComGameState_SquadPickupPoint PickupPoint;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local array<StrategyCostScalar> CostScalars;
 	local XComGameState NewGameState;
@@ -74,18 +75,18 @@ simulated function ConfirmExfiltrate()
 	XComHQ = `XCOMHQ;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Exfiltration Confirmed");
-	NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', ObjectID);
+	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', self.ObjectID));
 	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.GetReference().ObjectID));
 
 	CostScalars.Length = 0;
-	bSquadExfiltrated = true;
+	PickupPoint.bSquadExfiltrated = true;
 
 	XComHQ.PayStrategyCost(NewGameState, ExfiltrateCost, CostScalars);
-	ClearUnitsFromAction(NewGameState);
+	PickupPoint.ClearUnitsFromAction(NewGameState);
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	
-	DestroyTheEvidence();
+	PickupPoint.DestroyTheEvidence();
 
 	`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic();
 	InteractionComplete(true);
