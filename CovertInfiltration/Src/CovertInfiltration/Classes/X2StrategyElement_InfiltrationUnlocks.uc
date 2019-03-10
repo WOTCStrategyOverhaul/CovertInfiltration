@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  NotSoLoneWolf
+//  PURPOSE: GTS unlocks for infiltration squad upgrades
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2StrategyElement_InfiltrationUnlocks extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()

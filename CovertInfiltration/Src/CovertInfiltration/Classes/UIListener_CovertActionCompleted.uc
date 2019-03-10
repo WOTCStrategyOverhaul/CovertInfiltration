@@ -1,13 +1,11 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  statusNone
-//  PURPOSE: This class is used to track when a covert action is completed in order to
-//	apply soldier will loss
+//  PURPOSE: This class is used to show "tired" on covert action report
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class UIListener_CovertActionCompleted extends UIScreenListener config(Infiltration);
-
 
 event OnInit(UIScreen Screen)
 {

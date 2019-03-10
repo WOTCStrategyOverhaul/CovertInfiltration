@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class adds several functions that help
-//           in creating X2CovertMissionInfoTemplates
+//  PURPOSE: Base class for data set of X2CovertMissionInfos
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

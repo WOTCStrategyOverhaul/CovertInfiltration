@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  ArcaneData
+//  AUTHOR:  ArcaneData and NotSoLonewWolf
 //  PURPOSE: Displays covert action info on the squad select screen
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team

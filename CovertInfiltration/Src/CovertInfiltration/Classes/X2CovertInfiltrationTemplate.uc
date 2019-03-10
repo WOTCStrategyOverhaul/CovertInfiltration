@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Special template class for infiltration actions
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2CovertInfiltrationTemplate extends X2CovertActionTemplate;
 
 function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState NewGameState, StateObjectReference FactionRef)

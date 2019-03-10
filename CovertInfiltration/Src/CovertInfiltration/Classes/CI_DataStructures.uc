@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  statusNone
-//  PURPOSE: Container to hold data structures that need accessed from multiple places
+//  PURPOSE: Container to hold data structures that need to be accessed from multiple
+//           classes to avoid dependson mess
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

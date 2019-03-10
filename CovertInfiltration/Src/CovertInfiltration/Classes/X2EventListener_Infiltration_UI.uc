@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
-//  PURPOSE: Listeners for various UI events (mostly CHL hooks)
+//  AUTHOR:  Xymanek and robojumper
+//  PURPOSE: Houses X2EventListenerTemplates that affect UI. Mostly CHL hooks
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

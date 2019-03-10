@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  statusNone
-//  PURPOSE: Manager class to keep track of covert infiltration expirations
+//  PURPOSE: Singleton manager that keeps track of covert actions expirations.
+//           Mostly used for infiltration only
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

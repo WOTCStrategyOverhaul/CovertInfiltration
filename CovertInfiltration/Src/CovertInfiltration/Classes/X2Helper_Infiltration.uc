@@ -1,8 +1,6 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class contains a variety of tools
-//           for this mod and others to interact with
-//           the infiltration template system.
+//  AUTHOR:  NotSoLoneWolf, Xymanek, statusNone and ArcaneData
+//  PURPOSE: Houses various common functionality used in various places by this mod
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

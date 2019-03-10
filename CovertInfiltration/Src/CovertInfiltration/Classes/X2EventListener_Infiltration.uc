@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek and statusNone
+//  PURPOSE: Houses X2EventListenerTemplates that affect gameplay. Mostly CHL hooks
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2EventListener_Infiltration extends X2EventListener config(Infiltration);
 
 //values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)

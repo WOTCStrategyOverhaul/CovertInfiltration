@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  NotSoLoneWolf
+//  PURPOSE: Quest items for infltration missions
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2Item_InfiltrationQuestItems extends X2Item;
 
 static function array<X2DataTemplate> CreateTemplates()

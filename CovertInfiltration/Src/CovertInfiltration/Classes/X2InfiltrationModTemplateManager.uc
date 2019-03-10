@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class contains functions to control and
-//           retrieve X2InfiltrationMod templates.
+//  PURPOSE: Template manager for X2InfiltrationMod
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

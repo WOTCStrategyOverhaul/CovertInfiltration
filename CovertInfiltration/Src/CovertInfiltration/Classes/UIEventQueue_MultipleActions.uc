@@ -1,10 +1,7 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  (Integrated from BountyGiver's mod)
-//           Adapted for overhaul by NotSoLoneWolf, robojumper
-//  PURPOSE: This class is a replacement for base game's UIEventQueue
-//           which allows multiple covert actions to be shown.
-//           Modified to shift Covert Actions into the regular queue,
-//           instead of being stuck at the bottom all the time.
+//  AUTHOR:  NotSoLoneWolf, robojumper (Initially integrated from BountyGiver's mod) 
+//  PURPOSE: This class is a replacement for base game's UIEventQueue which spawns our
+//           custom list classes instead of base game ones
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

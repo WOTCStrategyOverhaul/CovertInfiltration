@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
-//  PURPOSE: Small behaviour change to open our new covert ops screen
+//  AUTHOR:  Xymanek and statusNone
+//  PURPOSE: (1) Open our new covert ops screen on click
+//           (2) Integrate mod that shows hours when the event is close
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  NotSoLoneWolf and Xymanek
+//  PURPOSE: Rewards used in infiltration actions and missions
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Infiltration);
 
 var config int P2_EXPIRATION_BASE_TIME;

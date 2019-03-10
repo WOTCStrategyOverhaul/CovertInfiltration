@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
+//  AUTHOR:  Xymanek and statusNone
 //  PURPOSE: Handles various template changes. Split from DLCInfo to prevent poluting it
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team

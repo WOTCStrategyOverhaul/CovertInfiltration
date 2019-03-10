@@ -1,11 +1,11 @@
-; Log helpers - required as game doesn't pickup Suppress in Core.System from DLCs/mods
+// Log helpers - required as game doesn't pickup Suppress in Core.System from DLCs/mods
 
 `define CI_Trace(msg) if(!class'X2DownloadableContentInfo_CovertInfiltration'.default.SuppressTraceLogs) `Log(`msg,, 'CI_Trace')
 
 `define CI_Log(msg) `Log(`msg,, 'CI')
 `define CI_Warn(msg) `Warn(`msg,, 'CI')
 
-; Gamestate management helpers
+// Gamestate management helpers
 
 `define SubmitGameState(state) `XCOMGAME.GameRuleset.SubmitGameState(`state);
 `define CleanupGameState(state) `XCOMHISTORY.CleanupPendingGameState(`state);

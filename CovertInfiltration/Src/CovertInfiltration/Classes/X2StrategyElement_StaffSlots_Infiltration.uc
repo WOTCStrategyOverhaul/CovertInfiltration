@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
-//  PURPOSE: Provides staff slot templates created by this mod. Currently used to
-//           completely replace Resistance Ring staff slot
+//  PURPOSE: Provides staff slot templates created by this mod
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -12,10 +11,11 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> StaffSlots;
 
-	StaffSlots.AddItem(CreateInfiltrationActionSlotTemplate());
-
 	// Completely replace the ring staff slot. This way other mods can OPTC our slot
 	StaffSlots.AddItem(CreateResistanceRingStaffSlotTemplate());
+
+	// Special slot template for infiltration actions
+	StaffSlots.AddItem(CreateInfiltrationActionSlotTemplate());
 
 	return StaffSlots;
 }

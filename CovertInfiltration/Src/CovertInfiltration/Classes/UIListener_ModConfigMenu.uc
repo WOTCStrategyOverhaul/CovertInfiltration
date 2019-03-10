@@ -1,5 +1,8 @@
 //---------------------------------------------------------------------------------------
-//  ModConfigMenu Listener & Options Screen
+//  AUTHOR:  statusNone
+//  PURPOSE: ModConfigMenu options screen for this mod
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class UIListener_ModConfigMenu extends UIScreenListener config(CovertInfiltrationSettings);

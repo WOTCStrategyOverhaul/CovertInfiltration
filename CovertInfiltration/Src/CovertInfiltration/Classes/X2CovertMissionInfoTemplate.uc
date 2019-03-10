@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class adds a new template which controls
-//           mission type and rewards for infiltration CAs
+//  PURPOSE: Template which controls mission type and rewards for infiltration CAs
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

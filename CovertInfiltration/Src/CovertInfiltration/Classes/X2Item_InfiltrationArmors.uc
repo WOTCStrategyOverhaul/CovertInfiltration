@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  ArcaneData
-//  PURPOSE: Creates basic templates for new armors.
+//  PURPOSE: Creates basic templates for new armors (disguises).
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

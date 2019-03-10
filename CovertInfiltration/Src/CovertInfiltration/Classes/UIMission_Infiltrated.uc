@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Screen for launching an infiltrated mission
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIMission_Infiltrated extends UIMission;
 
 var public localized string m_strResOpsMission;

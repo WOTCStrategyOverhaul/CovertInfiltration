@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  ArcaneData
-//  PURPOSE: Creates basic templates for new items.
+//  PURPOSE: Creates item templates for items added by this mod
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

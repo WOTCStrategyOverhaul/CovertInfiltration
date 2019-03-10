@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
 //  PURPOSE: This class adds a button to Geoscape to allow players to access
-//           the Covert Actions menu without the Resistance Ring built
+//           the Covert Actions menu without the Resistance Ring built. Also handles
+//           controller input (since player cannot click on the button with controller)
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
