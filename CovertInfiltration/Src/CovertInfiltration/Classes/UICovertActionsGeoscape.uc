@@ -65,9 +65,9 @@ var UIMask FactionLeaderImageMask;
 // UI - buttons
 var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
-var UIText DurationLabel;
-var UIText DurationValue;
-var UIButton ConfirmButton, CloseScreenButton;
+var UIText DurationLabel, DurationValue;
+var UIText ExfiltrateLabel, ExfiltrateValue;
+var UIButton MainActionButton, CloseScreenButton;
 
 // UI - action risks
 var UIPanel ActionRisksContainer;
@@ -99,9 +99,13 @@ var protected bool bDontUpdateData;
 var localized string strRewardHeader;
 var localized string strSlotsHeader;
 var localized string strInfiltration;
+var localized string strExfilLabel;
+var localized string strAbortAction;
 var localized string strOpenLoadout;
 var localized string strCloseScreen;
 var localized string strRisksHeader;
+var localized string strDialogDataTitle;
+var localized string strDialogDataText;
 
 const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
@@ -441,7 +445,7 @@ simulated protected function BuildButtons()
 	ButtonGroupWrap.bAnimateOnInit = false;
 	ButtonGroupWrap.InitPanel('ButtonGroupWrap');
 	ButtonGroupWrap.SetPosition(0, 490);
-	ButtonGroupWrap.SetSize(RightPane.Width, 100);
+	ButtonGroupWrap.SetSize(RightPane.Width, 130); // 100
 
 	ButtonsBG = Spawn(class'UIBGBox', ButtonGroupWrap);
 	ButtonsBG.bAnimateOnInit = false;
@@ -459,27 +463,39 @@ simulated protected function BuildButtons()
 	DurationValue.InitText('DurationValue');
 	DurationValue.SetWidth(ButtonGroupWrap.Width);
 
-	ConfirmButton = Spawn(class'UIButton', ButtonGroupWrap);
-	ConfirmButton.bAnimateOnInit = false;
-	ConfirmButton.InitButton('ConfirmButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
-	ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
-	ConfirmButton.SetResizeToText(false);
-	ConfirmButton.SetPosition(0, 35);
-	ConfirmButton.SetWidth(ButtonGroupWrap.Width);
+	ExfiltrateLabel = Spawn(class'UIText', ButtonGroupWrap);
+	ExfiltrateLabel.bAnimateOnInit = false;
+	ExfiltrateLabel.InitText('ExfiltrateLabel');
+	ExfiltrateLabel.SetPosition(0, 30);
+	ExfiltrateLabel.SetWidth(ButtonGroupWrap.Width);
+	
+	ExfiltrateValue = Spawn(class'UIText', ButtonGroupWrap);
+	ExfiltrateValue.bAnimateOnInit = false;
+	ExfiltrateValue.InitText('ExfiltrateValue');
+	ExfiltrateValue.SetPosition(0, 30);
+	ExfiltrateValue.SetWidth(ButtonGroupWrap.Width);
+
+	MainActionButton = Spawn(class'UIButton', ButtonGroupWrap);
+	MainActionButton.bAnimateOnInit = false;
+	MainActionButton.InitButton('MainActionButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
+	MainActionButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
+	MainActionButton.SetResizeToText(false);
+	MainActionButton.SetPosition(0, 65); // 35
+	MainActionButton.SetWidth(ButtonGroupWrap.Width);
 
 	CloseScreenButton = Spawn(class'UIButton', ButtonGroupWrap);
 	CloseScreenButton.bAnimateOnInit = false;
 	CloseScreenButton.InitButton('CloseScreenButton', strCloseScreen, OnCloseScreenClicked, eUIButtonStyle_HOTLINK_BUTTON);
 	CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
 	CloseScreenButton.SetResizeToText(false);
-	CloseScreenButton.SetPosition(0, 70);
+	CloseScreenButton.SetPosition(0, 100); // 70
 	CloseScreenButton.SetWidth(ButtonGroupWrap.Width);
 
 	if (`ISCONTROLLERACTIVE)
 	{
-		ConfirmButton.OnSizeRealized = OnConfirmButtonSizeRealized;
-		ConfirmButton.SetResizeToText(true);
-		ConfirmButton.Hide();
+		MainActionButton.OnSizeRealized = OnMainActionButtonSizeRealized;
+		MainActionButton.SetResizeToText(true);
+		MainActionButton.Hide();
 
 		CloseScreenButton.OnSizeRealized = OnCloseScreenButtonSizeRealized;
 		CloseScreenButton.SetResizeToText(true);
@@ -487,10 +503,10 @@ simulated protected function BuildButtons()
 	}
 }
 
-simulated protected function OnConfirmButtonSizeRealized()
+simulated protected function OnMainActionButtonSizeRealized()
 {
-	ConfirmButton.SetX(ButtonGroupWrap.Width / 2 - ConfirmButton.Width / 2);
-	ConfirmButton.Show();
+	MainActionButton.SetX(ButtonGroupWrap.Width / 2 - MainActionButton.Width / 2);
+	MainActionButton.Show();
 }
 
 simulated protected function OnCloseScreenButtonSizeRealized()
@@ -686,7 +702,7 @@ simulated function UpdateData()
 	PrepareSlotsInfo();
 
 	FocusCameraOnCurrentAction();
-	ConfirmButton.SetDisabled(!CanOpenLoadout());
+	UpdateButtons();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 }
@@ -726,10 +742,36 @@ simulated function bool CanOpenLoadout()
 	return true;
 }
 
+simulated function UpdateButtons()
+{
+	local array<StrategyCostScalar> CostScalars;
+	local bool bHaveIntel;
+
+	if (GetAction().bStarted)
+	{
+		CostScalars.Length = 0; // Avoid complier warning
+		bHaveIntel = `XCOMHQ.CanAffordAllStrategyCosts(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
+		
+		MainActionButton.SetText(strAbortAction);
+		MainActionButton.OnClickedDelegate = OnAbortClicked;
+		MainActionButton.SetDisabled(!bHaveIntel);
+	}
+	else
+	{
+
+		MainActionButton.SetText(strOpenLoadout);
+		MainActionButton.OnClickedDelegate = OnConfirmClicked;
+		MainActionButton.SetDisabled(!CanOpenLoadout());
+	}
+}
+
 simulated function UpdateCovertActionInfo()
 {
 	local XComGameState_CovertAction CurrentAction;
+	local array<StrategyCostScalar> CostScalars;
+
 	CurrentAction = GetAction();
+	CostScalars.Length = 0; // Avoid complier warning
 
 	FactionInfoIcon.SetImageStack(CurrentAction.GetFaction().FactionIconData);
 	FactionGenericName.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(
@@ -760,6 +802,20 @@ simulated function UpdateCovertActionInfo()
 
 	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
+
+	ExfiltrateLabel.SetText(strExfilLabel);
+	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
+	
+	if (GetAction().bStarted)
+	{
+		ExfiltrateLabel.Show();
+		ExfiltrateValue.Show();
+	}
+	else
+	{
+		ExfiltrateLabel.Hide();
+		ExfiltrateValue.Hide();
+	}
 
 	UpdateSlots();
 	UpdateRisks();
@@ -1211,6 +1267,40 @@ simulated function OnCloseScreenClicked(UIButton Button)
 	CloseScreen();
 }
 
+simulated function OnAbortClicked(UIButton Button)
+{
+	ConfirmAbortPopup();
+}
+
+simulated function ConfirmAbortPopup()
+{
+	local TDialogueBoxData DialogData;
+
+	DialogData.eType = eDialog_Normal;
+	DialogData.strTitle = strDialogDataTitle;
+	DialogData.strText = strDialogDataText;
+	DialogData.strAccept = class'UIUtilities_Text'.default.m_strGenericConfirm;
+	DialogData.strCancel = class'UIUtilities_Text'.default.m_strGenericBack;
+	DialogData.fnCallback = ConfirmAbortPopupCallback;
+
+	Movie.Pres.UIRaiseDialog(DialogData);
+}
+
+simulated function ConfirmAbortPopupCallback(Name eAction)
+{
+	local XComGameState_CovertAction CovertAction;
+
+	
+
+	if (eAction == 'eUIAction_Accept')
+	{
+		CovertAction = GetAction();
+
+		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationCost(CovertAction));
+		CloseScreen();
+	}
+}
+
 /////////////////////////////////////
 /// Keyboard and controller input ///
 /////////////////////////////////////
@@ -1225,9 +1315,9 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
 	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
 	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
-		if (CanOpenLoadout())
+		if (!MainActionButton.IsDisabled)
 		{
-			ConfirmButton.OnClickedDelegate(ConfirmButton);
+			MainActionButton.OnClickedDelegate(MainActionButton);
 		}
 		else
 		{

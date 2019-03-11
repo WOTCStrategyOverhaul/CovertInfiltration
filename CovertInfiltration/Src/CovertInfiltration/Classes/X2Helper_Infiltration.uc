@@ -9,6 +9,10 @@ class X2Helper_Infiltration extends Object config(Infiltration);
 
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
+
+var config int EXFIL_INTEL_COST_BASEAMOUNT;
+var config int EXFIL_INTEL_COST_MULTIPLIER;
+
 var config array<float> OVERLOADED_MULT;
 
 var config array<int> RANKS_DETER;
@@ -191,6 +195,24 @@ static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionIn
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	
 	return X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionSource));
+}
+
+static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction CovertAction)
+{
+	local StrategyCost ExfiltrateCost;
+	local ArtifactCost IntelCost;
+	local TDateTime CurrentTime;
+	local float Days;
+
+	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	Days = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24;
+
+	IntelCost.Quantity = default.EXFIL_INTEL_COST_BASEAMOUNT + Round(Days * default.EXFIL_INTEL_COST_MULTIPLIER);
+	IntelCost.ItemTemplateName = 'Intel';
+
+	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);
+
+	return ExfiltrateCost;
 }
 
 static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
