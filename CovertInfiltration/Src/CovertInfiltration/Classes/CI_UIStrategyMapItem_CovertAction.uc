@@ -24,7 +24,7 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 
 	ScanButton = Spawn(class'UIScanButton', self).InitScanButton();
 	ScanButton.SetButtonIcon("");
-	//ScanButton.SetDefaultDelegate(OpenInfiltrationMissionScreen);
+	ScanButton.SetDefaultDelegate(OpenCovertActionsScreen);
 	ScanButton.SetButtonType(eUIScanButtonType_Default);
 
 	PercentLabel = Spawn(class'UIText', ScanButton).InitText('PercentLabel', "");
@@ -143,6 +143,11 @@ simulated function SetProgressBarColor(float percent)
 	{
 		ProgressBar.SetColor(class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
 	}
+}
+
+function OpenCovertActionsScreen()
+{
+	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(GetAction().GetReference());
 }
 
 simulated function bool IsSelectable()
