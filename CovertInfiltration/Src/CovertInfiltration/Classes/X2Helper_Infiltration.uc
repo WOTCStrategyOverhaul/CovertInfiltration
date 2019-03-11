@@ -204,12 +204,12 @@ static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction Cove
 	local StrategyCost ExfiltrateCost;
 	local ArtifactCost IntelCost;
 	local TDateTime CurrentTime;
-	local float HourMultiplier;
+	local float Days;
 
 	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
-	HourMultiplier = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24;
+	Days = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24;
 
-	IntelCost.Quantity = default.EXFIL_INTEL_COST_BASEAMOUNT + Round(HourMultiplier * default.EXFIL_INTEL_COST_MULTIPLIER);
+	IntelCost.Quantity = default.EXFIL_INTEL_COST_BASEAMOUNT + Round(Days * default.EXFIL_INTEL_COST_MULTIPLIER);
 	IntelCost.ItemTemplateName = 'Intel';
 
 	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);

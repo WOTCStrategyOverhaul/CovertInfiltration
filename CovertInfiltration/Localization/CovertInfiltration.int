@@ -11,13 +11,11 @@ strSlotsHeader="Deployable resources"
 strInfiltration="INFILTRATION MISSION"
 strExfilLabel="EXFILTRATION COST:"
 strOpenLoadout="Go to loadout"
-strAbortMission="Abort Mission"
+strAbortAction="Abort Action"
 strCloseScreen="Close covert ops"
 strRisksHeader=Risks
-strDialogDataTitle="ABORT INFILTRATION"
+strDialogDataTitle="ABORT ACTION"
 strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!!"
-strDialogDataAccept="ABORT"
-strDialogDataCancel="CANCEL"
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
@@ -51,11 +49,9 @@ strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
 strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
 
 [UISkyrangerExfiltrate]
-strBody="The Skyranger has reached the mission site. Awaiting orders."
-strSkyrangerExfiltrateTitle="SKYRANGER"
-strSkyrangerExfiltrateSubtitle="INITIATING LANDING SEQUENCE"
-strConfirmExfiltration="ABORT AND EXFILTRATE"
-strCancelExfiltration="RETURN TO AVENGER"
+strBody="The Skyranger has reached the action site. Awaiting orders."
+strSkyrangerExfiltrateSubtitle="READY FOR EXFILTRATION"
+strConfirmExfiltration="ABORT ACTION AND EXFILTRATE"
 
 [CovertAction_P1DarkEvent X2CovertInfiltrationTemplate]
 ActionObjective="Recover Activity Leads"

@@ -10,10 +10,8 @@
 class UISkyrangerExfiltrate extends UIScreen;
 
 var localized String strBody;
-var localized String strSkyrangerExfiltrateTitle;
 var localized String strSkyrangerExfiltrateSubtitle;
 var localized String strConfirmExfiltration;
-var localized String strCancelExfiltration;
 
 var UIPanel LibraryPanel;
 var UIPanel ButtonGroup; 
@@ -139,7 +137,7 @@ simulated function BuildSkyrangerPanel()
 {
 	// Send over to flash
 	LibraryPanel.MC.BeginFunctionOp("UpdateSkyrangerInfoBlade");
-	LibraryPanel.MC.QueueString(strSkyrangerExfiltrateTitle);
+	LibraryPanel.MC.QueueString(class'UISkyrangerArrives'.default.m_strSkyrangerArrivesTitle);
 	LibraryPanel.MC.QueueString(strSkyrangerExfiltrateSubtitle);
 	LibraryPanel.MC.EndOp();
 }
@@ -151,7 +149,7 @@ simulated function BuildOptionsPanel()
 	LibraryPanel.MC.QueueString(GetOpName());
 	LibraryPanel.MC.QueueString(strBody);
 	LibraryPanel.MC.QueueString(strConfirmExfiltration);
-	LibraryPanel.MC.QueueString(strCancelExfiltration);
+	LibraryPanel.MC.QueueString(class'UISkyrangerArrives'.default.m_strReturnToBase);
 	LibraryPanel.MC.EndOp();
 }
 
@@ -161,14 +159,14 @@ simulated function BuildOptionsPanel()
 
 simulated function OnLaunchClicked(UIButton button)
 {
-	`HQPRES.UINarrative(XComNarrativeMoment(`CONTENT.RequestGameArchetype("X2NarrativeMoments.Strategy.Avenger_Skyranger_Recalled")));
+	PlayAbortActionNarrativeMoment();
 	GetPickupPoint().ConfirmExfiltrate();
 	CloseScreen();
 }
 
 simulated function OnCancelClicked(UIButton button)
 {
-	`HQPRES.UINarrative(XComNarrativeMoment'X2NarrativeMoments.Strategy.Avenger_Skyranger_Recalled');
+	`HQPRES.UINarrative(XComNarrativeMoment(`CONTENT.RequestGameArchetype("X2NarrativeMoments.Strategy.Avenger_Skyranger_Recalled")));
 	GetPickupPoint().CancelExfiltrate();
 	CloseScreen();
 }
@@ -208,7 +206,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 /// Data Hookup ///
 ///////////////////
 
-simulated function String GetOpName()
+simulated function string GetOpName()
 {
 	local XComGameState_SquadPickupPoint PickupPoint;
 	local XComGameState_CovertAction CovertAction;
@@ -229,6 +227,31 @@ simulated function XComGameState_SquadPickupPoint GetPickupPoint()
 		{
 			return PickupPoint;
 		}
+	}
+}
+
+simulated function PlayAbortActionNarrativeMoment()
+{
+	local XComHQPresentationLayer HQPres;
+
+	HQPres = `HQPRES;
+
+	switch (`SYNC_RAND(4))
+	{
+		case 0:
+			HQPres.UINarrative(XComNarrativeMoment'X2NarrativeMoments.T_EVAC_All_Out_Firebrand_02');
+			break;
+		case 1:
+			HQPres.UINarrative(XComNarrativeMoment'X2NarrativeMoments.T_EVAC_All_Out_Firebrand_03');
+			break;
+		case 2:
+			HQPres.UINarrative(XComNarrativeMoment'X2NarrativeMoments.T_EVAC_All_Out_Firebrand_04');
+			break;
+		case 3:
+			HQPres.UINarrative(XComNarrativeMoment'X2NarrativeMoments.T_EVAC_All_Out_Firebrand_05');
+			break;
+		default:
+			break;
 	}
 }
 
