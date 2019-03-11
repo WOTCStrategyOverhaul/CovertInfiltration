@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  ArcaneData
-//  PURPOSE: MCO for covert action items on strategy map, adding the infiltration nameplate
+//  PURPOSE: MCO for covert action items on strategy map
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -44,14 +44,9 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 
 function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
-	local int InfilPercent;
-	local float ScanWidth;
 	local XComGameState_CovertAction CovertAction;
-	local float TotalDuration, RemainingDuration;
-	local ActionExpirationInfo ActionInfo;
-	local bool foundAction;
 
-	if( !bIsInited ) return;
+	if (!bIsInited) return;
 
 	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 
@@ -59,73 +54,88 @@ function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity Geoscap
 
 	if (CovertAction.bStarted)
 	{
-		TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.StartDateTime);
-		RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.GetCurrentTime());
-
-		InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
-
-		PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.AlignCenter(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20)));
-
-		if (!bScanButtonResized)
-		{
-			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");
-		
-			bScanButtonResized = true;
-		}
-
-		ScanButton.DefaultState();
-		ScanButton.PulseScanner(false);
-		ScanButton.ShowScanIcon(false);
-		ScanButton.Realize();
-
-		ScanWidth = ScanButton.MC.GetNum("bg._width"); 
-
-		if (ScanWidth != CachedScanButtonWidth)
-		{
-			PercentLabel.SetX(ScanWidth - 60);
-			ProgressLabel.SetX(ScanWidth - 60);
-			ScanButton.SetX(-(ScanWidth / 2));
-			
-			CachedScanButtonWidth = ScanWidth;
-		}
-		
+		UpdateLaunchedActionBox(CovertAction);
 		ProgressBar.Hide();
 	}
 	else
 	{
-		foundAction = class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(CovertAction.GetReference(), ActionInfo);
-
-		if (foundAction && ActionInfo.Expiration.m_iYear < 2100)
-		{
-			TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, ActionInfo.OriginTime);
-			RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
-
-			ProgressBar.SetPercent(RemainingDuration / TotalDuration);
-
-			SetProgressBarColor();
-
-			ProgressBar.Show();
-		}
-		else
-		{
-			ProgressBar.Hide();
-		}
-
+		UpdateExpiringActionProgressBar(CovertAction);
 		ScanButton.Hide();
 	}	
 }
 
-simulated function SetProgressBarColor()
+simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertAction)
 {
-	if (ProgressBar.Percent > 0.75)
+	local float TotalDuration, RemainingDuration;
+	local int InfilPercent;
+	local float ScanWidth;
+	
+	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.StartDateTime);
+	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.GetCurrentTime());
+
+	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
+
+	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.AlignCenter(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20)));
+	
+	if (!bScanButtonResized)
+	{
+		ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");		
+		bScanButtonResized = true;
+	}
+
+	ScanButton.DefaultState();
+	ScanButton.PulseScanner(false);
+	ScanButton.ShowScanIcon(false);
+	ScanButton.Realize();
+
+	ScanWidth = ScanButton.MC.GetNum("bg._width"); 
+
+	if (ScanWidth != CachedScanButtonWidth)
+	{
+		PercentLabel.SetX(ScanWidth - 60);
+		ProgressLabel.SetX(ScanWidth - 60);
+		ScanButton.SetX(-(ScanWidth / 2));
+			
+		CachedScanButtonWidth = ScanWidth;
+	}
+}
+
+simulated function UpdateExpiringActionProgressBar(XComGameState_CovertAction CovertAction)
+{
+	local bool FoundAction;
+	local ActionExpirationInfo ActionInfo;
+	local float TotalDuration, RemainingDuration;
+	local float Percent;
+	
+	FoundAction = class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(CovertAction.GetReference(), ActionInfo);
+
+	if (!FoundAction || ActionInfo.Expiration.m_iYear > 2100)
+	{
+		ProgressBar.Hide();
+		return;
+	}	
+	
+	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, ActionInfo.OriginTime);
+	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
+
+	Percent = RemainingDuration / TotalDuration;
+	ProgressBar.SetPercent(Percent);
+	SetProgressBarColor(Percent);
+
+	ProgressBar.Show();
+}
+
+simulated function SetProgressBarColor(float percent)
+{
+	if (percent > 0.75)
 	{
 		ProgressBar.SetColor(class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
 	}
-	else if (ProgressBar.Percent > 0.5)
+	else if (percent > 0.5)
 	{
 		ProgressBar.SetColor(class'UIUtilities_Colors'.const.WARNING_HTML_COLOR);
 	}
-	else if (ProgressBar.Percent > 0.25)
+	else if (percent > 0.25)
 	{
 		ProgressBar.SetColor(class'UIUtilities_Colors'.const.WARNING2_HTML_COLOR);
 	}
