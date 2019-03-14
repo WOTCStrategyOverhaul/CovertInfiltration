@@ -1,4 +1,4 @@
-class X2SitRep_CustomSitRepEffects extends X2SitRepEffect config(GameData);
+class X2SitRep_InfiltrationSitRepEffects extends X2SitRepEffect config(GameData);
 
 var config array<int> InformationWarReduction;
 
@@ -17,7 +17,6 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateGunneryEmplacementsEffectTemplate_CI());
     Templates.AddItem(CreateShoddyIntelEffectTemplate_CI());
     Templates.AddItem(CreateWellRehearsedEffectTemplate_CI());
-    
     
     return Templates;
 }
@@ -40,22 +39,23 @@ static function InformationWarModFunction(out int ModValue)
 
 static function X2SitRepEffectTemplate CreateInformationWarUnitEffectTemplate_CI()
 {
-   local X2SitRepEffect_GrantAbilities_CI Template;
+   local X2SitRepEffect_GrantAbilities Template;
 
-   `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities_CI', Template, 'InformationWarUnitEffect_CI');
+   `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'InformationWarUnitEffect_CI');
    
    Template.AbilityTemplateNames.AddItem('InformationWarDebuff_CI');
+
    Template.Teams.AddItem(eTeam_Alien);
-   Template.ExcludeOrganic = true;
+   Template.RequireRobotic = true;
 
    return Template;
 }
 
 static function X2SitRepEffectTemplate CreateFamiliarTerrainEffectTemplate_CI()
 {
-    local X2SitRepEffect_GrantAbilities_CI Template;
+    local X2SitRepEffect_GrantAbilities Template;
     
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities_CI', Template, 'FamiliarTerrainEffect_CI')
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FamiliarTerrainEffect_CI')
 
     Template.AbilityTemplateNames.AddItem('FamiliarTerrainBuff_CI');
     Template.GrantToSoldiers = true;
@@ -65,9 +65,9 @@ static function X2SitRepEffectTemplate CreateFamiliarTerrainEffectTemplate_CI()
 
 static function X2SitRepEffectTemplate CreatePhysicalConditioningEffectTemplate_CI()
 {
-    local X2SitRepEffect_GrantAbilities_CI Template;
+    local X2SitRepEffect_GrantAbilities Template;
     
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities_CI', Template, 'PhysicalConditioningEffect_CI')
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'PhysicalConditioningEffect_CI')
 
     Template.AbilityTemplateNames.AddItem('PhysicalConditioningBuff_CI');
     Template.GrantToSoldiers = true;
@@ -77,9 +77,9 @@ static function X2SitRepEffectTemplate CreatePhysicalConditioningEffectTemplate_
 
 static function X2SitRepEffectTemplate CreateMentalReadinessEffectTemplate_CI()
 {
-    local X2SitRepEffect_GrantAbilities_CI Template;
+    local X2SitRepEffect_GrantAbilities Template;
     
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities_CI', Template, 'MentalReadinessEffect_CI')
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'MentalReadinessEffect_CI')
 
     Template.AbilityTemplateNames.AddItem('MentalReadinessBuff_CI');
     Template.GrantToSoldiers = true;
@@ -89,9 +89,9 @@ static function X2SitRepEffectTemplate CreateMentalReadinessEffectTemplate_CI()
 
 static function X2SitRepEffectTemplate CreateLightningStrikeEffect_CI()
 {
-    local X2SitRepEffect_GrantAbilities_CI Template;
+    local X2SitRepEffect_GrantAbilities Template;
 
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities_CI', Template, 'LightningStrikeEffect_CI')
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'LightningStrikeEffect_CI')
 
     Template.AbilityTemplateNames.AddItem('LightningStrike');
     Template.GrantToSoldiers = true;
