@@ -6,18 +6,18 @@ var config name	VolunteerArmyCharacterTemplate;
 var config name	VolunteerArmyCharacterTemplateM2;
 var config name	VolunteerArmyCharacterTemplateM3;
 
-var config array<name> DoubleAgentCharacterTemplates;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
     
     // granted abilities
-    Templates.AddItem(CreateInformationWarUnitEffectTemplate_CI());
+    Templates.AddItem(CreateInformationWarDebuffEffect_CI());
     Templates.AddItem(CreateFamiliarTerrainEffectTemplate_CI());
     Templates.AddItem(CreatePhysicalConditioningEffectTemplate_CI());
     Templates.AddItem(CreateMentalReadinessEffectTemplate_CI());
     Templates.AddItem(CreateLightningStrikeEffect_CI());
+    Templates.AddItem(CreateIntelligenceLeakDebuffEffect_CI());
+    Templates.AddItem(CreateDoubleAgentAbilitiesTemplate_CI());
 
     // podsize & encounters
     Templates.AddItem(CreatePodSizeIncreasedByOneEffectTemplate_CI());
@@ -30,10 +30,11 @@ static function array<X2DataTemplate> CreateTemplates()
 
     // misc
     Templates.AddItem(CreateInformationWarEffectTemplate_CI());
-    Templates.AddItem(CreateNoSquadConcealmentEffectTemplate_CI());
-
+    
     // tactical startstate
+    Templates.AddItem(CreateNoSquadConcealmentEffectTemplate_CI());
     Templates.AddItem(CreateVolunteerArmyEffectTemplate_CI());
+    Templates.AddItem(CreateDoubleAgentEffectTemplate_CI());
 
     return Templates;
 }
@@ -42,11 +43,11 @@ static function array<X2DataTemplate> CreateTemplates()
 /// Granted Abilities ///
 /////////////////////////
 
-static function X2SitRepEffectTemplate CreateInformationWarUnitEffectTemplate_CI()
+static function X2SitRepEffectTemplate CreateInformationWarDebuffEffect_CI()
 {
    local X2SitRepEffect_GrantAbilities Template;
 
-   `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'InformationWarUnitEffect_CI');
+   `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'InformationWarDebuffEffect_CI');
    
    Template.AbilityTemplateNames.AddItem('InformationWarDebuff_CI');
 
@@ -100,6 +101,51 @@ static function X2SitRepEffectTemplate CreateLightningStrikeEffect_CI()
 
     Template.AbilityTemplateNames.AddItem('LightningStrike');
     Template.GrantToSoldiers = true;
+
+    return Template;
+}
+
+static function X2SitRepEffectTemplate CreateIntelligenceLeakDebuffEffect_CI()
+{
+    local X2SitRepEffect_GrantAbilities Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'IntelligenceLeakDebuffEffect_CI')
+
+    Template.AbilityTemplateNames.AddItem('IntelligenceLeakDebuff_CI');
+    Template.GrantToSoldiers = true;
+
+    return Template;
+}
+
+static function X2SitRepEffectTemplate CreateDoubleAgentAbilitiesTemplate_CI()
+{
+    local X2SitRepEffect_GrantAbilities Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'DoubleAgentAbilities_CI')
+
+    Template.Teams.AddItem(eTeam_XCom);
+    Template.GrantToSoldiers = false;
+    Template.AbilityTemplateNames.AddItem( 'Evac' );
+	Template.AbilityTemplateNames.AddItem('PlaceEvacZone');
+	Template.AbilityTemplateNames.AddItem('LiftOffAvenger');
+
+	Template.AbilityTemplateNames.AddItem('Loot');
+	Template.AbilityTemplateNames.AddItem('CarryUnit');
+	Template.AbilityTemplateNames.AddItem('PutDownUnit');
+
+	Template.AbilityTemplateNames.AddItem('Interact_PlantBomb');
+	Template.AbilityTemplateNames.AddItem('Interact_TakeVial');
+	Template.AbilityTemplateNames.AddItem('Interact_StasisTube');
+	Template.AbilityTemplateNames.AddItem('Interact_MarkSupplyCrate');
+	Template.AbilityTemplateNames.AddItem('Interact_ActivateAscensionGate');
+
+	Template.AbilityTemplateNames.AddItem('DisableConsumeAllPoints');
+
+	Template.AbilityTemplateNames.AddItem('Revive');
+	Template.AbilityTemplateNames.AddItem('Panicked');
+	Template.AbilityTemplateNames.AddItem('Berserk');
+	Template.AbilityTemplateNames.AddItem('Obsessed');
+	Template.AbilityTemplateNames.AddItem('Shattered');
 
     return Template;
 }
@@ -220,8 +266,6 @@ static function RemoveSquadConcealment(XComGameSTate StartState)
     }
     `assert(BattleData != none);
 
-    BattleData = XComGameState_BattleData(StartState.ModifyStateObject(class'XComGameState_BattleData', BattleData.ObjectID));
-    // TODO: Narrative for no concealment?
     BattleData.bForceNoSquadConcealment = true;
 }
 
@@ -261,6 +305,61 @@ static function VolunteerArmyTacticalStartModifier(XComGameState StartState)
     }
 
     XComTeamSoldierSpawnTacticalStartModifier(VolunteerCharacterTemplate, StartState);
+}
+
+static function X2SitRepEffectTemplate CreateDoubleAgentEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyTacticalStartState Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'DoubleAgentEffect_CI');
+
+    Template.ModifyTacticalStartStateFn = DoubleAgentTacticalStartModifier;
+    
+    return Template;
+}
+
+static function DoubleAgentTacticalStartModifier(XComGameState StartState)
+{
+    local array<DoubleAgentData> DoubleAgentPotentials;
+    local XComGameState_BattleData BattleData;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local DoubleAgentData DoubleAgent;
+	local int CurrentForceLevel, Rand;
+
+    DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
+
+	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
+    {
+		break;
+    }
+    `assert( XComHQ != none );
+
+	foreach StartState.IterateByClassType(class'XComGameState_BattleData', BattleData)
+	{
+		break;
+	}
+	`assert( BattleData != none );
+
+	CurrentForceLevel = BattleData.GetForceLevel();
+	foreach DoubleAgentPotentials(DoubleAgent)
+	{
+		if ((CurrentForceLevel < DoubleAgent.MinForceLevel) || (CurrentForceLevel > DoubleAgent.MaxForceLevel))
+		{
+			DoubleAgentPotentials.RemoveItem(DoubleAgent);
+		}
+	}
+
+	if (DoubleAgentPotentials.Length > 0)
+	{
+		Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
+		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
+	}
+	else
+	{
+		DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
+        Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
+		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
+	}
 }
 
 static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName, XComGameState StartState)

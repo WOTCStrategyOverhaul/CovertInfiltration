@@ -12,6 +12,7 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(FamiliarTerrainBuff_CI());
     Templates.AddItem(PhysicalConditioningBuff_CI());
     Templates.AddItem(MentalReadinessBuff_CI());
+    Templates.AddItem(IntelligenceLeakDebuff_CI());
 
     return Templates;
 }
@@ -115,6 +116,32 @@ static function X2AbilityTemplate MentalReadinessBuff_CI()
     StatEffect.BuildPersistentEffect(1, true, false, true);
     StatEffect.AddPersistentStatChange(eStat_Will, 10); //TODO: config this
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, "Will + 10", "CUZ REASONS", Template.IconImage, true,,Template.AbilitySourceName);
+    Template.AddTargetEffect(StatEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate IntelligenceLeakDebuff_CI()
+{
+    local X2AbilityTemplate Template;
+    local X2Effect_PersistentStatChange StatEffect;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'IntelligenceLeakDebuff_CI');
+    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_escape";
+	Template.AbilitySourceName = 'eAbilitySource_Perk';
+	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+	Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+    Template.bIsPassive = true;
+
+    StatEffect = new class'X2Effect_PersistentStatChange';
+    StatEffect.BuildPersistentEffect(1, true, false, true);
+    StatEffect.AddPersistentStatChange(eStat_DetectionModifier, 0.33, MODOP_Multiplication); //TODO: config this
+    StatEffect.SetDisplayInfo(ePerkBuff_Passive, "intel leak", "CUZ REASONS", Template.IconImage, true,,Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
