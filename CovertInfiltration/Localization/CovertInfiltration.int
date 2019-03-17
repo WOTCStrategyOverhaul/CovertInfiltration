@@ -22,7 +22,7 @@ strSlotOptionalNote="Optional"
 strSlotPenaltyNote="Overload Penalty"
 strSlotRequiredPrefix="Required:"
 
-[UISS_InfiltrationPanel]
+[UISS_InfiltrationReadout]
 strTotalDurationTitle="TOTAL DURATION:"
 strBaseDurationTitle="BASE DURATION:"
 strSquadDurationTitle="INFILTRATION MODIFIER:"

@@ -155,7 +155,7 @@
     <Content Include="Src\CovertInfiltration\Classes\UISS_CostSlotsContainer.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationPanel.uc">
+    <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationReadout.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStackingIcon.uc">

@@ -16,7 +16,7 @@ var protected SSAAT_SquadSelectConfiguration Configuration;
 var protectedwrite UISquadSelect SquadSelect;
 
 var protected bool bCreatedUIElements;
-var protected UISS_InfiltrationPanel InfoDisplay;
+var protected UISS_InfiltrationReadout InfoDisplay;
 var protected UISS_CostSlotsContainer CostSlots;
 
 var localized string strSlotOptionalNote;
@@ -41,8 +41,8 @@ simulated protected function PostScreenInit()
 	ActionInfo.InitCovertActionInfo('CovertActionInfo');
 	ActionInfo.UpdateData(GetAction());
 	
-	InfoDisplay = SquadSelect.Spawn(class'UISS_InfiltrationPanel', SquadSelect);
-	InfoDisplay.InitRisks(GetAction());
+	InfoDisplay = SquadSelect.Spawn(class'UISS_InfiltrationReadout', SquadSelect);
+	InfoDisplay.InitReadout(GetAction());
 
 	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
 	CostSlots.PostAnySlotStateChanged = UpdateUIElements;
