@@ -18,6 +18,7 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateLightningStrikeEffect_CI());
     Templates.AddItem(CreateIntelligenceLeakDebuffEffect_CI());
     Templates.AddItem(CreateDoubleAgentAbilitiesTemplate_CI());
+    Templates.AddItem(CreateTacticalAnalysisAbilityTemplate_CI());
 
     // podsize & encounters
     Templates.AddItem(CreatePodSizeIncreasedByOneEffectTemplate_CI());
@@ -35,6 +36,9 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateNoSquadConcealmentEffectTemplate_CI());
     Templates.AddItem(CreateVolunteerArmyEffectTemplate_CI());
     Templates.AddItem(CreateDoubleAgentEffectTemplate_CI());
+    Templates.AddItem(CreateTacticalAnalysisEffectTemplate_CI());
+    Templates.AddItem(CreateAdventAirPatrolsEffectTemplate_CI());
+    Templates.AddItem(CreateCommsJammingEffectTemplate_CI());
 
     return Templates;
 }
@@ -146,6 +150,17 @@ static function X2SitRepEffectTemplate CreateDoubleAgentAbilitiesTemplate_CI()
 	Template.AbilityTemplateNames.AddItem('Berserk');
 	Template.AbilityTemplateNames.AddItem('Obsessed');
 	Template.AbilityTemplateNames.AddItem('Shattered');
+
+    return Template;
+}
+
+static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate_CI()
+{
+    local X2SitRepEffect_GrantAbilities  Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'TacticalAnalysisAbility_CI');
+
+    Template.AbilityTemplateNames.AddItem('TacticalAnalysis');
 
     return Template;
 }
@@ -409,4 +424,122 @@ static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName,
 
 	XComHQ.Squad.AddItem(SoldierState.GetReference());
 	XComHQ.AllSquads[0].SquadMembers.AddItem(SoldierState.GetReference());
+}
+
+static function X2SitRepEffectTemplate CreateTacticalAnalysisEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyTacticalStartState Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'TacticalAnalysisEffect_CI');
+
+    Template.ModifyTacticalStartStateFn = TacticalAnalysisStartModifier;
+
+    return Template;
+}
+
+static function TacticalAnalysisStartModifier(XComGameState StartState)
+{
+    local XComGameState_Player Player;
+    local Object PlayerObject;
+
+    foreach StartState.IterateByClassType(class'XComGameState_Player', Player)
+    {
+        if (Player.GetTeam() == eTeam_XCom)
+        {
+            break;
+        }
+    }
+
+    PlayerObject = Player;
+
+    `XEVENTMGR.RegisterForEvent(PlayerObject, 'ScamperEnd', Player.TacticalAnalysisScamperResponse, ELD_OnStateSubmitted);
+}
+
+static function X2SitRepEffectTemplate CreateAdventAirPatrolsEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyTacticalStartState Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'AdventAirPatrolsEffect_CI');
+
+    Template.ModifyTacticalStartStateFn = AdventAirPatrolStartModifier;
+
+    return Template;
+}
+
+static function AdventAirPatrolStartModifier(XComGameState StartState)
+{
+    local XComGameState_Player Player;
+    local Object PlayerObject;
+
+    foreach StartState.IterateByClassType(class'XComGameState_Player', Player)
+    {
+        if (Player.GetTeam() == eTeam_XCom)
+        {
+            break;
+        }
+    }
+
+    PlayerObject = Player;
+
+    `XEVENTMGR.RegisterForEvent(PlayerObject, 'SquadConcealmentBroken', CallReinforcements, ELD_OnStateSubmitted);
+}
+
+static function EventListenerReturn CallReinforcements(Object EventData, Object EventSource, XComGameState StartState, Name EventID, Object CallbackData)
+{
+    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements('Tutorial_GroupTwo', 1, , , 6, , , , , , , , true);
+    
+    return ELR_NoInterrupt;
+}
+
+static function X2SitRepEffectTemplate CreateCommsJammingEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyTacticalStartState Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'CommsJammingEffect_CI');
+
+    Template.ModifyTacticalStartStateFn = CommsJammingStartModifier;
+
+    return Template; 
+}
+
+static function CommsJammingStartModifier(XComGameState StartState)
+{
+    local XComGameState_Player Player;
+    local Object PlayerObject;
+
+    foreach StartState.IterateByClassType(class'XComGameState_Player', Player)
+    {
+        if (Player.GetTeam() == eTeam_XCom)
+        {
+            break;
+        }
+    }
+
+    PlayerObject = Player;
+
+    `XEVENTMGR.RegisterForEvent(PlayerObject, 'ReinforcementSpawnerCreated', DelayReinforcements, ELD_OnStateSubmitted);
+}
+
+static function EventListenerReturn DelayReinforcements(Object EventData, Object EventSource, XComGameState StartState, Name EventID, Object CallbackData)
+{
+    local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+    local XComGameState NewGameState;
+
+    ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
+
+    if (ReinforcementSpawner == none)
+    {
+        `redscreen("SITREP_CommsJamming: could not find ReinformentSpawner, hold onto your britches bitches");
+
+        return ELR_NoInterrupt;
+    }
+    
+    NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
+
+    ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
+    ReinforcementSpawner.Countdown += 1;
+
+    `TACTICALRULES.SubmitGameState(NewGameState);
+    
+    return ELR_NoInterrupt;
 }
