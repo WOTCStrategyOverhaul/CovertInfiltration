@@ -17,20 +17,17 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateMentalReadinessEffectTemplate_CI());
     Templates.AddItem(CreateLightningStrikeEffect_CI());
     Templates.AddItem(CreateIntelligenceLeakDebuffEffect_CI());
-    Templates.AddItem(CreateDoubleAgentAbilitiesTemplate_CI());
     Templates.AddItem(CreateTacticalAnalysisAbilityTemplate_CI());
 
     // podsize & encounters
     Templates.AddItem(CreatePodSizeIncreasedByOneEffectTemplate_CI());
     Templates.AddItem(CreateGunneryEmplacementsEffectTemplate_CI());
     Templates.AddItem(CreatePhalanxEffectTemplate_CI());
+    Templates.AddItem(CreateCongregationEffectTemplate_CI());
 
     // kismet variables
     Templates.AddItem(CreateShoddyIntelEffectTemplate_CI());
     Templates.AddItem(CreateWellRehearsedEffectTemplate_CI());
-
-    // misc
-    Templates.AddItem(CreateInformationWarEffectTemplate_CI());
     
     // tactical startstate
     Templates.AddItem(CreateNoSquadConcealmentEffectTemplate_CI());
@@ -39,6 +36,9 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateTacticalAnalysisEffectTemplate_CI());
     Templates.AddItem(CreateAdventAirPatrolsEffectTemplate_CI());
     Templates.AddItem(CreateCommsJammingEffectTemplate_CI());
+
+    // misc
+    Templates.AddItem(CreateInformationWarEffectTemplate_CI());
 
     return Templates;
 }
@@ -121,39 +121,6 @@ static function X2SitRepEffectTemplate CreateIntelligenceLeakDebuffEffect_CI()
     return Template;
 }
 
-static function X2SitRepEffectTemplate CreateDoubleAgentAbilitiesTemplate_CI()
-{
-    local X2SitRepEffect_GrantAbilities Template;
-
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'DoubleAgentAbilities_CI')
-
-    Template.Teams.AddItem(eTeam_XCom);
-    Template.GrantToSoldiers = false;
-    Template.AbilityTemplateNames.AddItem( 'Evac' );
-	Template.AbilityTemplateNames.AddItem('PlaceEvacZone');
-	Template.AbilityTemplateNames.AddItem('LiftOffAvenger');
-
-	Template.AbilityTemplateNames.AddItem('Loot');
-	Template.AbilityTemplateNames.AddItem('CarryUnit');
-	Template.AbilityTemplateNames.AddItem('PutDownUnit');
-
-	Template.AbilityTemplateNames.AddItem('Interact_PlantBomb');
-	Template.AbilityTemplateNames.AddItem('Interact_TakeVial');
-	Template.AbilityTemplateNames.AddItem('Interact_StasisTube');
-	Template.AbilityTemplateNames.AddItem('Interact_MarkSupplyCrate');
-	Template.AbilityTemplateNames.AddItem('Interact_ActivateAscensionGate');
-
-	Template.AbilityTemplateNames.AddItem('DisableConsumeAllPoints');
-
-	Template.AbilityTemplateNames.AddItem('Revive');
-	Template.AbilityTemplateNames.AddItem('Panicked');
-	Template.AbilityTemplateNames.AddItem('Berserk');
-	Template.AbilityTemplateNames.AddItem('Obsessed');
-	Template.AbilityTemplateNames.AddItem('Shattered');
-
-    return Template;
-}
-
 static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate_CI()
 {
     local X2SitRepEffect_GrantAbilities  Template;
@@ -200,7 +167,19 @@ static function X2SitRepEffectTemplate CreatePhalanxEffectTemplate_CI()
     local X2SitRepEffect_ModifyDefaultEncounterLists Template;
 
     `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyDefaultEncounterLists', Template, 'PhalanxEffect_CI');
+
     Template.DefaultLeaderListOverride = 'PhalanxLeaders';
+
+    return Template;
+}
+
+static function X2SitRepEffectTemplate CreateCongregationEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyDefaultEncounterLists Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyDefaultEncounterLists', Template, 'CongregationEffect_CI');
+
+    Template.DefaultLeaderListOverride = 'CongregationLeaders';
 
     return Template;
 }
@@ -235,25 +214,6 @@ static function X2SitRepEffectTemplate CreateWellRehearsedEffectTemplate_CI()
 	Template.ValueAdjustment = 1;
 
 	return Template;
-}
-
-////////////
-/// Misc ///
-////////////
-
-static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
-{
-    local X2SitRepEffect_ModifyHackDefenses Template;
-
-    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'InformationWarEffect_CI');
-    Template.DefenseDeltaFn = InformationWarModFunction;
-
-    return Template;
-}
-
-static function InformationWarModFunction(out int ModValue)
-{
-    ModValue += default.InformationWarReduction;
 }
 
 ///////////////////////////
@@ -379,7 +339,9 @@ static function DoubleAgentTacticalStartModifier(XComGameState StartState)
 
 static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName, XComGameState StartState)
 {
-	local X2CharacterTemplate Template;
+	local X2CharacterTemplate CharacterTemplate;
+    local array<X2AbilityTemplate> Abilities;
+    local X2AbilityTemplate AbilityTemplate;
 	local XComGameState_Unit SoldierState;
 	local XGCharacterGenerator CharacterGenerator;
 	local XComGameState_Player PlayerState;
@@ -387,15 +349,16 @@ static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName,
 	local XComGameState_HeadquartersXCom XComHQ;
 
 	// generate a basic resistance soldier unit
-	Template = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager().FindCharacterTemplate(CharTemplateName);
-	`assert(Template != none);
+	CharacterTemplate = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager().FindCharacterTemplate(CharTemplateName);
+	`assert(CharacterTemplate != none);
 
-	SoldierState = Template.CreateInstanceFromTemplate(StartState);
+	SoldierState = CharacterTemplate.CreateInstanceFromTemplate(StartState);
 	SoldierState.bMissionProvided = true;
+    Abilities = GetTempSoldierAbilities();
 
-	if (Template.bAppearanceDefinesPawn)
+	if (CharacterTemplate.bAppearanceDefinesPawn)
 	{
-		CharacterGenerator = `XCOMGRI.Spawn(Template.CharacterGeneratorClass);
+		CharacterGenerator = `XCOMGRI.Spawn(CharacterTemplate.CharacterGeneratorClass);
 		`assert(CharacterGenerator != none);
 
 		Soldier = CharacterGenerator.CreateTSoldier();
@@ -403,8 +366,7 @@ static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName,
 		SoldierState.SetCharacterName(Soldier.strFirstName, Soldier.strLastName, Soldier.strNickName);
 		SoldierState.SetCountry(Soldier.nmCountry);
 	}
-
-	// assign the player to him
+    
 	foreach StartState.IterateByClassType(class'XComGameState_Player', PlayerState)
 	{
 		if(PlayerState.GetTeam() == eTeam_XCom)
@@ -414,7 +376,6 @@ static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName,
 		}
 	}
 
-	// give him a loadout
 	SoldierState.ApplyInventoryLoadout(StartState);
 
 	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
@@ -422,8 +383,48 @@ static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName,
 		break;
     }
 
+    if (!SoldierState.IsSoldier())
+    {
+        foreach Abilities(AbilityTemplate)
+        {
+            class'X2TacticalGameRuleset'.static.InitAbilityForUnit(AbilityTemplate, SoldierState, StartState);			
+        }
+    }
+
 	XComHQ.Squad.AddItem(SoldierState.GetReference());
 	XComHQ.AllSquads[0].SquadMembers.AddItem(SoldierState.GetReference());
+}
+
+static function array<X2AbilityTemplate> GetTempSoldierAbilities()
+{
+    local array<X2AbilityTemplate> Templates;
+    local X2AbilityTemplateManager Manager;
+
+    Manager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+
+    Templates.AddItem(Manager.FindAbilityTemplate('Evac'));
+	Templates.AddItem(Manager.FindAbilityTemplate('PlaceEvacZone'));
+	Templates.AddItem(Manager.FindAbilityTemplate('LiftOffAvenger'));
+
+	Templates.AddItem(Manager.FindAbilityTemplate('Loot'));
+	Templates.AddItem(Manager.FindAbilityTemplate('CarryUnit'));
+	Templates.AddItem(Manager.FindAbilityTemplate('PutDownUnit'));
+
+	Templates.AddItem(Manager.FindAbilityTemplate('Interact_PlantBomb'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Interact_TakeVial'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Interact_StasisTube'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Interact_MarkSupplyCrate'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Interact_ActivateAscensionGate'));
+
+	Templates.AddItem(Manager.FindAbilityTemplate('DisableConsumeAllPoints'));
+
+	Templates.AddItem(Manager.FindAbilityTemplate('Revive'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Panicked'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Berserk'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Obsessed'));
+	Templates.AddItem(Manager.FindAbilityTemplate('Shattered'));
+
+    return Templates;
 }
 
 static function X2SitRepEffectTemplate CreateTacticalAnalysisEffectTemplate_CI()
@@ -533,7 +534,12 @@ static function EventListenerReturn DelayReinforcements(Object EventData, Object
 
         return ELR_NoInterrupt;
     }
-    
+    // we cannot delay an instant spawn of RNFs
+    else if (ReinforcementSpawner.Countdown <= 0)
+    {
+        return ELR_NoInterrupt;
+    }
+
     NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
 
     ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
@@ -542,4 +548,24 @@ static function EventListenerReturn DelayReinforcements(Object EventData, Object
     `TACTICALRULES.SubmitGameState(NewGameState);
     
     return ELR_NoInterrupt;
+}
+
+////////////
+/// Misc ///
+////////////
+
+static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
+{
+    local X2SitRepEffect_ModifyHackDefenses Template;
+
+    `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'InformationWarEffect_CI');
+
+    Template.DefenseDeltaFn = InformationWarModFunction;
+
+    return Template;
+}
+
+static function InformationWarModFunction(out int ModValue)
+{
+    ModValue += default.InformationWarReduction;
 }
