@@ -1,10 +1,15 @@
-class X2SitRep_InfiltrationSitRepEffects extends X2SitRepEffect config(GameData);
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  statusNone
+//  PURPOSE: Class to add custom SitReps Templates
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
 
-var config int InformationWarReduction;
+class X2SitRep_InfiltrationSitRepEffects extends X2SitRepEffect;
 
-var config name	VolunteerArmyCharacterTemplate;
-var config name	VolunteerArmyCharacterTemplateM2;
-var config name	VolunteerArmyCharacterTemplateM3;
+var localized string strBannerMessage;
+var localized string strBannerSubtitle;
+var localized string strBannerValue;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -20,7 +25,6 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(CreateTacticalAnalysisAbilityTemplate_CI());
 
     // podsize & encounters
-    Templates.AddItem(CreatePodSizeIncreasedByOneEffectTemplate_CI());
     Templates.AddItem(CreateGunneryEmplacementsEffectTemplate_CI());
     Templates.AddItem(CreatePhalanxEffectTemplate_CI());
     Templates.AddItem(CreateCongregationEffectTemplate_CI());
@@ -132,20 +136,9 @@ static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate_CI(
     return Template;
 }
 
-////////////////////////////
-/// Podsize & Encounters ///
-////////////////////////////
-
-static function X2SitRepEffectTemplate CreatePodSizeIncreasedByOneEffectTemplate_CI()
-{
-	local X2SitRepEffect_ModifyPodSize Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyPodSize', Template, 'PodSizeIncreaseByOneEffect_CI');
-
-	Template.PodSizeDelta = 1;
-
-	return Template;
-}
+//////////////////
+/// Encounters ///
+//////////////////
 
 static function X2SitRepEffectTemplate CreateGunneryEmplacementsEffectTemplate_CI()
 {
@@ -268,15 +261,15 @@ static function VolunteerArmyTacticalStartModifier(XComGameState StartState)
 
     if (XComHQ.IsTechResearched('PlasmaRifle'))
     {
-        VolunteerCharacterTemplate = default.VolunteerArmyCharacterTemplateM3;
+        VolunteerCharacterTemplate = class'X2StrategyElement_XpackResistanceActions'.default.VolunteerArmyCharacterTemplateM3;
     }
     else if (XComHQ.IsTechResearched('MagnetizedWeapons'))
     {
-        VolunteerCharacterTemplate = default.VolunteerArmyCharacterTemplateM2;
+        VolunteerCharacterTemplate = class'X2StrategyElement_XpackResistanceActions'.default.VolunteerArmyCharacterTemplateM2;
     }
     else
     {
-        VolunteerCharacterTemplate = default.VolunteerArmyCharacterTemplate;
+        VolunteerCharacterTemplate = class'X2StrategyElement_XpackResistanceActions'.default.VolunteerArmyCharacterTemplate;
     }
 
     XComTeamSoldierSpawnTacticalStartModifier(VolunteerCharacterTemplate, StartState);
@@ -487,7 +480,15 @@ static function AdventAirPatrolStartModifier(XComGameState StartState)
 
 static function EventListenerReturn CallReinforcements(Object EventData, Object EventSource, XComGameState StartState, Name EventID, Object CallbackData)
 {
-    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements('Tutorial_GroupTwo', 1, , , 6, , , , , , , , true);
+    local XComTacticalMissionManager MissionManager;
+    local MissionSchedule ActiveMissionSchedule;
+    local int RandomEncounterID;
+
+    MissionManager = `TACTICALMISSIONMGR;
+    MissionManager.GetActiveMissionSchedule(ActiveMissionSchedule);
+    RandomEncounterID = `SYNC_RAND_STATIC(ActiveMissionSchedule.PrePlacedEncounters.Length);
+
+    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(ActiveMissionSchedule.PrePlacedEncounters[RandomEncounterID].EncounterID, 1, , , 6, , , , , , , , true);
     
     return ELR_NoInterrupt;
 }
@@ -521,9 +522,11 @@ static function CommsJammingStartModifier(XComGameState StartState)
     `XEVENTMGR.RegisterForEvent(PlayerObject, 'ReinforcementSpawnerCreated', DelayReinforcements, ELD_OnStateSubmitted);
 }
 
-static function EventListenerReturn DelayReinforcements(Object EventData, Object EventSource, XComGameState StartState, Name EventID, Object CallbackData)
+static function EventListenerReturn DelayReinforcements(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
     local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+    local VisualizationActionMetadata ActionMetadata;
+    local X2Action_PlayMessageBanner MessageBanner;
     local XComGameState NewGameState;
 
     ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
@@ -534,7 +537,7 @@ static function EventListenerReturn DelayReinforcements(Object EventData, Object
 
         return ELR_NoInterrupt;
     }
-    // we cannot delay an instant spawn of RNFs
+    // we cannot delay instant RNFs
     else if (ReinforcementSpawner.Countdown <= 0)
     {
         return ELR_NoInterrupt;
@@ -542,6 +545,12 @@ static function EventListenerReturn DelayReinforcements(Object EventData, Object
 
     NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
 
+    ActionMetadata.StateObject_OldState = ReinforcementSpawner;
+    ActionMetadata.StateObject_NewState = ReinforcementSpawner;
+
+    MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, NewGameState.GetContext()));
+    MessageBanner.AddMessageBanner(default.strBannerMessage, , default.strBannerSubtitle, default.strBannerValue, eUIState_Good);
+    
     ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
     ReinforcementSpawner.Countdown += 1;
 
@@ -567,5 +576,5 @@ static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
 
 static function InformationWarModFunction(out int ModValue)
 {
-    ModValue += default.InformationWarReduction;
+    ModValue += `ScaleStrategyArrayInt(class'X2StrategyElement_XpackResistanceActions'.default.InformationWarReduction);
 }
