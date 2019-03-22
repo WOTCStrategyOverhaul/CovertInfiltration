@@ -140,8 +140,6 @@ static function X2SitRepEffectTemplate CreateGunneryEmplacementsEffectTemplate()
 
     `CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTurretCount', Template, 'GunneryEmplacementsEffect');
 
-    Template.MinCount = 2;
-    Template.MaxCount = 2;
     Template.CountDelta = 2;
     Template.ZoneWidthDelta = 16;
     Template.ZoneOffsetDelta = -16;

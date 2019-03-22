@@ -4,9 +4,9 @@ class X2EventListener_Infiltration extends X2EventListener config(Infiltration);
 var config int MIN_WILL_LOSS;
 var config int MAX_WILL_LOSS;
 
-var localized string strBannerMessage;
-var localized string strBannerSubtitle;
-var localized string strBannerValue;
+var localized string strReinforcementDelayBannerMessage;
+var localized string strReinforcementDelayBannerSubtitle;
+var localized string strReinforcementDelayBannerValue;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -236,8 +236,8 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Tactical');
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
-	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol);
-	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming);
+	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
+	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -327,13 +327,13 @@ static protected function EventListenerReturn AddCovertEscapeObjective(Object Ev
 	return ELR_NoInterrupt;
 }
 
-static function EventListenerReturn AdventAirPatrol(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComGameState_BattleData BattleData;
 	local name EncounterID;
-    local int PodStrength;
+	local int PodStrength;
 
-    BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
 
 	if (BattleData.ActiveSitReps.Find('AdventAirPatrols') == INDEX_NONE)
 	{
@@ -342,65 +342,66 @@ static function EventListenerReturn AdventAirPatrol(Object EventData, Object Eve
 	
 	PodStrength = `SYNC_RAND_STATIC(100) + 1;
 
-    if (PodStrength < 33)
-    {
-        EncounterID = 'ADVx3_Weak';
-    }
-    else if (PodStrength < 66)
-    {
-        EncounterID = 'ADVx3_Standard';
-    }
-    else
-    {
-        EncounterID = 'ADVx3_Strong';
-    }
+	if (PodStrength < 33)
+	{
+		EncounterID = 'ADVx3_Weak';
+	}
+	else if (PodStrength < 66)
+	{
+		EncounterID = 'ADVx3_Standard';
+	}
+	else
+	{
+		EncounterID = 'ADVx3_Strong';
+	}
 
-    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, 1, , , 6, , , , , , , , true);
-    
-    return ELR_NoInterrupt;
+	class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, 1, , , 6, , , , , , , , true);
+	
+	return ELR_NoInterrupt;
 }
 
-static function EventListenerReturn CommsJamming(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static function EventListenerReturn CommsJamming_ReinforcementDelay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-    local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-    local XComGameState_BattleData BattleData;
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComGameState_BattleData BattleData;
 	local XComGameState NewGameState;
 
 	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
-    ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
+	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
 
 	if (BattleData.ActiveSitReps.Find('CommsJamming') == INDEX_NONE)
 	{
 		return ELR_NoInterrupt;
 	}
-	else if (ReinforcementSpawner == none)
-    {
-        `redscreen("SITREP_CommsJamming: could not find ReinformentSpawner, hold onto your britches bitches");
+	
+	if (ReinforcementSpawner == none)
+	{
+		`redscreen("SITREP_CommsJamming: could not find ReinformentSpawner, hold onto your britches bitches");
 
-        return ELR_NoInterrupt;
-    }
-    // we cannot delay instant RNFs
-    else if (ReinforcementSpawner.Countdown <= 0)
-    {
-        return ELR_NoInterrupt;
-    }
+		return ELR_NoInterrupt;
+	}
+	// we cannot delay instant RNFs
+	else if (ReinforcementSpawner.Countdown <= 0)
+	{
+		return ELR_NoInterrupt;
+	}
 
-    NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
 
-    ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
-    ReinforcementSpawner.Countdown += 1;
+	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
+	ReinforcementSpawner.Countdown += 1;
 
-    XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = XComReinforcementsDelayedVisualizationFn;
-    `TACTICALRULES.SubmitGameState(NewGameState);
-    
-    return ELR_NoInterrupt;
+	XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = XComReinforcementsDelayedVisualizationFn;
+	`TACTICALRULES.SubmitGameState(NewGameState);
+	
+	return ELR_NoInterrupt;
 }
 
 function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameState)
 {
-    local VisualizationActionMetadata ActionMetadata;
-    local X2Action_PlayMessageBanner MessageBanner;
+	local VisualizationActionMetadata ActionMetadata;
+	local X2Action_PlayMessageBanner MessageBanner;
 
-    MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
-    MessageBanner.AddMessageBanner(default.strBannerMessage, , default.strBannerSubtitle, default.strBannerValue, eUIState_Good);
+	MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
+	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
 }

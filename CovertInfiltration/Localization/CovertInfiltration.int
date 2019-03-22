@@ -27,9 +27,9 @@ strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
 [X2EventListener_Infiltration]
-strBannerMessage="Comms Jamming.."
-strBannerSubtitle="Advent Reinforcements Delayed:"
-strBannerValue="1 Turn"
+strReinforcementDelayBannerMessage="Comms Jamming.."
+strReinforcementDelayBannerSubtitle="Advent Reinforcements Delayed:"
+strReinforcementDelayBannerValue="1 Turn"
 
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign Orders
