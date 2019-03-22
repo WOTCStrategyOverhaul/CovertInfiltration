@@ -449,6 +449,7 @@ static function TacticalAnalysisStartModifier(XComGameState StartState)
     `XEVENTMGR.RegisterForEvent(PlayerObject, 'ScamperEnd', Player.TacticalAnalysisScamperResponse, ELD_OnStateSubmitted);
 }
 
+// best to use this in conjunction
 static function X2SitRepEffectTemplate CreateAdventAirPatrolsEffectTemplate_CI()
 {
     local X2SitRepEffect_ModifyTacticalStartState Template;
@@ -476,19 +477,30 @@ static function AdventAirPatrolStartModifier(XComGameState StartState)
     PlayerObject = Player;
 
     `XEVENTMGR.RegisterForEvent(PlayerObject, 'SquadConcealmentBroken', CallReinforcements, ELD_OnStateSubmitted);
+    `XEVENTMGR.RegisterForEvent(PlayerObject, 'SpawnReinforcementsComplete', CallReinforcements, ELD_OnStateSubmitted);
 }
 
 static function EventListenerReturn CallReinforcements(Object EventData, Object EventSource, XComGameState StartState, Name EventID, Object CallbackData)
 {
-    local XComTacticalMissionManager MissionManager;
-    local MissionSchedule ActiveMissionSchedule;
-    local int RandomEncounterID;
+    local name EncounterID;
+    local int PodStrength;
 
-    MissionManager = `TACTICALMISSIONMGR;
-    MissionManager.GetActiveMissionSchedule(ActiveMissionSchedule);
-    RandomEncounterID = `SYNC_RAND_STATIC(ActiveMissionSchedule.PrePlacedEncounters.Length);
+    PodStrength = `SYNC_RAND_STATIC(100) + 1;
 
-    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(ActiveMissionSchedule.PrePlacedEncounters[RandomEncounterID].EncounterID, 1, , , 6, , , , , , , , true);
+    if (PodStrength < 33)
+    {
+        EncounterID = 'ADVx3_Weak';
+    }
+    else if (PodStrength < 66)
+    {
+        EncounterID = 'ADVx3_Standard';
+    }
+    else
+    {
+        EncounterID = 'ADVx3_Strong';
+    }
+
+    class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, 1, , , 6, , , , , , , , true);
     
     return ELR_NoInterrupt;
 }
@@ -525,8 +537,6 @@ static function CommsJammingStartModifier(XComGameState StartState)
 static function EventListenerReturn DelayReinforcements(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
     local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-    local VisualizationActionMetadata ActionMetadata;
-    local X2Action_PlayMessageBanner MessageBanner;
     local XComGameState NewGameState;
 
     ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
@@ -545,18 +555,22 @@ static function EventListenerReturn DelayReinforcements(Object EventData, Object
 
     NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
 
-    ActionMetadata.StateObject_OldState = ReinforcementSpawner;
-    ActionMetadata.StateObject_NewState = ReinforcementSpawner;
-
-    MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, NewGameState.GetContext()));
-    MessageBanner.AddMessageBanner(default.strBannerMessage, , default.strBannerSubtitle, default.strBannerValue, eUIState_Good);
-    
     ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
     ReinforcementSpawner.Countdown += 1;
 
+    XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = XComReinforcementsDelayedVisualizationFn;
     `TACTICALRULES.SubmitGameState(NewGameState);
     
     return ELR_NoInterrupt;
+}
+
+function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameState)
+{
+    local VisualizationActionMetadata ActionMetadata;
+    local X2Action_PlayMessageBanner MessageBanner;
+
+    MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
+    MessageBanner.AddMessageBanner(default.strBannerMessage, , default.strBannerSubtitle, default.strBannerValue, eUIState_Good);
 }
 
 ////////////
