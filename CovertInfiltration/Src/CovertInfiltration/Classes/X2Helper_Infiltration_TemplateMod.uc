@@ -17,6 +17,7 @@ var config array<name> arrDataSetsToForceVariants;
 var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
+var config(StrategyTuning) array<name> arrRemoveFactionCard;
 
 /////////////
 /// Items ///
@@ -416,4 +417,24 @@ static function PatchGuerillaTacticsSchool()
 	// Add infiltration size upgrades
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize1');
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize2');
+}
+
+/////////////////////
+/// Faction Cards ///
+/////////////////////
+
+static function RemoveFactionCards()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local X2StrategyCardTemplate CardTemplate;
+	local name TemplateName;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	`CI_Log("Suffocating Faction Cards");
+
+	foreach default.arrRemoveFactionCard(TemplateName)
+	{
+		CardTemplate = X2StrategyCardTemplate(Manager.FindStrategyElementTemplate(TemplateName));
+		CardTemplate.Category = "__REMOVED__";
+	}
 }

@@ -30,6 +30,11 @@ strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
+[X2EventListener_Infiltration]
+strReinforcementDelayBannerMessage="Comms Jamming.."
+strReinforcementDelayBannerSubtitle="Advent Reinforcements Delayed:"
+strReinforcementDelayBannerValue="1 Turn"
+
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign Orders
 
@@ -77,3 +82,4 @@ ActionObjective="Rescue Scientist"
 
 [CovertAction_P2DarkVIP X2CovertInfiltrationTemplate]
 ActionObjective="Neutralize VIP"
+
