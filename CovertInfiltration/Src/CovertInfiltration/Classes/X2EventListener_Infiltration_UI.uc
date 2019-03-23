@@ -273,6 +273,7 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
+	Template.AddCHEvent('CustomizeStatusStringsSeparate', CustomizeStatusStringsSeparate, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -339,6 +340,38 @@ static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Objec
 	if (Screen.ActiveList == Screen.SlotsList)
 	{
 		NavHelp.AddLeftHelp(class'UIUtilities_Infiltration'.default.strDropUpgrade, class'UIUtilities_Input'.const.ICON_X_SQUARE);
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CustomizeStatusStringsSeparate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+	local XComGameState_Unit UnitState;
+	local XComGameState_StaffSlot OccupiedSlot;
+	local XComGameState_CovertAction Action;
+	local string TimeValue, TimeLabel;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'CustomizeStatusStringsSeparate') return ELR_NoInterrupt;
+
+	UnitState = XComGameState_Unit(EventSource);
+	OccupiedSlot = UnitState.GetStaffSlot();
+
+	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
+	{
+		Action = OccupiedSlot.GetCovertAction();
+
+		if (Action != none)
+		{
+			class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+
+			Tuple.Data[0].b = true;
+			Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();		
+			Tuple.Data[2].s = TimeLabel;
+			Tuple.Data[3].i = int(TimeValue);
+		}
 	}
 
 	return ELR_NoInterrupt;
