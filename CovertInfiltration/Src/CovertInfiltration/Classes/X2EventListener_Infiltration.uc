@@ -37,6 +37,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
+	Template.AddCHEvent('CustomizeStatusStringsSeparate', CustomizeStatusStringsSeparate, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -224,6 +225,35 @@ static protected function EventListenerReturn ShouldCleanupCovertAction(Object E
 		{
 			Tuple.Data[1].b = false;
 		}
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CustomizeStatusStringsSeparate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+	local XComGameState_Unit UnitState;
+	local XComGameState_StaffSlot OccupiedSlot;
+	local XComGameState_CovertAction Action;
+	local string TimeValue, TimeLabel;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'CustomizeStatusStringsSeparate') return ELR_NoInterrupt;
+
+	UnitState = XComGameState_Unit(EventSource);
+	OccupiedSlot = UnitState.GetStaffSlot();
+
+	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
+	{
+		Action = OccupiedSlot.GetCovertAction();
+
+		class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+
+		Tuple.Data[0].b = true;
+		Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();		
+		Tuple.Data[2].s = TimeLabel;
+		Tuple.Data[3].i = int(TimeValue);
 	}
 
 	return ELR_NoInterrupt;
