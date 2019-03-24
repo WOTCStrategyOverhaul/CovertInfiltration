@@ -360,15 +360,16 @@ static protected function EventListenerReturn CustomizeStatusStringsSeparate(Obj
 	OccupiedSlot = UnitState.GetStaffSlot();
 
 	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
-	{
+	{	
+		Tuple.Data[0].b = true;
+		Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();	
+
 		Action = OccupiedSlot.GetCovertAction();
 
 		if (Action != none)
 		{
 			class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
 
-			Tuple.Data[0].b = true;
-			Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();		
 			Tuple.Data[2].s = TimeLabel;
 			Tuple.Data[3].i = int(TimeValue);
 		}
