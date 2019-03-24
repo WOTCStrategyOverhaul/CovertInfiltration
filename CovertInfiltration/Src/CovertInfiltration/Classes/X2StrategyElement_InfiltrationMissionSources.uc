@@ -217,3 +217,41 @@ static function Phase2OnSuccess(XComGameState NewGameState, XComGameState_Missio
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 }
 
+static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite MissionState)
+{
+	local XComGameState_CovertAction CovertAction, ActionState;
+	local array<name> ActiveSitReps;
+	local CovertActionRisk Risk;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_CovertAction', ActionState)
+	{
+		if (ActionState.Location == MissionState.Location)
+		{
+			CovertAction = ActionState;
+			break;
+		}
+	}
+
+	if (CovertAction == none)
+	{
+		// something went horribly wrong, just do the normal thing
+		return class'X2StrategyElement_DefaultMissionSources'.static.GetSitrepsGeneric(MissionState);
+	}
+
+	foreach CovertAction.Risks(Risk)
+	{
+		if (Risk.bOccurs && class'X2CovertInfiltrationTemplate'.default.arrInfiltrationFlatRisk.Find(Risk.RiskTemplateName) != INDEX_NONE)
+		{
+			ActiveSitReps.AddItem(Risk.RiskTemplateName);
+		}
+	}
+
+	if(ActiveSitReps.Length == 0)
+	{
+		return class'X2StrategyElement_DefaultMissionSources'.static.GetSitrepsGeneric(MissionState);
+	}
+	else
+	{
+		return ActiveSitReps;
+	}
+}

@@ -83,3 +83,17 @@ ActionObjective="Rescue Scientist"
 [CovertAction_P2DarkVIP X2CovertInfiltrationTemplate]
 ActionObjective="Neutralize VIP"
 
+[CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
+RiskName="Advent Patrols"
+
+[CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
+RiskName="Intelligence Leak"
+
+[CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
+RiskName="Advent Air Patrols"
+
+[CovertActionRisk_GunneryEmplacements X2CovertActionRiskTemplate]
+RiskName="Gunnery Emplacements"
+
+[CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
+RiskName="Shoddy Intel"

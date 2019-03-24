@@ -43,6 +43,12 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
@@ -66,6 +72,12 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
+
 	return Template;
 }
 
@@ -87,6 +99,12 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
@@ -109,6 +127,12 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
@@ -149,6 +173,12 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
@@ -171,6 +201,12 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
@@ -193,6 +229,12 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 	Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_AdventPatrols');
+	Template.Risks.AddItem('CovertActionRisk_IntelligenceLeak');
+	Template.Risks.AddItem('CovertActionRisk_AdventAirPatrols');
+	Template.Risks.AddItem('CovertActionRisk_GunneryEmplacements');
+	Template.Risks.AddItem('CovertActionRisk_ShoddyIntel');
 	
 	return Template;
 }
