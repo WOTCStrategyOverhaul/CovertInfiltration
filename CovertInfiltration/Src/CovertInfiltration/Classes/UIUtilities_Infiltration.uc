@@ -106,13 +106,13 @@ static function string GetRiskDifficultyColouredString(int RiskLevel)
 	
 	switch (RiskLevel)
 	{
-	case 0: TextColor = "fdce2b";	break; // yellow
+	case 0: TextColor = "fdce2b";   break; // yellow
 	case 1: TextColor = "e6af31";   break; // yellow-orange
-	case 2: TextColor = "e69831";	break; // orange
+	case 2: TextColor = "e69831";   break; // orange
 	case 3: TextColor = "e66d31";   break; // orange-red
-	case 4: TextColor = "bf1e2e";	break; // red
+	case 4: TextColor = "bf1e2e";   break; // red
 	}
-	
+
 	return ColourText(Text, TextColor);
 }
 
@@ -140,7 +140,7 @@ protected static function int ConvertChanceToRiskLevel(int chanceToOccur)
 			break;
 		}
 	}
-	
+
 	return iRiskLevel;
 }
 

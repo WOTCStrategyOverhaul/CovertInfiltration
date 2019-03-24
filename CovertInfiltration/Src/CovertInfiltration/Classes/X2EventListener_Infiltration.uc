@@ -165,6 +165,7 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	Tuple = XComLWTuple(EventData);
 	
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionRisk_AlterChanceModifier') return ELR_NoInterrupt;
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action)) return ELR_NoInterrupt;
 
 	ActionSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
 	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadDeterrence(ActionSquad);

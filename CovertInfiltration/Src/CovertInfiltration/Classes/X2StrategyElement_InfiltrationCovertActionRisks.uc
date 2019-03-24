@@ -82,5 +82,11 @@ static function X2DataTemplate CreateShoddyIntelRiskTemplate()
 
 static function bool BypassCreateRisks(XComGameState_ResistanceFaction FactionState, optional XComGameState NewGameState)
 {
-	return false;
+	// XCGS_CovertAction::UpdateNegatedRisks sends a gamestate
+	// on it's call, return true there to avoid being negated
+	if (NewGameState == none)
+	{
+		return false;
+	}
+	return true;
 }

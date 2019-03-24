@@ -43,30 +43,9 @@ function X2CovertActionRiskTemplate SelectFlatRisk()
 function AddRisk(X2CovertActionRiskTemplate RiskTemplate, XComGameState_CovertAction ActionState)
 {
 	local CovertActionRisk SelectedRisk;
-	
+
 	SelectedRisk.RiskTemplateName = RiskTemplate.DataName;
 	SelectedRisk.ChanceToOccur = (RiskTemplate.MinChanceToOccur + `SYNC_RAND(RiskTemplate.MaxChanceToOccur - RiskTemplate.MinChanceToOccur + 1));
-	SelectedRisk.Level = GetRiskLevel(SelectedRisk);
 
 	ActionState.Risks.AddItem(SelectedRisk);
-}
-
-function int GetRiskLevel(CovertActionRisk Risk)
-{
-	local array<int> RiskThresholds;
-	local int TotalChanceToOccur, Threshold, iThreshold;
-
-	RiskThresholds = class'X2StrategyGameRulesetDataStructures'.default.RiskThresholds;
-	TotalChanceToOccur = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
-
-	// Set the risk threshold based on the chance to occur (not whether it actually does)
-	foreach RiskThresholds(Threshold, iThreshold)
-	{
-		if (TotalChanceToOccur <= Threshold)
-		{
-			break;
-		}
-	}
-
-	return iThreshold;
 }
