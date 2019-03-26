@@ -39,7 +39,7 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	//Template.SpawnMissionsFn = SpawnGuerillaOpsMissions;
 	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	Template.GetSitRepsFn = GetSitrepsGeneric;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	/*DeckEntry.RewardName = 'Reward_Supplies';
 	DeckEntry.Quantity = 1;
@@ -95,7 +95,7 @@ static function X2DataTemplate CreateDarkEventTemplate()
 	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = StrategyObjectivePlusSweepCompleted;
 	Template.GetMissionRegionFn = GetGuerillaOpRegions;
-	Template.GetSitRepsFn = GetGuerillaOpsSitReps;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Supplies';
 	DeckEntry.Quantity = 2;
@@ -144,6 +144,7 @@ static function X2DataTemplate CreateEngineerTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Engineer';
 	DeckEntry.Quantity = 1;
@@ -171,6 +172,7 @@ static function X2DataTemplate CreateScientistTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Scientist';
 	DeckEntry.Quantity = 1;
@@ -198,6 +200,7 @@ static function X2DataTemplate CreateDarkVIPTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Intel';
 	DeckEntry.Quantity = 1;
@@ -231,27 +234,32 @@ static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite Mission
 			break;
 		}
 	}
-
-	if (CovertAction == none)
+	`CI_Log("STARTING UP DA SHIELDS");
+	if (CovertAction != none)
 	{
-		// something went horribly wrong, just do the normal thing
-		return class'X2StrategyElement_DefaultMissionSources'.static.GetSitrepsGeneric(MissionState);
-	}
-
-	foreach CovertAction.Risks(Risk)
-	{
-		if (Risk.bOccurs && class'X2CovertInfiltrationTemplate'.default.arrInfiltrationFlatRisk.Find(Risk.RiskTemplateName) != INDEX_NONE)
+		foreach CovertAction.Risks(Risk)
 		{
-			ActiveSitReps.AddItem(Risk.RiskTemplateName);
+			if (Risk.bOccurs && class'X2CovertInfiltrationTemplate'.default.arrInfiltrationFlatRisk.Find(Risk.RiskTemplateName) != INDEX_NONE)
+			{
+				`CI_Log("ADDING TO LIST");
+				ActiveSitReps.AddItem(Risk.RiskTemplateName);
+			}
 		}
 	}
 
-	if(ActiveSitReps.Length == 0)
+	if(ActiveSitReps.Length > 0)
+	{
+		`CI_Log("DIDN'T PROC");
+		return ActiveSitReps;
+	}
+	`CI_Log("DIDN'T PROC");
+	if (MissionState.GetMyTemplateName() == 'MissionSource_GatherLead')
 	{
 		return class'X2StrategyElement_DefaultMissionSources'.static.GetSitrepsGeneric(MissionState);
 	}
-	else
+	
+	if (MissionState.GetMyTemplateName() == 'MissionSource_DarkEvent')
 	{
-		return ActiveSitReps;
+		return class'X2StrategyElement_DefaultMissionSources'.static.GetGuerillaOpsSitReps(MissionState);
 	}
 }
