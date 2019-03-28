@@ -230,14 +230,7 @@ static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite Mission
 
 	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
 
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_CovertAction', ActionState)
-	{
-		if (ActionState.GetReference() == InfiltrationState.CorrespondingActionRef)
-		{
-			CovertAction = ActionState;
-			break;
-		}
-	}
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(InfiltrationState.CorrespondingActionRef.ObjectID));
 	
 	if (CovertAction != none)
 	{

@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_InfiltrationActions extends X2StrategyElement config(GameData);
+class X2StrategyElement_InfiltrationActions extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -25,7 +25,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	return CovertActions;
 }
 
-static function X2DataTemplate CreateInfiltrationTemplate(name CovertActionName, optional bool bCreateSlots=false)
+static function X2CovertInfiltrationTemplate CreateInfiltrationTemplate(name CovertActionName, optional bool bCreateSlots=false)
 {
 	local X2CovertActionTemplate Template;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
@@ -35,16 +35,16 @@ static function X2DataTemplate CreateInfiltrationTemplate(name CovertActionName,
 	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
 	{
 		Template.Risks.AddItem(FlatRiskSitRep.FlatRiskName);
+	}
 
-		if (bCreateSlots)
-		{
-			Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-			Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-			Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-			Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-			Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
-			Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
-		}
+	if (bCreateSlots)
+	{
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	}
 
 	return Template;
