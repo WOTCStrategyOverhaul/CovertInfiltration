@@ -10,71 +10,23 @@ class X2StrategyElement_InfiltrationCovertActionRisks extends X2StrategyElement;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> CovertActionRisks;
+	local ActionFlatRiskSitRep FlatRiskSitRep;
 
 	// flat risks
-	CovertActionRisks.AddItem(CreateAdventPatrolsRiskTemplate());
-	CovertActionRisks.AddItem(CreateIntelligenceLeakRiskTemplate());
-	CovertActionRisks.AddItem(CreateAdventAirPatrolsRiskTemplate());
-	CovertActionRisks.AddItem(CreateGunneryEmplacementsRiskTemplate());
-	CovertActionRisks.AddItem(CreateShoddyIntelRiskTemplate());
-
+	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
+	{
+		CovertActionRisks.AddItem(CreateFlatRiskTemplate(FlatRiskSitRep.FlatRiskName));
+	}
+	
 	return CovertActionRisks;
 }
 
-//////////////////
-/// Flat Risks ///
-//////////////////
-
-static function X2DataTemplate CreateAdventPatrolsRiskTemplate()
+static function X2DataTemplate CreateFlatRiskTemplate(name FlatRiskName)
 {
 	local X2CovertActionRiskTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, 'CovertActionRisk_AdventPatrols');
-
-	Template.IsRiskAvailableFn = BypassCreateRisks;
-
-	return Template;
-}
-
-static function X2DataTemplate CreateIntelligenceLeakRiskTemplate()
-{
-	local X2CovertActionRiskTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, 'CovertActionRisk_IntelligenceLeak');
-
-	Template.IsRiskAvailableFn = BypassCreateRisks;
-
-	return Template;
-}
-
-static function X2DataTemplate CreateAdventAirPatrolsRiskTemplate()
-{
-	local X2CovertActionRiskTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, 'CovertActionRisk_AdventAirPatrols');
-
-	Template.IsRiskAvailableFn = BypassCreateRisks;
-
-	return Template;
-}
-
-static function X2DataTemplate CreateGunneryEmplacementsRiskTemplate()
-{
-	local X2CovertActionRiskTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, 'CovertActionRisk_GunneryEmplacements');
-
-	Template.IsRiskAvailableFn = BypassCreateRisks;
-
-	return Template;
-}
-
-static function X2DataTemplate CreateShoddyIntelRiskTemplate()
-{
-	local X2CovertActionRiskTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, 'CovertActionRisk_ShoddyIntel');
-
+	`CREATE_X2TEMPLATE(class'X2CovertActionRiskTemplate', Template, FlatRiskName);
+	
 	Template.IsRiskAvailableFn = BypassCreateRisks;
 
 	return Template;

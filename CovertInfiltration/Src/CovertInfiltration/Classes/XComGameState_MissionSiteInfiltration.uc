@@ -10,6 +10,7 @@
 class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite;
 
 var array<StateObjectReference> SoldiersOnMission;
+var StateObjectReference CorrespondingActionRef;
 
 function bool RequiresAvenger()
 {
@@ -24,6 +25,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
 	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	CorrespondingActionRef = Action.GetReference();
 
 	MissionInfo.InitMissionFn(NewGameState, Action, self);
 	SetSoldiersFromAction(Action);

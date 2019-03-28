@@ -5,9 +5,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2CovertInfiltrationTemplate extends X2CovertActionTemplate config(Infiltration);
-
-var config array<name> arrInfiltrationFlatRisk;
+class X2CovertInfiltrationTemplate extends X2CovertActionTemplate;
 
 function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState NewGameState, StateObjectReference FactionRef)
 {
@@ -23,6 +21,7 @@ function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState New
 	}
 
 	AddRisk(SelectFlatRisk(), ActionState);
+	ActionState.RecalculateRiskChanceToOccurModifiers();
 
 	return ActionState;
 }
@@ -34,8 +33,8 @@ function X2CovertActionRiskTemplate SelectFlatRisk()
 	local int Selection;
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	Selection = `SYNC_RAND(arrInfiltrationFlatRisk.Length);
-	RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(arrInfiltrationFlatRisk[Selection]));
+	Selection = `SYNC_RAND(class'X2Helper_Infiltration'.default.FlatRiskSitReps.Length);
+	RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(class'X2Helper_Infiltration'.default.FlatRiskSitReps[Selection].FlatRiskName));
 
 	return RiskTemplate;
 }

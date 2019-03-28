@@ -222,44 +222,40 @@ static function Phase2OnSuccess(XComGameState NewGameState, XComGameState_Missio
 
 static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite MissionState)
 {
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
 	local XComGameState_CovertAction CovertAction, ActionState;
+	local ActionFlatRiskSitRep FlatRiskSitRep;
 	local array<name> ActiveSitReps;
 	local CovertActionRisk Risk;
 
+	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
+
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_CovertAction', ActionState)
 	{
-		if (ActionState.Location == MissionState.Location)
+		if (ActionState.GetReference() == InfiltrationState.CorrespondingActionRef)
 		{
 			CovertAction = ActionState;
 			break;
 		}
 	}
-	`CI_Log("STARTING UP DA SHIELDS");
+	
 	if (CovertAction != none)
 	{
 		foreach CovertAction.Risks(Risk)
 		{
-			if (Risk.bOccurs && class'X2CovertInfiltrationTemplate'.default.arrInfiltrationFlatRisk.Find(Risk.RiskTemplateName) != INDEX_NONE)
+			if (Risk.bOccurs)
 			{
-				`CI_Log("ADDING TO LIST");
-				ActiveSitReps.AddItem(Risk.RiskTemplateName);
+				foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
+				{
+					if (FlatRiskSitRep.FlatRiskName == Risk.RiskTemplateName)
+					{
+						ActiveSitReps.AddItem(FlatRiskSitRep.SitRepName);
+						break;
+					}
+				}
 			}
 		}
 	}
 
-	if(ActiveSitReps.Length > 0)
-	{
-		`CI_Log("DIDN'T PROC");
-		return ActiveSitReps;
-	}
-	`CI_Log("DIDN'T PROC");
-	if (MissionState.GetMyTemplateName() == 'MissionSource_GatherLead')
-	{
-		return class'X2StrategyElement_DefaultMissionSources'.static.GetSitrepsGeneric(MissionState);
-	}
-	
-	if (MissionState.GetMyTemplateName() == 'MissionSource_DarkEvent')
-	{
-		return class'X2StrategyElement_DefaultMissionSources'.static.GetGuerillaOpsSitReps(MissionState);
-	}
+	return ActiveSitReps;
 }
