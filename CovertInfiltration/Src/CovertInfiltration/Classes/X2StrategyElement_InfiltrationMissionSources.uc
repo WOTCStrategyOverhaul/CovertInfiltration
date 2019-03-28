@@ -223,7 +223,7 @@ static function Phase2OnSuccess(XComGameState NewGameState, XComGameState_Missio
 static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite MissionState)
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
-	local XComGameState_CovertAction CovertAction, ActionState;
+	local XComGameState_CovertAction ActionState;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
 	local array<name> ActiveSitReps;
 	local CovertActionRisk Risk;
@@ -232,9 +232,9 @@ static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite Mission
 
 	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(InfiltrationState.CorrespondingActionRef.ObjectID));
 	
-	if (CovertAction != none)
+	if (ActionState != none)
 	{
-		foreach CovertAction.Risks(Risk)
+		foreach ActionState.Risks(Risk)
 		{
 			if (Risk.bOccurs)
 			{

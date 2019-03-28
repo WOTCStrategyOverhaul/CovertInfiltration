@@ -27,7 +27,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 static function X2CovertInfiltrationTemplate CreateInfiltrationTemplate(name CovertActionName, optional bool bCreateSlots=false)
 {
-	local X2CovertActionTemplate Template;
+	local X2CovertInfiltrationTemplate Template;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
 
 	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, CovertActionName);
@@ -54,7 +54,7 @@ static function X2DataTemplate CreateP1DarkEventTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P1DarkEvent', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P1DarkEvent', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -69,7 +69,7 @@ static function X2DataTemplate CreateP1SupplyRaidTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P1SupplyRaid', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P1SupplyRaid', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -84,7 +84,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P1Jailbreak', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P1Jailbreak', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -99,7 +99,7 @@ static function X2DataTemplate CreateP2DarkEventTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P2DarkEvent', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P2DarkEvent', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -132,7 +132,7 @@ static function X2DataTemplate CreateP2EngineerTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P2Engineer', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P2Engineer', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -147,7 +147,7 @@ static function X2DataTemplate CreateP2ScientistTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P2Scientist', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P2Scientist', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
@@ -162,7 +162,7 @@ static function X2DataTemplate CreateP2DarkVIPTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	Template = X2CovertActionTemplate(CreateInfiltrationTemplate('CovertAction_P2DarkVIP', true));
+	Template = CreateInfiltrationTemplate('CovertAction_P2DarkVIP', true);
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomContactedRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
