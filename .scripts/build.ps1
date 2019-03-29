@@ -161,6 +161,13 @@ if (Test-Path "$stagingPath\$modNameCanonical.x2proj") {
     Remove-Item "$stagingPath\$modNameCanonical.x2proj"
 }
 
+Write-Host "Converting the localization file enconding";
+Get-ChildItem "$stagingPath\Localization" | 
+Foreach-Object {
+	$content = Get-Content $_.FullName
+	$content | Out-File $_.FullName -Encoding Unicode
+}
+
 New-Item "$stagingPath/Script" -ItemType Directory
 
 # read mod metadata from the x2proj file
