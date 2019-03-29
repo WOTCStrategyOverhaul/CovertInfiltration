@@ -79,17 +79,13 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 	DurationBreadownItems.RealizeList();
 
 	// Risks
-	
-	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
-	{
-		RisksLabel = Spawn(class'UISS_InfiltrationItem', self);
-		RisksLabel.InitObjectiveListItem('RisksLabel', -29, DurationBreadownItems.Y + DurationBreadownItems.TotalItemSize);
-		RisksLabel.SetSubTitle(class'UICovertActions'.default.CovertActions_RiskTitle, "FAF0C8");
+	RisksLabel = Spawn(class'UISS_InfiltrationItem', self);
+	RisksLabel.InitObjectiveListItem('RisksLabel', -29, DurationBreadownItems.Y + DurationBreadownItems.TotalItemSize);
+	RisksLabel.SetSubTitle(class'UICovertActions'.default.CovertActions_RiskTitle, "FAF0C8");
 
-		RiskEntries = Spawn(class'UIList', self);
-		RiskEntries.InitList('RiskEntries');
-		RiskEntries.SetPosition(0, RisksLabel.Y + 32);
-	}
+	RiskEntries = Spawn(class'UIList', self);
+	RiskEntries.InitList('RiskEntries');
+	RiskEntries.SetPosition(0, RisksLabel.Y + 32);
 }
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
@@ -125,11 +121,6 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 	local UISS_InfiltrationItem Item;
 	local array<string> RiskStrings;
 	local int idx;
-
-	if (RiskEntries == none)
-	{
-		return;
-	}
 
 	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
 	RisksLabel.SetVisible(RiskStrings.Length > 0);

@@ -39,7 +39,7 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	//Template.SpawnMissionsFn = SpawnGuerillaOpsMissions;
 	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	Template.GetSitRepsFn = GetSitrepsGeneric;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	/*DeckEntry.RewardName = 'Reward_Supplies';
 	DeckEntry.Quantity = 1;
@@ -95,7 +95,7 @@ static function X2DataTemplate CreateDarkEventTemplate()
 	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = StrategyObjectivePlusSweepCompleted;
 	Template.GetMissionRegionFn = GetGuerillaOpRegions;
-	Template.GetSitRepsFn = GetGuerillaOpsSitReps;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Supplies';
 	DeckEntry.Quantity = 2;
@@ -144,6 +144,7 @@ static function X2DataTemplate CreateEngineerTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Engineer';
 	DeckEntry.Quantity = 1;
@@ -171,6 +172,7 @@ static function X2DataTemplate CreateScientistTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Scientist';
 	DeckEntry.Quantity = 1;
@@ -198,6 +200,7 @@ static function X2DataTemplate CreateDarkVIPTemplate()
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
 	Template.GetMissionRegionFn = GetCalendarMissionRegion;
+	Template.GetSitRepsFn = GetSitRepsFromRisk;
 
 	DeckEntry.RewardName = 'Reward_Intel';
 	DeckEntry.Quantity = 1;
@@ -217,3 +220,35 @@ static function Phase2OnSuccess(XComGameState NewGameState, XComGameState_Missio
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 }
 
+static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite MissionState)
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameState_CovertAction ActionState;
+	local ActionFlatRiskSitRep FlatRiskSitRep;
+	local array<name> ActiveSitReps;
+	local CovertActionRisk Risk;
+
+	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
+
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(InfiltrationState.CorrespondingActionRef.ObjectID));
+	
+	if (ActionState != none)
+	{
+		foreach ActionState.Risks(Risk)
+		{
+			if (Risk.bOccurs)
+			{
+				foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
+				{
+					if (FlatRiskSitRep.FlatRiskName == Risk.RiskTemplateName)
+					{
+						ActiveSitReps.AddItem(FlatRiskSitRep.SitRepName);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return ActiveSitReps;
+}

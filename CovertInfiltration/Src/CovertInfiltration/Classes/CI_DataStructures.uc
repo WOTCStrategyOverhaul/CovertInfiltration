@@ -14,3 +14,9 @@ struct ActionExpirationInfo
 	var TDateTime OriginTime;
 	var bool bBlockMonthlyCleanup;
 };
+
+struct ActionFlatRiskSitRep
+{
+	var name FlatRiskName;
+	var name SitRepName;
+};

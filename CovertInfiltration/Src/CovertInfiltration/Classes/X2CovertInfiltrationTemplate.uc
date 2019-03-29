@@ -20,5 +20,31 @@ function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState New
 		ActionState.StaffSlots[i].bOptional = true;
 	}
 
+	AddRisk(SelectFlatRisk(), ActionState);
+	ActionState.RecalculateRiskChanceToOccurModifiers();
+
 	return ActionState;
+}
+
+function X2CovertActionRiskTemplate SelectFlatRisk()
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2CovertActionRiskTemplate RiskTemplate;
+	local int Selection;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Selection = `SYNC_RAND(class'X2Helper_Infiltration'.default.FlatRiskSitReps.Length);
+	RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(class'X2Helper_Infiltration'.default.FlatRiskSitReps[Selection].FlatRiskName));
+
+	return RiskTemplate;
+}
+
+function AddRisk(X2CovertActionRiskTemplate RiskTemplate, XComGameState_CovertAction ActionState)
+{
+	local CovertActionRisk SelectedRisk;
+
+	SelectedRisk.RiskTemplateName = RiskTemplate.DataName;
+	SelectedRisk.ChanceToOccur = (RiskTemplate.MinChanceToOccur + `SYNC_RAND(RiskTemplate.MaxChanceToOccur - RiskTemplate.MinChanceToOccur + 1));
+
+	ActionState.Risks.AddItem(SelectedRisk);
 }
