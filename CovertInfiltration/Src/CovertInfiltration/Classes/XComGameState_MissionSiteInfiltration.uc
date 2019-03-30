@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
+//  AUTHOR:  Xymanek
 //  PURPOSE: This class contains the special logic used for
 //           infiltration missions, such as autoselecting the
 //           mission squad from the infiltration Covert Action

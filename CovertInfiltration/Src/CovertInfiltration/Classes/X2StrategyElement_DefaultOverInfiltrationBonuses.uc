@@ -1,4 +1,4 @@
-class X2StrategyElement_DefaultOverInfiltrationBonuses extends X2StrategyElement;
+class X2StrategyElement_DefaultOverInfiltrationBonuses extends X2StrategyElement config(Infiltration);
 
 struct SitRepBonusMapping
 {
@@ -49,7 +49,14 @@ static function bool IsSitRepBonusAvaliable(X2OverInfiltrationBonusTemplate Bonu
 
 static function ApplySitRepBonus(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	// TODO
+	// TODO: Gamestate?
+
+	// While this should not be possible, prevent duplicating sitreps in any case
+	if (Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE)
+	{
+		Infiltration.GeneratedMission.SitReps.AddItem(BonusTemplate.MetatdataName);
+		Infiltration.UpdateSitrepTags();
+	}
 }
 
 ///////////////////
@@ -70,10 +77,23 @@ static function X2OverInfiltrationBonusTemplate CreateNegateRiskBonus()
 
 static function bool IsNegateRiskBonusAvaliable(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	return Infiltration.AppliedFlatRiskName != '';
+	return Infiltration.AppliedFlatRisks.Length > 0;
 }
 
 static function ApplyNegateRiskBonus(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	// TODO
+	local ActionFlatRiskSitRep FlatRiskMapping;
+	local name SitRepName;
+	local name RiskName;
+	local int i;
+
+	foreach Infiltration.AppliedFlatRisks(RiskName)
+	{
+		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
+		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps;
+
+		Infiltration.GeneratedMission.SitReps.RemoveItem(SitRepName);
+	}
+
+	Infiltration.UpdateSitrepTags();
 }
