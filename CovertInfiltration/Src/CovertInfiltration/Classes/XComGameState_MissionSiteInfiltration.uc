@@ -10,13 +10,13 @@
 class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite;
 
 var array<StateObjectReference> SoldiersOnMission;
-var StateObjectReference CorrespondingActionRef;
 
-function bool RequiresAvenger()
-{
-	// Does not require the Avenger at the mission site
-	return false;
-}
+var StateObjectReference CorrespondingActionRef;
+var name AppliedFlatRiskName;
+
+/////////////
+/// Setup ///
+/////////////
 
 function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction Action)
 {
@@ -25,11 +25,44 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
 	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	
 	CorrespondingActionRef = Action.GetReference();
+	// AppliedFlatRiskName
 
 	MissionInfo.InitMissionFn(NewGameState, Action, self);
+
+	SelectPlotAndBiome();
+	ApplyFlatRisk();
+	SelectOverfInfiltrationBonuses();
+	PrepareChosen(); // This might be better suited in update
+
 	SetSoldiersFromAction(Action);
 	RegisterForEvents();
+}
+
+function SetBasicInfo()
+{
+	// TODO
+}
+
+function SelectPlotAndBiome()
+{
+	// TODO
+}
+
+function ApplyFlatRisk()
+{
+	// TODO
+}
+
+function SelectOverfInfiltrationBonuses()
+{
+	// TODO
+}
+
+function PrepareChosen()
+{
+	// TODO
 }
 
 protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
@@ -49,6 +82,53 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 			SoldiersOnMission.AddItem(SlotState.GetAssignedStaffRef());
 		}
 	}
+}
+
+/////////////////
+/// Overinfil ///
+/////////////////
+
+function UpdateGameBoard()
+{
+	`RedScreen(class.name @ "is ticking!!!!! Alarm!!!!");
+	// TODO
+}
+
+protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local UIMission_Infiltrated MissionUI;
+	local XComHQPresentationLayer HQPres;
+	local UIStrategyMap StrategyMap;
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'PreventGeoscapeTick') return ELR_NoInterrupt;
+
+	HQPres = `HQPRES;
+	StrategyMap = HQPres.StrategyMap2D;
+	
+	// Don't popup anything while the Avenger or Skyranger are flying
+	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
+	{
+		MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
+		MissionUI.MissionRef = GetReference();
+		HQPres.ScreenStack.Push(MissionUI);
+
+		Tuple.Data[0].b = true;
+		return ELR_InterruptListeners;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+//////////////
+/// Launch ///
+//////////////
+
+function bool RequiresAvenger()
+{
+	// Does not require the Avenger at the mission site
+	return false;
 }
 
 function SelectSquad()
@@ -98,42 +178,14 @@ function StartMission()
 	ConfirmMission();
 }
 
-function UpdateGameBoard()
-{
-	`RedScreen(class.name @ "is ticking!!!!! Alarm!!!!");
-}
+////////////
+/// Misc ///
+////////////
 
 function RemoveEntity(XComGameState NewGameState)
 {
 	super.RemoveEntity(NewGameState);
 	UnRegisterFromEvents();
-}
-
-protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local UIMission_Infiltrated MissionUI;
-	local XComHQPresentationLayer HQPres;
-	local UIStrategyMap StrategyMap;
-	local XComLWTuple Tuple;
-
-	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'PreventGeoscapeTick') return ELR_NoInterrupt;
-
-	HQPres = `HQPRES;
-	StrategyMap = HQPres.StrategyMap2D;
-	
-	// Don't popup anything while the Avenger or Skyranger are flying
-	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
-	{
-		MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
-		MissionUI.MissionRef = GetReference();
-		HQPres.ScreenStack.Push(MissionUI);
-
-		Tuple.Data[0].b = true;
-		return ELR_InterruptListeners;
-	}
-
-	return ELR_NoInterrupt;
 }
 
 ////////////////////////

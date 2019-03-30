@@ -264,6 +264,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2SitRep_InfiltrationSitRepEffects.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultOverInfiltrationBonuses.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationCovertActionRisks.uc">
       <SubType>Content</SubType>
     </Content>
