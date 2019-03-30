@@ -10,8 +10,6 @@ class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Inf
 var config int P2_EXPIRATION_BASE_TIME;
 var config int P2_EXPIRATION_VARIANCE;
 
-var localized string GatherLeadText;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -99,7 +97,7 @@ static function X2RewardTemplate CreateGatherLeadPersonnelReward()
 
 static protected function string GatherLeadString(XComGameState_Reward RewardState)
 {
-	return default.GatherLeadText;
+	return RewardState.GetMyTemplate().DisplayName;
 }
 
 static protected function GiveGatherLeadActivity(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder=false, optional int OrderHours=-1)

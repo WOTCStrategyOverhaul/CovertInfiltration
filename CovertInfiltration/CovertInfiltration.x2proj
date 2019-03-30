@@ -258,6 +258,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2SitRep_InfiltrationSitRepEffects.uc">
       <SubType>Content</SubType>
     </Content>

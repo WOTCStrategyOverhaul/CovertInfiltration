@@ -97,3 +97,12 @@ RiskName="Gunnery Emplacements"
 
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
+
+[UIMission_Infiltrated]
+strBullet="•"
+strOverInfiltrationHeader="Over Infiltration"
+strOverInfiltrationNextBonus="Next bonus"
+strMissionReady="MISSION READY"
+strInfiltration="INFILTRATION"
+strWait="WAIT"
+strReturnToAvenger="RETURN TO AVENGER"
