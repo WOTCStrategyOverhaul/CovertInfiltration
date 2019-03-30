@@ -10,4 +10,4 @@ var localized string BonusName;
 var localized string BonusDescription;
 
 delegate bool IsAvaliableFn(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
-delegate ApplyFn(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
+delegate ApplyFn(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);

@@ -47,10 +47,8 @@ static function bool IsSitRepBonusAvaliable(X2OverInfiltrationBonusTemplate Bonu
 	return Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE;
 }
 
-static function ApplySitRepBonus(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
+static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	// TODO: Gamestate?
-
 	// While this should not be possible, prevent duplicating sitreps in any case
 	if (Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE)
 	{
@@ -80,7 +78,7 @@ static function bool IsNegateRiskBonusAvaliable(X2OverInfiltrationBonusTemplate 
 	return Infiltration.AppliedFlatRisks.Length > 0;
 }
 
-static function ApplyNegateRiskBonus(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
+static function ApplyNegateRiskBonus(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
 	local ActionFlatRiskSitRep FlatRiskMapping;
 	local name SitRepName;

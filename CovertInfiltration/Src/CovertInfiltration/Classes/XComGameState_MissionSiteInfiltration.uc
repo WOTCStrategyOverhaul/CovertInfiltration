@@ -15,7 +15,9 @@ var array<name> AppliedFlatRisks;
 var array<StateObjectReference> SoldiersOnMission;
 
 var config array<int> OverInfiltartionThresholds;
+
 var array<name> SelectedOverInfiltartionBonuses;
+var int OverInfiltartionBonusesGranted;
 
 /////////////
 /// Setup ///
@@ -45,7 +47,9 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 	SelectOverInfiltrationBonuses();
 
 	SetSoldiersFromAction(Action);
-	RegisterForEvents();
+
+	`HQPRES.NotifyBanner("Mission ready",, GetMissionObjectiveText(), GetMissionDescription(), eUIState_Good);
+	`GAME.GetGeoscape().Pause();
 }
 
 protected function CopyDataFromAction(XComGameState_CovertAction Action)
@@ -269,14 +273,117 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 	}
 }
 
+function UpdateSitrepTags()
+{
+	// Reworked this function to remove tac tags if sitreps are removed
+
+	local X2SitRepTemplateManager SitRepMgr;
+	local X2SitRepTemplate SitRepTemplate;
+	local name SitRepTemplateName, GameplayTag;
+	local array<name> RequiredTags;
+	local int i;
+
+	SitRepMgr = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+
+	// Collect needed tags
+	foreach GeneratedMission.SitReps(SitRepTemplateName)
+	{
+		SitRepTemplate = SitRepMgr.FindSitRepTemplate(SitRepTemplateName);
+
+		foreach SitRepTemplate.TacticalGameplayTags(GameplayTag)
+		{
+			RequiredTags.AddItem(GameplayTag);
+		}
+	}
+
+	// Remove obsolete tags
+	for (i = 0; i < TacticalGameplayTags.Length; ++i) {
+		if (RequiredTags.Find(TacticalGameplayTags[i]) == INDEX_NONE) {
+			TacticalGameplayTags.Remove(i, 1);
+			i--;
+		}
+	}
+
+	// Add missing tags
+	foreach RequiredTags(GameplayTag)
+	{
+		if(TacticalGameplayTags.Find(GameplayTag) == INDEX_NONE)
+		{
+			TacticalGameplayTags.AddItem(GameplayTag);
+		}
+	}
+}
+
 /////////////////
 /// Overinfil ///
 /////////////////
 
 function UpdateGameBoard()
 {
-	`RedScreen(class.name @ "is ticking!!!!! Alarm!!!!");
-	// TODO (remember the chosen!!!)
+	local XComGameState NewGameState;
+	local XComGameState_MissionSiteInfiltration NewMissionState;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local array<int> SortedThresholds;
+
+	// Check if we should give an overinfil bonus
+	// Do this before showing the screen to support 200% rewards
+
+	SortedThresholds = OverInfiltartionThresholds;
+	SortedThresholds.Sort(CompareThresholds);
+
+	if (
+		OverInfiltartionBonusesGranted < SortedThresholds.Length && // Do we still have bonuses to grant?
+		SortedThresholds[OverInfiltartionBonusesGranted] >= GetCurrentInfilInt() // Should we grant the next one
+	)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Give over infiltartion bonus");
+		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
+		BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
+
+		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, self);
+		OverInfiltartionBonusesGranted++;
+
+		`SubmitGamestate(NewGameState);
+		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.BonusName, BonusTemplate.BonusDescription, eUIState_Good);
+		`GAME.GetGeoscape().Pause();
+	}
+
+	// TODO the chosen!!!
+
+	if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationDateTime, GetCurrentTime()))
+	{
+		EnablePreventTick();
+		MissionSelected();
+	}
+}
+
+function float GetCurrentOverInfil()
+{
+	local float FullDurationDiff, CurrentDiff;
+
+	// Use seconds so that we support 200% tiers
+	FullDurationDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationDateTime, TimerStartDateTime);
+	CurrentDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationDateTime, GetCurrentTime());
+
+	return 1 - CurrentDiff / FullDurationDiff;
+}
+
+function float GetCurrentInfil()
+{
+	return 1 + GetCurrentOverInfil();
+}
+
+function int GetCurrentInfilInt()
+{
+	return Round(GetCurrentInfil() * 100);
+}
+
+protected function int CompareThresholds (int A, int B)
+{
+	if (A == B) return 0;
+
+	return A < B ? 1 : -1;
 }
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -295,15 +402,25 @@ protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, O
 	// Don't popup anything while the Avenger or Skyranger are flying
 	if (StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
 	{
-		MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
-		MissionUI.MissionRef = GetReference();
-		HQPres.ScreenStack.Push(MissionUI);
+		MissionSelected();
 
 		Tuple.Data[0].b = true;
 		return ELR_InterruptListeners;
 	}
 
 	return ELR_NoInterrupt;
+}
+
+function MissionSelected()
+{
+	local UIMission_Infiltrated MissionUI;
+	local XComHQPresentationLayer HQPres;
+
+	HQPres = `HQPRES;
+
+	MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
+	MissionUI.MissionRef = GetReference();
+	HQPres.ScreenStack.Push(MissionUI);
 }
 
 //////////////
@@ -377,7 +494,7 @@ function RemoveEntity(XComGameState NewGameState)
 /// Event management ///
 ////////////////////////
 
-protected function RegisterForEvents()
+protected function EnablePreventTick()
 {
 	local X2EventManager EventManager;
 	local Object ThisObj;
