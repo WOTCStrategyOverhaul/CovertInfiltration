@@ -39,6 +39,8 @@ simulated function Name GetLibraryID()
 
 simulated function BuildScreen()
 {
+	local X2OverInfiltrationBonusTemplate NextBonus;
+
 	// Add Interception warning and Shadow Chamber info 
 	super.BuildScreen();
 
@@ -55,22 +57,29 @@ simulated function BuildScreen()
 		XComHQPresentationLayer(Movie.Pres).CAMLookAtEarth(GetMission().Get2DLocation(), CAMERA_ZOOM);
 	}
 
-	// TODO: Remove the faction title BG
+	NextBonus = GetInfiltration().GetNextOverInfiltrationBonus();
 
-	// LW2-inspired stuff
-	OverInfiltrationPanel = Spawn(class'UIPanel', self);
-	OverInfiltrationPanel.InitPanel('OverInfiltrationPanel');
-	OverInfiltrationPanel.SetPosition(725, 736);
+	if (NextBonus != none)
+	{
+		OverInfiltrationPanel = Spawn(class'UIPanel', self);
+		OverInfiltrationPanel.InitPanel('OverInfiltrationPanel');
+		OverInfiltrationPanel.SetPosition(725, 736);
 
-	OverInfiltrationBG = Spawn(class'UIBGBox', OverInfiltrationPanel);
-	OverInfiltrationBG.LibID = class'UIUtilities_Controls'.const.MC_X2Background;
-	OverInfiltrationBG.InitBG('BG', 0, 0, 470, 130);
+		OverInfiltrationBG = Spawn(class'UIBGBox', OverInfiltrationPanel);
+		OverInfiltrationBG.LibID = class'UIUtilities_Controls'.const.MC_X2Background;
+		OverInfiltrationBG.InitBG('BG', 0, 0, 470, 130);
 
-	OverInfiltrationHeader = Spawn(class'UIX2PanelHeader', OverInfiltrationPanel);
-	OverInfiltrationHeader.InitPanelHeader('Header', strOverInfiltrationHeader, strOverInfiltrationNextBonus $ ": Remove risk" @ strBullet @ "133%\nThe first bonus always negates the risk");
-	OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
-	OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
-	OverInfiltrationHeader.Show();
+		OverInfiltrationHeader = Spawn(class'UIX2PanelHeader', OverInfiltrationPanel);
+		OverInfiltrationHeader.InitPanelHeader(
+			'Header',
+			strOverInfiltrationHeader,
+			strOverInfiltrationNextBonus $ ": "@ NextBonus.BonusName @ strBullet @ GetInfiltration().GetNextThreshold() $ "%\n" $ NextBonus.BonusDescription
+		);
+		OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
+		OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
+		OverInfiltrationHeader.Show();
+	}
+
 }
 
 simulated function BuildMissionPanel()
@@ -158,7 +167,7 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 simulated function BuildOptionsPanel()
 {
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionButtonBlade");
-	LibraryPanel.MC.QueueString(strInfiltration $ "- 115%"); // m_strResOpsMission
+	LibraryPanel.MC.QueueString(strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"); // m_strResOpsMission
 	LibraryPanel.MC.QueueString(m_strLaunchMission);
 	LibraryPanel.MC.QueueString(strWait); // m_strIgnore
 	LibraryPanel.MC.EndOp();
@@ -202,6 +211,11 @@ simulated function CloseScreen()
 simulated function EUIState GetLabelColor()
 {
 	return eUIState_Normal;
+}
+
+simulated function XComGameState_MissionSiteInfiltration GetInfiltration()
+{
+	return XComGameState_MissionSiteInfiltration(GetMission());
 }
 //==============================================================================
 

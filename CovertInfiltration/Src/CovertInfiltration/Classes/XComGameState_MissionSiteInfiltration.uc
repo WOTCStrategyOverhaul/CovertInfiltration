@@ -328,7 +328,9 @@ function UpdateGameBoard()
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
+	// TODO: Covert this to use funcs used by UI
 
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	SortedThresholds = OverInfiltartionThresholds;
 	SortedThresholds.Sort(CompareThresholds);
 
@@ -384,6 +386,29 @@ protected function int CompareThresholds (int A, int B)
 	if (A == B) return 0;
 
 	return A < B ? 1 : -1;
+}
+
+function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+
+	// None left
+	if (OverInfiltartionBonusesGranted >= SortedThresholds.Length) return none;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
+}
+
+function int GetNextThreshold()
+{
+	local array<int> SortedThresholds;
+
+	if (OverInfiltartionBonusesGranted >= SortedThresholds.Length) return -1;
+
+	SortedThresholds = OverInfiltartionThresholds;
+	SortedThresholds.Sort(CompareThresholds);
+
+	return SortedThresholds[OverInfiltartionBonusesGranted];
 }
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
