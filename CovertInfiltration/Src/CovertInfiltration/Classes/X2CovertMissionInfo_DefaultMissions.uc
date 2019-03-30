@@ -132,13 +132,14 @@ static function array<StateObjectReference> GenericInitRewards(XComGameState New
 	local array<X2RewardTemplate> RewardTemplates;
 	local array<StateObjectReference> Rewards;
 	local XComGameState_Reward RewardState;
+	local int i;
 
 	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
 
 	for (i = 0; i < RewardTemplates.length; i++)
 	{
 		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
-		RewardState.GenerateReward(NewGameState,, RegionRef);
+		RewardState.GenerateReward(NewGameState,, MissionSite.Region);
 		Rewards.AddItem(RewardState.GetReference());
 	}
 
@@ -150,13 +151,14 @@ static function array<StateObjectReference> DarkEventInitRewards(XComGameState N
 	local array<X2RewardTemplate> RewardTemplates;
 	local array<StateObjectReference> Rewards;
 	local XComGameState_Reward RewardState;
+	local int i;
 
 	RewardTemplates = class'X2Helper_Infiltration'.static.GetCovertMissionRewards(MissionInfo);
 
 	for (i = 0; i < RewardTemplates.length; i++)
 	{
 		RewardState = RewardTemplates[i].CreateInstanceFromTemplate(NewGameState);
-		RewardState.GenerateReward(NewGameState, 0.5, RegionRef);
+		RewardState.GenerateReward(NewGameState, 0.5, MissionSite.Region);
 		Rewards.AddItem(RewardState.GetReference());
 	}
 
@@ -168,7 +170,7 @@ static function DarkEventPreMissionSetup(XComGameState NewGameState, XComGameSta
 	local XComGameState_CovertAction Action;
 	local XComGameState_Reward ActionReward;
 
-	Action = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(MissionSite.CorrespondingActionRef));
+	Action = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(MissionSite.CorrespondingActionRef.ObjectID));
 	ActionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Action.RewardRefs[0].ObjectID));
 
 	MissionSite.DarkEvent = ActionReward.RewardObjectReference;

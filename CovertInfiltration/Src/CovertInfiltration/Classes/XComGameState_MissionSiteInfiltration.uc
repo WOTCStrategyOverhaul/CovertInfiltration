@@ -54,6 +54,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 
 protected function CopyDataFromAction(XComGameState_CovertAction Action)
 {
+	local ActionFlatRiskSitRep FlatRiskSitRep;
 	local CovertActionRisk Risk;
 
 	// Copy over the location data
@@ -66,7 +67,7 @@ protected function CopyDataFromAction(XComGameState_CovertAction Action)
 	CorrespondingActionRef = Action.GetReference();
 	AppliedFlatRisks.Length = 0;
 
-	foreach ActionState.Risks(Risk)
+	foreach Action.Risks(Risk)
 	{
 		if (Risk.bOccurs)
 		{
@@ -81,7 +82,8 @@ protected function CopyDataFromAction(XComGameState_CovertAction Action)
 	}
 
 	// The mission phase starts once the action finishes (100%)
-	ExpirationDateTime = TimerStartDateTime = Action.EndDateTime;
+	TimerStartDateTime = Action.EndDateTime;
+	ExpirationDateTime = Action.EndDateTime;
 
 	// And ends at 200%
 	class'X2StrategyGameRulesetDataStructures'.static.AddHours(ExpirationDateTime, Action.HoursToComplete);
@@ -94,16 +96,17 @@ protected function InitalizeGeneratedMission()
 	local GeneratedMissionData EmptyData;
 	local string AdditionalTag;
 
+	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Rewards[0].ObjectID)).GetMyTemplate();
 	MissionMgr = `TACTICALMISSIONMGR;
 	GeneratedMission = EmptyData;
 	
 	GeneratedMission.MissionID = ObjectID;
-	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine();
+	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
 	
 	GeneratedMission.Mission = MissionMgr.GetMissionDefinitionForSourceReward(Source, MissionReward.DataName, ExcludeMissionFamilies, ExcludeMissionTypes);
 	GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
 
-	if(GeneratedMission.Mission.sType == "")
+	if (GeneratedMission.Mission.sType == "")
 	{
 		`Redscreen("GetMissionDataForSourceReward() failed to generate a mission with: \n"
 						$ " Source: " $ Source $ "\n RewardType: " $ MissionReward.DisplayName);
@@ -114,7 +117,6 @@ protected function InitalizeGeneratedMission()
 		GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
 	}
 
-	MissionReward = X2RewardTemplate(`XCOMHISTORY.GetGameStateForObjectID(Rewards[0].ObjectID));
 	GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(Source, MissionReward, GeneratedMission.Mission, DarkEvent.ObjectID > 0);
 
 	// Cosmetic stuff
@@ -135,6 +137,7 @@ protected function SelectPlotAndBiome()
 {
 	local PlotTypeDefinition PlotTypeDef;
 	local XComParcelManager ParcelMgr;
+	local name SitRepName;
 	local string Biome;
 
 	ParcelMgr = `PARCELMGR;
@@ -142,7 +145,7 @@ protected function SelectPlotAndBiome()
 	// Find a plot that supports the biome and the mission
 	// Note that here we only support sitrep plot filters for forced sitreps
 	// As we cannot change the plot as sitreps are added/removed
-	SelectBiomeAndPlotDefinition(GeneratedMission.Mission, Biome, GeneratedMission.Plot, GeneratedMission.SitReps);
+	SelectBiomeAndPlotDefinition(GeneratedMission.Mission, Biome, GeneratedMission.Plot, GeneratedMission.SitReps); // TODO
 
 	// Add SitReps forced by Plot Type
 	PlotTypeDef = ParcelMgr.GetPlotTypeDefinition(GeneratedMission.Plot.strType);
@@ -170,7 +173,6 @@ protected function SelectPlotAndBiome()
 
 protected function ApplyFlatRisks()
 {
-	local ActionFlatRiskSitRep FlatRiskMapping;
 	local name SitRepName;
 	local name RiskName;
 	local int i;
@@ -178,7 +180,7 @@ protected function ApplyFlatRisks()
 	foreach AppliedFlatRisks(RiskName)
 	{
 		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
-		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps;
+		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps[i].SitRepName;
 
 		if (GeneratedMission.SitReps.Find(SitRepName) == INDEX_NONE)
 		{
@@ -239,11 +241,12 @@ protected function bool ValidateOverInfiltrationBonus(string CardLabel, Object V
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(CardLabel)));
 	
 	if (BonusTemplate == none)
 	{
-		return;
+		return false;
 	}
 
 	if (BonusTemplate.IsAvaliableFn != none && !BonusTemplate.IsAvaliableFn(BonusTemplate, self))
@@ -343,8 +346,8 @@ function UpdateGameBoard()
 		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
 		BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
 
-		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, self);
-		OverInfiltartionBonusesGranted++;
+		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, NewMissionState);
+		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
 		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.BonusName, BonusTemplate.BonusDescription, eUIState_Good);
@@ -393,7 +396,7 @@ function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
 	local X2StrategyElementTemplateManager TemplateManager;
 
 	// None left
-	if (OverInfiltartionBonusesGranted >= SortedThresholds.Length) return none;
+	if (OverInfiltartionBonusesGranted >= OverInfiltartionThresholds.Length) return none;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
@@ -413,7 +416,6 @@ function int GetNextThreshold()
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local UIMission_Infiltrated MissionUI;
 	local XComHQPresentationLayer HQPres;
 	local UIStrategyMap StrategyMap;
 	local XComLWTuple Tuple;
@@ -553,6 +555,144 @@ function BuildMission(X2MissionSourceTemplate MissionSource, Vector2D v2Loc, Sta
 private function FunctionNotSupported(string CalledFunction)
 {
 	`RedScreen("XComGameState_MissionSiteInfiltration doesn't support" @ CalledFunction);
+}
+
+/////////////////////////////////
+/// Private stuff from parent ///
+/////////////////////////////////
+
+private function SelectBiomeAndPlotDefinition(MissionDefinition MissionDef, out string Biome, out PlotDefinition SelectedDef, optional array<name> SitRepNames)
+{
+	local XComParcelManager ParcelMgr;
+	local string PrevBiome;
+	local array<string> ExcludeBiomes;
+
+	ParcelMgr = `PARCELMGR;
+	ExcludeBiomes.Length = 0;
+	
+	Biome = SelectBiome(MissionDef, ExcludeBiomes);
+	PrevBiome = Biome;
+
+	while(!SelectPlotDefinition(MissionDef, Biome, SelectedDef, ExcludeBiomes, SitRepNames))
+	{
+		Biome = SelectBiome(MissionDef, ExcludeBiomes);
+
+		if(Biome == PrevBiome)
+		{
+			`Redscreen("Could not find valid plot for mission!\n" $ " MissionType: " $ MissionDef.MissionName);
+			SelectedDef = ParcelMgr.arrPlots[0];
+			return;
+		}
+	}
+}
+
+//---------------------------------------------------------------------------------------
+private function string SelectBiome(MissionDefinition MissionDef, out array<string> ExcludeBiomes)
+{
+	local string Biome;
+	local int TotalValue, RollValue, CurrentValue, idx, BiomeIndex;
+	local array<BiomeChance> BiomeChances;
+	local string TestBiome;
+
+	if(MissionDef.ForcedBiome != "")
+	{
+		return MissionDef.ForcedBiome;
+	}
+
+	// Grab Biome from location
+	Biome = class'X2StrategyGameRulesetDataStructures'.static.GetBiome(Get2DLocation());
+
+	if(ExcludeBiomes.Find(Biome) != INDEX_NONE)
+	{
+		Biome = "";
+	}
+
+	// Grab "extra" biomes which we could potentially swap too (used for Xenoform)
+	BiomeChances = class'X2StrategyGameRulesetDataStructures'.default.m_arrBiomeChances;
+
+	// Not all plots support these "extra" biomes, check if excluded
+	foreach ExcludeBiomes(TestBiome)
+	{
+		BiomeIndex = BiomeChances.Find('BiomeName', TestBiome);
+
+		if(BiomeIndex != INDEX_NONE)
+		{
+			BiomeChances.Remove(BiomeIndex, 1);
+		}
+	}
+
+	// If no "extra" biomes just return the world map biome
+	if(BiomeChances.Length == 0)
+	{
+		return Biome;
+	}
+
+	// Calculate total value of roll to see if we want to swap to another biome
+	TotalValue = 0;
+
+	for(idx = 0; idx < BiomeChances.Length; idx++)
+	{
+		TotalValue += BiomeChances[idx].Chance;
+	}
+
+	// Chance to use location biome is remainder of 100
+	if(TotalValue < 100)
+	{
+		TotalValue = 100;
+	}
+
+	// Do the roll
+	RollValue = `SYNC_RAND(TotalValue);
+	CurrentValue = 0;
+
+	for(idx = 0; idx < BiomeChances.Length; idx++)
+	{
+		CurrentValue += BiomeChances[idx].Chance;
+
+		if(RollValue < CurrentValue)
+		{
+			Biome = BiomeChances[idx].BiomeName;
+			break;
+		}
+	}
+
+	return Biome;
+}
+
+//---------------------------------------------------------------------------------------
+private function bool SelectPlotDefinition(MissionDefinition MissionDef, string Biome, out PlotDefinition SelectedDef, out array<string> ExcludeBiomes, optional array<name> SitRepNames)
+{
+	local XComParcelManager ParcelMgr;
+	local array<PlotDefinition> ValidPlots;
+	local X2SitRepTemplateManager SitRepMgr;
+	local name SitRepName;
+	local X2SitRepTemplate SitRep;
+
+	ParcelMgr = `PARCELMGR;
+	ParcelMgr.GetValidPlotsForMission(ValidPlots, MissionDef, Biome);
+	SitRepMgr = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+
+	// pull the first one that isn't excluded from strategy, they are already in order by weight
+	foreach ValidPlots(SelectedDef)
+	{
+		foreach SitRepNames(SitRepName)
+		{
+			SitRep = SitRepMgr.FindSitRepTemplate(SitRepName);
+
+			if(SitRep != none && SitRep.ExcludePlotTypes.Find(SelectedDef.strType) != INDEX_NONE)
+			{
+				continue;
+			}
+		}
+
+		if(!SelectedDef.ExcludeFromStrategy)
+		{
+			return true;
+		}
+	}
+
+	ExcludeBiomes.AddItem(Biome);
+	return false;
 }
 
 defaultproperties

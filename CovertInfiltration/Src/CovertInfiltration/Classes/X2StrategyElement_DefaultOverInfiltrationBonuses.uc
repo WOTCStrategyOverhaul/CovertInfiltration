@@ -80,7 +80,6 @@ static function bool IsNegateRiskBonusAvaliable(X2OverInfiltrationBonusTemplate 
 
 static function ApplyNegateRiskBonus(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	local ActionFlatRiskSitRep FlatRiskMapping;
 	local name SitRepName;
 	local name RiskName;
 	local int i;
@@ -88,7 +87,7 @@ static function ApplyNegateRiskBonus(XComGameState NewGameState, X2OverInfiltrat
 	foreach Infiltration.AppliedFlatRisks(RiskName)
 	{
 		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
-		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps;
+		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps[i].SitRepName;
 
 		Infiltration.GeneratedMission.SitReps.RemoveItem(SitRepName);
 	}
