@@ -135,6 +135,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchNewRetaliationNarrative();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPArmorsets();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();

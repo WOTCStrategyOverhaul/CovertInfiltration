@@ -134,6 +134,85 @@ static function KillItems()
 	}
 }
 
+static function PatchTLPArmorsets()
+{
+	PatchTLPRanger();
+	PatchTLPGrenadier();
+	PatchTLPSpecialist();
+	PatchTLPSharpshooter();
+	PatchTLPPsiOperative();
+}
+
+static function PatchTLPRanger()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPGrenadier()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPSpecialist()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPSharpshooter()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPPsiOperative()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativeKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativePlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativePoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
 ////////////////
 /// Research ///
 ////////////////
