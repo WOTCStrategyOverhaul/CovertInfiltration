@@ -48,8 +48,7 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 
 	SetSoldiersFromAction(Action);
 
-	`HQPRES.NotifyBanner("Mission ready",, GetMissionObjectiveText(), GetMissionDescription(), eUIState_Good);
-	`GAME.GetGeoscape().Pause();
+	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
 }
 
 protected function CopyDataFromAction(XComGameState_CovertAction Action)
@@ -213,6 +212,8 @@ protected function SelectOverInfiltrationBonuses()
 			string(BonusTemplate.DataName),
 			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
 		);
+
+		// TODO: Seems to stuff everything into T0, need to debug further
 	}
 
 	// Reset the bonuses just in case
@@ -325,38 +326,33 @@ function UpdateGameBoard()
 {
 	local XComGameState NewGameState;
 	local XComGameState_MissionSiteInfiltration NewMissionState;
-	local X2StrategyElementTemplateManager TemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
-	local array<int> SortedThresholds;
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
-	// TODO: Covert this to use funcs used by UI
 
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	SortedThresholds = OverInfiltartionThresholds;
-	SortedThresholds.Sort(CompareThresholds);
+	BonusTemplate = GetNextOverInfiltrationBonus();
 
-	if (
-		OverInfiltartionBonusesGranted < SortedThresholds.Length && // Do we still have bonuses to grant?
-		SortedThresholds[OverInfiltartionBonusesGranted] >= GetCurrentInfilInt() // Should we grant the next one
-	)
+	if (BonusTemplate != none && GetCurrentInfilInt() >= GetNextThreshold())
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Give over infiltartion bonus");
 		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
-		BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
 
 		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, NewMissionState);
 		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
 		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.BonusName, BonusTemplate.BonusDescription, eUIState_Good);
-		`GAME.GetGeoscape().Pause();
+		
+		if (`GAME.GetGeoscape().IsScanning())
+		{
+			`HQPRES.StrategyMap2D.ToggleScan();
+		}
 	}
 
 	// TODO the chosen!!!
 
-	if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationDateTime, GetCurrentTime()))
+	if (MustLaunch())
 	{
 		EnablePreventTick();
 		MissionSelected();
@@ -412,6 +408,11 @@ function int GetNextThreshold()
 	SortedThresholds.Sort(CompareThresholds);
 
 	return SortedThresholds[OverInfiltartionBonusesGranted];
+}
+
+function bool MustLaunch()
+{
+	return class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationDateTime, GetCurrentTime());
 }
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)

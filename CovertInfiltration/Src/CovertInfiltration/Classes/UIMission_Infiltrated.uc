@@ -169,7 +169,7 @@ simulated function BuildOptionsPanel()
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionButtonBlade");
 	LibraryPanel.MC.QueueString(strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"); // m_strResOpsMission
 	LibraryPanel.MC.QueueString(m_strLaunchMission);
-	LibraryPanel.MC.QueueString(strWait); // m_strIgnore
+	LibraryPanel.MC.QueueString(GetInfiltration().MustLaunch() ? strReturnToAvenger : strWait); // m_strIgnore
 	LibraryPanel.MC.EndOp();
 }
 
@@ -203,8 +203,11 @@ simulated function CloseScreen()
 {
 	super.CloseScreen();
 
-	// Close the map as well - go back to avenger
-	Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
+	if (GetInfiltration().MustLaunch())
+	{
+		// Close the map as well - go back to avenger
+		Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
+	}
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------
