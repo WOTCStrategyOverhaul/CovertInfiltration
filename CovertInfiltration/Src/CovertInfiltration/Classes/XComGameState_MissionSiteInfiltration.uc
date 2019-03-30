@@ -7,12 +7,15 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite;
+class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite config(Infiltration);
+
+var StateObjectReference CorrespondingActionRef;
+var array<name> AppliedFlatRisks;
 
 var array<StateObjectReference> SoldiersOnMission;
 
-var StateObjectReference CorrespondingActionRef;
-var name AppliedFlatRiskName;
+var config array<int> OverInfiltartionThresholds;
+var array<name> SelectedOverInfiltartionBonuses;
 
 /////////////
 /// Setup ///
@@ -26,43 +29,225 @@ function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction 
 	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
 	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
 	
-	CorrespondingActionRef = Action.GetReference();
-	// AppliedFlatRiskName
+	if (MissionInfo.PreMissionSetup != none)
+	{
+		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
+	}
 
-	MissionInfo.InitMissionFn(NewGameState, Action, self);
+	CopyDataFromAction(Action);
+	Source = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo).DataName;
+	Rewards = MissionInfo.InitializeRewards(NewGameState, self, MissionInfo);
 
+	InitalizeGeneratedMission();
 	SelectPlotAndBiome();
-	ApplyFlatRisk();
-	SelectOverfInfiltrationBonuses();
-	PrepareChosen(); // This might be better suited in update
+	ApplyFlatRisks();
+	UpdateSitrepTags();
+	SelectOverInfiltrationBonuses();
 
 	SetSoldiersFromAction(Action);
 	RegisterForEvents();
 }
 
-function SetBasicInfo()
+protected function CopyDataFromAction(XComGameState_CovertAction Action)
 {
-	// TODO
+	local CovertActionRisk Risk;
+
+	// Copy over the location data
+	Location.x = Action.Location.x;
+	Location.y = Action.Location.y;
+	Continent  = Action.Continent;
+	Region = Action.Region;
+
+	// Set the action ref and copy over the applied risks
+	CorrespondingActionRef = Action.GetReference();
+	AppliedFlatRisks.Length = 0;
+
+	foreach ActionState.Risks(Risk)
+	{
+		if (Risk.bOccurs)
+		{
+			foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
+			{
+				if (FlatRiskSitRep.FlatRiskName == Risk.RiskTemplateName)
+				{
+					AppliedFlatRisks.AddItem(Risk.RiskTemplateName);
+				}
+			}
+		}
+	}
+
+	// The mission phase starts once the action finishes (100%)
+	ExpirationDateTime = TimerStartDateTime = Action.EndDateTime;
+
+	// And ends at 200%
+	class'X2StrategyGameRulesetDataStructures'.static.AddHours(ExpirationDateTime, Action.HoursToComplete);
 }
 
-function SelectPlotAndBiome()
+protected function InitalizeGeneratedMission()
 {
-	// TODO
+	local XComTacticalMissionManager MissionMgr;
+	local X2RewardTemplate MissionReward;
+	local GeneratedMissionData EmptyData;
+	local string AdditionalTag;
+
+	MissionMgr = `TACTICALMISSIONMGR;
+	GeneratedMission = EmptyData;
+	
+	GeneratedMission.MissionID = ObjectID;
+	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine();
+	
+	GeneratedMission.Mission = MissionMgr.GetMissionDefinitionForSourceReward(Source, MissionReward.DataName, ExcludeMissionFamilies, ExcludeMissionTypes);
+	GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
+
+	if(GeneratedMission.Mission.sType == "")
+	{
+		`Redscreen("GetMissionDataForSourceReward() failed to generate a mission with: \n"
+						$ " Source: " $ Source $ "\n RewardType: " $ MissionReward.DisplayName);
+	}
+
+	foreach AdditionalRequiredPlotObjectiveTags(AdditionalTag)
+	{
+		GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
+	}
+
+	MissionReward = X2RewardTemplate(`XCOMHISTORY.GetGameStateForObjectID(Rewards[0].ObjectID));
+	GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(Source, MissionReward, GeneratedMission.Mission, DarkEvent.ObjectID > 0);
+
+	// Cosmetic stuff
+
+	if(GetMissionSource().BattleOpName != "")
+	{
+		GeneratedMission.BattleOpName = GetMissionSource().BattleOpName;
+	}
+	else
+	{
+		GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
+	}
+
+	GenerateMissionFlavorText();
 }
 
-function ApplyFlatRisk()
+protected function SelectPlotAndBiome()
 {
-	// TODO
+	local PlotTypeDefinition PlotTypeDef;
+	local XComParcelManager ParcelMgr;
+	local string Biome;
+
+	ParcelMgr = `PARCELMGR;
+
+	// Find a plot that supports the biome and the mission
+	// Note that here we only support sitrep plot filters for forced sitreps
+	// As we cannot change the plot as sitreps are added/removed
+	SelectBiomeAndPlotDefinition(GeneratedMission.Mission, Biome, GeneratedMission.Plot, GeneratedMission.SitReps);
+
+	// Add SitReps forced by Plot Type
+	PlotTypeDef = ParcelMgr.GetPlotTypeDefinition(GeneratedMission.Plot.strType);
+
+	foreach PlotTypeDef.ForcedSitReps(SitRepName)
+	{
+		if (
+			GeneratedMission.SitReps.Find(SitRepName) == INDEX_NONE &&
+			(SitRepName != 'TheLost' || GeneratedMission.SitReps.Find('TheHorde') == INDEX_NONE)
+		)
+		{
+			GeneratedMission.SitReps.AddItem(SitRepName);
+		}
+	}
+
+	// At this point normall the CHL calls DLCInfo::PostSitRepCreation hook
+	// TODO: decide what to do with that hook since we change sitreps later
+
+	// the plot we find should either have no defined biomes, or the requested biome type
+	if (GeneratedMission.Plot.ValidBiomes.Length > 0)
+	{
+		GeneratedMission.Biome = ParcelMgr.GetBiomeDefinition(Biome);
+	}
 }
 
-function SelectOverfInfiltrationBonuses()
+protected function ApplyFlatRisks()
 {
-	// TODO
+	local ActionFlatRiskSitRep FlatRiskMapping;
+	local name SitRepName;
+	local name RiskName;
+	local int i;
+
+	foreach AppliedFlatRisks(RiskName)
+	{
+		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
+		SitRepName = class'X2Helper_Infiltration'.default.FlatRiskSitReps;
+
+		if (GeneratedMission.SitReps.Find(SitRepName) == INDEX_NONE)
+		{
+			GeneratedMission.SitReps.AddItem(SitRepName);
+		}
+	}
 }
 
-function PrepareChosen()
+protected function SelectOverInfiltrationBonuses()
 {
-	// TODO
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local X2CardManager CardManager;
+	local X2DataTemplate Template;
+	local string SelectedBonus;
+	local name DeckName;
+	local int i;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
+
+	// Build the decks
+	foreach TemplateManager.IterateTemplates(Template, none)
+	{
+		BonusTemplate = X2OverInfiltrationBonusTemplate(Template);
+		if (BonusTemplate == none) continue;
+
+		CardManager.AddCardToDeck(
+			name('OverInfiltrationBonusesT' $ BonusTemplate.Tier),
+			string(BonusTemplate.DataName),
+			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
+		);
+	}
+
+	// Reset the bonuses just in case
+	SelectedOverInfiltartionBonuses.Length = 0;
+	SelectedOverInfiltartionBonuses.Length = OverInfiltartionThresholds.Length;
+
+	for (i = 0; i < OverInfiltartionThresholds.Length; i++)
+	{
+		DeckName = name('OverInfiltrationBonusesT' $ i);
+
+		if (CardManager.SelectNextCardFromDeck(DeckName, SelectedBonus, ValidateOverInfiltrationBonus,, false))
+		{
+			BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(SelectedBonus)));
+			SelectedOverInfiltartionBonuses[i] = name(SelectedBonus);
+
+			if (!BonusTemplate.DoNotMarkUsed)
+			{
+				CardManager.MarkCardUsed(DeckName, SelectedBonus);
+			}
+		}
+	}
+}
+
+protected function bool ValidateOverInfiltrationBonus(string CardLabel, Object ValidationData)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+
+	BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(CardLabel)));
+	
+	if (BonusTemplate == none)
+	{
+		return;
+	}
+
+	if (BonusTemplate.IsAvaliableFn != none && !BonusTemplate.IsAvaliableFn(BonusTemplate, self))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
@@ -91,7 +276,7 @@ protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 function UpdateGameBoard()
 {
 	`RedScreen(class.name @ "is ticking!!!!! Alarm!!!!");
-	// TODO
+	// TODO (remember the chosen!!!)
 }
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -212,4 +397,24 @@ protected function UnRegisterFromEvents()
 	ThisObj = self;
 
 	EventManager.UnRegisterFromAllEvents(ThisObj);
+}
+
+///////////////////////////////
+/// Disabled base functions ///
+///////////////////////////////
+
+function BuildMission(X2MissionSourceTemplate MissionSource, Vector2D v2Loc, StateObjectReference RegionRef, array<XComGameState_Reward> MissionRewards, optional bool bAvailable=true, optional bool bExpiring=false, optional int iHours=-1, optional int iSeconds=-1, optional bool bUseSpecifiedLevelSeed=false, optional int LevelSeedOverride=0, optional bool bSetMissionData=true)
+{
+	FunctionNotSupported("BuildMission");
+}
+
+private function FunctionNotSupported(string CalledFunction)
+{
+	`RedScreen("XComGameState_MissionSiteInfiltration doesn't support" @ CalledFunction);
+}
+
+defaultproperties
+{
+	Available = true;
+	Expiring = false;
 }
