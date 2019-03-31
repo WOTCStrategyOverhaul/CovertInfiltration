@@ -7,8 +7,17 @@
 
 class UIMission_Infiltrated extends UIMission;
 
-var public localized string m_strResOpsMission;
-var public localized string m_strImageGreeble;
+var UIPanel OverInfiltrationPanel;
+var UIBGBox OverInfiltrationBG;
+var UIX2PanelHeader OverInfiltrationHeader;
+
+var localized string strBullet;
+var localized string strOverInfiltrationHeader;
+var localized string strOverInfiltrationNextBonus;
+var localized string strMissionReady;
+var localized string strInfiltration;
+var localized string strWait;
+var localized string strReturnToAvenger;
 
 //----------------------------------------------------------------------------
 // MEMBERS
@@ -30,6 +39,8 @@ simulated function Name GetLibraryID()
 
 simulated function BuildScreen()
 {
+	local X2OverInfiltrationBonusTemplate NextBonus;
+
 	// Add Interception warning and Shadow Chamber info 
 	super.BuildScreen();
 
@@ -46,20 +57,38 @@ simulated function BuildScreen()
 		XComHQPresentationLayer(Movie.Pres).CAMLookAtEarth(GetMission().Get2DLocation(), CAMERA_ZOOM);
 	}
 
-	// TODO: Remove the faction title BG
+	NextBonus = GetInfiltration().GetNextOverInfiltrationBonus();
+
+	if (NextBonus != none)
+	{
+		OverInfiltrationPanel = Spawn(class'UIPanel', self);
+		OverInfiltrationPanel.InitPanel('OverInfiltrationPanel');
+		OverInfiltrationPanel.SetPosition(725, 736);
+
+		OverInfiltrationBG = Spawn(class'UIBGBox', OverInfiltrationPanel);
+		OverInfiltrationBG.LibID = class'UIUtilities_Controls'.const.MC_X2Background;
+		OverInfiltrationBG.InitBG('BG', 0, 0, 470, 130);
+
+		OverInfiltrationHeader = Spawn(class'UIX2PanelHeader', OverInfiltrationPanel);
+		OverInfiltrationHeader.InitPanelHeader(
+			'Header',
+			strOverInfiltrationHeader,
+			strOverInfiltrationNextBonus $ ": "@ NextBonus.BonusName @ strBullet @ GetInfiltration().GetNextThreshold() $ "%\n" $ NextBonus.BonusDescription
+		);
+		OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
+		OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
+		OverInfiltrationHeader.Show();
+	}
+
 }
 
 simulated function BuildMissionPanel()
 {
-	//local XComGameState_ResistanceFaction FactionState;
-
-	//FactionState = GetMission().GetResistanceFaction();
-
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionInfoBlade");
-	LibraryPanel.MC.QueueString("MISSION READY");
+	LibraryPanel.MC.QueueString(strMissionReady);
 	LibraryPanel.MC.QueueString(""); // Handled by SetFactionIcon
-	LibraryPanel.MC.QueueString(""); // FactionState.GetFactionTitle()
-	LibraryPanel.MC.QueueString(""); // FactionState.GetFactionName()
+	LibraryPanel.MC.QueueString(m_strMissionDifficulty); // FactionState.GetFactionTitle()
+	LibraryPanel.MC.QueueString(GetDifficultyString()); // FactionState.GetFactionName()
 	LibraryPanel.MC.QueueString(GetMissionImage()); // FactionState.GetLeaderImage()
 	LibraryPanel.MC.QueueString(GetOpName());
 	LibraryPanel.MC.QueueString(m_strMissionObjective);
@@ -67,9 +96,11 @@ simulated function BuildMissionPanel()
 	LibraryPanel.MC.QueueString(m_strReward);
 	LibraryPanel.MC.EndOp();
 	
-	UpdateRewards(); 
+	// Since we don't have a faction icon, move the mission text to left
+	LibraryPanel.MC.ChildSetNum("factionGroup.factionLabel", "_x", 0);
+	LibraryPanel.MC.ChildSetNum("factionGroup.factionName", "_x", 0);
 
-	//SetFactionIcon(FactionState.GetFactionIcon());
+	UpdateRewards(); 
 
 	Button1.OnClickedDelegate = OnLaunchClicked;
 	Button2.OnClickedDelegate = OnCancelClicked;
@@ -136,22 +167,9 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 simulated function BuildOptionsPanel()
 {
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionButtonBlade");
-	LibraryPanel.MC.QueueString("INFILTRATION"); // m_strResOpsMission
+	LibraryPanel.MC.QueueString(strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"); // m_strResOpsMission
 	LibraryPanel.MC.QueueString(m_strLaunchMission);
-	LibraryPanel.MC.QueueString("Return to Avenger"); // m_strIgnore
-	LibraryPanel.MC.EndOp();
-}
-
-function SetFactionIcon(StackedUIIconData factionIcon)
-{
-	local int i;
-	LibraryPanel.MC.BeginFunctionOp("SetFactionIcon");
-
-	LibraryPanel.MC.QueueBoolean(factionIcon.bInvert);
-	for (i = 0; i < factionIcon.Images.Length; i++)
-	{
-		LibraryPanel.MC.QueueString("img:///" $ factionIcon.Images[i]);
-	}
+	LibraryPanel.MC.QueueString(GetInfiltration().MustLaunch() ? strReturnToAvenger : strWait); // m_strIgnore
 	LibraryPanel.MC.EndOp();
 }
 
@@ -185,14 +203,22 @@ simulated function CloseScreen()
 {
 	super.CloseScreen();
 
-	// Close the map as well - go back to avenger
-	Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
+	if (GetInfiltration().MustLaunch())
+	{
+		// Close the map as well - go back to avenger
+		Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
+	}
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------
 simulated function EUIState GetLabelColor()
 {
 	return eUIState_Normal;
+}
+
+simulated function XComGameState_MissionSiteInfiltration GetInfiltration()
+{
+	return XComGameState_MissionSiteInfiltration(GetMission());
 }
 //==============================================================================
 

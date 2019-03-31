@@ -97,3 +97,28 @@ RiskName="Gunnery Emplacements"
 
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
+
+[UIMission_Infiltrated]
+strBullet="•"
+strOverInfiltrationHeader="Over Infiltration"
+strOverInfiltrationNextBonus="Next bonus"
+strMissionReady="MISSION READY"
+strInfiltration="INFILTRATION"
+strWait="WAIT"
+strReturnToAvenger="RETURN TO AVENGER"
+
+[OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
+BonusName="Remove risk"
+BonusDescription="The first bonus always negates the risk"
+
+[OverInfiltrationBonus_WellRehearsed X2OverInfiltrationBonusTemplate]
+BonusName="WellRehearsed"
+BonusDescription="WellRehearsed WellRehearsed WellRehearsed"
+
+[OverInfiltrationBonus_FamiliarTerrain X2OverInfiltrationBonusTemplate]
+BonusName="FamiliarTerrain"
+BonusDescription="FamiliarTerrain FamiliarTerrain FamiliarTerrain"
+
+[OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
+BonusName="TacticalAnalysis"
+BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"

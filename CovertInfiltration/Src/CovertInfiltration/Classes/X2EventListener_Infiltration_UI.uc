@@ -36,6 +36,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertAction_ActionSelectedOverride', CovertAction_ActionSelectedOverride, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate);
 	Template.AddCHEvent('OnGeoscapeEntry', OnGeoscapeEntry);
+	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted); // On submitted as we are going to pause geoscape which will cause a gamestate
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -167,6 +168,39 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertActionCompleted(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_CovertAction CovertAction;
+
+	CovertAction = XComGameState_CovertAction(EventSource);
+
+	if (CovertAction == none)
+	{
+		return ELR_NoInterrupt;
+	}
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionState)
+		{
+			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
+			{
+				`HQPRES.NotifyBanner("Mission ready",, MissionState.GetMissionObjectiveText(), MissionState.GetMissionDescription(), eUIState_Good);
+				
+				if (`GAME.GetGeoscape().IsScanning())
+				{
+					`HQPRES.StrategyMap2D.ToggleScan();
+				}
+
+				break;
+			}
+		}
+	}
+	
 	return ELR_NoInterrupt;
 }
 

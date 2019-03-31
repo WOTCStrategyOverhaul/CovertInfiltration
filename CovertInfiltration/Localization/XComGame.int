@@ -157,9 +157,6 @@ FriendlyName="Target Lead"
 FriendlyNamePlural="Target Lead"
 LootTooltip=""
 
-[X2StrategyElement_InfiltrationRewards]
-GatherLeadText="Gather Lead"
-
 [CovertActionNarrative_RescueSoldier_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Personnel Extraction"
 ActionPreNarrative="My kind still hold great knowledge of <XGParam:StrValue1/!ChosenName/>'s facilities and operations. Together, I am confident we will find your comrade."
