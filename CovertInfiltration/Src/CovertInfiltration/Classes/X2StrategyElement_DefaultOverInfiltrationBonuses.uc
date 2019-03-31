@@ -53,7 +53,7 @@ static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationB
 	if (Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE)
 	{
 		Infiltration.GeneratedMission.SitReps.AddItem(BonusTemplate.MetatdataName);
-		Infiltration.UpdateSitrepTags();
+		Infiltration.PostSitRepsChanged(NewGameState);
 	}
 }
 
@@ -67,8 +67,8 @@ static function X2OverInfiltrationBonusTemplate CreateNegateRiskBonus()
 
 	`CREATE_X2TEMPLATE(class'X2OverInfiltrationBonusTemplate', Template, 'OverInfiltrationBonus_NegateRisk');
 	
-	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
-	Template.ApplyFn = ApplySitRepBonus;
+	Template.IsAvaliableFn = IsNegateRiskBonusAvaliable;
+	Template.ApplyFn = ApplyNegateRiskBonus;
 
 	return Template;
 }
@@ -92,5 +92,5 @@ static function ApplyNegateRiskBonus(XComGameState NewGameState, X2OverInfiltrat
 		Infiltration.GeneratedMission.SitReps.RemoveItem(SitRepName);
 	}
 
-	Infiltration.UpdateSitrepTags();
+	Infiltration.PostSitRepsChanged(NewGameState);
 }

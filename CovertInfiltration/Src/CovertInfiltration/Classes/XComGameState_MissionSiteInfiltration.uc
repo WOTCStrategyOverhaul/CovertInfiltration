@@ -208,7 +208,7 @@ protected function SelectOverInfiltrationBonuses()
 		if (BonusTemplate == none) continue;
 
 		CardManager.AddCardToDeck(
-			name('OverInfiltrationBonusesT' $ BonusTemplate.Tier),
+			GetBonusDeckName(BonusTemplate.Tier),
 			string(BonusTemplate.DataName),
 			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
 		);
@@ -222,7 +222,7 @@ protected function SelectOverInfiltrationBonuses()
 
 	for (i = 0; i < OverInfiltartionThresholds.Length; i++)
 	{
-		DeckName = name('OverInfiltrationBonusesT' $ i);
+		DeckName = GetBonusDeckName(i);
 
 		if (CardManager.SelectNextCardFromDeck(DeckName, SelectedBonus, ValidateOverInfiltrationBonus,, false))
 		{
@@ -235,6 +235,11 @@ protected function SelectOverInfiltrationBonuses()
 			}
 		}
 	}
+}
+
+static function name GetBonusDeckName(int Tier)
+{
+	return name('OverInfiltrationBonusesT' $ Tier);
 }
 
 protected function bool ValidateOverInfiltrationBonus(string CardLabel, Object ValidationData)
@@ -402,7 +407,7 @@ function int GetNextThreshold()
 {
 	local array<int> SortedThresholds;
 
-	if (OverInfiltartionBonusesGranted >= SortedThresholds.Length) return -1;
+	if (OverInfiltartionBonusesGranted >= OverInfiltartionThresholds.Length) return -1;
 
 	SortedThresholds = OverInfiltartionThresholds;
 	SortedThresholds.Sort(CompareThresholds);
@@ -449,6 +454,24 @@ function MissionSelected()
 	MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
 	MissionUI.MissionRef = GetReference();
 	HQPres.ScreenStack.Push(MissionUI);
+}
+
+function PostSitRepsChanged(XComGameState NewGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local int MissionDataIndex;
+
+	UpdateSitrepTags();
+
+	// Need to update XComHQ.arrGeneratedMissionData cache
+	XComHQ = `XCOMHQ;
+	MissionDataIndex = XComHQ.arrGeneratedMissionData.Find('MissionID', ObjectID);
+
+	if (MissionDataIndex != INDEX_NONE)
+	{
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		XComHQ.arrGeneratedMissionData.Remove(MissionDataIndex, 1);
+	}
 }
 
 //////////////
