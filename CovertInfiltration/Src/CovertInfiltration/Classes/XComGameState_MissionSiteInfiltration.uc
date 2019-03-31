@@ -144,7 +144,7 @@ protected function SelectPlotAndBiome()
 	// Find a plot that supports the biome and the mission
 	// Note that here we only support sitrep plot filters for forced sitreps
 	// As we cannot change the plot as sitreps are added/removed
-	SelectBiomeAndPlotDefinition(GeneratedMission.Mission, Biome, GeneratedMission.Plot, GeneratedMission.SitReps); // TODO
+	SelectBiomeAndPlotDefinition(GeneratedMission.Mission, Biome, GeneratedMission.Plot, GeneratedMission.SitReps);
 
 	// Add SitReps forced by Plot Type
 	PlotTypeDef = ParcelMgr.GetPlotTypeDefinition(GeneratedMission.Plot.strType);
@@ -212,8 +212,6 @@ protected function SelectOverInfiltrationBonuses()
 			string(BonusTemplate.DataName),
 			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
 		);
-
-		// TODO: Seems to stuff everything into T0, need to debug further
 	}
 
 	// Reset the bonuses just in case
