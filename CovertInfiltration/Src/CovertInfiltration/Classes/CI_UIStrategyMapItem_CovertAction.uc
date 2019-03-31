@@ -159,3 +159,19 @@ simulated function XComGameState_CovertAction GetAction()
 {
 	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
 }
+
+simulated function OnReceiveFocus()
+{
+	ScanButton.OnReceiveFocus();
+}
+
+simulated function OnLoseFocus()
+{
+	ScanButton.OnLoseFocus();
+	super.OnLoseFocus();
+}
+
+defaultproperties
+{
+	bProcessesMouseEvents = false;
+}
