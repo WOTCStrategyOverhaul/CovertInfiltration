@@ -37,6 +37,8 @@ static function array<X2DataTemplate> CreateTemplates()
 
     // misc
     Templates.AddItem(CreateInformationWarEffectTemplate_CI());
+	Templates.AddItem(CreateAdventAirPatrolsEffectTemplate());
+	Templates.AddItem(CreateCommsJammingEffectTemplate());
 
     return Templates;
 }
@@ -459,4 +461,25 @@ static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
 static function InformationWarModFunction(out int ModValue)
 {
     ModValue += `ScaleStrategyArrayInt(class'X2StrategyElement_XpackResistanceActions'.default.InformationWarReduction);
+}
+
+
+// dummy template for localization purposes
+static function X2SitRepEffectTemplate CreateCommsJammingEffectTemplate()
+{
+	local X2SitRepEffect_ModifyTacticalStartState Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'CommsJammingEffect');
+
+	return Template; 
+}
+
+// dummy template for localization purposes
+static function X2SitRepEffectTemplate CreateAdventAirPatrolsEffectTemplate()
+{
+	local X2SitRepEffect_ModifyTacticalStartState Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'AdventAirPatrolsEffect');
+
+	return Template;
 }
