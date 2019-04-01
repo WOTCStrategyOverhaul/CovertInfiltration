@@ -17,6 +17,7 @@ var transient float CachedScanButtonWidth;
 
 var localized string strProgress;
 var localized string strCovertAction;
+var localized string strCovertInfiltration;
 
 simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntity Entity)
 {
@@ -79,7 +80,14 @@ simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertActi
 	
 	if (!bScanButtonResized)
 	{
-		ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");		
+		if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+		{
+			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertInfiltration, " ", " ");
+		}
+		else
+		{
+			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");
+		}
 		bScanButtonResized = true;
 	}
 
