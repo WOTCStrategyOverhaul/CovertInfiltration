@@ -195,75 +195,75 @@ IntelligenceLeakFriendlyName = "Intelligence Leak"
 IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
 
 [InformationWar_CI X2SitRepTemplate]
-FriendlyName="Information War"
+FriendlyName="<font color='FFFFFF'>Information War</font>"
 Description="Enemy tech defense is lowered by 20 for the duration of this mission."
 
 [FamiliarTerrain X2SitRepTemplate]
-FriendlyName="Familiar Terrain"
+FriendlyName="<font color='FFFFFF'>Familiar Terrain</font>"
 Description="Gain 1 additional mobility during this mission."
 
 [PhysicalConditioning X2SitRepTemplate]
-FriendlyName="Physical Conditioning"
+FriendlyName="<font color='FFFFFF'>Physical Conditioning</font>"
 Description="Squad receives additional dodge during this mission."
 
 [MentalReadiness X2SitRepTemplate]
-FriendlyName="Mental Readiness"
+FriendlyName="<font color='FFFFFF'>Mental Readiness</font>"
 Description"Squad receieves additional mental fortitude during this mission."
 
 [LightningStrike X2SitRepTemplate]
-FriendlyName="Lightning Strike"
-Description="Units gain +<Ability:LIGHTNINGSTRIKEMOVEBONUS/> mobility for the first <Ability:LIGHTNINGSTRIKEDURATION/> turns of battle while the squad remains concealed."
+FriendlyName="<font color='FFFFFF'>Lightning Strike</font>"
+Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
-FriendlyName="Advent Patrols"
+FriendlyName="<font color='bf1e2e'>Advent Patrols</font>"
 Description="This mission's Difficulty is increased by 1 level."
 
 [OpportuneMoment X2SitRepTemplate]
-FriendlyName="Opportune Moment"
+FriendlyName="<font color='FFFFFF'>Opportune Moment</font>"
 Description="This mission's Difficulty is decreased by 1 level."
 
 [GunneryEmplacements X2SitRepTemplate]
-FriendlyName="Gunnery Emplacements"
+FriendlyName="<font color='bf1e2e'>Gunnery Emplacements</font>"
 Description="Advent has increased static defenses in this location."
 
 [Phalanx_CI X2SitRepTemplate]
-FriendlyName="Phalanx"
+FriendlyName="<font color='bf1e2e'>Phalanx</font>"
 Description="All Enemy Pods have a ShieldBearer."
 
 [Congregation X2SitRepTemplate]
-FriendlyName="Congregation"
+FriendlyName="<font color='bf1e2e'>Congregation</font>"
 Description="All Enemy Pods have a Priest."
 
 [ShoddyIntel X2SitRepTemplate]
-FriendlyName="Shoddy Intel"
+FriendlyName="<font color='FFFFFF'>Shoddy Intel</font>"
 Description="Mission timer is decreased by 1."
 
 [WellRehearsed X2SitRepTemplate]
-FriendlyName="Well Rehearsed"
+FriendlyName="<font color='FFFFFF'>Well Rehearsed</font>"
 Description="Mission timer is increased by 1."
 
 [VolunteerArmy X2SitRepTemplate]
-FriendlyName="Volunteer Army"
+FriendlyName="<font color='FFFFFF'>Volunteer Army</font>"
 Description="A Resistance soldier joins the squad for this operation."
 
 [DoubleAgent X2SitRepTemplate]
-FriendlyName="Double Agent"
+FriendlyName="<font color='FFFFFF'>Double Agent</font>"
 Description="An Advent Defector joins the squad for this operation."
 
 [IntelligenceLeak X2SitRepTemplate]
-FriendlyName="Intelligence Leak"
+FriendlyName="<font color='bf1e2e'>Intelligence Leak</font>"
 Description="Start mission without concealment and compromised detection radius on concealed soldiers."
 
 [TacticalAnalysis X2SitRepTemplate]
-FriendlyName="Tactical Analysis"
+FriendlyName="<font color='FFFFFF'>Tactical Analysis</font>"
 Description="Enemies activated on the XCOM  turn will receive only one action on their turn."
 
 [AdventAirPatrols X2SitRepTemplate]
-FriendlyName="Advent Air Patrols"
+FriendlyName="<font color='bf1e2e'>Advent Air Patrols</font>"
 Description="Extra Advent reinforcements will be dropped into the mission site once squad concealment is lost."
 
 [CommsJamming X2SitRepTemplate]
-FriendlyName="Comms Jamming"
+FriendlyName="<font color='bf1e2e'>Comms Jamming</font>"
 Description="The first Reinforcements dropship is guaranteed to be delayed."
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
@@ -280,6 +280,74 @@ RiskName="Gunnery Emplacements"
 
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
+
+[InformationWarEffect_CI X2SitRepEffect_ModifyHackDefenses]
+FriendlyName="Advent Equipment Hack Defense Decreased"
+Description="Advent electronic equipment in this area has decreased hack defenses"
+
+[InformationWarDebuffEffect_CI X2SitRepEffect_GrantAbilities]
+FriendlyName="Robotic Unit Hack Defense Decreased"
+Description="Advent's robotic units in this area have compromised hack defenses"
+
+[FamiliarTerrainEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Increased Mobility"
+Description="This battleground is familiar to our soldiers making it easier to traverse."
+
+[PhysicalConditioningEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Increased Dodge"
+Description="Our soldiers have increased dodge for this mission cuz reasons.."
+
+[MentalReadinessEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Increased chance to avoid psionic attacks"
+Description="R soldiers mind is too STRONK (just for this mission tho)"
+
+[LightningStrikeEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Initial Mobility Boost"
+Description="While our soldiers remain conceal they have increased mobility for the first few turns of battle"
+
+[GunneryEmplacementsEffect X2SitRepEffect_ModifyTurretCount]
+FriendlyName="MOAR TURRETS K"
+Description="Hopefully there is to much turrets for you"
+
+[PhalanxEffect_CI X2SitRepEffect_ModifyDefaultEncounterLists]
+FriendlyName="ShieldBearer Leaders"
+Description="Every Advent pod is led by a ShieldBearer"
+
+[CongregationEffect X2SitRepEffect_ModifyDefaultEncounterLists]
+FriendlyName="Priest Leaders"
+Description="Every Advent pod is led by a Priest"
+
+[ShoddyIntelEffect X2SitRepEffect_ModifyKismetVariable]
+FriendlyName="Reduced turn timer"
+Description="Our Intelligence source turned out to be shoddy, we have one less turn to accomplish our mission"
+
+[WellRehearsedEffect X2SitRepEffect_ModifyKismetVariable]
+FriendlyName="Increased turn timer"
+Description="A well oiled machine receives one additional turn to complete it's mission"
+
+[VolunteerArmyEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Rebel Soldier joins us for the mission"
+Description="An overzealous rebel soldier has joined XCom for this mission"
+
+[DoubleAgentEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Advent Defect joins us for the mission"
+Description="A Traitor to Advent is going to help us complete our mission"
+
+[NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="No Starting Concealment"
+Description="Due to an intelligence leak we won't start with concealment here"
+
+[IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Increased Detection Range"
+Description="Due to an intelligence leak Advent is aware we're coming our conceal units will be spotted easier"
+
+[TacticalAnalysisEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Tactical Analysis"
+Description="Do the thing"
+
+[TacticalAnalysisAbility X2SitRepEffect_GrantAbilities]
+FriendlyName="Tactical Analysis"
+Description="Keep doing the thing"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Trivial"
