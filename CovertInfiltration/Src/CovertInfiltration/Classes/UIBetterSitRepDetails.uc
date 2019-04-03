@@ -4,7 +4,7 @@ var UISitRepInformation CastedScreen;
 var array<string> CachedDarkEvents;
 
 var UIList SitRepsList;
-var UIScrollingText DarkEventsHeader;
+var UIText DarkEventsHeader;
 var UIList DarkEventsList;
 
 var protected array<UIBetterSitRepDetails_Row> RowsToRealize;
@@ -12,6 +12,9 @@ var protected array<UIBetterSitRepDetails_Row> Rows;
 
 simulated function UIPanel InitPanel(optional name InitName, optional name InitLibID)
 {
+	local UITextStyleObject DarkEventHeaderStyle;
+	local float RightPanelX;
+
 	super.InitPanel(InitName, InitLibID);
 
 	// Use navigation to forward input to us (needed for controllers)
@@ -22,25 +25,40 @@ simulated function UIPanel InitPanel(optional name InitName, optional name InitL
 	SitRepsList.Hide(); // We will show when all items realize
 	SitRepsList.InitList('SitRepsList');
 	SitRepsList.SetPosition(406, 390);
-	SitRepsList.SetSize(746, 392);
+	SitRepsList.SetSize(726, 392);
 	SitRepsList.SetSelectedNavigation();
+	CreateSitReps();
 
 	CacheDarkEvents();
 	if (CachedDarkEvents.Length > 0)
 	{
-		DarkEventsHeader = Spawn(class'UIScrollingText', self);
-		DarkEventsHeader.InitScrollingText('DarkEventsHeader');
-		DarkEventsHeader.SetPosition(SitRepsList.X + SitRepsList.Width + 10, SitRepsList.Y);
-		DarkEventsHeader.SetWidth(340);
+		RightPanelX = SitRepsList.X + SitRepsList.Width + 30;
+
+		DarkEventHeaderStyle.iState = eUIState_Bad;
+		DarkEventHeaderStyle.bUseTitleFont = true;
+		DarkEventHeaderStyle.FontSize = 22;
+		DarkEventHeaderStyle.Alignment = "CENTER";
+
+		// Move the dark events icon
+		Screen.MC.ChildSetNum("DarkEventRow", "_x", RightPanelX);
+		Screen.MC.ChildSetNum("DarkEventRow", "_y", SitRepsList.Y);
+		Screen.MC.ChildSetBool("DarkEventRow", "_visible", true);
+		Screen.MC.ChildSetBool("DarkEventRow.theTitle", "_visible", false);
+		Screen.MC.ChildSetBool("DarkEventRow.theDescription", "_visible", false);
+
+		DarkEventsHeader = Spawn(class'UIText', self);
+		DarkEventsHeader.InitText('DarkEventsHeader');
+		DarkEventsHeader.SetTitle(class'UIUtilities_Text'.static.ApplyStyle(class'UISitRepInformation'.default.m_strDarkEventsLabel, DarkEventHeaderStyle));
+		DarkEventsHeader.SetPosition(RightPanelX + 50, SitRepsList.Y);
+		DarkEventsHeader.SetSize(290, 46);
 
 		DarkEventsList = Spawn(class'UIList', self);
 		DarkEventsList.InitList('DarkEventsList');
-		DarkEventsList.SetPosition(DarkEventsHeader.X, DarkEventsHeader.Y + DarkEventsHeader.Height + 5);
-		DarkEventsList.SetSize(DarkEventsHeader.Width, 240);
-	}
+		DarkEventsList.SetPosition(RightPanelX, DarkEventsHeader.Y + DarkEventsHeader.Height + 5);
+		DarkEventsList.SetSize(340, 230);
 
-	CreateSitReps();
-	// TODO: Dark events
+		CreateDarkEvents();
+	}
 
 	return self;
 }
@@ -89,11 +107,13 @@ simulated protected function CreateSitReps()
 			Spacer.InitPanel();
 			Spacer.SetHeight(10);
 			Spacer.DisableNavigation();
+			Spacer.ProcessMouseEvents(SitRepsList.OnChildMouseEvent);
 		}
 
 		Row = Spawn(class'UIBetterSitRepDetails_Row', SitRepsList.ItemContainer);
 		Row.SitRepTemplate = SitRepTemplate;
 		Row.InitRow();
+		Row.ProcessMouseEvents(SitRepsList.OnChildMouseEvent);
 
 		Rows.AddItem(Row);
 
@@ -105,6 +125,7 @@ simulated protected function CreateSitReps()
 			Row = Spawn(class'UIBetterSitRepDetails_Row', SitRepsList.ItemContainer);
 			Row.SitRepEffectTemplate = SitRepEffectTemplate;
 			Row.InitRow();
+			Row.ProcessMouseEvents(SitRepsList.OnChildMouseEvent);
 
 			Rows.AddItem(Row);
 		}
@@ -133,6 +154,24 @@ simulated function RowRealized(UIBetterSitRepDetails_Row Row)
 		Row.Title.AnimateIn(class'UIUtilities'.const.INTRO_ANIMATION_DELAY_PER_INDEX * PanelsAnimated++);
 		Row.Description.AnimateIn(class'UIUtilities'.const.INTRO_ANIMATION_DELAY_PER_INDEX * PanelsAnimated++);
 	}
+}
+
+simulated function CreateDarkEvents()
+{
+	local UIScrollingText Text;
+	local string DarkEvent;
+
+	foreach CachedDarkEvents(DarkEvent)
+	{
+		Text = Spawn(class'UIScrollingText', DarkEventsList.ItemContainer);
+		Text.bIsNavigable = true; // Allow controller scroll
+		Text.InitScrollingText(, class'UIUtilities_Text'.static.GetColoredText(DarkEvent, eUIState_Bad));
+		Text.SetWidth(DarkEventsList.Width);
+		Text.AnimateIn();
+	}
+
+	DarkEventsList.RealizeItems();
+	DarkEventsList.RealizeList();
 }
 
 defaultproperties

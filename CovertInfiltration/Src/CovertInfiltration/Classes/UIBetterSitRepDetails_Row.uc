@@ -8,6 +8,9 @@ var UIText Description;
 
 simulated function InitRow ()
 {
+	local EUIState ColorState;
+	local string strTitle;
+
 	if (SitRepTemplate == none && SitRepEffectTemplate == none)
 	{
 		`RedScreen(class.name @ "no template set");
@@ -24,21 +27,25 @@ simulated function InitRow ()
 
 	Description = Spawn(class'UIText', self);
 	Description.InitText('Description');
-	Description.SetY(Title.Height + 5);
 	Description.OnTextSizeRealized = OnDescriptionSizeRealized;
 
 	if (SitRepTemplate != none)
 	{
-		Title.SetTitle(SitRepTemplate.GetFriendlyName());
+		Description.SetY(37);
+
+		ColorState = SitRepTemplate.bNegativeEffect ? eUIState_Bad : eUIState_Good;
+		strTitle = class'UIUtilities_Text'.static.GetColoredText(SitRepTemplate.GetFriendlyName(), ColorState);
+
+		Title.SetTitle(strTitle);
 		Description.SetText(SitRepTemplate.Description);
 	}
 	else
 	{
 		// Slightly offset effects to the right
 		Title.SetX(10);
-		Description.SetX(10);
+		Description.SetPosition(10, 27);
 
-		Title.SetTitle(SitRepEffectTemplate.GetFriendlyName());
+		Title.SetSubTitle(SitRepEffectTemplate.GetFriendlyName());
 		Description.SetText(SitRepEffectTemplate.Description);
 	}
 
