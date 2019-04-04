@@ -349,11 +349,11 @@ Description="Do the thing"
 FriendlyName="Tactical Analysis"
 Description="Keep doing the thing"
 
-[AdventAirPatrolsEffect X2SitRepEffect_ModifyTacticalStartState]
+[AdventAirPatrolsEffect X2SitRepEffectTemplate]
 FriendlyName="Advent has additional air support"
 Description="Advent air patrols are actively looking for XCom in the area and will drop in reinforcements on loss of concealment"
 
-[CommsJammingEffect X2SitRepEffect_ModifyTacticalStartState]
+[CommsJammingEffect X2SitRepEffectTemplate]
 FriendlyName="Delay Advent Reinforcements"
 Description="Advent's air support requests will be delayed by 1 turn"
 
