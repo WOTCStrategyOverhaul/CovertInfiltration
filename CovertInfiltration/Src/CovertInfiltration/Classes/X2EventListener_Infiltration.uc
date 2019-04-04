@@ -246,6 +246,8 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
 	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
+	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
+	Template.AddCHEvent('OverrideDisableReinforcementsFlare', DisableReinforcementsFlare, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -339,7 +341,7 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 {
 	local XComGameState_BattleData BattleData;
 	local name EncounterID;
-	local int PodStrength;
+	local int PodStrength, TurnDelay, DelayCrit;
 
 	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
 
@@ -349,21 +351,49 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	}
 	
 	PodStrength = `SYNC_RAND_STATIC(100) + 1;
+	DelayCrit = `SYNC_RAND_STATIC(2);
 
 	if (PodStrength < 33)
 	{
 		EncounterID = 'ADVx3_Weak';
+
+		if (DelayCrit > 1)
+		{
+			TurnDelay = 1;
+		}
+		else
+		{
+			TurnDelay = 2;
+		}
 	}
 	else if (PodStrength < 66)
 	{
 		EncounterID = 'ADVx3_Standard';
+
+		if (DelayCrit > 1)
+		{
+			TurnDelay = 3;
+		}
+		else
+		{
+			TurnDelay = 4;
+		}
 	}
 	else
 	{
 		EncounterID = 'ADVx3_Strong';
-	}
 
-	class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, 1, , , 6, , , , , , , , true);
+		if (DelayCrit > 1)
+		{
+			TurnDelay = 5;
+		}
+		else
+		{
+			TurnDelay = 6;
+		}
+	}
+	
+	class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, TurnDelay, , , 6, , , , , , , , true);
 	
 	return ELR_NoInterrupt;
 }
@@ -393,7 +423,7 @@ static function EventListenerReturn CommsJamming_ReinforcementDelay(Object Event
 	{
 		return ELR_NoInterrupt;
 	}
-
+	
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
 
 	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
@@ -412,4 +442,70 @@ function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameSta
 
 	MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
 	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
+}
+
+static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	{
+		break;
+	}
+
+	if (ReinforcementSpawner == None || Tuple == None)
+	{
+		return ELR_NoInterrupt;
+	}
+
+	Tuple.Data[0].b = true;
+	
+	if (ReinforcementSpawner.Countdown > 2)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Good);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("INCOMING", eUIState_Good);
+		Tuple.Data[3].s = "828282";
+	}
+	else if (ReinforcementSpawner.Countdown == 2)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Warning);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("WARNING", eUIState_Warning);
+		Tuple.Data[3].s = "fdce2b";
+	}
+	else
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Bad);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("IMMINENT", eUIState_Bad);
+		Tuple.Data[3].s = "bf1e2e";
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static function EventListenerReturn DisableReinforcementsFlare(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComLWTuple Tuple;
+
+	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (ReinforcementSpawner == None || Tuple == None)
+	{
+		return ELR_NoInterrupt;
+	}
+
+	if (ReinforcementSpawner.Countdown > 1)
+	{
+		Tuple.Data[0].b = true;
+	}
+	else
+	{
+		Tuple.Data[0].b = false;
+	}
+
+	return ELR_NoInterrupt;
 }
