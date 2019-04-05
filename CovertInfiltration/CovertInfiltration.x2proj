@@ -237,6 +237,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
+    <Content Include="Src\CovertInfiltration\Classes\X2Effect_MentalReadiness.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>

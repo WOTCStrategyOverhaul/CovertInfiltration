@@ -1,0 +1,5 @@
+class X2Effect_MentalReadiness extends X2Effect_Persistent;
+
+var int HitMod;
+
+function GetToHitAsTargetModifiersForStatCheck
