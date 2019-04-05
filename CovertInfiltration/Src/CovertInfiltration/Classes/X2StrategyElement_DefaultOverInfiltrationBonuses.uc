@@ -44,7 +44,27 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 
 static function bool IsSitRepBonusAvaliable(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
-	return Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE;
+	local X2SitRepTemplate SitRepTemplate;
+
+	if (Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) != INDEX_NONE)
+	{
+		// Already exists in the mission
+		return false;
+	}
+
+	SitRepTemplate = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager().FindSitRepTemplate(BonusTemplate.MetatdataName);
+
+	if (SitRepTemplate == none)
+	{
+		return false;
+	}
+
+	if (!SitRepTemplate.MeetsRequirements(Infiltration))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)

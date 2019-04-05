@@ -193,9 +193,10 @@ protected function SelectOverInfiltrationBonuses()
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2CardManager CardManager;
+	local array<string> CardLabels;
 	local X2DataTemplate Template;
-	local string SelectedBonus;
 	local name DeckName;
+	local string Card;
 	local int i;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
@@ -222,16 +223,40 @@ protected function SelectOverInfiltrationBonuses()
 	{
 		DeckName = GetBonusDeckName(i);
 
-		if (CardManager.SelectNextCardFromDeck(DeckName, SelectedBonus, ValidateOverInfiltrationBonus,, false))
+		CardLabels.Length = 0;
+		CardManager.GetAllCardsInDeck(DeckName, CardLabels);
+
+		foreach CardLabels(Card)
 		{
-			BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(SelectedBonus)));
-			SelectedOverInfiltartionBonuses[i] = name(SelectedBonus);
+			BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(Card)));
+
+			if (BonusTemplate == none || BonusTemplate.Tier != i)
+			{
+				// Something changed, just remove the card from deck
+				CardManager.RemoveCardFromDeck(DeckName, Card);
+				continue;
+			}
+
+			if (BonusTemplate.IsAvaliableFn != none && !BonusTemplate.IsAvaliableFn(BonusTemplate, self))
+			{
+				// Bonus doesn't qualify
+				continue;
+			}
+
+			// All good, use the bonus
+			SelectedOverInfiltartionBonuses[i] = name(Card);
 
 			if (!BonusTemplate.DoNotMarkUsed)
 			{
-				CardManager.MarkCardUsed(DeckName, SelectedBonus);
+				CardManager.MarkCardUsed(DeckName, Card);
 			}
+
+			// Do not attempt to check 
+			break;
 		}
+
+		// In case we didn't manage to pick anything for this tier
+		// Just leave it empty ('') and the code later will handle it
 	}
 }
 
@@ -240,44 +265,9 @@ static function name GetBonusDeckName(int Tier)
 	return name('OverInfiltrationBonusesT' $ Tier);
 }
 
-protected function bool ValidateOverInfiltrationBonus(string CardLabel, Object ValidationData)
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2OverInfiltrationBonusTemplate BonusTemplate;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(CardLabel)));
-	
-	if (BonusTemplate == none)
-	{
-		return false;
-	}
-
-	if (BonusTemplate.IsAvaliableFn != none && !BonusTemplate.IsAvaliableFn(BonusTemplate, self))
-	{
-		return false;
-	}
-
-	return true;
-}
-
 protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
 {
-	local XComGameState_StaffSlot SlotState;
-	local int idx;
-
-	// Just in case somebody was here before
-	SoldiersOnMission.Length = 0;
-
-	for (idx = 0; idx < Action.StaffSlots.Length; idx++)
-	{
-		SlotState = Action.GetStaffSlot(idx);
-
-		if (SlotState != none && SlotState.IsSoldierSlot() && SlotState.IsSlotFilled())
-		{
-			SoldiersOnMission.AddItem(SlotState.GetAssignedStaffRef());
-		}
-	}
+	SoldiersOnMission = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
 }
 
 function UpdateSitrepTags()
@@ -380,7 +370,9 @@ function float GetCurrentInfil()
 
 function int GetCurrentInfilInt()
 {
-	return Round(GetCurrentInfil() * 100);
+	// Truncate, not round on purpose 
+	// We want the percentage to go up only when a percent is fully accumulated
+	return int(GetCurrentInfil() * 100);
 }
 
 protected function int CompareThresholds (int A, int B)
@@ -393,9 +385,12 @@ protected function int CompareThresholds (int A, int B)
 function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
 {
 	local X2StrategyElementTemplateManager TemplateManager;
+	local int NextBonusIndex;
+
+	NextBonusIndex = GetNextValidBonusIndex();
 
 	// None left
-	if (OverInfiltartionBonusesGranted >= OverInfiltartionThresholds.Length) return none;
+	if (NextBonusIndex < 0) return none;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
@@ -404,13 +399,33 @@ function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
 function int GetNextThreshold()
 {
 	local array<int> SortedThresholds;
+	local int NextBonusIndex;
 
-	if (OverInfiltartionBonusesGranted >= OverInfiltartionThresholds.Length) return -1;
+	NextBonusIndex = GetNextValidBonusIndex();
+
+	// Return something absurdly highly
+	// Do not return -1 as (GetCurrentInfilInt() > GetNextThreshold()) checks will pass
+	if (NextBonusIndex < 0) return 99999;
 
 	SortedThresholds = OverInfiltartionThresholds;
 	SortedThresholds.Sort(CompareThresholds);
 
 	return SortedThresholds[OverInfiltartionBonusesGranted];
+}
+
+function int GetNextValidBonusIndex()
+{
+	local int i;
+
+	for (i = OverInfiltartionBonusesGranted; i < OverInfiltartionThresholds.Length; i++)
+	{
+		if (SelectedOverInfiltartionBonuses[i] != '')
+		{
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 function bool MustLaunch()
