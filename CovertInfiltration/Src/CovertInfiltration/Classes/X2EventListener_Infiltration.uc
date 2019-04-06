@@ -246,7 +246,6 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
 	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
-	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
 	Template.AddCHEvent('OverrideDisableReinforcementsFlare', DisableReinforcementsFlare, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
@@ -372,11 +371,11 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 
 		if (DelayCrit > 1)
 		{
-			TurnDelay = 3;
+			TurnDelay = 2;
 		}
 		else
 		{
-			TurnDelay = 4;
+			TurnDelay = 3;
 		}
 	}
 	else
@@ -385,11 +384,11 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 
 		if (DelayCrit > 1)
 		{
-			TurnDelay = 5;
+			TurnDelay = 3;
 		}
 		else
 		{
-			TurnDelay = 6;
+			TurnDelay = 4;
 		}
 	}
 	
@@ -444,51 +443,12 @@ function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameSta
 	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
 }
 
-static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-	local XComLWTuple Tuple;
-
-	Tuple = XComLWTuple(EventData);
-
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
-	{
-		break;
-	}
-
-	if (ReinforcementSpawner == None || Tuple == None)
-	{
-		return ELR_NoInterrupt;
-	}
-
-	Tuple.Data[0].b = true;
-	
-	if (ReinforcementSpawner.Countdown > 2)
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Good);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("INCOMING", eUIState_Good);
-		Tuple.Data[3].s = "828282";
-	}
-	else if (ReinforcementSpawner.Countdown == 2)
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Warning);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("WARNING", eUIState_Warning);
-		Tuple.Data[3].s = "fdce2b";
-	}
-	else
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Bad);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("IMMINENT", eUIState_Bad);
-		Tuple.Data[3].s = "bf1e2e";
-	}
-
-	return ELR_NoInterrupt;
-}
-
 static function EventListenerReturn DisableReinforcementsFlare(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComGameState_Player PlayerState;
 	local XComLWTuple Tuple;
+	local Object ThisObj;
 
 	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
 	Tuple = XComLWTuple(EventData);
@@ -497,14 +457,34 @@ static function EventListenerReturn DisableReinforcementsFlare(Object EventData,
 	{
 		return ELR_NoInterrupt;
 	}
+	
+	Tuple.Data[0].b = true;
 
-	if (ReinforcementSpawner.Countdown > 1)
+	ThisObj = ReinforcementSpawner;
+	PlayerState = class'XComGameState_Player'.static.GetPlayerState(ReinforcementSpawner.SpawnInfo.Team);
+	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnTurnBegun, ELD_OnStateSubmitted, , PlayerState);
+
+	return ELR_NoInterrupt;
+}
+
+function EventListenerReturn OnTurnBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComGameState NewGameState;
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+
+	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventData);
+
+	if (ReinforcementSpawner.Countdown < 2)
 	{
-		Tuple.Data[0].b = true;
+		`CI_Log("DO THE THING!");
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CheckCountdownForVisualization");
+		ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
+		XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = ReinforcementSpawner.BuildVisualizationForSpawnerCreation;
+		`TACTICALRULES.SubmitGameState(NewGameState);
 	}
 	else
 	{
-		Tuple.Data[0].b = false;
+		`CI_Log("NOT THE TIME YET!");
 	}
 
 	return ELR_NoInterrupt;

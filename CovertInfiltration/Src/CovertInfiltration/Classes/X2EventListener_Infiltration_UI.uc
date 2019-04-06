@@ -20,6 +20,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateArmoryListeners());
 	Templates.AddItem(CreateSquadSelectListeners());
 	Templates.AddItem(CreateStrategyPolicyListeners());
+	Templates.AddItem(CreateTacticalHUDListeners());
 
 	return Templates;
 }
@@ -517,5 +518,61 @@ static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOn
 	// Never show actions popup after UIStrategyPolicy
 	Tuple.Data[0].b = false;
 	
+	return ELR_NoInterrupt;
+}
+
+////////////////////
+/// Tactical HUD ///
+////////////////////
+
+static function CHEventListenerTemplate CreateTacticalHUDListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_StrategyPolicy');
+	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	{
+		break;
+	}
+
+	if (ReinforcementSpawner == None || Tuple == None)
+	{
+		return ELR_NoInterrupt;
+	}
+
+	Tuple.Data[0].b = true;
+	
+	if (ReinforcementSpawner.Countdown > 2)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Good);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("INCOMING", eUIState_Good);
+		Tuple.Data[3].s = "828282";
+	}
+	else if (ReinforcementSpawner.Countdown == 2)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Warning);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("WARNING", eUIState_Warning);
+		Tuple.Data[3].s = "fdce2b";
+	}
+	else
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText("REINFORCEMENTS", eUIState_Bad);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText("IMMINENT", eUIState_Bad);
+		Tuple.Data[3].s = "bf1e2e";
+	}
+
 	return ELR_NoInterrupt;
 }
