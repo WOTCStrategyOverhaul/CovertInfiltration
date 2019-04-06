@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: A row panel for UIBetterSitRepDetails. It can show either sitrep or an
+//           effect (but not both at the same time)
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIBetterSitRepDetails_Row extends UIVerticalListItemBase;
 
 var X2SitRepTemplate SitRepTemplate;

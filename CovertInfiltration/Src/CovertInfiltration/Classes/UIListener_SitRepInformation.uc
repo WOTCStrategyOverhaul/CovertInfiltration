@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Hides the default infromation provided by UISitRepInformation and
+//           instantiates UIBetterSitRepDetails to show the information
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIListener_SitRepInformation extends UIScreenListener;
 
 event OnInit(UIScreen Screen)

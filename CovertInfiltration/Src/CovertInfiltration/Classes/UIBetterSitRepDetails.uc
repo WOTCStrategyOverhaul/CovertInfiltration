@@ -1,3 +1,13 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: A manager panel that replaces the UISitRepInformation content so that more
+//           information is displayed
+//  TODO:    Replace the scrolling with YAF1's method so that it's more sensible on
+//           controllers
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIBetterSitRepDetails extends UIPanel;
 
 var UISitRepInformation CastedScreen;
