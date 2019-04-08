@@ -462,23 +462,3 @@ static function InformationWarModFunction(out int ModValue)
 {
 	ModValue += `ScaleStrategyArrayInt(class'X2StrategyElement_XpackResistanceActions'.default.InformationWarReduction);
 }
-
-// dummy template for localization purposes
-static function X2SitRepEffectTemplate CreateAdventAirPatrolsEffectTemplate()
-{
-	local X2SitRepEffectTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffectTemplate', Template, 'AdventAirPatrolsEffect');
-
-	return Template;
-}
-
-// dummy template for localization purposes
-static function X2SitRepEffectTemplate CreateCommsJammingEffectTemplate()
-{
-	local X2SitRepEffectTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffectTemplate', Template, 'CommsJammingEffect');
-
-	return Template; 
-}
