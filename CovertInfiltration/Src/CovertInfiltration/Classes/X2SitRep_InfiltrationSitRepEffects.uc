@@ -37,8 +37,6 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	// misc
 	Templates.AddItem(CreateInformationWarEffectTemplate_CI());
-	Templates.AddItem(CreateAdventAirPatrolsEffectTemplate());
-	Templates.AddItem(CreateCommsJammingEffectTemplate());
 
 	return Templates;
 }
