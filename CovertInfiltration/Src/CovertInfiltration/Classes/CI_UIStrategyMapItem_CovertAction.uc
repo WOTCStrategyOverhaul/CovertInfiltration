@@ -204,4 +204,5 @@ simulated function OnMouseOut()
 defaultproperties
 {
 	bProcessesMouseEvents = false;
+	bAnimateOnInit = false;
 }
