@@ -104,6 +104,12 @@
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIBetterSitRepDetails.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIBetterSitRepDetails_Row.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
       <SubType>Content</SubType>
     </Content>
@@ -132,6 +138,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_NextCovertAction.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_SitRepInformation.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_WeaponUpgrade.uc">

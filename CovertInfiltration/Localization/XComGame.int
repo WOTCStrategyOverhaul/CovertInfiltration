@@ -212,7 +212,7 @@ Description"Squad receieves additional mental fortitude during this mission."
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
-Description="Units gain +<Ability:LIGHTNINGSTRIKEMOVEBONUS/> mobility for the first <Ability:LIGHTNINGSTRIKEDURATION/> turns of battle while the squad remains concealed."
+Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Advent Patrols"
@@ -280,6 +280,14 @@ RiskName="Gunnery Emplacements"
 
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
+
+[NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="No Starting Concealment"
+Description="Due to an intelligence leak we won't start with concealment here"
+
+[IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Increased Detection Range"
+Description="Due to an intelligence leak Advent is aware we're coming and our concealed units will be more easily spotted"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Trivial"
