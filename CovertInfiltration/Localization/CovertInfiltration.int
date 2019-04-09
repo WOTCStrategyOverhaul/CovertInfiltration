@@ -41,6 +41,7 @@ strAssingOrdersOverlay=Assign Orders
 [CI_UIStrategyMapItem_CovertAction]
 strProgress=Progress
 strCovertAction=Covert Action
+strCovertInfiltration=Covert Infiltration
 
 [UIListener_ModConfigMenu]
 PageTitle="Covert Infiltration"

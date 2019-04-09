@@ -12,11 +12,14 @@ var UIText ProgressLabel;
 
 var UIProgressBar ProgressBar;
 
+var int ColorState;
+
 var transient bool bScanButtonResized;
 var transient float CachedScanButtonWidth;
 
 var localized string strProgress;
 var localized string strCovertAction;
+var localized string strCovertInfiltration;
 
 simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntity Entity)
 {
@@ -26,18 +29,20 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 	ScanButton.SetButtonIcon("");
 	ScanButton.SetDefaultDelegate(OpenCovertActionsScreen);
 	ScanButton.SetButtonType(eUIScanButtonType_Default);
-
+	
 	PercentLabel = Spawn(class'UIText', ScanButton).InitText('PercentLabel', "");
 	PercentLabel.SetWidth(60); 
 	PercentLabel.SetPosition(154, 3);
 
-	ProgressLabel = Spawn(class'UIText', ScanButton).InitText('ProgressLabel', class'UIUtilities_Text'.static.GetSizedText(strProgress, 12));
+	ProgressLabel = Spawn(class'UIText', ScanButton).InitText('ProgressLabel', "");
 	ProgressLabel.SetWidth(60); 
 	ProgressLabel.SetPosition(154, 23);
 
 	ProgressBar = Spawn(class'UIProgressBar', self).InitProgressBar('MissionInfiltrationProgress', -32, 5, 64, 8, 0.5, eUIState_Normal);
-	
+		
 	bScanButtonResized = false;
+
+	ColorState = eUIState_Normal;
 
 	return self;
 }
@@ -75,19 +80,27 @@ simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertActi
 
 	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
 
-	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.AlignCenter(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20)));
+	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20), ColorState,, "CENTER"));
+	ProgressLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(strProgress, ColorState, 12));
 	
 	if (!bScanButtonResized)
 	{
-		ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");		
+		if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+		{
+			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertInfiltration, " ", " ");
+		}
+		else
+		{
+			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");
+		}
 		bScanButtonResized = true;
 	}
-
+	
 	ScanButton.DefaultState();
 	ScanButton.PulseScanner(false);
 	ScanButton.ShowScanIcon(false);
 	ScanButton.Realize();
-
+	
 	ScanWidth = ScanButton.MC.GetNum("bg._width"); 
 
 	if (ScanWidth != CachedScanButtonWidth)
@@ -97,7 +110,7 @@ simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertActi
 		ScanButton.SetX(-(ScanWidth / 2));
 			
 		CachedScanButtonWidth = ScanWidth;
-	}
+	}	
 }
 
 simulated function UpdateExpiringActionProgressBar(XComGameState_CovertAction CovertAction)
@@ -150,12 +163,46 @@ function OpenCovertActionsScreen()
 	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(GetAction().GetReference());
 }
 
+simulated function XComGameState_CovertAction GetAction()
+{
+	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
+}
+
 simulated function bool IsSelectable()
 {
 	return true;
 }
 
-simulated function XComGameState_CovertAction GetAction()
+simulated function OnMouseEvent(int cmd, array<string> args)
 {
-	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
+	if(GetStrategyMap().m_eUIState == eSMS_Flight)
+		return;
+
+	switch(cmd) 
+	{ 
+		case class'UIUtilities_Input'.const.FXS_L_MOUSE_IN:
+			OnMouseIn();
+			break;
+		case class'UIUtilities_Input'.const.FXS_L_MOUSE_OUT:
+			OnMouseOut();
+			break;
+	}
+}
+
+simulated function OnMouseIn()
+{
+	ColorState = -1;
+	super(UIStrategyMapItem).OnMouseIn();
+}
+
+simulated function OnMouseOut()
+{
+	ColorState = eUIState_Normal;
+	super(UIStrategyMapItem).OnMouseOut();
+}
+
+defaultproperties
+{
+	bProcessesMouseEvents = false;
+	bAnimateOnInit = false;
 }
