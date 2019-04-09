@@ -287,7 +287,7 @@ Description="Due to an intelligence leak we won't start with concealment here"
 
 [IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Increased Detection Range"
-Description="Due to an intelligence leak Advent is aware we're coming our conceal units will be spotted easier"
+Description="Due to an intelligence leak Advent is aware we're coming and our concealed units will be more easily spotted"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Trivial"
