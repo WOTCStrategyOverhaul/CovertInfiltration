@@ -15,6 +15,8 @@ var array<name> AppliedFlatRisks;
 var array<StateObjectReference> SoldiersOnMission;
 
 var config array<int> OverInfiltartionThresholds;
+var config float ChosenAppearenceModAt100;
+var config float ChosenAppearenceModAt200;
 
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
@@ -488,6 +490,92 @@ function PostSitRepsChanged(XComGameState NewGameState)
 }
 
 //////////////
+/// Chosen ///
+//////////////
+
+function XComGameState_AdventChosen GetCurrentChosen()
+{
+	local array<XComGameState_AdventChosen> AliveChosen;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_AdventChosen ChosenState;
+	
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	AliveChosen = AlienHQ.GetAllChosen(, true);
+
+	foreach AliveChosen(ChosenState)
+	{
+		if (ChosenState.ChosenControlsRegion(Region)) 
+		{
+			return ChosenState;
+		}
+	}
+
+	return none;
+}
+
+function int GetChosenAppereanceChange()
+{
+	local float OverInfilProgress, OverInfilScalar, AlienHQScalar;
+	local XComGameState_AdventChosen CurrentChosen;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local int BaseChance;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	CurrentChosen = GetCurrentChosen();
+
+	if (CurrentChosen == none) {
+		// Great job!
+		return -1;
+	}
+
+	BaseChance = CurrentChosen.GetChosenAppearChance();
+	if (BaseChance == 0) return 0;
+
+	OverInfilProgress = GetCurrentOverInfil() / 100;
+	OverInfilScalar = Lerp(ChosenAppearenceModAt100, ChosenAppearenceModAt200, OverInfilProgress);
+
+	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
+	if (AlienHQScalar <= 0) AlienHQScalar = 1;
+
+	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
+}
+
+function ApplyChosenBeforeLaunch()
+{
+	local XComGameState_MissionSiteInfiltration NewMissionState;
+	local XComGameState_AdventChosen CurrentChosen;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState NewGameState;
+	local int AppearenceChance;
+
+	AppearenceChance = GetChosenAppereanceChange();
+	CurrentChosen = GetCurrentChosen();
+
+	`CI_Log("Infiltration launch - chosen chance" @ AppearenceChance);
+
+	if (CurrentChosen.CurrentAppearanceRoll < AppearenceChance)
+	{
+		`CI_Log("Infiltration launch - chosen roll success, adding");
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Infiltration - adding chosen to mission");
+
+		// Add chosen to the mission
+		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
+		NewMissionState.TacticalGameplayTags.AddItem(CurrentChosen.GetMyTemplate().GetSpawningTag(CurrentChosen.Level));
+
+		// Update the tactical tags cache
+		XComHQ = `XCOMHQ;
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		XComHQ.AddMissionTacticalTags(NewMissionState);
+
+		`SubmitGamestate(NewGameState);
+	}
+	else
+	{
+		`CI_Log("Infiltration launch - chosen roll failed, skipping");
+	}
+}
+
+//////////////
 /// Launch ///
 //////////////
 
@@ -535,6 +623,7 @@ function StartMission()
 {
 	local XGStrategy StrategyGame;
 	
+	ApplyChosenBeforeLaunch();
 	BeginInteraction();
 	
 	StrategyGame = `GAME;
