@@ -19,6 +19,8 @@ var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 var config(StrategyTuning) array<name> arrRemoveFactionCard;
 
+var config array<name> arrPrototypesToDisable;
+
 /////////////
 /// Items ///
 /////////////
@@ -211,6 +213,25 @@ static function PatchTLPPsiOperative()
 	Template.CreatorTemplateName = 'none';
 	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativePoweredArmor'));
 	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPWeapons()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2WeaponTemplate				Template;
+	local name							ItemName;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	foreach default.arrPrototypesToDisable(ItemName)
+	{
+		//Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_CV'));
+		//Template.StartingItem = false;
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_MG'));
+		Template.CreatorTemplateName = 'none';
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_BM'));
+		Template.CreatorTemplateName = 'none';
+	}
 }
 
 ////////////////
