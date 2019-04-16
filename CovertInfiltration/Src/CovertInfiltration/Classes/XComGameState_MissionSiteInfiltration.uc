@@ -523,8 +523,7 @@ function int GetChosenAppereanceChange()
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
 
-	if (CurrentChosen == none) {
-		// Great job!
+	if (CurrentChosen == none || !AlienHQ.bChosenActive) {
 		return -1;
 	}
 

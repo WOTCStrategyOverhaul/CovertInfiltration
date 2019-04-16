@@ -24,9 +24,10 @@ static function X2DataTemplate CreateCivilianDisguise()
 
 	`CREATE_X2TEMPLATE(class'X2ArmorTemplate', Template, 'CivilianDisguise');
 	Template.strImage = "img:///UILibrary_DisguiseIcons.X2InventoryIcons.Inv_Disguise_Civilian";
-	Template.StartingItem = true;
-	Template.CanBeBuilt = false;
-	Template.bInfiniteItem = true;
+	Template.StartingItem = false;
+	Template.CanBeBuilt = true;
+	Template.TradingPostValue = 2;
+	Template.bInfiniteItem = false;
 	Template.Abilities.AddItem('CivilianDisguiseStats');
 	Template.Abilities.AddItem('Phantom');
 	Template.ArmorTechCat = 'conventional';
