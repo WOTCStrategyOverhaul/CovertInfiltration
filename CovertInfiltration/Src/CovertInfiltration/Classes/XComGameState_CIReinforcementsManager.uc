@@ -105,11 +105,19 @@ function DelayedReinforcementSpawner GetNextDelayedReinforcementSpawner(optional
 	return IncomingDRS;
 }
 
-function bool GetCountdownDisplay(out XComLWTuple Tuple, XComGameState_CIReinforcementsManager ManagerState)
+static function bool SetCountdownDisplay(XComLWTuple Tuple)
 {
 	local XComGameState NewGameState;
+	local XComGameState_CIReinforcementsManager ManagerState;
 	local DelayedReinforcementSpawner NextDRS;
 	local XGParamTag kTag;
+
+	ManagerState = GetReinforcementsManager(true);
+
+	if (ManagerState == none)
+	{
+		return false;
+	}
 
 	if (ManagerState.bNeedsUpdate)
 	{
@@ -121,14 +129,14 @@ function bool GetCountdownDisplay(out XComLWTuple Tuple, XComGameState_CIReinfor
 
 		`TACTICALRULES.SubmitGameState(NewGameState);
 
-		if (NextDRS.TurnsUntilSpawn == Threshold && NextDRS.EncounterID != '')
+		if (NextDRS.TurnsUntilSpawn == default.Threshold && NextDRS.EncounterID != '')
 		{// we need a fresh gamestate to do this
-			class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(NextDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
+			class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(NextDRS.EncounterID, default.Threshold, , , 6, , , , , , , , true);
 		}
 	}
 	else
 	{
-		NextDRS = GetNextDelayedReinforcementSpawner(false);
+		NextDRS = ManagerState.GetNextDelayedReinforcementSpawner(false);
 	}
 
 	if (NextDRS.TurnsUntilSpawn > 2)

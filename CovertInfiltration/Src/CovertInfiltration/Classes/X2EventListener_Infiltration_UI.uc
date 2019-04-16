@@ -538,18 +538,16 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 
 static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local XComGameState_CIReinforcementsManager Manager;
 	local XComLWTuple Tuple;
 
 	Tuple = XComLWTuple(EventData);
-	Manager = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager(true);
 
-	if (Tuple == none || Manager == none)
+	if (Tuple == none)
 	{
 		return ELR_NoInterrupt;
 	}
 
-	if (Manager.GetCountdownDisplay(Tuple, Manager))
+	if (class'XComGameState_CIReinforcementsManager'.static.SetCountdownDisplay(Tuple))
 	{
 		Tuple.Data[0].b = true;
 	}
