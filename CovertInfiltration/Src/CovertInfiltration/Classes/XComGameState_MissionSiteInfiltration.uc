@@ -337,15 +337,13 @@ function UpdateGameBoard()
 		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
-		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.BonusName, BonusTemplate.BonusDescription, eUIState_Good);
+		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription(), eUIState_Good);
 		
 		if (`GAME.GetGeoscape().IsScanning())
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
 		}
 	}
-
-	// TODO the chosen!!!
 
 	if (MustLaunch())
 	{
