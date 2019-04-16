@@ -549,13 +549,9 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 		return ELR_NoInterrupt;
 	}
 
-	if (Manager.GetCountdownDisplay(Tuple))
+	if (Manager.GetCountdownDisplay(Tuple, Manager))
 	{
 		Tuple.Data[0].b = true;
-	}
-	else
-	{// this is necessary to turn it back off
-		Tuple.Data[0].b = false;
 	}
 
 	return ELR_NoInterrupt;
