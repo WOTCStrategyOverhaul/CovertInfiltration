@@ -112,18 +112,6 @@ strReturnToAvenger="RETURN TO AVENGER"
 BonusName="Remove risk"
 BonusDescription="The first bonus always negates the risk"
 
-[OverInfiltrationBonus_WellRehearsed X2OverInfiltrationBonusTemplate]
-BonusName="WellRehearsed"
-BonusDescription="WellRehearsed WellRehearsed WellRehearsed"
-
-[OverInfiltrationBonus_FamiliarTerrain X2OverInfiltrationBonusTemplate]
-BonusName="FamiliarTerrain"
-BonusDescription="FamiliarTerrain FamiliarTerrain FamiliarTerrain"
-
-[OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
-BonusName="TacticalAnalysis"
-BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
-
 [X2Ability_SitRepAbilitySet_CI]
 FamiliarTerrainFriendlyName = "Familiar Terrain"
 FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mission."

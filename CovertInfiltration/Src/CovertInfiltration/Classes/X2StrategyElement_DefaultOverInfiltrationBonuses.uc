@@ -38,6 +38,8 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 	Template.MetatdataName = Mapping.SitRepName;
 	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
 	Template.ApplyFn = ApplySitRepBonus;
+	Template.GetBonusNameFn = GetSitRepName;
+	Template.GetBonusDescriptionFn = GetSitRepDescription;
 
 	return Template;
 }
@@ -75,6 +77,20 @@ static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationB
 		Infiltration.GeneratedMission.SitReps.AddItem(BonusTemplate.MetatdataName);
 		Infiltration.PostSitRepsChanged(NewGameState);
 	}
+}
+
+static function string GetSitRepName(X2OverInfiltrationBonusTemplate BonusTemplate)
+{
+	return class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager()
+		.FindSitRepTemplate(BonusTemplate.MetatdataName)
+		.GetFriendlyName();
+}
+
+static function string GetSitRepDescription(X2OverInfiltrationBonusTemplate BonusTemplate)
+{
+	return class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager()
+		.FindSitRepTemplate(BonusTemplate.MetatdataName)
+		.Description;
 }
 
 ///////////////////
