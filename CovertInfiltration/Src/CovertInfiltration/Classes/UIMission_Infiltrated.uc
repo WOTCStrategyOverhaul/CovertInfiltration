@@ -73,13 +73,12 @@ simulated function BuildScreen()
 		OverInfiltrationHeader.InitPanelHeader(
 			'Header',
 			strOverInfiltrationHeader,
-			strOverInfiltrationNextBonus $ ": "@ NextBonus.BonusName @ strBullet @ GetInfiltration().GetNextThreshold() $ "%\n" $ NextBonus.BonusDescription
+			strOverInfiltrationNextBonus $ ": "@ NextBonus.GetBonusName() @ strBullet @ GetInfiltration().GetNextThreshold() $ "%\n" $ NextBonus.GetBonusDescription()
 		);
 		OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
 		OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
 		OverInfiltrationHeader.Show();
 	}
-
 }
 
 simulated function BuildMissionPanel()

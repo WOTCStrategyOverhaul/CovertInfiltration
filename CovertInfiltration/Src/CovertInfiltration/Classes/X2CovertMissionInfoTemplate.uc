@@ -9,6 +9,7 @@ class X2CovertMissionInfoTemplate extends X2DataTemplate;
 
 var array<name> MissionRewards;
 var name MissionSource;
+var string UIButtonIcon;
 
 delegate array<StateObjectReference> InitializeRewards(XComGameState NewGameState, XComGameState_MissionSiteInfiltration MissionSite, X2CovertMissionInfoTemplate MissionInfo);
 

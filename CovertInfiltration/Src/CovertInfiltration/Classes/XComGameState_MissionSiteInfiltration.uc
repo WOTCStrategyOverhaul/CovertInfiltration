@@ -9,7 +9,10 @@
 
 class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite config(Infiltration);
 
+// Since spawner action will get erased from history when player launches a mission
+// we need to duplicate any info that is used after the mission site is initialized
 var StateObjectReference CorrespondingActionRef;
+var name SpawningActionName;
 var array<name> AppliedFlatRisks;
 
 var array<StateObjectReference> SoldiersOnMission;
@@ -21,17 +24,24 @@ var config float ChosenAppearenceModAt200;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
 
+var localized string strBannerBonusGained;
+
 /////////////
 /// Setup ///
 /////////////
 
+function X2CovertMissionInfoTemplate GetMisisonInfo()
+{
+	return class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager()
+		.GetCovertMissionInfoTemplateFromCA(SpawningActionName);
+}
+
 function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction Action)
 {
-	local X2CovertMissionInfoTemplateManager InfilMgr;
 	local X2CovertMissionInfoTemplate MissionInfo;
 
-	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
-	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
+	SpawningActionName = Action.GetMyTemplateName();
+	MissionInfo = GetMisisonInfo();
 	
 	if (MissionInfo.PreMissionSetup != none)
 	{
@@ -322,6 +332,7 @@ function UpdateGameBoard()
 	local XComGameState NewGameState;
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local XComHQPresentationLayer HQPres;
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
@@ -337,15 +348,16 @@ function UpdateGameBoard()
 		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
-		`HQPRES.NotifyBanner("Overinfil bonus",, BonusTemplate.BonusName, BonusTemplate.BonusDescription, eUIState_Good);
-		
+
+		HQPres = `HQPRES;
+		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
+		HQPres.PlayUISound(eSUISound_SoldierPromotion);
+
 		if (`GAME.GetGeoscape().IsScanning())
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
 		}
 	}
-
-	// TODO the chosen!!!
 
 	if (MustLaunch())
 	{
@@ -635,6 +647,26 @@ function StartMission()
 ////////////
 /// Misc ///
 ////////////
+
+function string GetUIButtonIcon()
+{
+	local string Path;
+
+	Path = GetMisisonInfo().UIButtonIcon;
+
+	if (Path == "")
+	{
+		// Use default icon, ala parent
+		Path = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GoldenPath";
+	}
+
+	return Path;
+}
+
+simulated function string GetUIButtonTooltipTitle()
+{
+	return GetMissionObjectiveText();
+}
 
 function RemoveEntity(XComGameState NewGameState)
 {
