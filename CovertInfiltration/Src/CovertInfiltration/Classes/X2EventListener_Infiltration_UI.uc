@@ -178,6 +178,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 {
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_CovertAction CovertAction;
+	local XComHQPresentationLayer HQPres;
 
 	CovertAction = XComGameState_CovertAction(EventSource);
 
@@ -192,8 +193,10 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 		{
 			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
 			{
-				`HQPRES.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
-				
+				HQPres = `HQPRES;
+				HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
+				HQPres.PlayUISound(eSUISound_SoldierPromotion);
+
 				if (`GAME.GetGeoscape().IsScanning())
 				{
 					`HQPRES.StrategyMap2D.ToggleScan();

@@ -332,6 +332,7 @@ function UpdateGameBoard()
 	local XComGameState NewGameState;
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local XComHQPresentationLayer HQPres;
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
@@ -347,8 +348,11 @@ function UpdateGameBoard()
 		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
-		`HQPRES.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
-		
+
+		HQPres = `HQPRES;
+		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
+		HQPres.PlayUISound(eSUISound_SoldierPromotion);
+
 		if (`GAME.GetGeoscape().IsScanning())
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
