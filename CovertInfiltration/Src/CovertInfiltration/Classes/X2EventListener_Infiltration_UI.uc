@@ -189,7 +189,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 		{
 			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
 			{
-				`HQPRES.NotifyBanner("Mission ready",, MissionState.GetMissionObjectiveText(), MissionState.GetMissionDescription(), eUIState_Good);
+				`HQPRES.NotifyBanner("Mission ready", MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), MissionState.GetMissionDescription(), eUIState_Good);
 				
 				if (`GAME.GetGeoscape().IsScanning())
 				{

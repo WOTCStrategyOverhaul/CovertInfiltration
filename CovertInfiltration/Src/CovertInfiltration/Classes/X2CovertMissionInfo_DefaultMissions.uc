@@ -34,6 +34,7 @@ static function X2DataTemplate CreateP1DarkEventMission()
 
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadActivity');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
@@ -46,6 +47,7 @@ static function X2DataTemplate CreateP1SupplyRaidMission()
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadTarget');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
@@ -58,6 +60,7 @@ static function X2DataTemplate CreateP1JailbreakMission()
 	
 	Template.MissionSource = 'MissionSource_GatherLead';
 	Template.MissionRewards.AddItem('Reward_GatherLeadPersonnel');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
@@ -71,6 +74,7 @@ static function X2DataTemplate CreateP2DarkEventMission()
 	
 	Template.MissionSource = 'MissionSource_DarkEvent';
 	Template.MissionRewards.AddItem('Reward_Supplies');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	Template.InitializeRewards = DarkEventInitRewards;
 	Template.PreMissionSetup = DarkEventPreMissionSetup;
 
@@ -85,6 +89,7 @@ static function X2DataTemplate CreateP2DarkVIPMission()
 
 	Template.MissionSource = 'MissionSource_DarkVIP';
 	Template.MissionRewards.AddItem('Reward_Intel');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
@@ -109,6 +114,7 @@ static function X2DataTemplate CreateP2EngineerMission()
 	
 	Template.MissionSource = 'MissionSource_Engineer';
 	Template.MissionRewards.AddItem('Reward_Engineer');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
@@ -122,6 +128,7 @@ static function X2DataTemplate CreateP2ScientistMission()
 	
 	Template.MissionSource = 'MissionSource_Scientist';
 	Template.MissionRewards.AddItem('Reward_Scientist');
+	Template.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	Template.InitializeRewards = GenericInitRewards;
 
 	return Template;
