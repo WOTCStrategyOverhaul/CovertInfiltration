@@ -119,7 +119,7 @@ static function X2AbilityTemplate PhysicalConditioningBuff()
 static function X2AbilityTemplate MentalReadinessBuff()
 {
     local X2AbilityTemplate Template;
-    local X2Effect_PersistentStatChange StatEffect;
+    local X2Effect_MentalReadiness ReadinessEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'MentalReadinessBuff');
     Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_mentalfortress";
@@ -131,11 +131,11 @@ static function X2AbilityTemplate MentalReadinessBuff()
     Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
     Template.bIsPassive = true;
 
-    StatEffect = new class'X2Effect_PersistentStatChange';
-    StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_Will, default.MENTAL_READINESS_VALUE);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.MentalReadinessFriendlyName, default.MentalReadinessFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
-    Template.AddTargetEffect(StatEffect);
+    ReadinessEffect = new class'X2Effect_MentalReadiness';
+    ReadinessEffect.BuildPersistentEffect(1, true, false, true);
+    ReadinessEffect.Hitmod = -default.MENTAL_READINESS_VALUE;
+    ReadinessEffect.SetDisplayInfo(ePerkBuff_Passive, default.MentalReadinessFriendlyName, default.MentalReadinessFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
+    Template.AddTargetEffect(ReadinessEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 
