@@ -100,7 +100,7 @@ RiskName="Gunnery Emplacements"
 RiskName="Shoddy Intel"
 
 [UIMission_Infiltrated]
-strBullet="•"
+strBullet="ï¿½"
 strOverInfiltrationHeader="Over Infiltration"
 strOverInfiltrationNextBonus="Next bonus"
 strMissionReady="MISSION READY"
@@ -123,3 +123,16 @@ BonusDescription="FamiliarTerrain FamiliarTerrain FamiliarTerrain"
 [OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
 BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
+
+[X2Ability_SitRepAbilitySet_CI]
+FamiliarTerrainFriendlyName = "Familiar Terrain"
+FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mission."
+
+PhysicalConditioningFriendlyName = "Physical Conditioning"
+PhysicalConditioningFriendlyDesc = "Squad receives additional dodge during this mission."
+
+MentalReadinessFriendlyName = "Mental Readiness"
+MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
+
+IntelligenceLeakFriendlyName = "Intelligence Leak"
+IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
