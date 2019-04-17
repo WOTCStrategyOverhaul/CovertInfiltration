@@ -24,6 +24,8 @@ var config float ChosenAppearenceModAt200;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
 
+var localized string strBannerBonusGained;
+
 /////////////
 /// Setup ///
 /////////////
@@ -345,7 +347,7 @@ function UpdateGameBoard()
 		NewMissionState.OverInfiltartionBonusesGranted++;
 
 		`SubmitGamestate(NewGameState);
-		`HQPRES.NotifyBanner("Overinfil bonus", GetUIButtonIcon(), BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription(), eUIState_Good);
+		`HQPRES.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
 		
 		if (`GAME.GetGeoscape().IsScanning())
 		{
@@ -655,6 +657,11 @@ function string GetUIButtonIcon()
 	}
 
 	return Path;
+}
+
+simulated function string GetUIButtonTooltipTitle()
+{
+	return GetMissionObjectiveText();
 }
 
 function RemoveEntity(XComGameState NewGameState)

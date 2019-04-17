@@ -7,6 +7,9 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener;
 
+var localized string strInfiltrationReady;
+var localized string strCanWaitForBonusOrLaunch;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -189,7 +192,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 		{
 			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
 			{
-				`HQPRES.NotifyBanner("Mission ready", MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), MissionState.GetMissionDescription(), eUIState_Good);
+				`HQPRES.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
 				
 				if (`GAME.GetGeoscape().IsScanning())
 				{

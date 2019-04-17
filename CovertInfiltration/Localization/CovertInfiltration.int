@@ -124,3 +124,10 @@ MentalReadinessFriendlyDesc = "Squad receives additional will during this missio
 
 IntelligenceLeakFriendlyName = "Intelligence Leak"
 IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
+
+[X2EventListener_Infiltration_UI]
+strInfiltrationReady="Mission ready"
+strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
+
+[XComGameState_MissionSiteInfiltration]
+strBannerBonusGained="Overinfiltration bonus gained"
