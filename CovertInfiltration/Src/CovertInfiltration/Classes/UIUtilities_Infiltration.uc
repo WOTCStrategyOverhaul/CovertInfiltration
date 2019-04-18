@@ -15,6 +15,9 @@ var localized string strStripUpgradesTooltip;
 var localized string strStripUpgradesConfirm;
 var localized string strStripUpgradesConfirmDesc;
 
+var localized string strReinforcementsBodyWarning;
+var localized string strReinforcementsBodyImminent;
+
 //////////////////
 /// Game state ///
 //////////////////
@@ -241,6 +244,39 @@ simulated protected function InfiltrationActionAvaliableCB(Name eAction, out Dyn
 			HQPres.StrategyMap2D.ToggleScan();
 		}
 	}
+}
+
+static function bool SetCountdownTextAndColor(int Turns, XComLWTuple Tuple)
+{
+	local XGParamTag kTag;
+
+	if (Turns > 2)
+	{
+		kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+		kTag.StrValue0 = string(Turns);
+
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Good);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(`XEXPAND.ExpandString(default.strReinforcementsBodyWarning), eUIState_Good);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Good);
+	}
+	else if (Turns > 1)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Warning);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(default.strReinforcementsBodyImminent, eUIState_Warning);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Warning);
+	}
+	else if (Turns > 0)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Bad);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsBody, eUIState_Bad);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Bad);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
 }
 
 ////////////////////////////////

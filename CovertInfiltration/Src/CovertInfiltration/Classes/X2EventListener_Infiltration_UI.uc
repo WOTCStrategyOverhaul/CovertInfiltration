@@ -20,6 +20,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateArmoryListeners());
 	Templates.AddItem(CreateSquadSelectListeners());
 	Templates.AddItem(CreateStrategyPolicyListeners());
+	Templates.AddItem(CreateTacticalHUDListeners());
 
 	return Templates;
 }
@@ -520,5 +521,59 @@ static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOn
 	// Never show actions popup after UIStrategyPolicy
 	Tuple.Data[0].b = false;
 	
+	return ELR_NoInterrupt;
+}
+
+////////////////////
+/// Tactical HUD ///
+////////////////////
+
+static function CHEventListenerTemplate CreateTacticalHUDListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_TacticalHUD');
+	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
+	Template.RegisterInTactical = true;
+
+	return Template;
+}
+
+static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComLWTuple Tuple;
+	local int DelayedRNF, NextRNF;
+
+	Tuple = XComLWTuple(EventData);
+
+	if (Tuple == none)
+	{
+		return ELR_NoInterrupt;
+	}
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	{
+		if (ReinforcementSpawner.Countdown > 0)
+		{
+			if (NextRNF > ReinforcementSpawner.Countdown || NextRNF == 0)
+			{
+				NextRNF = ReinforcementSpawner.Countdown;
+			}
+		}
+	}
+	
+	DelayedRNF = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements();
+
+	if (NextRNF == 0 || NextRNF > DelayedRNF)
+	{
+		NextRNF = DelayedRNF;
+	}
+
+	if (class'UIUtilities_Infiltration'.static.SetCountdownTextAndColor(NextRNF, Tuple))
+	{
+		Tuple.Data[0].b = true;
+	}
+
 	return ELR_NoInterrupt;
 }

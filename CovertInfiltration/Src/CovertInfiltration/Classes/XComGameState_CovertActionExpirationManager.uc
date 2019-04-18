@@ -14,14 +14,12 @@ static function CreateExpirationManager(optional XComGameState StartState)
 {
 	local XComGameState NewGameState;
 
-	// create a manager on new campaign
 	if (StartState != none)
 	{
 		StartState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager');
 	}
-	// seems this never runs cuz reasons
-	if (GetExpirationManager(true) == none)
-	{
+	else if (GetExpirationManager(true) == none)
+	{// if we didn't send a gamestate and we don't have one yet make one from a newgamestate
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating expiration manager singleton");
 
 		NewGameState.CreateNewStateObject(class'XComGameState_CovertActionExpirationManager');
