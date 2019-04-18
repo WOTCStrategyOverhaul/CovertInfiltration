@@ -540,7 +540,7 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
 	local XComLWTuple Tuple;
-	local int NextReinforcements;
+	local int DelayedRNF, NextRNF;
 
 	Tuple = XComLWTuple(EventData);
 
@@ -553,19 +553,21 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 	{
 		if (ReinforcementSpawner.Countdown > 0)
 		{
-			if (NextReinforcements > ReinforcementSpawner.Countdown || NextReinforcements == 0)
+			if (NextRNF > ReinforcementSpawner.Countdown || NextRNF == 0)
 			{
-				NextReinforcements = ReinforcementSpawner.Countdown;
+				NextRNF = ReinforcementSpawner.Countdown;
 			}
 		}
 	}
+	
+	DelayedRNF = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements();
 
-	if (NextReinforcements == 0)
+	if (NextRNF == 0 || NextRNF > DelayedRNF)
 	{
-		NextReinforcements = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements();
+		NextRNF = DelayedRNF;
 	}
 
-	if (class'UIUtilities_Infiltration'.static.SetCountdownTextAndColor(NextReinforcements, Tuple))
+	if (class'UIUtilities_Infiltration'.static.SetCountdownTextAndColor(NextRNF, Tuple))
 	{
 		Tuple.Data[0].b = true;
 	}
