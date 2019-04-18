@@ -12,16 +12,14 @@ var array<DelayedReinforcementSpawner> DelayedReinforcementSpawners;
 var int NextReinforcementsArrival;
 var int LastTurnModified;
 
-static function CreateReinforcementsManager(optional XComGameState GameState)
+var localized string m_strReinforcementsBodyWarning;
+var localized string m_strReinforcementsBodyImminent;
+
+static function CreateReinforcementsManager()
 {
 	local XComGameState NewGameState;
 
-	if (GameState != none)
-	{
-		GameState.CreateNewStateObject(class'XComGameState_CIReinforcementsManager');
-	}
-
-	if (GetReinforcementsManager(true) == none)
+	if(GetReinforcementsManager(true) == none)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating reinforcements manager singleton");
 
@@ -36,22 +34,56 @@ static function XComGameState_CIReinforcementsManager GetReinforcementsManager(o
 	return XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CIReinforcementsManager', AllowNull));
 }
 
-function AddDelayedReinforcementSpawner(DelayedReinforcementSpawner DelayedSpawner)
+function AddDelayedReinforcementSpawner(DelayedReinforcementSpawner DelayedSpawner, optional XComGameState_CIReinforcementsManager ManagerState, optional bool bResetUpdate=false)
 {
-	DelayedReinforcementSpawners.AddItem(DelayedSpawner);
+	local XComGameState NewGameState;
+
+	if (ManagerState == none)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Deleting DelayedReinforcementSpawner from manager");
+
+		ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
+		ManagerState.DelayedReinforcementSpawners.AddItem(DelayedSpawner);
+
+		`TACTICALRULES.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		ManagerState.DelayedReinforcementSpawners.AddItem(DelayedSpawner);
+	}
+
+	if (bResetUpdate)
+	{
+		ManagerState.LastTurnModified = -1;
+	}
 }
 
-function RemoveDelayedReinforcementSpawner(DelayedReinforcementSpawner DelayedSpawner)
+function RemoveDelayedReinforcementSpawner(int idx, optional XComGameState_CIReinforcementsManager ManagerState)
 {
-	DelayedReinforcementSpawners.RemoveItem(DelayedSpawner);
+	local XComGameState NewGameState;
+	
+	if (ManagerState == none)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Deleting DelayedReinforcementSpawner from manager");
+
+		ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
+		ManagerState.DelayedReinforcementSpawners.Remove(idx, 1);
+
+		`TACTICALRULES.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		ManagerState.DelayedReinforcementSpawners.Remove(idx, 1);
+	}
 }
 
 function Update(optional int Threshold=1)
 {
 	local XComGameState NewGameState;
-	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComGameState_CIReinforcementsManager ManagerState;
 	local DelayedReinforcementSpawner CurrentDRS;
 	local int idx, CurrentTurn;
+	local bool bRemovedSpawner;
 
 	CurrentTurn = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData')).TacticalTurnCount;
 
@@ -60,35 +92,31 @@ function Update(optional int Threshold=1)
 		return;
 	}
 
-	NextReinforcementsArrival = 0;
-	for (idx = 0; idx < DelayedReinforcementSpawners.Length; idx++)
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
+	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
+
+	ManagerState.NextReinforcementsArrival = 0;
+	for (idx = 0; idx < ManagerState.DelayedReinforcementSpawners.Length; idx++)
 	{
-		CurrentDRS = DelayedReinforcementSpawners[idx];
+		CurrentDRS = ManagerState.DelayedReinforcementSpawners[idx];
 		CurrentDRS.TurnsUntilSpawn = CurrentDRS.TurnCreated + CurrentDRS.SpawnerDelay - CurrentTurn;
 
 		if (CurrentDRS.TurnsUntilSpawn > Threshold && (CurrentDRS.TurnsUntilSpawn < NextReinforcementsArrival || NextReinforcementsArrival == 0))
 		{
-			NextReinforcementsArrival = CurrentDRS.TurnsUntilSpawn;
+			ManagerState.NextReinforcementsArrival = CurrentDRS.TurnsUntilSpawn;
 		}
-		else if (CurrentDRS.TurnsUntilSpawn <= Threshold)
-		{
-			class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(CurrentDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
-
-			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Deleting DelayedReinforcementSpawner from manager");
-			
-			RemoveDelayedReinforcementSpawner(CurrentDRS);
-
-			`TACTICALRULES.SubmitGameState(NewGameState);
+		else if (CurrentDRS.TurnsUntilSpawn >= Threshold)
+		{// removing via index works better for an array of structs
+			RemoveDelayedReinforcementSpawner(idx, ManagerState);
+			bRemovedSpawner = true;
 		}
 	}
 
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
-	{// quick pass on any non-managed RNF spawners to ensure we have the very next rnf deployment
-		if (ReinforcementSpawner.Countdown < NextReinforcementsArrival)
-		{
-			NextReinforcementsArrival = ReinforcementSpawner.Countdown;
-		}
-	}
+	ManagerState.LastTurnModified = CurrentTurn;
+	`TACTICALRULES.SubmitGameState(NewGameState);
 
-	LastTurnModified = CurrentTurn;
+	if (bRemovedSpawner)
+	{
+		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(CurrentDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
+	}
 }

@@ -119,6 +119,7 @@ FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mi
 PhysicalConditioningFriendlyName = "Physical Conditioning"
 PhysicalConditioningFriendlyDesc = "Squad receives additional dodge during this mission."
 
+
 MentalReadinessFriendlyName = "Mental Readiness"
 MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
 
@@ -131,3 +132,11 @@ strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration bonus gained"
+
+[OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
+BonusName="TacticalAnalysis"
+BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
+
+[XComGameState_CIReinforcementsManager]
+m_strReinforcementsBodyWarning="Warning";
+m_strReinforcementsBodyImminent="Imminent";

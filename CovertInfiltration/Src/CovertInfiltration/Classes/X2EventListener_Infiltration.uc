@@ -246,6 +246,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
 	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
+	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun, ELD_OnStateSubmitted);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -375,11 +376,8 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	DelayedReinforcementSpawner.EncounterID = EncounterID;
 	DelayedReinforcementSpawner.TurnCreated = BattleData.TacticalTurnCount;
 	DelayedReinforcementSpawner.SpawnerDelay = SpawnerDelay;
-	ReinforcementsManager.AddDelayedReinforcementSpawner(DelayedReinforcementSpawner);
-	ReinforcementsManager.LastTurnModified = -1; //reset this for sameturn HUD update
+	ReinforcementsManager.AddDelayedReinforcementSpawner(DelayedReinforcementSpawner, , true);
 
-	`XEVENTMGR.TriggerEvent('DelayedReinforcementSpawnerCreated');
-	
 	return ELR_NoInterrupt;
 }
 
@@ -427,4 +425,11 @@ function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameSta
 
 	MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
 	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
+}
+
+static function EventListenerReturn OnTacticalPlayBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	class'XComGameState_CIReinforcementsManager'.static.CreateReinforcementsManager();
+
+	return ELR_NoInterrupt;
 }
