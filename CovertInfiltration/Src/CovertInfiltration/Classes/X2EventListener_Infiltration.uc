@@ -341,7 +341,7 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	local XComGameState NewGameState;
 	local XComGameState_BattleData BattleData;
 	local XComGameState_CIReinforcementsManager ManagerState;
-	local DelayedReinforcementSpawner DelayedReinforcementSpawner;
+	local DelayedReinforcementOrder DelayedReinforcementOrder;
 	local name EncounterID;
 	local int PodStrength, SpawnerDelay, DelayCrit;
 
@@ -376,10 +376,10 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	
 	SpawnerDelay += DelayCrit;
 
-	DelayedReinforcementSpawner.EncounterID = EncounterID;
-	DelayedReinforcementSpawner.TurnsUntilSpawn = SpawnerDelay;
+	DelayedReinforcementOrder.EncounterID = EncounterID;
+	DelayedReinforcementOrder.TurnsUntilSpawn = SpawnerDelay;
 
-	ManagerState.DelayedReinforcementSpawners.AddItem(DelayedReinforcementSpawner);
+	ManagerState.DelayedReinforcementOrders.AddItem(DelayedReinforcementOrder);
 
 	`TACTICALRULES.SubmitGameState(NewGameState);
 

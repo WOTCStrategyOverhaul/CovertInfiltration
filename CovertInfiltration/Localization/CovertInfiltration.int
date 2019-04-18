@@ -57,6 +57,9 @@ strStripUpgrades=MAKE UPGRADES AVAILABLE
 strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
 strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
 strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
+strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
+strReinforcementsBodyImminent="Imminent"
+
 
 [UISkyrangerExfiltrate]
 strBody="The Skyranger has reached the action site. Awaiting orders."
@@ -136,8 +139,3 @@ strBannerBonusGained="Overinfiltration bonus gained"
 [OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
 BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
-
-[XComGameState_CIReinforcementsManager]
-m_strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
-m_strReinforcementsBodyImminent="Imminent"
-

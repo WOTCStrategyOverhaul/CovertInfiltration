@@ -538,7 +538,9 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 
 static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
 	local XComLWTuple Tuple;
+	local int NextReinforcements;
 
 	Tuple = XComLWTuple(EventData);
 
@@ -547,7 +549,23 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 		return ELR_NoInterrupt;
 	}
 
-	if (class'XComGameState_CIReinforcementsManager'.static.SetCountdownDisplay(Tuple))
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	{
+		if (ReinforcementSpawner.Countdown > 0)
+		{
+			if (NextReinforcements > ReinforcementSpawner.Countdown || NextReinforcements == 0)
+			{
+				NextReinforcements = ReinforcementSpawner.Countdown;
+			}
+		}
+	}
+
+	if (NextReinforcements == 0)
+	{
+		NextReinforcements = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements();
+	}
+
+	if (class'UIUtilities_Infiltration'.static.SetCountdownTextAndColor(NextReinforcements, Tuple))
 	{
 		Tuple.Data[0].b = true;
 	}

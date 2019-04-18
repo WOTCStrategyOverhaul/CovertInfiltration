@@ -21,7 +21,7 @@ struct ActionFlatRiskSitRep
 	var name SitRepName;
 };
 
-struct DelayedReinforcementSpawner
+struct DelayedReinforcementOrder
 {
 	var name EncounterID;
 	var int TurnsUntilSpawn;
