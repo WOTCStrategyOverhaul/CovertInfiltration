@@ -9,20 +9,16 @@ class XComGameState_CIReinforcementsManager extends XComGameState_BaseObject;
 
 var array<DelayedReinforcementSpawner> DelayedReinforcementSpawners;
 
-var int NextReinforcements;
-var int Threshold;
+var protectedwrite int NextReinforcements;
+var const int Threshold;
 
-var string CountdownDisplayTitle;
-var string CountdownDisplayBody;
-var string CountdownDisplayColor;
-
-var localized string m_strReinforcementsBodyWarningPrefix;
-var localized string m_strReinforcementsBodyWarningSuffix;
+var localized string m_strReinforcementsBodyWarning;
 var localized string m_strReinforcementsBodyImminent;
 
 static function CreateReinforcementsManager()
 {
 	local XComGameState NewGameState;
+	local XComGameState_Player PlayerState;
 	local Object ThisObj;
 
 	if (GetReinforcementsManager(true) == none)
@@ -34,23 +30,29 @@ static function CreateReinforcementsManager()
 		`TACTICALRULES.SubmitGameState(NewGameState);
 	}
 
+	PlayerState = class'XComGameState_Player'.static.GetPlayerState(eTeam_XCom);
 	ThisObj = GetReinforcementsManager();
-	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnPlayerTurnBegun, ELD_OnStateSubmitted);
+	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnPlayerTurnBegun, ELD_Immediate, , PlayerState);
 }
 
 function EventListenerReturn OnPlayerTurnBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComGameState NewGameState;
 	local XComGameState_CIReinforcementsManager ManagerState;
+	local name EncounterID;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
 	ManagerState = GetReinforcementsManager();
 	ManagerState = XComGameState_CIReinforcementsManager(GameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
 
-	ManagerState.UpdateNextReinforcements();
-	ManagerState.UpdateCountdownDisplay();
+	ManagerState.UpdateNextReinforcements(EncounterID);
 
 	`TACTICALRULES.SubmitGameState(NewGameState);
+
+	if (EncounterID != '')
+	{// we need a fresh gamestate to do this
+		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, Threshold, , , 6, , , , , , , , true);
+	}
 
 	return ELR_NoInterrupt;
 }
@@ -60,7 +62,7 @@ static function XComGameState_CIReinforcementsManager GetReinforcementsManager(o
 	return XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CIReinforcementsManager', AllowNull));
 }
 
-function UpdateNextReinforcements(optional bool bSkipReduction=false)
+function UpdateNextReinforcements(out name EncounterID)
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
 	local DelayedReinforcementSpawner CurrentDRS;
@@ -76,27 +78,23 @@ function UpdateNextReinforcements(optional bool bSkipReduction=false)
 			}
 		}
 	}
-	`CI_Log(DelayedReinforcementSpawners.Length);
+
 	if (IncomingReinforcements == 0)
 	{// if we found another spawner skip all this (essentially.. pause)
 		for (idx = 0; idx < DelayedReinforcementSpawners.Length; idx++)
 		{
+			DelayedReinforcementSpawners[idx].TurnsUntilSpawn--;
 			CurrentDRS = DelayedReinforcementSpawners[idx];
-			
-			if (!bSkipReduction)
-			{// this is purely to update the UI mid-turn
-				CurrentDRS.TurnsUntilSpawn--;
-			}
 			
 			if (CurrentDRS.TurnsUntilSpawn > Threshold && (CurrentDRS.TurnsUntilSpawn < IncomingReinforcements || IncomingReinforcements == 0))
 			{
 				IncomingReinforcements = CurrentDRS.TurnsUntilSpawn;
 			}
-			else if (CurrentDRS.TurnsUntilSpawn == Threshold)
+			else if (CurrentDRS.TurnsUntilSpawn >= Threshold)
 			{
 				DelayedReinforcementSpawners.Remove(idx, 1);
 				IncomingReinforcements = Threshold;
-				class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(CurrentDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
+				EncounterID = CurrentDRS.EncounterID;
 			}
 		}
 	}
@@ -104,38 +102,35 @@ function UpdateNextReinforcements(optional bool bSkipReduction=false)
 	NextReinforcements = IncomingReinforcements;
 }
 
-function UpdateCountdownDisplay()
+function bool GetCountdownDisplay(out XComLWTuple Tuple)
 {
-	if (NextReinforcements > 2)
-	{
-		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Good);
-		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(m_strReinforcementsBodyWarningPrefix @ NextReinforcements @ m_strReinforcementsBodyWarningSuffix, eUIState_Good);
-		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Good);
-	}
-	else if (NextReinforcements > 1)
-	{
-		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Warning);
-		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(m_strReinforcementsBodyImminent, eUIState_Warning);
-		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Warning);
-	}
-	else
-	{
-		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Bad);
-		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsBody, eUIState_Bad);
-		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Bad);
-	}
-}
+	local XGParamTag kTag;
 
-static function bool CheckForReinforcements(out XComLWTuple Tuple, XComGameState_CIReinforcementsManager ManagerState)
-{
-	if (ManagerState.NextReinforcements == 0)
+	if (NextReinforcements == 0)
 	{
 		return false;
 	}
+	else if (NextReinforcements > 2)
+	{
+		kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+		kTag.StrValue0 = string(NextReinforcements);
 
-	Tuple.Data[1].s = ManagerState.CountdownDisplayTitle;
-	Tuple.Data[2].s = ManagerState.CountdownDisplayBody;
-	Tuple.Data[3].s = ManagerState.CountdownDisplayColor;
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Good);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(`XEXPAND.ExpandString(default.m_strReinforcementsBodyWarning), eUIState_Good);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Good);
+	}
+	else if (NextReinforcements > 1)
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Warning);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(default.m_strReinforcementsBodyImminent, eUIState_Warning);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Warning);
+	}
+	else
+	{
+		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Bad);
+		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsBody, eUIState_Bad);
+		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Bad);
+	}
 
 	return true;
 }

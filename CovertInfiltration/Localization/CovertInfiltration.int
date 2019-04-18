@@ -138,6 +138,6 @@ BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
 
 [XComGameState_CIReinforcementsManager]
-m_strReinforcementsBodyWarning="Warning";
-m_strReinforcementsBodyImminent="Imminent";
+m_strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
+m_strReinforcementsBodyImminent="Imminent"
 

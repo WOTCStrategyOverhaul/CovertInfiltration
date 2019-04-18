@@ -380,8 +380,6 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	DelayedReinforcementSpawner.TurnsUntilSpawn = SpawnerDelay;
 
 	ManagerState.DelayedReinforcementSpawners.AddItem(DelayedReinforcementSpawner);
-	ManagerState.UpdateNextReinforcements(true);
-	ManagerState.UpdateCountdownDisplay();
 
 	`TACTICALRULES.SubmitGameState(NewGameState);
 
