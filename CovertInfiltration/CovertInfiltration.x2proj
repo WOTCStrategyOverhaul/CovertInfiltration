@@ -294,6 +294,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_CIReinforcementsManager.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CovertActionExpirationManager.uc">
       <SubType>Content</SubType>
     </Content>

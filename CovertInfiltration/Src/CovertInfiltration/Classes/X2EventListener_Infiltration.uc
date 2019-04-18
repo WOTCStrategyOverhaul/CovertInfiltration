@@ -246,7 +246,6 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
 	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
-	Template.AddCHEvent('OverrideDisableReinforcementsFlare', DisableReinforcementsFlare, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -339,10 +338,13 @@ static protected function EventListenerReturn AddCovertEscapeObjective(Object Ev
 static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComGameState_BattleData BattleData;
+	local XComGameState_CIReinforcementsManager ReinforcementsManager;
+	local DelayedReinforcementSpawner DelayedReinforcementSpawner;
 	local name EncounterID;
-	local int PodStrength, TurnDelay, DelayCrit;
+	local int PodStrength, SpawnerDelay, DelayCrit;
 
 	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	ReinforcementsManager = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager();
 
 	if (BattleData.ActiveSitReps.Find('AdventAirPatrols') == INDEX_NONE)
 	{
@@ -355,44 +357,28 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	if (PodStrength < 33)
 	{
 		EncounterID = 'ADVx3_Weak';
-
-		if (DelayCrit > 1)
-		{
-			TurnDelay = 1;
-		}
-		else
-		{
-			TurnDelay = 2;
-		}
+		SpawnerDelay = 2;
 	}
 	else if (PodStrength < 66)
 	{
 		EncounterID = 'ADVx3_Standard';
-
-		if (DelayCrit > 1)
-		{
-			TurnDelay = 2;
-		}
-		else
-		{
-			TurnDelay = 3;
-		}
+		SpawnerDelay = 3;
 	}
 	else
 	{
 		EncounterID = 'ADVx3_Strong';
-
-		if (DelayCrit > 1)
-		{
-			TurnDelay = 3;
-		}
-		else
-		{
-			TurnDelay = 4;
-		}
+		SpawnerDelay = 4;
 	}
 	
-	class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(EncounterID, TurnDelay, , , 6, , , , , , , , true);
+	SpawnerDelay += DelayCrit;
+
+	DelayedReinforcementSpawner.EncounterID = EncounterID;
+	DelayedReinforcementSpawner.TurnCreated = BattleData.TacticalTurnCount;
+	DelayedReinforcementSpawner.SpawnerDelay = SpawnerDelay;
+	ReinforcementsManager.AddDelayedReinforcementSpawner(DelayedReinforcementSpawner);
+	ReinforcementsManager.LastTurnModified = -1; //reset this for sameturn HUD update
+
+	`XEVENTMGR.TriggerEvent('DelayedReinforcementSpawnerCreated');
 	
 	return ELR_NoInterrupt;
 }
@@ -441,51 +427,4 @@ function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameSta
 
 	MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
 	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
-}
-
-static function EventListenerReturn DisableReinforcementsFlare(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-	local XComGameState_Player PlayerState;
-	local XComLWTuple Tuple;
-	local Object ThisObj;
-
-	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
-	Tuple = XComLWTuple(EventData);
-
-	if (ReinforcementSpawner == None || Tuple == None)
-	{
-		return ELR_NoInterrupt;
-	}
-	
-	Tuple.Data[0].b = true;
-
-	ThisObj = ReinforcementSpawner;
-	PlayerState = class'XComGameState_Player'.static.GetPlayerState(ReinforcementSpawner.SpawnInfo.Team);
-	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnTurnBegun, ELD_OnStateSubmitted, , PlayerState);
-
-	return ELR_NoInterrupt;
-}
-
-function EventListenerReturn OnTurnBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
-{
-	local XComGameState NewGameState;
-	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-
-	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventData);
-
-	if (ReinforcementSpawner.Countdown < 2)
-	{
-		`CI_Log("DO THE THING!");
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CheckCountdownForVisualization");
-		ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
-		XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = ReinforcementSpawner.BuildVisualizationForSpawnerCreation;
-		`TACTICALRULES.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		`CI_Log("NOT THE TIME YET!");
-	}
-
-	return ELR_NoInterrupt;
 }
