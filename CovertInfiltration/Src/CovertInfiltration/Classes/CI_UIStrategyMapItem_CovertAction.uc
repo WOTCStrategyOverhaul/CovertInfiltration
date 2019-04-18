@@ -160,7 +160,7 @@ simulated function SetProgressBarColor(float percent)
 
 function OpenCovertActionsScreen()
 {
-	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(GetAction().GetReference());
+	GetAction().AttemptSelectionCheckInterruption();
 }
 
 simulated function XComGameState_CovertAction GetAction()
@@ -173,32 +173,26 @@ simulated function bool IsSelectable()
 	return true;
 }
 
-simulated function OnMouseEvent(int cmd, array<string> args)
-{
-	if(GetStrategyMap().m_eUIState == eSMS_Flight)
-		return;
-
-	switch(cmd) 
-	{ 
-		case class'UIUtilities_Input'.const.FXS_L_MOUSE_IN:
-			OnMouseIn();
-			break;
-		case class'UIUtilities_Input'.const.FXS_L_MOUSE_OUT:
-			OnMouseOut();
-			break;
-	}
-}
-
 simulated function OnMouseIn()
 {
 	ColorState = -1;
-	super(UIStrategyMapItem).OnMouseIn();
+
+	// In theory the highlight of the nameplate/scan button should be
+	// tracked separately from hovering over the icon/mesh itself
+	// However, UIScanButton doesn't use the mouse event delegate
+	// so we cannot change the progress text colour when hovering over it
+	// TODO: Fix it some day in CHL
+	ScanButton.OnReceiveFocus();
+
+	super.OnMouseIn();
 }
 
 simulated function OnMouseOut()
 {
 	ColorState = eUIState_Normal;
-	super(UIStrategyMapItem).OnMouseOut();
+	ScanButton.OnLoseFocus();
+	
+	super.OnMouseOut();
 }
 
 defaultproperties

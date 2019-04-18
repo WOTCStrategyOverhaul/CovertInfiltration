@@ -100,6 +100,9 @@ static protected function EventListenerReturn CovertAction_ActionSelectedOverrid
 
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_ActionSelectedOverride') return ELR_NoInterrupt;
 
+	// Stop highlighting the icon
+	UIStrategyMapItem(Action.GetVisualizer()).OnMouseOut();
+
 	// Open our custom screen
 	class'UIUtilities_Infiltration'.static.UICovertActionsGeoscape(Action.GetReference());
 
