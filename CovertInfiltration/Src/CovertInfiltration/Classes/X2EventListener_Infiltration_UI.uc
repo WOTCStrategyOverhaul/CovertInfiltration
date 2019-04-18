@@ -529,7 +529,7 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 {
 	local CHEventListenerTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_StrategyPolicy');
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_TacticalHUD');
 	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
@@ -538,57 +538,20 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 
 static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-	local XComGameState_CIReinforcementsManager ReinforcementsManager;
+	local XComGameState_CIReinforcementsManager Manager;
 	local XComLWTuple Tuple;
-	local int NextReinforcements;
 
 	Tuple = XComLWTuple(EventData);
-	ReinforcementsManager = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager(true);
+	Manager = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager(true);
 
-	if (Tuple == none || ReinforcementsManager == none)
+	if (Tuple == none || Manager == none)
 	{
 		return ELR_NoInterrupt;
 	}
 
-	ReinforcementsManager.Update();
-	NextReinforcements = ReinforcementsManager.NextReinforcementsArrival;
-
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	if (Manager.CheckForReinforcements(Tuple, Manager))
 	{
-		if (ReinforcementSpawner.Countdown > 0)
-		{
-			if (NextReinforcements > ReinforcementSpawner.Countdown || NextReinforcements <= 0)
-			{
-				NextReinforcements = ReinforcementSpawner.Countdown;
-			}
-		}
-	}
-
-	if (NextReinforcements <= 0)
-	{
-		return ELR_NoInterrupt;
-	}
-
-	Tuple.Data[0].b = true;
-
-	if (NextReinforcements > 2)
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Good);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(class'XComGameState_CIReinforcementsManager'.default.m_strReinforcementsBodyWarning, eUIState_Good);
-		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Good);
-	}
-	else if(NextReinforcements > 1)
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Warning);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(class'XComGameState_CIReinforcementsManager'.default.m_strReinforcementsBodyImminent, eUIState_Warning);
-		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Warning);
-	}
-	else
-	{
-		Tuple.Data[1].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Bad);
-		Tuple.Data[2].s = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsBody, eUIState_Bad);
-		Tuple.Data[3].s = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Bad);
+		Tuple.Data[0].b = true;
 	}
 
 	return ELR_NoInterrupt;

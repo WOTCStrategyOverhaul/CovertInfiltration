@@ -9,17 +9,23 @@ class XComGameState_CIReinforcementsManager extends XComGameState_BaseObject;
 
 var array<DelayedReinforcementSpawner> DelayedReinforcementSpawners;
 
-var int NextReinforcementsArrival;
-var int LastTurnModified;
+var int NextReinforcements;
+var int Threshold;
 
-var localized string m_strReinforcementsBodyWarning;
+var string CountdownDisplayTitle;
+var string CountdownDisplayBody;
+var string CountdownDisplayColor;
+
+var localized string m_strReinforcementsBodyWarningPrefix;
+var localized string m_strReinforcementsBodyWarningSuffix;
 var localized string m_strReinforcementsBodyImminent;
 
 static function CreateReinforcementsManager()
 {
 	local XComGameState NewGameState;
+	local Object ThisObj;
 
-	if(GetReinforcementsManager(true) == none)
+	if (GetReinforcementsManager(true) == none)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating reinforcements manager singleton");
 
@@ -27,6 +33,26 @@ static function CreateReinforcementsManager()
 
 		`TACTICALRULES.SubmitGameState(NewGameState);
 	}
+
+	ThisObj = GetReinforcementsManager();
+	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnPlayerTurnBegun, ELD_OnStateSubmitted);
+}
+
+function EventListenerReturn OnPlayerTurnBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComGameState NewGameState;
+	local XComGameState_CIReinforcementsManager ManagerState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
+	ManagerState = GetReinforcementsManager();
+	ManagerState = XComGameState_CIReinforcementsManager(GameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
+
+	ManagerState.UpdateNextReinforcements();
+	ManagerState.UpdateCountdownDisplay();
+
+	`TACTICALRULES.SubmitGameState(NewGameState);
+
+	return ELR_NoInterrupt;
 }
 
 static function XComGameState_CIReinforcementsManager GetReinforcementsManager(optional bool AllowNull = false)
@@ -34,89 +60,87 @@ static function XComGameState_CIReinforcementsManager GetReinforcementsManager(o
 	return XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CIReinforcementsManager', AllowNull));
 }
 
-function AddDelayedReinforcementSpawner(DelayedReinforcementSpawner DelayedSpawner, optional XComGameState_CIReinforcementsManager ManagerState, optional bool bResetUpdate=false)
+function UpdateNextReinforcements(optional bool bSkipReduction=false)
 {
-	local XComGameState NewGameState;
-
-	if (ManagerState == none)
-	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Deleting DelayedReinforcementSpawner from manager");
-
-		ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
-		ManagerState.DelayedReinforcementSpawners.AddItem(DelayedSpawner);
-
-		`TACTICALRULES.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		ManagerState.DelayedReinforcementSpawners.AddItem(DelayedSpawner);
-	}
-
-	if (bResetUpdate)
-	{
-		ManagerState.LastTurnModified = -1;
-	}
-}
-
-function RemoveDelayedReinforcementSpawner(int idx, optional XComGameState_CIReinforcementsManager ManagerState)
-{
-	local XComGameState NewGameState;
-	
-	if (ManagerState == none)
-	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Deleting DelayedReinforcementSpawner from manager");
-
-		ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
-		ManagerState.DelayedReinforcementSpawners.Remove(idx, 1);
-
-		`TACTICALRULES.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		ManagerState.DelayedReinforcementSpawners.Remove(idx, 1);
-	}
-}
-
-function Update(optional int Threshold=1)
-{
-	local XComGameState NewGameState;
-	local XComGameState_CIReinforcementsManager ManagerState;
+	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
 	local DelayedReinforcementSpawner CurrentDRS;
-	local int idx, CurrentTurn;
-	local bool bRemovedSpawner;
+	local int idx, IncomingReinforcements;
 
-	CurrentTurn = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData')).TacticalTurnCount;
-
-	if (LastTurnModified == CurrentTurn)
-	{// if we've been here already this turn, gtfo
-		return;
-	}
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
-	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ObjectID));
-
-	ManagerState.NextReinforcementsArrival = 0;
-	for (idx = 0; idx < ManagerState.DelayedReinforcementSpawners.Length; idx++)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
 	{
-		CurrentDRS = ManagerState.DelayedReinforcementSpawners[idx];
-		CurrentDRS.TurnsUntilSpawn = CurrentDRS.TurnCreated + CurrentDRS.SpawnerDelay - CurrentTurn;
-
-		if (CurrentDRS.TurnsUntilSpawn > Threshold && (CurrentDRS.TurnsUntilSpawn < NextReinforcementsArrival || NextReinforcementsArrival == 0))
+		if (ReinforcementSpawner.Countdown > 0)
 		{
-			ManagerState.NextReinforcementsArrival = CurrentDRS.TurnsUntilSpawn;
+			if (IncomingReinforcements > ReinforcementSpawner.Countdown || IncomingReinforcements == 0)
+			{
+				IncomingReinforcements = ReinforcementSpawner.Countdown;
+			}
 		}
-		else if (CurrentDRS.TurnsUntilSpawn >= Threshold)
-		{// removing via index works better for an array of structs
-			RemoveDelayedReinforcementSpawner(idx, ManagerState);
-			bRemovedSpawner = true;
+	}
+	`CI_Log(DelayedReinforcementSpawners.Length);
+	if (IncomingReinforcements == 0)
+	{// if we found another spawner skip all this (essentially.. pause)
+		for (idx = 0; idx < DelayedReinforcementSpawners.Length; idx++)
+		{
+			CurrentDRS = DelayedReinforcementSpawners[idx];
+			
+			if (!bSkipReduction)
+			{// this is purely to update the UI mid-turn
+				CurrentDRS.TurnsUntilSpawn--;
+			}
+			
+			if (CurrentDRS.TurnsUntilSpawn > Threshold && (CurrentDRS.TurnsUntilSpawn < IncomingReinforcements || IncomingReinforcements == 0))
+			{
+				IncomingReinforcements = CurrentDRS.TurnsUntilSpawn;
+			}
+			else if (CurrentDRS.TurnsUntilSpawn == Threshold)
+			{
+				DelayedReinforcementSpawners.Remove(idx, 1);
+				IncomingReinforcements = Threshold;
+				class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(CurrentDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
+			}
 		}
 	}
 
-	ManagerState.LastTurnModified = CurrentTurn;
-	`TACTICALRULES.SubmitGameState(NewGameState);
+	NextReinforcements = IncomingReinforcements;
+}
 
-	if (bRemovedSpawner)
+function UpdateCountdownDisplay()
+{
+	if (NextReinforcements > 2)
 	{
-		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(CurrentDRS.EncounterID, Threshold, , , 6, , , , , , , , true);
+		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Good);
+		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(m_strReinforcementsBodyWarningPrefix @ NextReinforcements @ m_strReinforcementsBodyWarningSuffix, eUIState_Good);
+		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Good);
 	}
+	else if (NextReinforcements > 1)
+	{
+		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Warning);
+		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(m_strReinforcementsBodyImminent, eUIState_Warning);
+		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Warning);
+	}
+	else
+	{
+		CountdownDisplayTitle = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsTitle, eUIState_Bad);
+		CountdownDisplayBody = class'UIUtilities_Text'.static.GetColoredText(class'UITacticalHUD_Countdown'.default.m_strReinforcementsBody, eUIState_Bad);
+		CountdownDisplayColor = class'UIUtilities_Colors'.static.GetHexColorFromState(eUIState_Bad);
+	}
+}
+
+static function bool CheckForReinforcements(out XComLWTuple Tuple, XComGameState_CIReinforcementsManager ManagerState)
+{
+	if (ManagerState.NextReinforcements == 0)
+	{
+		return false;
+	}
+
+	Tuple.Data[1].s = ManagerState.CountdownDisplayTitle;
+	Tuple.Data[2].s = ManagerState.CountdownDisplayBody;
+	Tuple.Data[3].s = ManagerState.CountdownDisplayColor;
+
+	return true;
+}
+
+defaultproperties 
+{
+	Threshold=1
 }

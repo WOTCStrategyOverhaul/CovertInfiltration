@@ -140,3 +140,4 @@ BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
 [XComGameState_CIReinforcementsManager]
 m_strReinforcementsBodyWarning="Warning";
 m_strReinforcementsBodyImminent="Imminent";
+

@@ -338,14 +338,17 @@ static protected function EventListenerReturn AddCovertEscapeObjective(Object Ev
 
 static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
+	local XComGameState NewGameState;
 	local XComGameState_BattleData BattleData;
-	local XComGameState_CIReinforcementsManager ReinforcementsManager;
+	local XComGameState_CIReinforcementsManager ManagerState;
 	local DelayedReinforcementSpawner DelayedReinforcementSpawner;
 	local name EncounterID;
 	local int PodStrength, SpawnerDelay, DelayCrit;
 
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager (Mid Turn)");
 	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
-	ReinforcementsManager = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager();
+	ManagerState = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager();
+	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
 
 	if (BattleData.ActiveSitReps.Find('AdventAirPatrols') == INDEX_NONE)
 	{
@@ -374,9 +377,13 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken(Object Eve
 	SpawnerDelay += DelayCrit;
 
 	DelayedReinforcementSpawner.EncounterID = EncounterID;
-	DelayedReinforcementSpawner.TurnCreated = BattleData.TacticalTurnCount;
-	DelayedReinforcementSpawner.SpawnerDelay = SpawnerDelay;
-	ReinforcementsManager.AddDelayedReinforcementSpawner(DelayedReinforcementSpawner, , true);
+	DelayedReinforcementSpawner.TurnsUntilSpawn = SpawnerDelay;
+
+	ManagerState.DelayedReinforcementSpawners.AddItem(DelayedReinforcementSpawner);
+	ManagerState.UpdateNextReinforcements(true);
+	ManagerState.UpdateCountdownDisplay();
+
+	`TACTICALRULES.SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
 }
