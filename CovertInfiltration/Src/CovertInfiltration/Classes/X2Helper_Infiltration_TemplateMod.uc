@@ -225,12 +225,23 @@ static function PatchTLPWeapons()
 
 	foreach default.arrPrototypesToDisable(ItemName)
 	{
-		//Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_CV'));
-		//Template.StartingItem = false;
-		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_MG'));
-		Template.CreatorTemplateName = 'none';
-		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName @ '_BM'));
-		Template.CreatorTemplateName = 'none';
+		/*
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName $ '_CV'));
+		if(Template != none)
+		{
+			Template.StartingItem = false;
+		}
+		*/
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(name(ItemName $ '_MG')));
+		if(Template != none)
+		{
+			Template.CreatorTemplateName = 'none';
+		}
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(name(ItemName $ '_BM')));
+		if(Template != none)
+		{
+			Template.CreatorTemplateName = 'none';
+		}
 	}
 }
 
@@ -260,6 +271,72 @@ static function DisableLockAndBreakthrough()
 			TechTemplate.Requirements.SpecialRequirementsFn = class'X2Helper_Infiltration'.static.ReturnFalse;
 		}
 	}
+}
+
+static function PatchWeaponTechs()
+{
+	AddPrototypeItem('MagnetizedWeapons', 'TLE_AssaultRifle_MG');
+	AddPrototypeItem('MagnetizedWeapons', 'TLE_Shotgun_MG');
+	AddPrototypeItem('MagnetizedWeapons', 'TLE_Pistol_MG');
+	AddPrototypeItem('GaussWeapons', 'TLE_SniperRifle_MG');
+	AddPrototypeItem('GaussWeapons', 'TLE_Cannon_MG');
+	AddPrototypeItem('AutopsyAdventStunLancer', 'TLE_Sword_MG');
+	
+	AddPrototypeItem('PlasmaRifle', 'TLE_AssaultRifle_BM');
+	AddPrototypeItem('AlloyCannon', 'TLE_Shotgun_BM');
+	AddPrototypeItem('PlasmaRifle', 'TLE_Pistol_BM');
+	AddPrototypeItem('PlasmaSniper', 'TLE_SniperRifle_BM');
+	AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
+	AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
+}
+
+static function AddPrototypeItem(name TechName, name Prototype)
+{
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Manager.FindDataTemplateAllDifficulties(TechName, DifficulityVariants);
+	
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+
+		if(TechTemplate != none)
+		{
+			if(TechTemplate.ResearchCompletedFn == none)
+			{
+				TechTemplate.ResearchCompletedFn = GiveAllItems;
+			}
+			TechTemplate.ItemRewards.AddItem(Prototype);
+		}
+	}
+}
+
+static function GiveAllItems(XComGameState NewGameState, XComGameState_Tech TechState)
+{
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+	local array<name> ItemRewards;
+	local name ItemName;
+
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	
+	TechState.ItemRewards.Length = 0; // Reset the item rewards array in case the tech is repeatable
+
+	ItemRewards = TechState.GetMyTemplate().ItemRewards;
+	foreach ItemRewards(ItemName)
+	{
+		ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
+		class'XComGameState_HeadquartersXCom'.static.GiveItem(NewGameState, ItemTemplate);
+
+		//TechState.ItemRewards.AddItem(ItemTemplate);
+		`HQPRES.UIItemReceived(ItemTemplate);
+	}
+
+	TechState.bSeenResearchCompleteScreen = false; // Reset the research report for techs that are repeatable
 }
 
 ////////////////
