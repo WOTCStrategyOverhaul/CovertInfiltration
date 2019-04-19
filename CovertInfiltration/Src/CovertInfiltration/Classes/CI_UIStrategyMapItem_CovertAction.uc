@@ -50,16 +50,23 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
 	local XComGameState_CovertAction CovertAction;
+	local XComGameState_MissionSiteInfiltration MissionSite;
 
 	if (!bIsInited) return;
 
 	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 
+	MissionSite = XComGameState_MissionSiteInfiltration(GeoscapeEntity);
 	CovertAction = GetAction();
 
-	if (CovertAction.bStarted)
+	if (MissionSite != None)
 	{
-		UpdateLaunchedActionBox(CovertAction);
+		UpdateOverinfiltratingBox(MissionSite);
+		ProgressBar.Hide();
+	}
+	else if (CovertAction.bStarted)
+	{
+		UpdateInfiltratingBox(CovertAction);
 		ProgressBar.Hide();
 	}
 	else
@@ -69,16 +76,31 @@ function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity Geoscap
 	}	
 }
 
-simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertAction)
+simulated function UpdateOverinfiltratingBox(XComGameState_MissionSiteInfiltration MissionSite)
+{
+	local XComGameState_CovertAction CovertAction;
+	
+	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(MissionSite.CorrespondingActionRef.ObjectID));
+
+	UpdateLaunchedActionBox(CovertAction, MissionSite.GetCurrentInfilInt());
+}
+
+simulated function UpdateInfiltratingBox(XComGameState_CovertAction CovertAction)
 {
 	local float TotalDuration, RemainingDuration;
 	local int InfilPercent;
-	local float ScanWidth;
 	
 	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.StartDateTime);
 	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.GetCurrentTime());
 
 	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
+
+	UpdateLaunchedActionBox(CovertAction, InfilPercent);
+}
+
+simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertAction, int InfilPercent)
+{
+	local float ScanWidth;
 
 	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20), ColorState,, "CENTER"));
 	ProgressLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(strProgress, ColorState, 12));
