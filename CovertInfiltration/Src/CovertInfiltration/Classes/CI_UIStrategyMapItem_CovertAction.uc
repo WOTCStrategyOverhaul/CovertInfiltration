@@ -78,11 +78,7 @@ function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity Geoscap
 
 simulated function UpdateOverinfiltratingBox(XComGameState_MissionSiteInfiltration MissionSite)
 {
-	local XComGameState_CovertAction CovertAction;
-	
-	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(MissionSite.CorrespondingActionRef.ObjectID));
-
-	UpdateLaunchedActionBox(CovertAction, MissionSite.GetCurrentInfilInt());
+	UpdateLaunchedActionBox(MissionSite.GetCurrentInfilInt(), MissionSite.GetMissionObjectiveText(), true);
 }
 
 simulated function UpdateInfiltratingBox(XComGameState_CovertAction CovertAction)
@@ -95,10 +91,10 @@ simulated function UpdateInfiltratingBox(XComGameState_CovertAction CovertAction
 
 	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
 
-	UpdateLaunchedActionBox(CovertAction, InfilPercent);
+	UpdateLaunchedActionBox(InfilPercent, CovertAction.GetDisplayName(), class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction));
 }
 
-simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertAction, int InfilPercent)
+simulated function UpdateLaunchedActionBox(int InfilPercent, string MissionName, bool IsInfiltration)
 {
 	local float ScanWidth;
 
@@ -107,14 +103,7 @@ simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertActi
 	
 	if (!bScanButtonResized)
 	{
-		if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
-		{
-			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertInfiltration, " ", " ");
-		}
-		else
-		{
-			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");
-		}
+		ScanButton.SetText(Caps(MissionName), (IsInfiltration ? strCovertInfiltration : strCovertAction), " ", " ");
 		bScanButtonResized = true;
 	}
 	
