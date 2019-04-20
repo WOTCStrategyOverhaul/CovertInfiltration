@@ -15,7 +15,7 @@ var localized String strConfirmExfiltration;
 
 var UIPanel LibraryPanel;
 var UIPanel ButtonGroup; 
-var UIButton Button1, Button2;
+var UIButton ConfirmButton, CloseScreenButton;
 
 ///////////////
 /// Members ///
@@ -33,84 +33,59 @@ simulated function BindLibraryItem()
 {
 	LibraryPanel = Spawn(class'UIPanel', self);
 	LibraryPanel.bAnimateOnInit = false;
+	LibraryPanel.bCascadeFocus = false;
 	LibraryPanel.InitPanel('', 'Alert_SkyrangerLanding');
 
 	ButtonGroup = Spawn(class'UIPanel', LibraryPanel);
+	ButtonGroup.bCascadeFocus = false;
 	ButtonGroup.InitPanel('ButtonGroup', '');
 
-	Button1 = Spawn(class'UIButton', ButtonGroup);
-	if( `ISCONTROLLERACTIVE )
+	ConfirmButton = Spawn(class'UIButton', ButtonGroup);
+	if (`ISCONTROLLERACTIVE)
 	{
-		Button1.InitButton('Button0', "", OnLaunchClicked, eUIButtonStyle_HOTLINK_BUTTON);
-		Button1.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
-		Button1.SetX(-150.0 / 2.0);
-		Button1.SetY(-Button1.Height / 2.0);
-		Button1.DisableNavigation();
+		ConfirmButton.InitButton('Button0', "", OnLaunchClicked, eUIButtonStyle_HOTLINK_BUTTON);
+		ConfirmButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetAdvanceButtonIcon());
+		ConfirmButton.SetY(-ConfirmButton.Height / 2.0);
+		ConfirmButton.DisableNavigation();
+		
+		ConfirmButton.OnSizeRealized = OnConfirmButtonSizeRealized;
+		ConfirmButton.Hide();
 	}
 	else
 	{
-		Button1.SetResizeToText(false);
-		Button1.InitButton('Button0', "", OnLaunchClicked);
+		ConfirmButton.SetResizeToText(false);
+		ConfirmButton.InitButton('Button0', "", OnLaunchClicked);
 	}
 
-	Button2 = Spawn(class'UIButton', ButtonGroup);
+	CloseScreenButton = Spawn(class'UIButton', ButtonGroup);
 	if(`ISCONTROLLERACTIVE )
 	{
-		Button2.InitButton('Button1', "", OnCancelClicked, eUIButtonStyle_HOTLINK_BUTTON);
-		Button2.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
-		Button2.SetX(-175.0 / 2.0);
-		Button2.SetY(Button2.Height / 2.0);
-		Button2.DisableNavigation();
+		CloseScreenButton.InitButton('Button1', "", OnCancelClicked, eUIButtonStyle_HOTLINK_BUTTON);
+		CloseScreenButton.SetGamepadIcon(class'UIUtilities_Input'.static.GetBackButtonIcon());
+		CloseScreenButton.SetX(-175.0 / 2.0);
+		CloseScreenButton.SetY(CloseScreenButton.Height / 2.0);
+		CloseScreenButton.DisableNavigation();
+
+		CloseScreenButton.OnSizeRealized = OnCloseScreenButtonSizeRealized;
+		CloseScreenButton.Hide();
 	}
 	else
 	{
-		Button2.SetResizeToText(false);
-		Button2.InitButton('Button1', "", OnCancelClicked);
+		CloseScreenButton.SetResizeToText(false);
+		CloseScreenButton.InitButton('Button1', "", OnCancelClicked);
 	}
 }
 
-simulated function RefreshNavigation()
+simulated protected function OnConfirmButtonSizeRealized()
 {
-	if(Button1.bIsVisible)
-	{
-		if(`ISCONTROLLERACTIVE == false)
-		{
-			Button1.EnableNavigation();
-		}
-	}
-	else
-	{
-		Button1.DisableNavigation();
-	}
+	ConfirmButton.SetX(-ConfirmButton.Width / 2);
+	ConfirmButton.Show();
+}
 
-	if(Button2.bIsVisible)
-	{
-		if(`ISCONTROLLERACTIVE == false)
-		{
-			Button2.EnableNavigation();
-		}
-	}
-	else
-	{
-		Button2.DisableNavigation();
-	}
-
-	LibraryPanel.bCascadeFocus = false;
-	LibraryPanel.bCascadeSelection = false;
-	LibraryPanel.SetSelectedNavigation();
-	ButtonGroup.bCascadeFocus = false;
-	ButtonGroup.bCascadeSelection = false;
-	ButtonGroup.Navigator.LoopSelection = true;
-	ButtonGroup.SetSelectedNavigation();
-
-	if(Button1.bIsNavigable)
-	{
-		Button1.SetSelectedNavigation();
-	}
-	else if(Button2.bIsNavigable)
-	{
-		Button2.SetSelectedNavigation();
-	}
+simulated protected function OnCloseScreenButtonSizeRealized()
+{
+	CloseScreenButton.SetX(-CloseScreenButton.Width / 2);
+	CloseScreenButton.Show();
 }
 
 simulated function BuildScreen()
@@ -126,10 +101,17 @@ simulated function BuildScreen()
 	BuildSkyrangerPanel();
 	BuildOptionsPanel();
 
-	RefreshNavigation();
 	if (!Movie.IsMouseActive())
 	{
 		Navigator.Clear();
+	}
+	else
+	{
+		LibraryPanel.SetSelectedNavigation();
+		ButtonGroup.SetSelectedNavigation();
+
+		ButtonGroup.Navigator.LoopSelection = true;
+		ConfirmButton.SetSelectedNavigation();
 	}
 }
 
@@ -185,8 +167,6 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	switch (cmd)
 	{
 		case class'UIUtilities_Input'.const.FXS_BUTTON_A:
-		case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
-		case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
 			OnLaunchClicked(none);
 			break;
 		case class'UIUtilities_Input'.const.FXS_BUTTON_B:

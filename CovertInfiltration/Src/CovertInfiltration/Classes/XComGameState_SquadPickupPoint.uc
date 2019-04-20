@@ -164,3 +164,8 @@ static function PreparePickupSite(XComGameState_CovertAction CovertAction, Strat
 
 	PickupPoint.FlyToPickupPoint();
 }
+
+function RemoveEntity(XComGameState NewGameState)
+{
+	NewGameState.RemoveStateObject(ObjectID);
+}

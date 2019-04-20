@@ -1290,12 +1290,13 @@ simulated function ConfirmAbortPopupCallback(Name eAction)
 {
 	local XComGameState_CovertAction CovertAction;
 
-	
-
 	if (eAction == 'eUIAction_Accept')
 	{
 		CovertAction = GetAction();
 
+		// This needs to be done before calling PreparePickupSite, so that when it sets flight mode, we won't override it
+		OnRemoveRestoreResistanceNetwork();
+		
 		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationCost(CovertAction));
 		CloseScreen();
 	}
@@ -1345,9 +1346,13 @@ simulated function OnRemoved()
 
 	SetActionsAsSeen();
 
-	GetHQPres().CAMRestoreSavedLocation();
-	GetHQPres().StrategyMap2D.ShowCursor();
-	OnRemoveRestoreResistanceNetwork();
+	// If we started flight (when canceling actions), do not touch the map - it causes a mess
+	if (GetHQPres().StrategyMap2D.m_eUIState != eSMS_Flight)
+	{
+		GetHQPres().CAMRestoreSavedLocation();
+		GetHQPres().StrategyMap2D.ShowCursor();
+		OnRemoveRestoreResistanceNetwork();
+	}
 
 	class'UIUtilities_Sound'.static.PlayCloseSound();
 }
