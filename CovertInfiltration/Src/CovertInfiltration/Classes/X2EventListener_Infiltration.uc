@@ -41,6 +41,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate);
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
+	Template.AddCHEvent('OnResearchReport', TriggerPrototypeAlert, ELD_OnStateSubmitted);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -228,6 +229,35 @@ static protected function EventListenerReturn ShouldCleanupCovertAction(Object E
 		if (ExpirationInfo.bBlockMonthlyCleanup)
 		{
 			Tuple.Data[1].b = false;
+		}
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn TriggerPrototypeAlert(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_Tech TechState;
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+	local array<name> ItemRewards;
+	local name ItemName;
+
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	
+	TechState = XComGameState_Tech(EventData);
+
+	if(TechState == none) return ELR_NoInterrupt;
+
+	ItemRewards = TechState.GetMyTemplate().ItemRewards;
+	foreach ItemRewards(ItemName)
+	{
+		`LOG("Evaluating Item:" @ string(ItemName));
+		if(Left(string(ItemName), 4) == "TLE_")
+		{
+			ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
+			//class'XComGameState_HeadquartersXCom'.static.GiveItem(GameState, ItemTemplate);
+			`HQPRES.UIItemReceived(ItemTemplate);
 		}
 	}
 

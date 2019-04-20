@@ -288,6 +288,9 @@ static function PatchWeaponTechs()
 	AddPrototypeItem('PlasmaSniper', 'TLE_SniperRifle_BM');
 	AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
 	AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
+
+	AddPrototypeItem('PlatedArmor', 'TLPPlatedArmor');
+	AddPrototypeItem('PoweredArmor', 'TLPPoweredArmor');
 }
 
 static function AddPrototypeItem(name TechName, name Prototype)
@@ -324,19 +327,13 @@ static function GiveAllItems(XComGameState NewGameState, XComGameState_Tech Tech
 
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	
-	TechState.ItemRewards.Length = 0; // Reset the item rewards array in case the tech is repeatable
-
 	ItemRewards = TechState.GetMyTemplate().ItemRewards;
 	foreach ItemRewards(ItemName)
 	{
 		ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
 		class'XComGameState_HeadquartersXCom'.static.GiveItem(NewGameState, ItemTemplate);
-
-		//TechState.ItemRewards.AddItem(ItemTemplate);
-		`HQPRES.UIItemReceived(ItemTemplate);
 	}
 
-	TechState.bSeenResearchCompleteScreen = false; // Reset the research report for techs that are repeatable
 }
 
 ////////////////
