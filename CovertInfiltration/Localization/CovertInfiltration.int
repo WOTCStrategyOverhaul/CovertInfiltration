@@ -103,7 +103,6 @@ RiskName="Gunnery Emplacements"
 RiskName="Shoddy Intel"
 
 [UIMission_Infiltrated]
-strBullet="�"
 strOverInfiltrationHeader="Over Infiltration"
 strOverInfiltrationNextBonus="Next bonus"
 strMissionReady="MISSION READY"

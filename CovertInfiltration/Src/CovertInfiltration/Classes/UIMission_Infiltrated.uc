@@ -11,7 +11,6 @@ var UIPanel OverInfiltrationPanel;
 var UIBGBox OverInfiltrationBG;
 var UIX2PanelHeader OverInfiltrationHeader;
 
-var localized string strBullet;
 var localized string strOverInfiltrationHeader;
 var localized string strOverInfiltrationNextBonus;
 var localized string strMissionReady;
@@ -39,7 +38,6 @@ simulated function Name GetLibraryID()
 
 simulated function BuildScreen()
 {
-	local X2OverInfiltrationBonusTemplate NextBonus;
 
 	// Add Interception warning and Shadow Chamber info 
 	super.BuildScreen();
@@ -57,9 +55,8 @@ simulated function BuildScreen()
 		XComHQPresentationLayer(Movie.Pres).CAMLookAtEarth(GetMission().Get2DLocation(), CAMERA_ZOOM);
 	}
 
-	NextBonus = GetInfiltration().GetNextOverInfiltrationBonus();
 
-	if (NextBonus != none)
+	if (GetInfiltration().GetNextOverInfiltrationBonus() != none)
 	{
 		OverInfiltrationPanel = Spawn(class'UIPanel', self);
 		OverInfiltrationPanel.InitPanel('OverInfiltrationPanel');
@@ -70,15 +67,28 @@ simulated function BuildScreen()
 		OverInfiltrationBG.InitBG('BG', 0, 0, 470, 130);
 
 		OverInfiltrationHeader = Spawn(class'UIX2PanelHeader', OverInfiltrationPanel);
-		OverInfiltrationHeader.InitPanelHeader(
-			'Header',
-			strOverInfiltrationHeader,
-			strOverInfiltrationNextBonus $ ": "@ NextBonus.GetBonusName() @ strBullet @ GetInfiltration().GetNextThreshold() $ "%\n" $ NextBonus.GetBonusDescription()
-		);
+		OverInfiltrationHeader.InitPanelHeader('Header', strOverInfiltrationHeader, GetOverInfiltrationText());
 		OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
 		OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
 		OverInfiltrationHeader.Show();
 	}
+
+	// There is no navigation on this screen.
+	// Also, this fixes selecting "cancel" via keyboard and hitting enter which uses "confirm" button
+	Navigator.Clear();
+}
+
+simulated function string GetOverInfiltrationText()
+{
+	local X2OverInfiltrationBonusTemplate NextBonus;
+	
+	NextBonus = GetInfiltration().GetNextOverInfiltrationBonus();
+
+	return 
+		strOverInfiltrationNextBonus
+		@ "(" $ GetInfiltration().GetNextThreshold() $ "%):"
+		@ NextBonus.GetBonusName() $ "\n"
+		$ NextBonus.GetBonusDescription();
 }
 
 simulated function BuildMissionPanel()
