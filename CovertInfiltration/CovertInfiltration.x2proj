@@ -40,9 +40,6 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComLW2SecondariesWOTC.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Config\XComMissionSources.ini">
       <SubType>Content</SubType>
     </Content>
