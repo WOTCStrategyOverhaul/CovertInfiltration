@@ -11,8 +11,8 @@ In order to build this mod, make sure that you clone the repository **with submo
 In order to run this mod, the following are needed (in addition to this mod):
 
 * X2WOTCCommunityHighlander - we maintain our own repo/branch where we merge our changes before the workshop version. You can generally find a built/cooked version [here](https://github.com/WOTCStrategyOverhaul/X2WOTCCommunityHighlander/releases)
-* SquadSelectAnytime - workshop version will suffice
-* [robojumperSquadSelect](https://github.com/robojumper/robojumperSquadSelect) - requires a **local build** (workshop version is behind)
+* [SquadSelectAnytime](https://steamcommunity.com/sharedfiles/filedetails/?id=1529472981)
+* [robojumperSquadSelect](https://steamcommunity.com/sharedfiles/filedetails/?id=1122974240)
 
 # Contributing
 When contributing please use the Community Highlander code style:
