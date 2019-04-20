@@ -121,7 +121,9 @@ simulated function ClearUnitsFromAction(XComGameState NewGameState)
 simulated function DestroyTheEvidence()
 {
 	local XComGameState_SquadPickupPoint PickupPoint;
+	local XComGameState_ResistanceFaction Faction;
 	local XComGameState_CovertAction CovertAction;
+	local X2CovertActionTemplate ActionTemplate;
 	local XComGameState NewGameState;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: SkyrangerExfiltrate Cleanup");
@@ -130,6 +132,16 @@ simulated function DestroyTheEvidence()
 	{
 		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
 		CovertAction.RemoveEntity(NewGameState);
+
+		ActionTemplate = CovertAction.GetMyTemplate();
+		if (ActionTemplate.bGoldenPath)
+		{
+			// Recreate GP actions, otherwise the campaign will be stuck forever
+			
+			Faction = CovertAction.GetFaction();
+			Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
+			Faction.GoldenPathActions.AddItem(Faction.CreateCovertAction(NewGameState, ActionTemplate, ActionTemplate.RequiredFactionInfluence));
+		}
 	}
 
 	PickupPoint = XComGameState_SquadPickupPoint(NewGameState.ModifyStateObject(class'XComGameState_SquadPickupPoint', GetReference().ObjectID));
