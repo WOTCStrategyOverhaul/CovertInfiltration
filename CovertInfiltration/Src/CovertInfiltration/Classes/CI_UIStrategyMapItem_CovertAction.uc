@@ -51,16 +51,23 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
 	local XComGameState_CovertAction CovertAction;
+	local XComGameState_MissionSiteInfiltration MissionSite;
 
 	if (!bIsInited) return;
 
 	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 
+	MissionSite = XComGameState_MissionSiteInfiltration(GeoscapeEntity);
 	CovertAction = GetAction();
 
-	if (CovertAction.bStarted)
+	if (MissionSite != None)
 	{
-		UpdateLaunchedActionBox(CovertAction);
+		UpdateOverinfiltratingBox(MissionSite);
+		ProgressBar.Hide();
+	}
+	else if (CovertAction.bStarted)
+	{
+		UpdateInfiltratingBox(CovertAction);
 		ProgressBar.Hide();
 	}
 	else
@@ -70,30 +77,34 @@ function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity Geoscap
 	}	
 }
 
-simulated function UpdateLaunchedActionBox(XComGameState_CovertAction CovertAction)
+simulated function UpdateOverinfiltratingBox(XComGameState_MissionSiteInfiltration MissionSite)
+{
+	UpdateLaunchedActionBox(MissionSite.GetCurrentInfilInt(), MissionSite.GetMissionObjectiveText(), true);
+}
+
+simulated function UpdateInfiltratingBox(XComGameState_CovertAction CovertAction)
 {
 	local float TotalDuration, RemainingDuration;
 	local int InfilPercent;
-	local float ScanWidth;
 	
 	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.StartDateTime);
 	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.GetCurrentTime());
 
 	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
 
+	UpdateLaunchedActionBox(InfilPercent, CovertAction.GetDisplayName(), class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction));
+}
+
+simulated function UpdateLaunchedActionBox(int InfilPercent, string MissionName, bool IsInfiltration)
+{
+	local float ScanWidth;
+
 	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20), ColorState,, "CENTER"));
 	ProgressLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(strProgress, ColorState, 12));
 	
 	if (!bScanButtonResized)
 	{
-		if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
-		{
-			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertInfiltration, " ", " ");
-		}
-		else
-		{
-			ScanButton.SetText(Caps(CovertAction.GetDisplayName()), strCovertAction, " ", " ");
-		}
+		ScanButton.SetText(Caps(MissionName), (IsInfiltration ? strCovertInfiltration : strCovertAction), " ", " ");
 		bScanButtonResized = true;
 	}
 	

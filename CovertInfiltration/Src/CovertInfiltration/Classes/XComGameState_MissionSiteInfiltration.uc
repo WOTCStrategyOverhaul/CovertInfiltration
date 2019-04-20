@@ -648,6 +648,11 @@ function StartMission()
 /// Misc ///
 ////////////
 
+function class<UIStrategyMapItem> GetUIClass()
+{
+	return class'CI_UIStrategyMapItem_CovertAction';
+}
+
 function string GetUIButtonIcon()
 {
 	local string Path;
