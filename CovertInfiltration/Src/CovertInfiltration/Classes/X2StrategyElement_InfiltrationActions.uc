@@ -39,11 +39,11 @@ static function X2CovertInfiltrationTemplate CreateInfiltrationTemplate(name Cov
 
 	if (bCreateSlots)
 	{
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
 		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
 	}
 

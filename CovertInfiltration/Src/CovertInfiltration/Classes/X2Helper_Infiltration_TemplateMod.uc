@@ -289,8 +289,8 @@ static function PatchWeaponTechs()
 	AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
 	AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
 
-	AddPrototypeItem('PlatedArmor', 'TLPPlatedArmor');
-	AddPrototypeItem('PoweredArmor', 'TLPPoweredArmor');
+	AddPrototypeItem('PlatedArmor', 'TLE_PlatedArmor');
+	AddPrototypeItem('PoweredArmor', 'TLE_PoweredArmor');
 }
 
 static function AddPrototypeItem(name TechName, name Prototype)
@@ -330,6 +330,7 @@ static function GiveAllItems(XComGameState NewGameState, XComGameState_Tech Tech
 	ItemRewards = TechState.GetMyTemplate().ItemRewards;
 	foreach ItemRewards(ItemName)
 	{
+		`LOG("CI granting prototype item:" @ string(ItemName));
 		ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
 		class'XComGameState_HeadquartersXCom'.static.GiveItem(NewGameState, ItemTemplate);
 	}

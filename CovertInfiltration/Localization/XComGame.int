@@ -28,6 +28,24 @@ FriendlyNamePlural="Adaptive Camo"
 BriefSummary="Based on patterns observed in the Spectre, the Adaptive Camo can be applied to armor to actively reflect enemy security sweeps, reducing the suit's impact on covertness."
 TacticalText="<Bullet/> Adaptive Camo reduces the impact of the soldier's armor on infiltration time." 
 
+[TLE_KevlarArmor X2ArmorTemplate]
+FriendlyName="Scavenged Field Armor"
+FriendlyNamePlural="Scavenged Field Armor"
+BriefSummary="This basic armor consists of improvised protection cobbled together from salvage and Resistance arms caches. It provides minimal protection against ADVENT and alien weaponry."
+TacticalText="<Bullet/> All soldiers receive Kevlar Armor as part of their basic kit.\n<Bullet/> Research can give us access to better armor."
+
+[TLE_PlatedArmor X2ArmorTemplate]
+FriendlyName="Prototype Field Plate"
+FriendlyNamePlural="Prototype Field Plate"
+BriefSummary="Using scavenged plates of ADVENT armor, this suit provides increased protection and additional inventory capacity for our soldiers."
+TacticalText="<Bullet/> Mid-weight armor based on ADVENT salvage.\n<Bullet/> As a medium-class armor, it provides a slot for one additional inventory item."
+
+[TLE_PoweredArmor X2ArmorTemplate]
+FriendlyName="Experimental Power Armor"
+FriendlyNamePlural="Experimental Power Armor"
+BriefSummary="Our new mastery of the alien's Elerium technology has lead us to the ultimate in battle armor. Elerium powered armor provides unprecedented survivability and versatility in the battle against increasingly powerful alien enemies."
+TacticalText="<Bullet/> Top tier medium-class armor available.\n<Bullet/> Power Armor has 2 inventory item slots."
+
 [ResistanceRing X2FacilityTemplate]
 CompletedSummary="Resistance Orders are available!\nNew Staff Slot Available - adds +1 wildcard order slot"
 Summary="The Resistance Ring allows managing Resistance Factions and assigning them orders on monthly basis"
