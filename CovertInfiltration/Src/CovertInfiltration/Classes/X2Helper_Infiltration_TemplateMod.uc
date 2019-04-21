@@ -291,11 +291,6 @@ static function PatchWeaponTechs()
 
 	AddPrototypeItem('PlatedArmor', 'TLPPlatedArmor');
 	AddPrototypeItem('PoweredArmor', 'TLPPoweredArmor');
-	
-	AddPrototypeItem('MagnetizedWeapons', 'AssaultRifle_MG_Schematic');
-	AddPrototypeItem('MagnetizedWeapons', 'Shotgun_MG_Schematic');
-	AddPrototypeItem('MagnetizedWeapons', 'Pistol_MG_Schematic');
-	AddPrototypeItem('MagnetizedWeapons', 'Bullpup_MG_Schematic');
 }
 
 static function AddPrototypeItem(name TechName, name Prototype)
