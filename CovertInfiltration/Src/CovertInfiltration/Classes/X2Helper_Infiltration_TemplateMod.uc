@@ -50,7 +50,7 @@ static function MakeItemsBuildable()
 	local X2ItemTemplateManager ItemTemplateManager;
 	local array<X2DataTemplate> DifficulityVariants;
 	local X2DataTemplate DataTemplate;
-	local X2ItemTemplate ItemTemplate, Schematic;
+	local X2ItemTemplate ItemTemplate;
 	local name TemplateName;
 
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
@@ -74,14 +74,6 @@ static function MakeItemsBuildable()
 			ItemTemplate.CanBeBuilt = true;
 			ItemTemplate.bInfiniteItem = false;
 			ItemTemplate.CreatorTemplateName = '';
-
-			foreach ItemTemplate.Requirements.RequiredItems(Schematic)
-			{
-				if(Right(string(Schematic.DataName), 10) = "_Schematic")
-				{
-					AddPrototypeItem(Schematic.Requirements.RequiredTechs[0].DataName, Schematic.DataName);
-				}
-			}
 
 			`CI_Trace(ItemTemplate.Name @ "was made single-buildable" @ `showvar(ItemTemplate.Requirements.RequiredTechs.Length));
 		}
@@ -299,6 +291,11 @@ static function PatchWeaponTechs()
 
 	AddPrototypeItem('PlatedArmor', 'TLPPlatedArmor');
 	AddPrototypeItem('PoweredArmor', 'TLPPoweredArmor');
+	
+	AddPrototypeItem('MagnetizedWeapons', 'AssaultRifle_MG_Schematic');
+	AddPrototypeItem('MagnetizedWeapons', 'Shotgun_MG_Schematic');
+	AddPrototypeItem('MagnetizedWeapons', 'Pistol_MG_Schematic');
+	AddPrototypeItem('MagnetizedWeapons', 'Bullpup_MG_Schematic');
 }
 
 static function AddPrototypeItem(name TechName, name Prototype)
