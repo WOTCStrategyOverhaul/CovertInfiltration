@@ -150,10 +150,10 @@ static function X2DataTemplate CreateInfiltrationActionSlotTemplate()
 	Template.FillFn = class'X2StrategyElement_XpackStaffSlots'.static.FillCovertActionSlot;
 	Template.CanStaffBeMovedFn = class'X2StrategyElement_XpackStaffSlots'.static.CanStaffBeMovedCovertActions;
 	Template.GetNameDisplayStringFn = class'X2StrategyElement_XpackStaffSlots'.static.GetCovertActionSoldierNameDisplayString;
-	Template.IsUnitValidForSlotFn = class'X2StrategyElement_XpackStaffSlots'.static.IsUnitValidForCovertActionSoldierSlot;
 	
 	// Custom
 	Template.EmptyFn = EmptyInfiltrationSlot;
+	Template.IsUnitValidForSlotFn = IsUnitValidForInfiltration;
 
 	return Template;
 }
@@ -209,4 +209,24 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 	ActionState = GetNewCovertActionState(NewGameState, NewSlotState);
 	ActionState.UpdateNegatedRisks(NewGameState);
 	ActionState.UpdateDurationForBondmates(NewGameState);
+}
+
+static function bool IsUnitValidForInfiltration(XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
+{
+	local XComGameState_Unit Unit;
+
+	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
+
+	if (
+		Unit.IsSoldier()
+		&& Unit.IsActive(true)
+		&& (SlotState.RequiredClass == '' || Unit.GetSoldierClassTemplateName() == SlotState.RequiredClass)
+		&& (SlotState.RequiredMinRank == 0 || Unit.GetRank() >= SlotState.RequiredMinRank)
+		&& (!SlotState.bRequireFamous || Unit.bIsFamous)
+	)
+	{
+		return true;
+	}
+
+	return false;
 }
