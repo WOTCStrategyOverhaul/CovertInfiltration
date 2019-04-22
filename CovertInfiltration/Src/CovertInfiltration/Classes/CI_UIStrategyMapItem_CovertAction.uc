@@ -27,7 +27,7 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 
 	ScanButton = Spawn(class'UIScanButton', self).InitScanButton();
 	ScanButton.SetButtonIcon("");
-	ScanButton.SetDefaultDelegate(OpenCovertActionsScreen);
+	ScanButton.SetDefaultDelegate(OnScanButtonClick);
 	ScanButton.SetButtonType(eUIScanButtonType_Default);
 	ScanButton.OnMouseEventDelegate = OnScanButtonMouseEvent;
 	
@@ -170,10 +170,14 @@ simulated function SetProgressBarColor(float percent)
 	}
 }
 
-function OpenCovertActionsScreen()
+function OnScanButtonClick()
 {
+	local XComGameState_GeoscapeEntity GeoscapeEntity;
+
 	ColorState = eUIState_Normal;
-	GetAction().AttemptSelectionCheckInterruption();
+
+	GeoscapeEntity = XComGameState_GeoscapeEntity(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
+	GeoscapeEntity.AttemptSelectionCheckInterruption();
 }
 
 simulated function XComGameState_CovertAction GetAction()
