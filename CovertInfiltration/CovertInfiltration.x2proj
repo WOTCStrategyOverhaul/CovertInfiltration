@@ -131,6 +131,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_CovertActionCompleted.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_ItemAvaliable.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_ModConfigMenu.uc">
       <SubType>Content</SubType>
     </Content>
