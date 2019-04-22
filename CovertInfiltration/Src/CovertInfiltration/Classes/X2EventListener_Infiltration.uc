@@ -253,7 +253,6 @@ static protected function EventListenerReturn TriggerPrototypeAlert(Object Event
 	ItemRewards = TechState.GetMyTemplate().ItemRewards;
 	foreach ItemRewards(ItemName)
 	{
-		`LOG("Evaluating Item:" @ string(ItemName));
 		if(Left(string(ItemName), 4) == "TLE_")
 		{
 			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Add Prototype Item");
