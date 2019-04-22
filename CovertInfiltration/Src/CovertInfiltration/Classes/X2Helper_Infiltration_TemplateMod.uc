@@ -20,6 +20,9 @@ var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifie
 var config(StrategyTuning) array<name> arrRemoveFactionCard;
 
 var config array<name> arrPrototypesToDisable;
+var config bool PrototypePrimaries;
+var config bool PrototypeSecondaries;
+var config bool PrototypeArmorsets;
 
 /////////////
 /// Items ///
@@ -225,13 +228,6 @@ static function PatchTLPWeapons()
 
 	foreach default.arrPrototypesToDisable(ItemName)
 	{
-		/*
-		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(ItemName $ '_CV'));
-		if(Template != none)
-		{
-			Template.StartingItem = false;
-		}
-		*/
 		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(name(ItemName $ '_MG')));
 		if(Template != none)
 		{
@@ -275,22 +271,31 @@ static function DisableLockAndBreakthrough()
 
 static function PatchWeaponTechs()
 {
-	AddPrototypeItem('MagnetizedWeapons', 'TLE_AssaultRifle_MG');
-	AddPrototypeItem('MagnetizedWeapons', 'TLE_Shotgun_MG');
-	AddPrototypeItem('MagnetizedWeapons', 'TLE_Pistol_MG');
-	AddPrototypeItem('GaussWeapons', 'TLE_SniperRifle_MG');
-	AddPrototypeItem('GaussWeapons', 'TLE_Cannon_MG');
-	AddPrototypeItem('AutopsyAdventStunLancer', 'TLE_Sword_MG');
-	
-	AddPrototypeItem('PlasmaRifle', 'TLE_AssaultRifle_BM');
-	AddPrototypeItem('AlloyCannon', 'TLE_Shotgun_BM');
-	AddPrototypeItem('PlasmaRifle', 'TLE_Pistol_BM');
-	AddPrototypeItem('PlasmaSniper', 'TLE_SniperRifle_BM');
-	AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
-	AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
+	if(default.PrototypePrimaries)
+	{
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_AssaultRifle_MG');
+		AddPrototypeItem('PlasmaRifle', 'TLE_AssaultRifle_BM');
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_Shotgun_MG');
+		AddPrototypeItem('AlloyCannon', 'TLE_Shotgun_BM');
+		AddPrototypeItem('GaussWeapons', 'TLE_SniperRifle_MG');
+		AddPrototypeItem('PlasmaSniper', 'TLE_SniperRifle_BM');
+		AddPrototypeItem('GaussWeapons', 'TLE_Cannon_MG');
+		AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
+	}
 
-	AddPrototypeItem('PlatedArmor', 'TLE_PlatedArmor');
-	AddPrototypeItem('PoweredArmor', 'TLE_PoweredArmor');
+	if(default.PrototypeSecondaries)
+	{
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_Pistol_MG');
+		AddPrototypeItem('PlasmaRifle', 'TLE_Pistol_BM');
+		AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
+		AddPrototypeItem('AutopsyAdventStunLancer', 'TLE_Sword_MG');
+	}
+
+	if(default.PrototypeArmorsets)
+	{
+		AddPrototypeItem('PlatedArmor', 'TLE_PlatedArmor');
+		AddPrototypeItem('PoweredArmor', 'TLE_PoweredArmor');
+	}
 }
 
 static function AddPrototypeItem(name TechName, name Prototype)
