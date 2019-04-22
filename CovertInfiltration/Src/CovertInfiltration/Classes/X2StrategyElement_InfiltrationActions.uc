@@ -91,7 +91,7 @@ static function X2DataTemplate CreateP1JailbreakTemplate()
 	
 	Template.Narratives.AddItem('CovertActionNarrative_P1Jailbreak');
 	Template.Rewards.AddItem('ActionReward_P1Jailbreak');
-	
+
 	return Template;
 }
 

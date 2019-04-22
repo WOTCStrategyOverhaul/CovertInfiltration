@@ -19,6 +19,11 @@ var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 var config(StrategyTuning) array<name> arrRemoveFactionCard;
 
+var config array<name> arrPrototypesToDisable;
+var config bool PrototypePrimaries;
+var config bool PrototypeSecondaries;
+var config bool PrototypeArmorsets;
+
 /////////////
 /// Items ///
 /////////////
@@ -134,6 +139,108 @@ static function KillItems()
 	}
 }
 
+static function PatchTLPArmorsets()
+{
+	PatchTLPRanger();
+	PatchTLPGrenadier();
+	PatchTLPSpecialist();
+	PatchTLPSharpshooter();
+	PatchTLPPsiOperative();
+}
+
+static function PatchTLPRanger()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('RangerPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPGrenadier()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('GrenadierPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPSpecialist()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SpecialistPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPSharpshooter()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterPlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('SharpshooterPoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPPsiOperative()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2ArmorTemplate				Template;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativeKevlarArmor'));
+	Template.StartingItem = false;
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativePlatedArmor'));
+	Template.CreatorTemplateName = 'none';
+	Template = X2ArmorTemplate(TemplateManager.FindItemTemplate('PsiOperativePoweredArmor'));
+	Template.CreatorTemplateName = 'none';
+}
+
+static function PatchTLPWeapons()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2WeaponTemplate				Template;
+	local name							ItemName;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	foreach default.arrPrototypesToDisable(ItemName)
+	{
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(name(ItemName $ '_MG')));
+		if(Template != none)
+		{
+			Template.CreatorTemplateName = 'none';
+		}
+		Template = X2WeaponTemplate(TemplateManager.FindItemTemplate(name(ItemName $ '_BM')));
+		if(Template != none)
+		{
+			Template.CreatorTemplateName = 'none';
+		}
+	}
+}
+
 ////////////////
 /// Research ///
 ////////////////
@@ -158,6 +265,56 @@ static function DisableLockAndBreakthrough()
 			TechTemplate.Requirements.RequiredScienceScore = 999999;
 			TechTemplate.Requirements.bVisibleifPersonnelGatesNotMet = false;
 			TechTemplate.Requirements.SpecialRequirementsFn = class'X2Helper_Infiltration'.static.ReturnFalse;
+		}
+	}
+}
+
+static function PatchWeaponTechs()
+{
+	if(default.PrototypePrimaries)
+	{
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_AssaultRifle_MG');
+		AddPrototypeItem('PlasmaRifle', 'TLE_AssaultRifle_BM');
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_Shotgun_MG');
+		AddPrototypeItem('AlloyCannon', 'TLE_Shotgun_BM');
+		AddPrototypeItem('GaussWeapons', 'TLE_SniperRifle_MG');
+		AddPrototypeItem('PlasmaSniper', 'TLE_SniperRifle_BM');
+		AddPrototypeItem('GaussWeapons', 'TLE_Cannon_MG');
+		AddPrototypeItem('HeavyPlasma', 'TLE_Cannon_BM');
+	}
+
+	if(default.PrototypeSecondaries)
+	{
+		AddPrototypeItem('MagnetizedWeapons', 'TLE_Pistol_MG');
+		AddPrototypeItem('PlasmaRifle', 'TLE_Pistol_BM');
+		AddPrototypeItem('AutopsyArchon', 'TLE_Sword_BM');
+		AddPrototypeItem('AutopsyAdventStunLancer', 'TLE_Sword_MG');
+	}
+
+	if(default.PrototypeArmorsets)
+	{
+		AddPrototypeItem('PlatedArmor', 'TLE_PlatedArmor');
+		AddPrototypeItem('PoweredArmor', 'TLE_PoweredArmor');
+	}
+}
+
+static function AddPrototypeItem(name TechName, name Prototype)
+{
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Manager.FindDataTemplateAllDifficulties(TechName, DifficulityVariants);
+	
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+
+		if(TechTemplate != none)
+		{
+			TechTemplate.ItemRewards.AddItem(Prototype);
 		}
 	}
 }
