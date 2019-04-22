@@ -237,6 +237,7 @@ static protected function EventListenerReturn ShouldCleanupCovertAction(Object E
 
 static protected function EventListenerReturn TriggerPrototypeAlert(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local XComGameState NewGameState;
 	local XComGameState_Tech TechState;
 	local X2ItemTemplateManager ItemTemplateManager;
 	local X2ItemTemplate ItemTemplate;
@@ -255,8 +256,11 @@ static protected function EventListenerReturn TriggerPrototypeAlert(Object Event
 		`LOG("Evaluating Item:" @ string(ItemName));
 		if(Left(string(ItemName), 4) == "TLE_")
 		{
+			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Add Prototype Item");
 			ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
-			//class'XComGameState_HeadquartersXCom'.static.GiveItem(GameState, ItemTemplate);
+			class'XComGameState_HeadquartersXCom'.static.GiveItem(NewGameState, ItemTemplate);
+			`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+
 			`HQPRES.UIItemReceived(ItemTemplate);
 		}
 	}

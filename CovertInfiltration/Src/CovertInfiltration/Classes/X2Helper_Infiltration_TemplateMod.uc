@@ -309,15 +309,17 @@ static function AddPrototypeItem(name TechName, name Prototype)
 
 		if(TechTemplate != none)
 		{
+			/*
 			if(TechTemplate.ResearchCompletedFn == none)
 			{
 				TechTemplate.ResearchCompletedFn = GiveAllItems;
 			}
+			*/
 			TechTemplate.ItemRewards.AddItem(Prototype);
 		}
 	}
 }
-
+/*
 static function GiveAllItems(XComGameState NewGameState, XComGameState_Tech TechState)
 {
 	local X2ItemTemplateManager ItemTemplateManager;
@@ -330,13 +332,12 @@ static function GiveAllItems(XComGameState NewGameState, XComGameState_Tech Tech
 	ItemRewards = TechState.GetMyTemplate().ItemRewards;
 	foreach ItemRewards(ItemName)
 	{
-		`LOG("CI granting prototype item:" @ string(ItemName));
 		ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemName);
 		class'XComGameState_HeadquartersXCom'.static.GiveItem(NewGameState, ItemTemplate);
 	}
 
 }
-
+*/
 ////////////////
 /// Missions ///
 ////////////////
