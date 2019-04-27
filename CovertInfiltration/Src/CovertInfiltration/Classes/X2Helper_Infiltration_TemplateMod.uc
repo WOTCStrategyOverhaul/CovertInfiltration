@@ -394,7 +394,6 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 
 		// Change 2: force the xpack retal instead of vanilla one
 		// xymanek - I want the first retal not to be so penalizing (first chosen is very hard)
-		// TODO: Remove the intro voiceline ("One of chosen is leading an assault")
 		MissionState.ExcludeMissionFamilies.AddItem("Terror");
 	}
 

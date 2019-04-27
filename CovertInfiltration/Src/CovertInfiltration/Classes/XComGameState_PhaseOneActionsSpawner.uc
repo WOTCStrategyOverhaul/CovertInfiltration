@@ -196,11 +196,6 @@ function SpawnAction(XComGameState NewGameState)
 	local XComGameState_ResistanceFaction Faction;
 	local StateObjectReference NewActionRef;
 
-	// TODO: Better logic for picking location/faction of action:
-	// 1) Get a random contacted region that has the least infiltrations right now
-	// 2) Get a faction that controls that region
-	// 3) If said faction isn't met pick one that has the least infiltrations currently
-
 	ActionTemplate = PickActionToSpawn();
 	Faction = GetFactionForNewAction();
 
