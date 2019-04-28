@@ -45,12 +45,16 @@ static function ForceDifficultyVariants()
 
 static function MakeItemsBuildable()
 {
+	local X2EventListener_Infiltration_UI UIEventListener;
+	local ItemAvaliableImageReplacement ImageReplacement;
 	local X2ItemTemplateManager ItemTemplateManager;
 	local array<X2DataTemplate> DifficulityVariants;
+	local X2WeaponTemplate WeaponTemplate;
 	local X2DataTemplate DataTemplate;
 	local X2ItemTemplate ItemTemplate;
 	local name TemplateName;
-
+	
+	UIEventListener = X2EventListener_Infiltration_UI(class'XComEngine'.static.GetClassDefaultObject(class'X2EventListener_Infiltration_UI'));
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	`CI_Log("Making items buildable");
 
@@ -67,6 +71,27 @@ static function MakeItemsBuildable()
 			{
 				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate");
 				continue;
+			}
+
+			// Check if we need to replace the image on "ItemAvaliable" screen
+			// Do this before we nuke the schematic ref
+			WeaponTemplate = X2WeaponTemplate(ItemTemplate);
+			if (
+				// If this item/weapon has attachments
+				WeaponTemplate != none && WeaponTemplate.DefaultAttachments.Length > 0
+
+				// And it has a creator schematic (although it should, otherwise why is it in this code at all?)
+				&& ItemTemplate.CreatorTemplateName != ''
+
+				// And we haven't added the replacement already (due to difficulty variants)
+				&& UIEventListener.ItemAvaliableImageReplacementsAutomatic.Find('TargetItem', ItemTemplate.DataName) == INDEX_NONE
+			)
+			{
+				ImageReplacement.TargetItem = ItemTemplate.DataName;
+				ImageReplacement.ImageSourceItem = ItemTemplate.CreatorTemplateName;
+
+				UIEventListener.ItemAvaliableImageReplacementsAutomatic.AddItem(ImageReplacement);
+				`CI_Trace("Added image replacement for" @ ItemTemplate.DataName);
 			}
 
 			ItemTemplate.CanBeBuilt = true;
