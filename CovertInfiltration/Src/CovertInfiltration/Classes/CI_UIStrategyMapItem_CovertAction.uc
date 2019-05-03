@@ -190,6 +190,8 @@ simulated function bool IsSelectable()
 	return true;
 }
 
+// Scan button mouse
+
 simulated function OnScanButtonMouseEvent(UIPanel Panel, int Cmd)
 {
 	switch (cmd)
@@ -201,6 +203,30 @@ simulated function OnScanButtonMouseEvent(UIPanel Panel, int Cmd)
 		case class'UIUtilities_Input'.const.FXS_L_MOUSE_OUT:
 			ColorState = eUIState_Normal;
 			break;
+	}
+
+	OnReceiveFocus();
+}
+
+// Scan button controller
+
+simulated function OnReceiveFocus()
+{
+	super.OnReceiveFocus();
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		ColorState = -1;
+	}
+}
+
+simulated function OnLoseFocus()
+{
+	super.OnLoseFocus();
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		ColorState = eUIState_Normal;
 	}
 }
 

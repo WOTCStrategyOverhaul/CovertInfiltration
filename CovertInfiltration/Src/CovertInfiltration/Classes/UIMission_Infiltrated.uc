@@ -18,8 +18,8 @@ var localized string strInfiltration;
 var localized string strWait;
 var localized string strReturnToAvenger;
 
-//----------------------------------------------------------------------------
-// MEMBERS
+const BUTTON_X = -175;
+const BUTTON_WIDTH = 350;
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
@@ -38,7 +38,6 @@ simulated function Name GetLibraryID()
 
 simulated function BuildScreen()
 {
-
 	// Add Interception warning and Shadow Chamber info 
 	super.BuildScreen();
 
@@ -141,28 +140,6 @@ function UpdateRewards()
 	}
 }
 
-//bsg-crobinson (5.12.17): Dont refresh navigation for this screen
-simulated function RefreshNavigation()
-{
-	super.RefreshNavigation();
-
-	if(`ISCONTROLLERACTIVE)
-	{
-		Button1.SetStyle(eUIButtonStyle_HOTLINK_WHEN_SANS_MOUSE);
-		Button1.SetGamepadIcon("");
-		Button1.SetPosition(-90,0);
-		Button1.SetText(class'UIUtilities_Text'.static.InjectImage(class'UIUtilities_Input'.static.GetAdvanceButtonIcon(),20,20,-10) @ m_strLaunchMission);
-
-		Button2.SetStyle(eUIButtonStyle_HOTLINK_WHEN_SANS_MOUSE);
-		Button2.SetGamepadIcon("");
-		Button2.SetPosition(-55,25);
-		Button2.SetText(class'UIUtilities_Text'.static.InjectImage(class'UIUtilities_Input'.static.GetBackButtonIcon(),20,20,-10) @ m_strIgnore);
-
-		Navigator.Clear();
-	}
-}
-//bsg-crobinson (5.12.17): end
-
 function UpdateMissionReward(int numIndex, string strLabel, string strRank, optional string strClass)
 {
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionReward");
@@ -175,16 +152,67 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 
 simulated function BuildOptionsPanel()
 {
-	LibraryPanel.MC.BeginFunctionOp("UpdateMissionButtonBlade");
-	LibraryPanel.MC.QueueString(strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"); // m_strResOpsMission
-	LibraryPanel.MC.QueueString(m_strLaunchMission);
-	LibraryPanel.MC.QueueString(GetInfiltration().MustLaunch() ? strReturnToAvenger : strWait); // m_strIgnore
-	LibraryPanel.MC.EndOp();
+	// The flash side is setup... very interestingly
+	// Yes, veeeeeryyyyyyy interestingly
+	// So screw it all, I'll fix it manually
+	
+	Button1.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
+	Button1.SetText(m_strLaunchMission);
+	Button1.SetWidth(BUTTON_WIDTH);
+	Button1.SetX(BUTTON_X);
+	Button1.Hide();
+
+	Button2.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
+	Button2.SetText(GetInfiltration().MustLaunch() ? strReturnToAvenger : strWait);
+	Button2.SetWidth(BUTTON_WIDTH);
+	Button2.SetX(BUTTON_X);
+	Button2.SetY(35);
+	Button2.Hide();
+
+	// This call will hide the buttons on flash side, so I hid them above so that unreal isn't confused
+	// We cannot actually set the button labels here as that will screw up controller positioning
+	LibraryPanel.MC.FunctionString(
+		"UpdateMissionButtonBlade",
+		strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"
+	);
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		Button1.SetResizeToText(true);
+		Button1.OnSizeRealized = OnButton1SizeRealized;
+
+		Button2.SetResizeToText(true);
+		Button2.OnSizeRealized = OnButton2SizeRealized;
+	}
+	else
+	{
+		Button1.Show();
+		Button2.Show();
+	}
+}
+
+simulated function OnButton1SizeRealized()
+{
+	// Buttons are center-anchored
+	Button1.SetX(-Button1.Width / 2);
+	Button1.Show();
+}
+
+simulated function OnButton2SizeRealized()
+{
+	// Buttons are center-anchored
+	Button2.SetX(-Button2.Width / 2);
+	Button2.Show();
+}
+
+simulated function RefreshNavigation()
+{
+	// Override - do nothing
 }
 
 simulated function OnButtonSizeRealized()
 {
-	//Override - do nothing
+	// Override - do nothing
 }
 
 //-------------- EVENT HANDLING --------------------------------------------------------
