@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Shows arbitrary list of units. Built for infiltrated mission screen
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIPersonnel_PreSetList extends UIPersonnel;
 
 simulated function PrepareFromArray(array<StateObjectReference> UnitRefs)
