@@ -61,6 +61,23 @@ static function UICovertActionsGeoscape(optional StateObjectReference ActionToFo
 	HQPres.ScreenStack.Push(TheScreen);
 }
 
+static function UIPersonnel_PreSetList(array<StateObjectReference> UnitRefs, optional string Header)
+{
+	local XComHQPresentationLayer HQPres;
+	local UIPersonnel_PreSetList TheScreen;
+
+	HQPres = `HQPRES;
+	TheScreen = HQPres.Spawn(class'UIPersonnel_PreSetList', HQPres);
+	TheScreen.PrepareFromArray(UnitRefs);
+	
+	HQPres.ScreenStack.Push(TheScreen);
+
+	if (Header != "")
+	{
+		TheScreen.SetScreenHeader(Header);
+	}
+}
+
 static function string ColourText(string strValue, string strColour)
 {
 	return "<font color='#" $ strColour $ "'>" $ strValue $ "</font>";
