@@ -154,6 +154,11 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 
 simulated function BuildOptionsPanel()
 {
+	// The flash side is setup... very interestingly
+	// Yes, veeeeeryyyyyyy interestingly
+	// So screw it all, I'll fix it manually
+	// ViewSquadButton is obviously custom
+	
 	ViewSquadButton = Spawn(class'UIButton', ButtonGroup);
 	ViewSquadButton.InitButton('ViewSquadButton', "VIEW SQUAD", OnViewSquad);
 	ViewSquadButton.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
@@ -163,21 +168,16 @@ simulated function BuildOptionsPanel()
 	ViewSquadButton.SetPosition(BUTTON_X, -35);
 	ViewSquadButton.SetWidth(BUTTON_WIDTH);
 
-	// The flash side is setup... very interestingly
-	// Yes, veeeeeryyyyyyy interestingly
-	// So screw it all, I'll fix it manually
-	
 	Button1.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
 	Button1.SetText(m_strLaunchMission);
 	Button1.SetWidth(BUTTON_WIDTH);
-	Button1.SetX(BUTTON_X);
+	Button1.SetPosition(BUTTON_X, 0);
 	Button1.Hide();
 
 	Button2.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
 	Button2.SetText(GetInfiltration().MustLaunch() ? strReturnToAvenger : strWait);
 	Button2.SetWidth(BUTTON_WIDTH);
-	Button2.SetX(BUTTON_X);
-	Button2.SetY(35);
+	Button2.SetPosition(BUTTON_X, 35);
 	Button2.Hide();
 
 	// This call will hide the buttons on flash side, so I hid them above so that unreal isn't confused
