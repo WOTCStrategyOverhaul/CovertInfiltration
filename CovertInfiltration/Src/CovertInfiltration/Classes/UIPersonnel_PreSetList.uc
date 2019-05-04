@@ -137,7 +137,11 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 		m_arrTabButtons[eUIPersonnel_Deceased].bIsNavigable = false;
 	}
 
-	 // Misc
+	// Unfortunately, this is used by many a thing to check objectives progression
+	// Much easier to do this here instead of overriding multiple functions
+	HQState = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	// Misc
 
 	CreateSortHeaders();
 	UpdateNavHelp();

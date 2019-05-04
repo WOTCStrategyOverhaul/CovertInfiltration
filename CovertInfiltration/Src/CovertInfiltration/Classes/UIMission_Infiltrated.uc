@@ -7,6 +7,8 @@
 
 class UIMission_Infiltrated extends UIMission;
 
+var UIButton ViewSquadButton;
+
 var UIPanel OverInfiltrationPanel;
 var UIBGBox OverInfiltrationBG;
 var UIX2PanelHeader OverInfiltrationHeader;
@@ -152,6 +154,14 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 
 simulated function BuildOptionsPanel()
 {
+	ViewSquadButton = Spawn(class'UIButton', ButtonGroup);
+	ViewSquadButton.InitButton('ViewSquadButton', "VIEW SQUAD", OnViewSquad);
+	ViewSquadButton.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
+	ViewSquadButton.SetGamepadIcon(class'UIUtilities_Input'.const.ICON_X_SQUARE);
+	ViewSquadButton.AnchorCenter();
+	ViewSquadButton.SetPosition(BUTTON_X, -35);
+	ViewSquadButton.SetWidth(BUTTON_WIDTH);
+
 	// The flash side is setup... very interestingly
 	// Yes, veeeeeryyyyyyy interestingly
 	// So screw it all, I'll fix it manually
@@ -183,6 +193,10 @@ simulated function BuildOptionsPanel()
 
 		Button2.SetResizeToText(true);
 		Button2.OnSizeRealized = OnButton2SizeRealized;
+
+		ViewSquadButton.Hide();
+		ViewSquadButton.SetResizeToText(true);
+		ViewSquadButton.OnSizeRealized = OnViewSquadButtonSizeRealized;
 	}
 	else
 	{
@@ -205,6 +219,13 @@ simulated function OnButton2SizeRealized()
 	Button2.Show();
 }
 
+simulated function OnViewSquadButtonSizeRealized()
+{
+	// Buttons are center-anchored
+	ViewSquadButton.SetX(-ViewSquadButton.Width / 2);
+	ViewSquadButton.Show();
+}
+
 simulated function RefreshNavigation()
 {
 	// Override - do nothing
@@ -213,6 +234,46 @@ simulated function RefreshNavigation()
 simulated function OnButtonSizeRealized()
 {
 	// Override - do nothing
+}
+
+// INPUT
+
+simulated function bool OnUnrealCommand(int cmd, int arg)
+{
+	if(!CheckInputIsReleaseOrDirectionRepeat(cmd, arg))
+		return false;
+
+	switch(cmd)
+	{
+	case class'UIUtilities_Input'.static.GetAdvanceButtonInputCode():
+	case class'UIUtilities_Input'.const.FXS_KEY_ENTER:
+	case class'UIUtilities_Input'.const.FXS_KEY_SPACEBAR:
+		Button1.OnClickedDelegate(Button1);
+		return true;
+
+	case class'UIUtilities_Input'.static.GetBackButtonInputCode():
+	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
+	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
+		if(CanBackOut())
+		{
+			CloseScreen();
+		}
+		return true;
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_L3 :
+		if (SitrepPanel.bIsVisible)
+		{
+			SitrepPanel.OnInfoButtonMouseEvent(SitrepPanel.InfoButton);
+		}
+		return true;
+	
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_X:
+		ViewSquadButton.Click();
+		return true;
+	}
+
+	return super.OnUnrealCommand(cmd, arg);
 }
 
 //-------------- EVENT HANDLING --------------------------------------------------------
@@ -245,6 +306,11 @@ simulated function CloseScreen()
 		// Close the map as well - go back to avenger
 		Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
 	}
+}
+
+simulated protected function OnViewSquad(UIButton Button)
+{
+	class'UIUtilities_Infiltration'.static.UIPersonnel_PreSetList(GetInfiltration().SoldiersOnMission, "DEPLOYED SQUAD");
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------

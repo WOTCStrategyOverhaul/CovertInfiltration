@@ -152,6 +152,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIMission_Infiltrated.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIPersonnel_PreSetList.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UISkyrangerExfiltrate.uc">
       <SubType>Content</SubType>
     </Content>
