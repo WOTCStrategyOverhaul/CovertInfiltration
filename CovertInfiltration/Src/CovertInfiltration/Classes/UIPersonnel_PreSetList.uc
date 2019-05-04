@@ -167,3 +167,26 @@ simulated function UpdateData()
 {
 	// No-op
 }
+
+simulated function UpdateNavHelp()
+{
+	local UINavigationHelp NavHelp;
+
+	NavHelp = `HQPRES.m_kAvengerHUD.NavHelp;
+
+	NavHelp.ClearButtonHelp();
+	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
+
+	NavHelp.AddBackButton(OnCancel);
+
+	if (!`SCREENSTACK.IsInStack(class'UIStrategyMap'))
+	{
+		NavHelp.AddGeoscapeButton();
+	}
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		NavHelp.AddLeftHelp(m_strToggleSort, class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ class'UIUtilities_Input'.const.ICON_X_SQUARE);
+		NavHelp.AddLeftHelp(m_strChangeColumn, class'UIUtilities_Input'.const.ICON_DPAD_HORIZONTAL); //bsg-crobinson (5.15.17): Add change column icon
+	}
+}

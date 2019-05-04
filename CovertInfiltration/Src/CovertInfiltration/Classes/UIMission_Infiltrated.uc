@@ -158,7 +158,8 @@ simulated function BuildOptionsPanel()
 	ViewSquadButton.InitButton('ViewSquadButton', "VIEW SQUAD", OnViewSquad);
 	ViewSquadButton.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
 	ViewSquadButton.SetGamepadIcon(class'UIUtilities_Input'.const.ICON_X_SQUARE);
-	ViewSquadButton.AnchorCenter();
+	ViewSquadButton.SetResizeToText(false);
+	ViewSquadButton.SetOrigin(class'UIUtilities'.const.ANCHOR_MIDDLE_CENTER);
 	ViewSquadButton.SetPosition(BUTTON_X, -35);
 	ViewSquadButton.SetWidth(BUTTON_WIDTH);
 
