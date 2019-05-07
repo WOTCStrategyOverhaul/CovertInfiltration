@@ -15,7 +15,7 @@ strAbortAction="Abort Action"
 strCloseScreen="Close covert ops"
 strRisksHeader=Risks
 strDialogDataTitle="ABORT ACTION"
-strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!!"
+strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!"
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
@@ -32,7 +32,7 @@ strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
 [X2EventListener_Infiltration]
 strReinforcementDelayBannerMessage="Comms Jamming.."
-strReinforcementDelayBannerSubtitle="Advent Reinforcements Delayed:"
+strReinforcementDelayBannerSubtitle="ADVENT Reinforcements Delayed:"
 strReinforcementDelayBannerValue="1 Turn"
 
 [UIFacility_ResitanceRing]
@@ -88,13 +88,13 @@ ActionObjective="Rescue Scientist"
 ActionObjective="Neutralize VIP"
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="Advent Patrols"
+RiskName="ADVENT Patrols"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Intelligence Leak"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
-RiskName="Advent Air Patrols"
+RiskName="ADVENT Air Patrols"
 
 [CovertActionRisk_GunneryEmplacements X2CovertActionRiskTemplate]
 RiskName="Gunnery Emplacements"

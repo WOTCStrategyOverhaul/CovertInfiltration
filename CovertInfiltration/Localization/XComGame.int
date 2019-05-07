@@ -212,14 +212,14 @@ Description="Squad receives additional dodge during this mission."
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description"Squad receieves additional mental fortitude during this mission."
+Description="Squad receives additional mental fortitude during this mission."
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
 Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
-FriendlyName="Advent Patrols"
+FriendlyName="ADVENT Patrols"
 Description="This mission's Difficulty is increased by 1 level."
 
 [OpportuneMoment X2SitRepTemplate]
@@ -228,15 +228,15 @@ Description="This mission's Difficulty is decreased by 1 level."
 
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"
-Description="Advent has increased static defenses in this location."
+Description="ADVENT has increased static defenses in this location."
 
 [Phalanx_CI X2SitRepTemplate]
 FriendlyName="Phalanx"
-Description="All Enemy Pods have a ShieldBearer."
+Description="All enemy pods have a Shieldbearer."
 
 [Congregation X2SitRepTemplate]
 FriendlyName="Congregation"
-Description="All Enemy Pods have a Priest."
+Description="All enemy pods have a Priest."
 
 [ShoddyIntel X2SitRepTemplate]
 FriendlyName="Shoddy Intel"
@@ -252,7 +252,7 @@ Description="A Resistance soldier joins the squad for this operation."
 
 [DoubleAgent X2SitRepTemplate]
 FriendlyName="Double Agent"
-Description="An Advent Defector joins the squad for this operation."
+Description="An ADVENT defector joins the squad for this operation."
 
 [IntelligenceLeak X2SitRepTemplate]
 FriendlyName="Intelligence Leak"
@@ -260,24 +260,24 @@ Description="Start mission without concealment and compromised detection radius 
 
 [TacticalAnalysis X2SitRepTemplate]
 FriendlyName="Tactical Analysis"
-Description="Enemies activated on the XCOM  turn will receive only one action on their turn."
+Description="Enemies activated on the XCOM turn will receive only one action on their turn."
 
 [AdventAirPatrols X2SitRepTemplate]
-FriendlyName="Advent Air Patrols"
-Description="Extra Advent reinforcements will be dropped into the mission site once squad concealment is lost."
+FriendlyName="ADVENT Air Patrols"
+Description="Extra ADVENT reinforcements will be dropped into the mission site once squad concealment is lost."
 
 [CommsJamming X2SitRepTemplate]
 FriendlyName="Comms Jamming"
 Description="The first Reinforcements dropship is guaranteed to be delayed."
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="Advent Patrols"
+RiskName="ADVENT Patrols"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Intelligence Leak"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
-RiskName="Advent Air Patrols"
+RiskName="ADVENT Air Patrols"
 
 [CovertActionRisk_GunneryEmplacements X2CovertActionRiskTemplate]
 RiskName="Gunnery Emplacements"
@@ -291,7 +291,7 @@ Description="Due to an intelligence leak we won't start with concealment here"
 
 [IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Increased Detection Range"
-Description="Due to an intelligence leak Advent is aware we're coming and our concealed units will be more easily spotted"
+Description="Due to an intelligence leak ADVENT is aware we're coming and our concealed units will be more easily spotted"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Trivial"
