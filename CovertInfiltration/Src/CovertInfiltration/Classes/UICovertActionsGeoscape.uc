@@ -67,6 +67,7 @@ var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIText DurationLabel, DurationValue;
 var UIText ExfiltrateLabel, ExfiltrateValue;
+var UIText ExpirationLabel, ExpirationValue;
 var UIButton MainActionButton, CloseScreenButton;
 
 // UI - action risks
@@ -100,6 +101,7 @@ var localized string strRewardHeader;
 var localized string strSlotsHeader;
 var localized string strInfiltration;
 var localized string strExfilLabel;
+var localized string strExpiryLabel;
 var localized string strAbortAction;
 var localized string strOpenLoadout;
 var localized string strCloseScreen;
@@ -462,7 +464,7 @@ simulated protected function BuildButtons()
 	DurationValue.bAnimateOnInit = false;
 	DurationValue.InitText('DurationValue');
 	DurationValue.SetWidth(ButtonGroupWrap.Width);
-
+	
 	ExfiltrateLabel = Spawn(class'UIText', ButtonGroupWrap);
 	ExfiltrateLabel.bAnimateOnInit = false;
 	ExfiltrateLabel.InitText('ExfiltrateLabel');
@@ -474,6 +476,18 @@ simulated protected function BuildButtons()
 	ExfiltrateValue.InitText('ExfiltrateValue');
 	ExfiltrateValue.SetPosition(0, 30);
 	ExfiltrateValue.SetWidth(ButtonGroupWrap.Width);
+	
+	ExpirationLabel = Spawn(class'UIText', ButtonGroupWrap);
+	ExpirationLabel.bAnimateOnInit = false;
+	ExpirationLabel.InitText('ExpirationLabel');
+	ExpirationLabel.SetPosition(0, 30);
+	ExpirationLabel.SetWidth(ButtonGroupWrap.Width);
+	
+	ExpirationValue = Spawn(class'UIText', ButtonGroupWrap);
+	ExpirationValue.bAnimateOnInit = false;
+	ExpirationValue.InitText('ExpirationValue');
+	ExpirationValue.SetPosition(0, 30);
+	ExpirationValue.SetWidth(ButtonGroupWrap.Width);
 
 	MainActionButton = Spawn(class'UIButton', ButtonGroupWrap);
 	MainActionButton.bAnimateOnInit = false;
@@ -802,12 +816,18 @@ simulated function UpdateCovertActionInfo()
 
 	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
-
+	
 	ExfiltrateLabel.SetText(strExfilLabel);
 	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
 	
+	ExpirationLabel.SetText(strExpiryLabel);
+	ExpirationValue.SetText(class'UIUtilities_Text'.static.AlignRight(string(GetExpirationDays())));
+	
 	if (GetAction().bStarted)
 	{
+		ExpirationLabel.Hide();
+		ExpirationValue.Hide();
+
 		ExfiltrateLabel.Show();
 		ExfiltrateValue.Show();
 	}
@@ -815,10 +835,22 @@ simulated function UpdateCovertActionInfo()
 	{
 		ExfiltrateLabel.Hide();
 		ExfiltrateValue.Hide();
+
+		ExpirationLabel.Show();
+		ExpirationValue.Show();
 	}
 
 	UpdateSlots();
 	UpdateRisks();
+}
+
+simulated protected function int GetExpirationDays()
+{
+	local ActionExpirationInfo ExpirationInfo;
+
+	class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo);
+	
+	return class'X2StrategyGameRulesetDataStructures'.static.DifferenceInDays(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
 }
 
 simulated protected function UpdateSlots()

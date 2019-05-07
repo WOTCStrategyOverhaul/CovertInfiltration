@@ -10,12 +10,13 @@ strRewardHeader=Reward
 strSlotsHeader="Deployable resources"
 strInfiltration="INFILTRATION MISSION"
 strExfilLabel="EXFILTRATION COST:"
-strOpenLoadout="Go to loadout"
+strExpiryLabel="DAYS UNTIL EXPIRY:"
+strOpenLoadout="Go to Loadout"
 strAbortAction="Abort Action"
-strCloseScreen="Close covert ops"
+strCloseScreen="Close Covert Ops"
 strRisksHeader=Risks
 strDialogDataTitle="ABORT ACTION"
-strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!!"
+strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!"
 
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
@@ -52,7 +53,7 @@ DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
 
 [UIUtilities_Infiltration]
-strDropUpgrade=Remove Upgrade
+strDropUpgrade=REMOVE UPGRADE
 strStripUpgrades=MAKE UPGRADES AVAILABLE
 strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
 strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
