@@ -37,6 +37,7 @@ static function Update()
 {
 	local XComGameState_PhaseOneActionsSpawner Spawner;
 	local XComGameState NewGameState;
+	local UIStrategyMap StrategyMap;
 	local bool bDirty;
 
 	Spawner = GetSpawner(false); // Do not spam redscreens every tick
@@ -48,9 +49,11 @@ static function Update()
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: XComGameState_PhaseOneActionsSpawner update");
 	Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.ModifyStateObject(class'XComGameState_PhaseOneActionsSpawner', Spawner.ObjectID));
+	
+	StrategyMap = `HQPRES.StrategyMap2D;
 
 	// STEP 1: we check if we are due spawning an action at CachedWorkRate
-	if (Spawner.ShouldSpawnAction())
+	if (Spawner.ShouldSpawnAction() && StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
 	{
 		`log("Enough work for P1, staring spawning",, 'CI_P1Spawner');
 		bDirty = true;
