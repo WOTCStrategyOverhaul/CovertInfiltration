@@ -76,6 +76,9 @@
     <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
       <SubType>Content</SubType>
     </Content>
