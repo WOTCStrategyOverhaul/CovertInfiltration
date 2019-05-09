@@ -277,6 +277,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Tactical');
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
+	Template.AddEvent('SquadConcealmentBroken', CallReinforcementsOnSupplyExtraction);
 	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
 	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun, ELD_OnStateSubmitted);
@@ -365,6 +366,33 @@ static protected function EventListenerReturn AddCovertEscapeObjective(Object Ev
 	History.SetVisualizer(InteractiveObject.ObjectID, Visualizer);
 	InteractiveObject.SetInitialState(Visualizer);
 	Visualizer.SetObjectIDFromState(InteractiveObject);
+
+	return ELR_NoInterrupt;
+}
+
+static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComGameState NewGameState;
+	local XComGameState_CIReinforcementsManager ManagerState;
+	local DelayedReinforcementOrder DelayedReinforcementOrder;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager (Mid Turn)");
+	ManagerState = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager();
+	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
+
+	if (`TACTICALMISSIONMGR.ActiveMission.sType != "SupplyExtraction")
+	{
+		return ELR_NoInterrupt;
+	}
+
+	DelayedReinforcementOrder.EncounterID = 'ADVx3_Standard';
+	DelayedReinforcementOrder.TurnsUntilSpawn = 3;
+	DelayedReinforcementOrder.Repeating = true;
+	DelayedReinforcementOrder.RepeatTime = 2;
+
+	ManagerState.DelayedReinforcementOrders.AddItem(DelayedReinforcementOrder);
+
+	`TACTICALRULES.SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
 }
