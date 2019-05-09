@@ -204,7 +204,7 @@ static protected function EventListenerReturn ShouldEmptySlotsOnActionRemoval(Ob
 	
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertAction_RemoveEntity_ShouldEmptySlots') return ELR_NoInterrupt;
 
-	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action) && Action.bStarted == false)
 	{
 		// do not kick people from finished infiltration - we will do it right before launching the mission
 		Tuple.Data[0].b = false;
