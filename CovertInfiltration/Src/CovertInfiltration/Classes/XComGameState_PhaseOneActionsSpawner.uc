@@ -55,7 +55,7 @@ static function Update()
 	// STEP 1: we check if we are due spawning an action at CachedWorkRate
 	if (Spawner.ShouldSpawnAction() && StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
 	{
-		`log("Enough work for P1, staring spawning",, 'CI_P1Spawner');
+		`log("Enough work for P1, starting spawning",, 'CI_P1Spawner');
 		bDirty = true;
 		
 		Spawner.SpawnAction(NewGameState);

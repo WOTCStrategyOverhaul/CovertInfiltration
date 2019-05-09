@@ -783,6 +783,7 @@ simulated function UpdateCovertActionInfo()
 {
 	local XComGameState_CovertAction CurrentAction;
 	local array<StrategyCostScalar> CostScalars;
+	local ActionExpirationInfo ExpirationInfo;
 
 	CurrentAction = GetAction();
 	CostScalars.Length = 0; // Avoid complier warning
@@ -823,8 +824,11 @@ simulated function UpdateCovertActionInfo()
 	ExpirationLabel.SetText(strExpiryLabel);
 	ExpirationValue.SetText(class'UIUtilities_Text'.static.AlignRight(string(GetExpirationDays())));
 	
+	`log("Updating CA info!");
+
 	if (GetAction().bStarted)
 	{
+		`log("Action begun!");
 		ExpirationLabel.Hide();
 		ExpirationValue.Hide();
 
@@ -833,11 +837,22 @@ simulated function UpdateCovertActionInfo()
 	}
 	else
 	{
+		`log("Action pending!");
 		ExfiltrateLabel.Hide();
 		ExfiltrateValue.Hide();
-
-		ExpirationLabel.Show();
-		ExpirationValue.Show();
+		
+		if (class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo))
+		{
+			`redscreen("Action expiring!");
+			ExpirationLabel.Show();
+			ExpirationValue.Show();
+		}
+		else
+		{
+			`log("Action infinite!");
+			ExpirationLabel.Hide();
+			ExpirationValue.Hide();
+		}
 	}
 
 	UpdateSlots();
