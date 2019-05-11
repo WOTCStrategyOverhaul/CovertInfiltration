@@ -1,0 +1,1 @@
+class X2MissionChainStage_Assault extends X2MissionChainStage;

@@ -1,0 +1,1 @@
+class X2MissionChainStage_CovertAction extends X2MissionChainStage;

@@ -31,25 +31,11 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 	Template.bShowRewardOnPin = true;
 	Template.OnSuccessFn = GatherLeadOnSuccess;
 	Template.OnFailureFn = GatherLeadOnFailure;
-	//Template.OnExpireFn = GuerillaOpOnExpire;
 	Template.DifficultyValue = 1;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
 	Template.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Guerrilla_Ops";
 	Template.GetMissionDifficultyFn = GetMissionDifficultyFromMonth;
-	//Template.SpawnMissionsFn = SpawnGuerillaOpsMissions;
-	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	Template.GetSitRepsFn = GetSitRepsFromRisk;
-
-	/*DeckEntry.RewardName = 'Reward_Supplies';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
-	DeckEntry.RewardName = 'Reward_Soldier';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
-	DeckEntry.RewardName = 'Reward_Intel';
-	DeckEntry.Quantity = 2;
-	Template.RewardDeck.AddItem(DeckEntry);*/
 
 	return Template;
 }
@@ -59,9 +45,6 @@ static function X2DataTemplate CreateGatherLeadTemplate()
 static function GatherLeadOnSuccess(XComGameState NewGameState, XComGameState_MissionSite MissionState)
 {
 	GiveRewards(NewGameState, MissionState);
-	//SpawnPointOfInterest(NewGameState, MissionState); // No POIs here
-	//CleanUpGuerillaOps(NewGameState, MissionState.ObjectID);
-	
 	MissionState.RemoveEntity(NewGameState);
 	`XEVENTMGR.TriggerEvent('GuerillaOpComplete', , , NewGameState);
 	
@@ -85,27 +68,11 @@ static function X2DataTemplate CreateDarkEventTemplate()
 	Template.bIncreasesForceLevel = false;
 	Template.bShowRewardOnPin = true;
 	Template.OnSuccessFn = DarkEventOnSuccess;
-	//Template.OnFailureFn = GuerillaOpOnFailure;
-	//Template.OnExpireFn = GuerillaOpOnExpire;
 	Template.DifficultyValue = 1;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
 	Template.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Guerrilla_Ops";
 	Template.GetMissionDifficultyFn = GetMissionDifficultyFromMonth;
-	//Template.SpawnMissionsFn = SpawnGuerillaOpsMissions;
-	//Template.MissionPopupFn = GuerillaOpsPopup;
 	Template.WasMissionSuccessfulFn = StrategyObjectivePlusSweepCompleted;
-	Template.GetMissionRegionFn = GetGuerillaOpRegions;
-	Template.GetSitRepsFn = GetSitRepsFromRisk;
-
-	DeckEntry.RewardName = 'Reward_Supplies';
-	DeckEntry.Quantity = 2;
-	Template.RewardDeck.AddItem(DeckEntry);
-	DeckEntry.RewardName = 'Reward_Soldier';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
-	DeckEntry.RewardName = 'Reward_Intel';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
 
 	return Template;
 }
@@ -132,23 +99,11 @@ static function X2DataTemplate CreateEngineerTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2MissionSourceTemplate', Template, 'MissionSource_Engineer');
 	Template.bIncreasesForceLevel = false;
-	//Template.bDisconnectRegionOnFail = true;
 	Template.OnSuccessFn = Phase2OnSuccess;
-	//Template.OnFailureFn = CouncilOnFailure;
-	//Template.OnExpireFn = CouncilOnExpire;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
 	Template.MissionImage = "img://UILibrary_Common.Councilman_small";
 	Template.GetMissionDifficultyFn = GetCouncilMissionDifficulty;
-	//Template.SpawnMissionsFn = SpawnCouncilMission;
-	//Template.MissionPopupFn = CouncilPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
-	Template.GetMissionRegionFn = GetCalendarMissionRegion;
-	Template.GetSitRepsFn = GetSitRepsFromRisk;
-
-	DeckEntry.RewardName = 'Reward_Engineer';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
 
 	return Template;
 }
@@ -160,23 +115,11 @@ static function X2DataTemplate CreateScientistTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2MissionSourceTemplate', Template, 'MissionSource_Scientist');
 	Template.bIncreasesForceLevel = false;
-	//Template.bDisconnectRegionOnFail = true;
 	Template.OnSuccessFn = Phase2OnSuccess;
-	//Template.OnFailureFn = CouncilOnFailure;
-	//Template.OnExpireFn = CouncilOnExpire;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
 	Template.MissionImage = "img://UILibrary_Common.Councilman_small";
 	Template.GetMissionDifficultyFn = GetCouncilMissionDifficulty;
-	//Template.SpawnMissionsFn = SpawnCouncilMission;
-	//Template.MissionPopupFn = CouncilPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
-	Template.GetMissionRegionFn = GetCalendarMissionRegion;
-	Template.GetSitRepsFn = GetSitRepsFromRisk;
-
-	DeckEntry.RewardName = 'Reward_Scientist';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
 
 	return Template;
 }
@@ -188,23 +131,11 @@ static function X2DataTemplate CreateDarkVIPTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2MissionSourceTemplate', Template, 'MissionSource_DarkVIP');
 	Template.bIncreasesForceLevel = false;
-	//Template.bDisconnectRegionOnFail = true;
 	Template.OnSuccessFn = Phase2OnSuccess;
-	//Template.OnFailureFn = CouncilOnFailure;
-	//Template.OnExpireFn = CouncilOnExpire;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
 	Template.MissionImage = "img://UILibrary_Common.Councilman_small";
 	Template.GetMissionDifficultyFn = GetCouncilMissionDifficulty;
-	//Template.SpawnMissionsFn = SpawnCouncilMission;
-	//Template.MissionPopupFn = CouncilPopup;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	//Template.RequireLaunchMissionPopupFn = CouncilRequireLaunchMissionPopup;
-	Template.GetMissionRegionFn = GetCalendarMissionRegion;
-	Template.GetSitRepsFn = GetSitRepsFromRisk;
-
-	DeckEntry.RewardName = 'Reward_Intel';
-	DeckEntry.Quantity = 1;
-	Template.RewardDeck.AddItem(DeckEntry);
 
 	return Template;
 }
@@ -218,37 +149,4 @@ static function Phase2OnSuccess(XComGameState NewGameState, XComGameState_Missio
 	GiveRewards(NewGameState, MissionState, ExcludeIndices);
 	MissionState.RemoveEntity(NewGameState);
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
-}
-
-static function array<name> GetSitRepsFromRisk(XComGameState_MissionSite MissionState)
-{
-	local XComGameState_MissionSiteInfiltration InfiltrationState;
-	local XComGameState_CovertAction ActionState;
-	local ActionFlatRiskSitRep FlatRiskSitRep;
-	local array<name> ActiveSitReps;
-	local CovertActionRisk Risk;
-
-	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
-
-	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(InfiltrationState.CorrespondingActionRef.ObjectID));
-	
-	if (ActionState != none)
-	{
-		foreach ActionState.Risks(Risk)
-		{
-			if (Risk.bOccurs)
-			{
-				foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
-				{
-					if (FlatRiskSitRep.FlatRiskName == Risk.RiskTemplateName)
-					{
-						ActiveSitReps.AddItem(FlatRiskSitRep.SitRepName);
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	return ActiveSitReps;
 }
