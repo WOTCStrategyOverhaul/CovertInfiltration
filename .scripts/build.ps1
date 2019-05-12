@@ -173,8 +173,8 @@ New-Item "$stagingPath/Script" -ItemType Directory
 # read mod metadata from the x2proj file
 Write-Host "Reading mod metadata from $modSrcRoot\$modNameCanonical.x2proj..."
 [xml]$x2projXml = Get-Content -Path "$modSrcRoot\$modNameCanonical.x2proj"
-$modProperties = $x2projXml.Project.PropertyGroup
-$modPublishedId = $modProperties.SteamPublishID[0]
+$modProperties = $x2projXml.Project.PropertyGroup[0]
+$modPublishedId = $modProperties.SteamPublishID
 $modTitle = $modProperties.Name
 $modDescription = $modProperties.Description
 Write-Host "Read."
@@ -189,10 +189,13 @@ Write-Host "Mirroring SrcOrig to Src..."
 Robocopy.exe "$sdkPath\Development\SrcOrig" "$sdkPath\Development\Src" *.uc *.uci /S /E /DCOPY:DA /COPY:DAT /PURGE /MIR /NP /R:1000000 /W:30 2>&1>$null
 Write-Host "Mirrored."
 
-# move Highlander's source files to Src so that the mod can use them
+# mirror Highlander's source files to Src so that the mod can use them
 Write-Host "Copying Highlander files to Src..."
 Robocopy.exe "$srcDirectory\X2WOTCCommunityHighlander\X2WOTCCommunityHighlander\Src" "$sdkPath\Development\Src" *.uc *.uci /XD X2WOTCCommunityHighlander /S /E /DCOPY:DA /COPY:DAT /NP /R:1000000 /W:30 2>&1>$null
 Write-Host "Copied."
+
+Write-Host "Updating CHL version and commit..."
+& "$srcDirectory\X2WOTCCommunityHighlander\.scripts\update_version.ps1" -ps "$srcDirectory\X2WOTCCommunityHighlander\VERSION.ps1" -srcDirectory "$sdkPath\Development\Src\" -use_commit
 
 for ($i=0; $i -lt $includes.length; $i++)
 {
