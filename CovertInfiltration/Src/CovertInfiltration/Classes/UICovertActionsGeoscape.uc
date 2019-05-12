@@ -100,7 +100,6 @@ var localized string strRewardHeader;
 var localized string strSlotsHeader;
 var localized string strInfiltration;
 var localized string strExfilLabel;
-var localized string strExpiryLabel;
 var localized string strAbortAction;
 var localized string strOpenLoadout;
 var localized string strCloseScreen;
@@ -463,7 +462,7 @@ simulated protected function BuildButtons()
 	DurationValue.bAnimateOnInit = false;
 	DurationValue.InitText('DurationValue');
 	DurationValue.SetWidth(ButtonGroupWrap.Width);
-	
+
 	ExfiltrateLabel = Spawn(class'UIText', ButtonGroupWrap);
 	ExfiltrateLabel.bAnimateOnInit = false;
 	ExfiltrateLabel.InitText('ExfiltrateLabel');
@@ -475,7 +474,7 @@ simulated protected function BuildButtons()
 	ExfiltrateValue.InitText('ExfiltrateValue');
 	ExfiltrateValue.SetPosition(0, 30);
 	ExfiltrateValue.SetWidth(ButtonGroupWrap.Width);
-	
+
 	MainActionButton = Spawn(class'UIButton', ButtonGroupWrap);
 	MainActionButton.bAnimateOnInit = false;
 	MainActionButton.InitButton('MainActionButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
@@ -803,12 +802,10 @@ simulated function UpdateCovertActionInfo()
 
 	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));
-	
+
 	ExfiltrateLabel.SetText(strExfilLabel);
 	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
 	
-	`log("Updating CA info!");
-
 	if (GetAction().bStarted)
 	{
 		ExfiltrateLabel.Show();
@@ -822,15 +819,6 @@ simulated function UpdateCovertActionInfo()
 
 	UpdateSlots();
 	UpdateRisks();
-}
-
-simulated protected function int GetExpirationDays()
-{
-	local ActionExpirationInfo ExpirationInfo;
-
-	class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo);
-	
-	return class'X2StrategyGameRulesetDataStructures'.static.DifferenceInDays(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
 }
 
 simulated protected function UpdateSlots()

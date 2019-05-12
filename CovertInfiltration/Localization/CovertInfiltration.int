@@ -10,7 +10,6 @@ strRewardHeader=Reward
 strSlotsHeader="Deployable resources"
 strInfiltration="INFILTRATION MISSION"
 strExfilLabel="EXFILTRATION COST:"
-strExpiryLabel="DAYS UNTIL EXPIRY:"
 strOpenLoadout="Go to Loadout"
 strAbortAction="Abort Action"
 strCloseScreen="Close Covert Ops"
