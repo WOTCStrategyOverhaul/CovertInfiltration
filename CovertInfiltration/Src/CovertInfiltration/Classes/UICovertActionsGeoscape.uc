@@ -67,7 +67,6 @@ var UIPanel ButtonGroupWrap;
 var UIBGBox ButtonsBG;
 var UIText DurationLabel, DurationValue;
 var UIText ExfiltrateLabel, ExfiltrateValue;
-var UIText ExpirationLabel, ExpirationValue;
 var UIButton MainActionButton, CloseScreenButton;
 
 // UI - action risks
@@ -477,18 +476,6 @@ simulated protected function BuildButtons()
 	ExfiltrateValue.SetPosition(0, 30);
 	ExfiltrateValue.SetWidth(ButtonGroupWrap.Width);
 	
-	ExpirationLabel = Spawn(class'UIText', ButtonGroupWrap);
-	ExpirationLabel.bAnimateOnInit = false;
-	ExpirationLabel.InitText('ExpirationLabel');
-	ExpirationLabel.SetPosition(0, 30);
-	ExpirationLabel.SetWidth(ButtonGroupWrap.Width);
-	
-	ExpirationValue = Spawn(class'UIText', ButtonGroupWrap);
-	ExpirationValue.bAnimateOnInit = false;
-	ExpirationValue.InitText('ExpirationValue');
-	ExpirationValue.SetPosition(0, 30);
-	ExpirationValue.SetWidth(ButtonGroupWrap.Width);
-
 	MainActionButton = Spawn(class'UIButton', ButtonGroupWrap);
 	MainActionButton.bAnimateOnInit = false;
 	MainActionButton.InitButton('MainActionButton', strOpenLoadout, OnConfirmClicked, eUIButtonStyle_HOTLINK_BUTTON);
@@ -783,7 +770,6 @@ simulated function UpdateCovertActionInfo()
 {
 	local XComGameState_CovertAction CurrentAction;
 	local array<StrategyCostScalar> CostScalars;
-	local ActionExpirationInfo ExpirationInfo;
 
 	CurrentAction = GetAction();
 	CostScalars.Length = 0; // Avoid complier warning
@@ -821,38 +807,17 @@ simulated function UpdateCovertActionInfo()
 	ExfiltrateLabel.SetText(strExfilLabel);
 	ExfiltrateValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
 	
-	ExpirationLabel.SetText(strExpiryLabel);
-	ExpirationValue.SetText(class'UIUtilities_Text'.static.AlignRight(string(GetExpirationDays())));
-	
 	`log("Updating CA info!");
 
 	if (GetAction().bStarted)
 	{
-		`log("Action begun!");
-		ExpirationLabel.Hide();
-		ExpirationValue.Hide();
-
 		ExfiltrateLabel.Show();
 		ExfiltrateValue.Show();
 	}
 	else
 	{
-		`log("Action pending!");
 		ExfiltrateLabel.Hide();
 		ExfiltrateValue.Hide();
-		
-		if (class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(GetAction().GetReference(), ExpirationInfo))
-		{
-			`redscreen("Action expiring!");
-			ExpirationLabel.Show();
-			ExpirationValue.Show();
-		}
-		else
-		{
-			`log("Action infinite!");
-			ExpirationLabel.Hide();
-			ExpirationValue.Hide();
-		}
 	}
 
 	UpdateSlots();
