@@ -119,7 +119,7 @@ static function int GetNextReinforcements()
 			if (NextDRO.Repeating)
 			{	
 				NewDRO.EncounterID = NextDRO.EncounterID;
-				NewDRO.TurnsUntilSpawn = NextDRO.RepeatTime;
+				NewDRO.TurnsUntilSpawn = NextDRO.RepeatTime + 1;
 				NewDRO.Repeating = true;
 				NewDRO.RepeatTime = NextDRO.RepeatTime;
 				
