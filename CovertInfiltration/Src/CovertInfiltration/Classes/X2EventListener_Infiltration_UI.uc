@@ -293,6 +293,7 @@ static function CHEventListenerTemplate CreateEventQueueListeners()
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_EventQueue');
 	Template.AddCHEvent('GetCovertActionEvents_Settings', GetCovertActionEvents_Settings, ELD_Immediate); // Relies on CHL #391, will be avaliable in v1.18
+	Template.AddCHEvent('OverrideNoCaEventMinMonths', OverrideNoCaEventMinMonths, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -310,6 +311,19 @@ static protected function EventListenerReturn GetCovertActionEvents_Settings(Obj
 	// Insert it sorted
 	Tuple.Data[1].b = true;
 	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideNoCaEventMinMonths(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'OverrideNoCaEventMinMonths') return ELR_NoInterrupt;
+	
+	// set to 0 to force nag
+	Tuple.Data[0].i = 0;
+
 	return ELR_NoInterrupt;
 }
 
