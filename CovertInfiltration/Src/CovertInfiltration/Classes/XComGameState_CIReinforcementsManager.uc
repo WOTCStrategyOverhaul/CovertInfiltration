@@ -91,7 +91,7 @@ static function int GetNextReinforcements()
 {
 	local XComGameState NewGameState;
 	local XComGameState_CIReinforcementsManager ManagerState;
-	local DelayedReinforcementOrder NextDRO;
+	local DelayedReinforcementOrder NextDRO, NewDRO;
 	local bool bOrderCompleted;
 
 	ManagerState = GetReinforcementsManager(true);
@@ -115,6 +115,16 @@ static function int GetNextReinforcements()
 		if (bOrderCompleted)
 		{// we need a fresh gamestate to do this
 			class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(NextDRO.EncounterID, default.Threshold, , , 6, , , , , , , , true);
+
+			if (NextDRO.Repeating)
+			{	
+				NewDRO.EncounterID = NextDRO.EncounterID;
+				NewDRO.TurnsUntilSpawn = NextDRO.RepeatTime + 1;
+				NewDRO.Repeating = true;
+				NewDRO.RepeatTime = NextDRO.RepeatTime;
+				
+				ManagerState.DelayedReinforcementOrders.AddItem(NewDRO);
+			}
 		}
 	}
 	else

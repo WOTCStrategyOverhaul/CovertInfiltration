@@ -25,6 +25,8 @@ struct DelayedReinforcementOrder
 {
 	var name EncounterID;
 	var int TurnsUntilSpawn;
+	var bool Repeating;
+	var int RepeatTime;
 };
 
 struct ItemAvaliableImageReplacement
