@@ -273,19 +273,19 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationUtilityItems.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2MissionChainStage.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2MissionChainStage_Assault.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Assault.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2MissionChainStage_CovertAction.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2MissionChainStage_Infiltration.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2MissionChainTemplate.uc">
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityChainTemplate.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">

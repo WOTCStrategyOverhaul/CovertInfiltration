@@ -1,4 +1,4 @@
-class X2MissionChainStage_Infiltration extends X2MissionChainStage;
+class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Assault;
 
 var name CovertActionName;
 var name MissionSourceName;
