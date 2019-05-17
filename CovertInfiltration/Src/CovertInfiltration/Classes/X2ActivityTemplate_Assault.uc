@@ -1,1 +1,1 @@
-class X2ActivityTemplate_Assault extends X2ActivityTemplate;
+class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission;

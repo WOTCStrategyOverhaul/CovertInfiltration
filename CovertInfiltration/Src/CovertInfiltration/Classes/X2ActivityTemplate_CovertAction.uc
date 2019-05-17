@@ -1,1 +1,1 @@
-class X2ActivityTemplate_CovertAction extends X2ActivityTemplate_Assault;
+class X2ActivityTemplate_CovertAction extends X2ActivityTemplate;
