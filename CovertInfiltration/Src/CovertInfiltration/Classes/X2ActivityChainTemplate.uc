@@ -6,5 +6,5 @@ var localized string Description;
 
 var array<name> Stages;
 
-delegate SetupChain(XComGameState_ActivityChain ChainState); // Called before stage's callbacks
-delegate CleanupChain(XComGameState_ActivityChain ChainState); // Called after stage's callbacks
+delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
+delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks

@@ -51,5 +51,5 @@ event OnCreation (optional X2DataTemplate Template)
 
 function XComGameState_ActivityChain GetActivityChain ()
 {
-	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainRef));
+	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainRef.ObjectID));
 }

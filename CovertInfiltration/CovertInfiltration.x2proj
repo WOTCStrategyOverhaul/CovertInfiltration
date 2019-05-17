@@ -224,6 +224,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_SitRepAbilitySet_CI.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2CovertInfiltrationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
@@ -310,6 +313,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_StaffSlots_Infiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_ActivityChain.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CIReinforcementsManager.uc">

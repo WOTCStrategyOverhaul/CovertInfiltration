@@ -1,1 +1,3 @@
 class X2ActivityTemplate_CovertAction extends X2ActivityTemplate;
+
+var name CovertActionName;
