@@ -45,6 +45,9 @@ event OnCreation (optional X2DataTemplate Template)
 	m_TemplateName = Template.DataName;
 }
 
+// Runs before the lifecycle callbacks on templates are called
+function OnEarlySetup(XComGameState NewGameState);
+
 /////////////
 /// Chain ///
 /////////////
