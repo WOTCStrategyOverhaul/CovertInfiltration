@@ -17,6 +17,10 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+// Region(s) where this chain is taking place
+var protectedwrite StateObjectReference PrimaryRegionRef;
+var protectedwrite StateObjectReference SecondaryRegionRef;
+
 // Progress tracking
 var protectedwrite int iCurrentStage;
 var protectedwrite bool bEnded;
@@ -70,6 +74,13 @@ function SetupChain (XComGameState NewGameState)
 	TemplateManager = GetMyTemplateManager();
 	GetMyTemplate();
 
+	// First, choose the region(s). Stages may need this during setup
+	if (m_Template.ChooseRegions != none)
+	{
+		m_Template.ChooseRegions(self, PrimaryRegionRef, SecondaryRegionRef);
+	}
+
+	// Craete the stages
 	StageRefs.Length = m_Template.Stages.Length;
 
 	foreach m_Template.Stages(ActivityTemplateName, i)
