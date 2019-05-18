@@ -1,11 +1,26 @@
 class X2ActivityTemplate_Mission extends X2ActivityTemplate abstract;
 
+const MISSION_SOURCE_NAME = 'MissionSource_ActivityCI';
+
 var array<name> MissionFamilies; // Used for selecting mission type
 var array<name> MissionRewards;
 var string UIButtonIcon;
 
-delegate OnSuccessDelegate(XComGameState NewGameState, XComGameState_MissionSite MissionState);
-delegate OnFailureDelegate(XComGameState NewGameState, XComGameState_MissionSite MissionState);
-delegate int GetMissionDifficulty(XComGameState_MissionSite MissionState);
-delegate string GetOverworldMeshPath(XComGameState_MissionSite MissionState);
-delegate bool WasMissionSuccessful(XComGameState_BattleData BattleDataState);
+////////////////////////////////////////////
+/// Proxied from X2MissionSourceTemplate ///
+////////////////////////////////////////////
+
+delegate OnSuccess (XComGameState NewGameState, XComGameState_Activity ActivityState);
+delegate OnFailure (XComGameState NewGameState, XComGameState_Activity ActivityState);
+delegate OnExpire (XComGameState NewGameState, XComGameState_Activity ActivityState);
+
+delegate OnTriadSuccess (XComGameState NewGameState, XComGameState_Activity ActivityState);
+delegate OnTriadFailure (XComGameState NewGameState, XComGameState_Activity ActivityState);
+
+delegate int GetMissionDifficulty (XComGameState_Activity ActivityState);
+delegate string GetOverworldMeshPath (XComGameState_Activity ActivityState);
+delegate bool WasMissionSuccessful (XComGameState_BattleData BattleDataState);
+delegate array<name> GetSitreps (XComGameState_MissionSite MissionState, XComGameState_Activity ActivityState);
+
+delegate bool RequireLaunchMissionPopup (XComGameState_MissionSite MissionState, XComGameState_Activity ActivityState);
+delegate bool CanLaunchMission (XComGameState_MissionSite MissionState, XComGameState_Activity ActivityState);

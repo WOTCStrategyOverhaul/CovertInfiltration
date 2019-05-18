@@ -148,3 +148,27 @@ protected function bool ValidateCanMarkCompletion ()
 
 	return true;
 }
+
+//////////////////////
+/// Static helpers ///
+//////////////////////
+
+static function XComGameState_Activity GetActivityFromPrimaryObject (XComGameState_BaseObject StateObject)
+{
+	return GetActivityFromPrimaryObjectID(StateObject.ObjectID);
+}
+
+static function XComGameState_Activity GetActivityFromPrimaryObjectID (int StateObjectID)
+{
+	local XComGameState_Activity Activity;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', Activity)
+	{
+		if (Activity.PrimaryObjectRef.ObjectID == StateObjectID)
+		{
+			return Activity;
+		}
+	}
+
+	return none;
+}
