@@ -230,18 +230,6 @@
     <Content Include="Src\CovertInfiltration\Classes\X2CovertInfiltrationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2CovertMissionInfo.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2CovertMissionInfoTemplate.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2CovertMissionInfoTemplateManager.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2CovertMissionInfo_DefaultMissions.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration.uc" />
     <Content Include="Src\CovertInfiltration\Classes\X2Effect_MentalReadiness.uc">
       <SubType>Content</SubType>
