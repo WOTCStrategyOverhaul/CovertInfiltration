@@ -9,7 +9,7 @@ var array<name> Stages;
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
 
-function XComGameState_ActivityChain CreateInstanceFromTemplate(XComGameState NewGameState)
+function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState)
 {
 	local XComGameState_ActivityChain ActivityState;
 
@@ -19,7 +19,7 @@ function XComGameState_ActivityChain CreateInstanceFromTemplate(XComGameState Ne
 	return ActivityState;
 }
 
-function bool ValidateTemplate(out string strError)
+function bool ValidateTemplate (out string strError)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate ActivityTemplate;
