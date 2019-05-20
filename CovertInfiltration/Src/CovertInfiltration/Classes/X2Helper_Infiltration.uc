@@ -18,6 +18,7 @@ var config array<float> OVERLOADED_MULT;
 var config array<int> RANKS_DETER;
 
 var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
+var config array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -235,13 +236,7 @@ static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionI
 
 static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
 {
-	local X2CovertMissionInfoTemplateManager InfilMgr;
-	local X2CovertMissionInfoTemplate MissionInfo;
-
-	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
-	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
-
-	return MissionInfo != none;
+	return class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action) != none;
 }
 
 static function bool ReturnFalse()

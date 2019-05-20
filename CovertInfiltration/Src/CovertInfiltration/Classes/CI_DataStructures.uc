@@ -39,3 +39,9 @@ struct ItemAvaliableImageReplacement
 	// Pull image from template
 	var name ImageSourceItem;
 };
+
+struct ActivityMissionFamilyMapping
+{
+	var name ActivityTemplate;
+	var string MissionFamily;
+};

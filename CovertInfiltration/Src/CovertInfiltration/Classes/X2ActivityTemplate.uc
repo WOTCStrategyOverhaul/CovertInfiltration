@@ -1,4 +1,4 @@
-class X2ActivityTemplate extends X2StrategyElementTemplate abstract;
+class X2ActivityTemplate extends X2StrategyElementTemplate abstract config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
 

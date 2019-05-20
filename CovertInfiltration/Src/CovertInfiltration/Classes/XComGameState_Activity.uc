@@ -172,3 +172,23 @@ static function XComGameState_Activity GetActivityFromPrimaryObjectID (int State
 
 	return none;
 }
+
+static function XComGameState_Activity GetActivityFromSecondaryObject (XComGameState_BaseObject StateObject)
+{
+	return GetActivityFromSecondaryObjectID(StateObject.ObjectID);
+}
+
+static function XComGameState_Activity GetActivityFromSecondaryObjectID (int StateObjectID)
+{
+	local XComGameState_Activity Activity;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', Activity)
+	{
+		if (Activity.SecondaryObjectRef.ObjectID == StateObjectID)
+		{
+			return Activity;
+		}
+	}
+
+	return none;
+}
