@@ -17,6 +17,9 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+// The faction associated with this chain, if any
+var protectedwrite StateObjectReference FactionRef;
+
 // Region(s) where this chain is taking place
 var protectedwrite StateObjectReference PrimaryRegionRef;
 var protectedwrite StateObjectReference SecondaryRegionRef;
@@ -74,7 +77,13 @@ function SetupChain (XComGameState NewGameState)
 	TemplateManager = GetMyTemplateManager();
 	GetMyTemplate();
 
-	// First, choose the region(s). Stages may need this during setup
+	// First, we choose the faction. Stages or regions may need this during setup
+	if (m_Template.ChooseFaction != none)
+	{
+		FactionRef = m_Template.ChooseFaction(self);
+	}
+
+	// Next, choose the region(s). Stages may need this during setup
 	if (m_Template.ChooseRegions != none)
 	{
 		m_Template.ChooseRegions(self, PrimaryRegionRef, SecondaryRegionRef);
@@ -211,6 +220,11 @@ function bool IsCompleted ()
 function XComGameState_Activity GetCurrentActivity ()
 {
 	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[iCurrentStage].ObjectID));
+}
+
+function XComGameState_ResistanceFaction GetFaction()
+{
+	return XComGameState_ResistanceFaction(`XCOMHISTORY.GetGameStateForObjectID(FactionRef.ObjectID));
 }
 
 defaultproperties

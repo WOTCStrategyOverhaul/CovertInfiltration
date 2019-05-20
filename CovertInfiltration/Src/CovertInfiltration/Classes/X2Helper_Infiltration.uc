@@ -191,15 +191,6 @@ static function CreateWillRecoveryProject(XComGameState NewGameState, XComGameSt
 	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
-static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
-{
-	local X2StrategyElementTemplateManager StratMgr;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	
-	return X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionSource));
-}
-
 static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction CovertAction)
 {
 	local StrategyCost ExfiltrateCost;
@@ -216,22 +207,6 @@ static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction Cove
 	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);
 
 	return ExfiltrateCost;
-}
-
-static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
-{
-	local array<X2RewardTemplate> Rewards;
-	local int i;
-	local X2StrategyElementTemplateManager StratMgr;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
-	{
-		Rewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionRewards[i])));
-	}
-
-	return Rewards;
 }
 
 static function bool IsInfiltrationAction(XComGameState_CovertAction Action)

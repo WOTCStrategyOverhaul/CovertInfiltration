@@ -11,8 +11,6 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 
 // Since spawner action will get erased from history when player launches a mission
 // we need to duplicate any info that is used after the mission site is initialized
-var StateObjectReference CorrespondingActionRef;
-var name SpawningActionName;
 var array<name> AppliedFlatRisks;
 
 var array<StateObjectReference> SoldiersOnMission;
@@ -30,35 +28,32 @@ var localized string strBannerBonusGained;
 /// Setup ///
 /////////////
 
-function X2CovertMissionInfoTemplate GetMisisonInfo()
+function InitializeFromActivity ()
 {
-	return class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager()
-		.GetCovertMissionInfoTemplateFromCA(SpawningActionName);
-}
+	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
-function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction Action)
-{
-	local X2CovertMissionInfoTemplate MissionInfo;
-
-	SpawningActionName = Action.GetMyTemplateName();
-	MissionInfo = GetMisisonInfo();
-	
-	if (MissionInfo.PreMissionSetup != none)
-	{
-		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
-	}
-
-	CopyDataFromAction(Action);
-	Source = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo).DataName;
-	Rewards = MissionInfo.InitializeRewards(NewGameState, self, MissionInfo);
+	// TODO
 
 	InitalizeGeneratedMission();
 	SelectPlotAndBiome();
+}
+
+function OnActionCompleted(XComGameState NewGameState, XComGameState_CovertAction Action)
+{
+	/*if (MissionInfo.PreMissionSetup != none)
+	{
+		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
+	}*/
+
+	CopyDataFromAction(Action);
+	//Rewards = MissionInfo.InitializeRewards(NewGameState, self, MissionInfo);
+
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();
 
 	SetSoldiersFromAction(Action);
+	Available = true;
 
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
 }
@@ -679,6 +674,21 @@ function RemoveEntity(XComGameState NewGameState)
 	UnRegisterFromEvents();
 }
 
+///////////////
+/// Helpers ///
+///////////////
+
+function XComGameState_Activity GetActivity ()
+{
+	return class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(self);
+}
+
+// Note that this might fail if we already had a mission since the CA->overinfil transition
+function XComGameState_CovertAction GetSpawningAction ()
+{
+	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GetActivity().SecondaryObjectRef));
+}
+
 ////////////////////////
 /// Event management ///
 ////////////////////////
@@ -859,6 +869,6 @@ private function bool SelectPlotDefinition(MissionDefinition MissionDef, string 
 
 defaultproperties
 {
-	Available = true;
+	Available = false;
 	Expiring = false;
 }

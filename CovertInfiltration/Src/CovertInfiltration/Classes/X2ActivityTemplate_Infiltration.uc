@@ -16,30 +16,34 @@ delegate array<StateObjectReference> InitializeRewards(XComGameState NewGameStat
 
 static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
-	ActivityState.SecondaryObjectRef = CreateCovertAction(NewGameState, ActivityState);
-	ActivityState.PrimaryObjectRef = CreateMission(NewGameState, ActivityState);
-
+	CreateCovertAction(NewGameState, ActivityState);
+	CreateMission(NewGameState, ActivityState);
 	AddExpiration(NewGameState, ActivityState);
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
+	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(ActivityState.SecondaryObjectRef, NewGameState);
 }
 
-static function StateObjectReference CreateCovertAction (XComGameState NewGameState, XComGameState_Activity ActivityState)
+static function CreateCovertAction (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local X2ActivityTemplate_Infiltration ActivityTemplate;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_ResistanceFaction FactionState;
 	local X2CovertActionTemplate ActionTemplate;
 	local StateObjectReference NewActionRef;
+	local XComGameState_CovertAction ActionState;
 
+	FactionState = ActivityState.GetActivityChain().GetFaction();
 	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
-	FactionState = class'XComGameState_PhaseOneActionsSpawner'.static.GetFactionForNewAction();
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplate.CovertActionName));
 
 	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
-	NewActionRef = FactionState.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
-	FactionState.CovertActions.AddItem(NewActionRef);
+	ActionState = ActionTemplate.CreateInstanceFromTemplate(NewGameState, FactionState.GetReference());
+	ActivityState.SecondaryObjectRef = ActionState.GetReference(); // Needed here so that we can get reference to chain for region select inside Spawn
+	
+	ActionState.Spawn(NewGameState);
+	ActionState.RequiredFactionInfluence = eFactionInfluence_Minimal;
+	ActionState.bNewAction = true;
 }
 
 static function AddExpiration (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -76,9 +80,16 @@ static function int CreateExpirationVariance (X2ActivityTemplate_Infiltration Ac
 	return Variance;
 }
 
-static function StateObjectReference CreateMission (XComGameState NewGameState, XComGameState_Activity ActivityState)
+static function CreateMission (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
-	// TODO
+	local XComGameState_MissionSiteInfiltration MissionState;
+
+	MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
+	ActivityState.PrimaryObjectRef = MissionState.GetReference();
+
+	MissionState.SetupFromAction(NewGameState, CovertAction);
+
+	return MissionState.GetReference();
 }
 
 defaultproperties

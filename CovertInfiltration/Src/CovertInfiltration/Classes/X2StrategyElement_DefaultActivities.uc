@@ -28,3 +28,8 @@ static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
 
 	Activity.CovertActionName = CovertAction.DataName;
 }
+
+static function ChooseRegionFrom (XComGameState NewGameState, XComGameState_CovertAction ActionState, out array<StateObjectReference> ExcludeLocations)
+{
+	ActionState.LocationEntity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(ActionState).GetActivityChain().PrimaryRegionRef;
+}
