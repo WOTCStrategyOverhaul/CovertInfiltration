@@ -2,6 +2,9 @@ class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Mission config(
 
 var name CovertActionName;
 
+var localized string ActionRewardDisplayName;
+var localized string ActionRewardDetails;
+
 var config bool bExpires;
 var config int ExpirationBaseTime;
 var config int ExpirationVariance;

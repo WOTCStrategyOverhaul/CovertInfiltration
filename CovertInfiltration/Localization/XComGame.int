@@ -63,10 +63,6 @@ BonusText="INFILTRATING"
 ActionName="Neutralize ADVENT Commander"
 ActionPreNarrative="SHOO the bad guy"
 
-[Activity_NeutralizeCommander X2RewardTemplate]
-DisplayName="Supply raid"
-RewardDetails="Get a supply raid"
-
 [ActivityLeadItem X2QuestItemTemplate]
 FriendlyName="Activity Lead"
 FriendlyNamePlural="Activity Lead"
