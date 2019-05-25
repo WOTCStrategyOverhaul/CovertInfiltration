@@ -38,19 +38,17 @@ function InitializeFromActivity (XComGameState NewGameState)
 	
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
-	// TODO
-
-	/*if (MissionInfo.PreMissionSetup != none)
+	if (ActivityTemplate.PreMissionSetup != none)
 	{
-		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
-	}*/
+		ActivityTemplate.PreMissionSetup(NewGameState, ActivityState);
+	}
 
 	if (ActivityTemplate.InitializeMissionRewards != none)
 	{
 		Rewards = ActivityTemplate.InitializeMissionRewards(NewGameState, ActivityState);
 	}
 
-	if (Rewards.Length = 0)
+	if (Rewards.Length == 0)
 	{
 		Rewards.Add('Reward_None');
 	}
@@ -75,10 +73,13 @@ function OnActionCompleted (XComGameState NewGameState)
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
 }
 
-protected function CopyDataFromAction(XComGameState_CovertAction Action)
+protected function CopyDataFromAction ()
 {
 	local ActionFlatRiskSitRep FlatRiskSitRep;
+	local XComGameState_CovertAction Action;
 	local CovertActionRisk Risk;
+
+	Action = GetSpawningAction();
 
 	// Copy over the location data
 	Location.x = Action.Location.x;
@@ -86,8 +87,7 @@ protected function CopyDataFromAction(XComGameState_CovertAction Action)
 	Continent  = Action.Continent;
 	Region = Action.Region;
 
-	// Set the action ref and copy over the applied risks
-	CorrespondingActionRef = Action.GetReference();
+	// Copy over the applied risks
 	AppliedFlatRisks.Length = 0;
 
 	foreach Action.Risks(Risk)
@@ -176,7 +176,7 @@ protected function SelectPlotAndBiome()
 		}
 	}
 
-	// At this point normall the CHL calls DLCInfo::PostSitRepCreation hook
+	// At this point normally the CHL calls DLCInfo::PostSitRepCreation hook
 	// TODO: decide what to do with that hook since we change sitreps later
 
 	// the plot we find should either have no defined biomes, or the requested biome type
@@ -281,9 +281,9 @@ static function name GetBonusDeckName(int Tier)
 	return name('OverInfiltrationBonusesT' $ Tier);
 }
 
-protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
+protected function SetSoldiersFromAction ()
 {
-	SoldiersOnMission = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
+	SoldiersOnMission = class'X2Helper_Infiltration'.static.GetCovertActionSquad(GetSpawningAction());
 }
 
 function UpdateSitrepTags()
@@ -661,7 +661,7 @@ function string GetUIButtonIcon()
 {
 	local string Path;
 
-	Path = GetMisisonInfo().UIButtonIcon;
+	Path = X2ActivityTemplate_Mission(GetActivity().GetMyTemplate()).UIButtonIcon;
 
 	if (Path == "")
 	{
@@ -695,7 +695,7 @@ function XComGameState_Activity GetActivity ()
 // Note that this might fail if we already had a mission since the CA->overinfil transition
 function XComGameState_CovertAction GetSpawningAction ()
 {
-	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GetActivity().SecondaryObjectRef));
+	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GetActivity().SecondaryObjectRef.ObjectID));
 }
 
 ////////////////////////

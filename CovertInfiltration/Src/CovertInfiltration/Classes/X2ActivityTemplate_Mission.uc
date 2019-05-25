@@ -5,6 +5,9 @@ const MISSION_SOURCE_NAME = 'MissionSource_ActivityCI';
 var array<name> MissionRewards;
 var string UIButtonIcon;
 
+delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
+delegate PreMissionSetup (XComGameState NewGameState, XComGameState_Activity ActivityState);
+
 ////////////////////////////////////////////
 /// Proxied from X2MissionSourceTemplate ///
 ////////////////////////////////////////////
