@@ -15,7 +15,7 @@ var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 
 static event UpdateDLC()
 {
-	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+	//class'XComGameState_PhaseOneActionsSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 }
 
@@ -381,4 +381,21 @@ exec function ClearOverInfiltrationDecks()
 			CardManager.RemoveCardFromDeck(Deck, Card);
 		}
 	}
+}
+
+exec function SpawnActivityChain (name ChainTemplateName)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_ActivityChain ChainState;
+	local X2ActivityChainTemplate ChainTemplate;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnActivityChain" @ ChainTemplateName);
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ChainTemplateate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(ChainTemplateName));
+
+	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	ChainState.StartNextStage(NewGameState);
+
+	`SubmitGameState(NewGameState);
 }

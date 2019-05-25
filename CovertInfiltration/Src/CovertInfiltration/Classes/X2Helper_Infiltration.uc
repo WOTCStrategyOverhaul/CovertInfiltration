@@ -318,17 +318,19 @@ static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers
 
 static function MissionDefinition GetMissionDefinitionForActivity (XComGameState_Activity ActivityState)
 {
+	local XComTacticalMissionManager MissionManager;
+	local X2CardManager CardManager;
+	
 	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionState;
 	local ActivityMissionFamilyMapping Mapping;
+	local MissionDefinition MissionDef;
+	
 	local array<string> ValidMissionFamilies;
 	local array<string> MissionFamiliesDeck;
 	local array<string> MissionTypesDeck;
 	local string MissionFamily;
 	local string MissionType;
-	local XComTacticalMissionManager MissionManager;
-	local XComGameState_MissionSite MissionState;
-	local MissionDefinition MissionDef;
-	local X2CardManager CardManager;
 
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 

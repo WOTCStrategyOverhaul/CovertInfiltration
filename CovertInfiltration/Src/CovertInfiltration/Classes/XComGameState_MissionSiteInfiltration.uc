@@ -310,6 +310,7 @@ function UpdateSitrepTags()
 	}
 
 	// Remove obsolete tags
+	// TODO: This will break if there are non-sitreps tags. Introduce some sort of "applied sitreps" tracking system?
 	for (i = 0; i < TacticalGameplayTags.Length; ++i) {
 		if (RequiredTags.Find(TacticalGameplayTags[i]) == INDEX_NONE) {
 			TacticalGameplayTags.Remove(i, 1);

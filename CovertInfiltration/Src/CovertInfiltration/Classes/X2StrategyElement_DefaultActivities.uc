@@ -25,6 +25,8 @@ static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
 	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
 
 	Activity.CovertActionName = CovertAction.DataName;
+
+	// Fill in the mission
 }
 
 static function UseActivityPrimaryRegion (XComGameState NewGameState, XComGameState_CovertAction ActionState, out array<StateObjectReference> ExcludeLocations)
