@@ -92,5 +92,5 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 
 defaultproperties
 {
-	SetupStage = static.DefaultInfiltrationSetup
+	SetupStage = DefaultInfiltrationSetup
 }

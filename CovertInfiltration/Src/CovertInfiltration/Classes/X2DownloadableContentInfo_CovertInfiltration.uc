@@ -392,7 +392,7 @@ exec function SpawnActivityChain (name ChainTemplateName)
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnActivityChain" @ ChainTemplateName);
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	ChainTemplateate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(ChainTemplateName));
+	ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(ChainTemplateName));
 
 	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
 	ChainState.StartNextStage(NewGameState);

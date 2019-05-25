@@ -29,7 +29,7 @@ static function StateObjectReference ChooseMetFaction (XComGameState_ActivityCha
 	local XComGameState_ResistanceFaction FactionState;
 	local array<StateObjectReference> FactionRefs;
 
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', Faction)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
 		if (FactionState.bMetXCom)
 		{

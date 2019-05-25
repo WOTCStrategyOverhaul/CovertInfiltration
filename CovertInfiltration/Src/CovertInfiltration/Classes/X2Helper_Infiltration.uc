@@ -18,7 +18,7 @@ var config array<float> OVERLOADED_MULT;
 var config array<int> RANKS_DETER;
 
 var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
-var config array<ActivityMissionFamilyMapping> ActivityMissionFamily;
+var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)

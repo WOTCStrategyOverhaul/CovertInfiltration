@@ -288,6 +288,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivities.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivityChains.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultOverInfiltrationBonuses.uc">
       <SubType>Content</SubType>
     </Content>
