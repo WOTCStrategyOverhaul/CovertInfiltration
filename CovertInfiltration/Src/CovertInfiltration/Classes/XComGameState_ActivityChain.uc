@@ -149,6 +149,13 @@ function StartNextStage (XComGameState NewGameState)
 	{
 		ActivityTemplate.SetupStage(NewGameState, ActivityState);
 	}
+
+	GetMyTemplate();
+
+	if (m_Template.PostStageSetup != none)
+	{
+		m_Template.PostStageSetup(NewGameState, ActivityState);
+	}
 }
 
 function CurrentStageHasCompleted (XComGameState NewGameState)

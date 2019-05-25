@@ -398,3 +398,14 @@ static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameS
 {
 	return XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
 }
+
+static function StateObjectReference CreateRewardNone (XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2RewardTemplate Template;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Template = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate('Reward_None'));
+
+	return Template.CreateInstanceFromTemplate(NewGameState).GetReference();
+}

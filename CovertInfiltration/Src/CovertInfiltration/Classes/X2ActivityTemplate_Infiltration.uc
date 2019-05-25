@@ -10,8 +10,6 @@ var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "block cleanup"
 
-delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
-
 // TODO:
 // (1) Remove X2CovertMissionInfoTemplate
 // (2) Make just one infiltration mission source

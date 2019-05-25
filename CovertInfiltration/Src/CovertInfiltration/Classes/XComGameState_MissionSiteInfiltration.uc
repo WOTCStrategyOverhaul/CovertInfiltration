@@ -50,7 +50,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 
 	if (Rewards.Length == 0)
 	{
-		Rewards.Add('Reward_None');
+		Rewards.AddItem(class'X2Helper_Infiltration'.static.CreateRewardNone(NewGameState));
 	}
 
 	InitalizeGeneratedMission();
