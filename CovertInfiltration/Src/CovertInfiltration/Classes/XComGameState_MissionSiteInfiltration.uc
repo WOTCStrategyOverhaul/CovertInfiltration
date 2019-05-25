@@ -28,31 +28,48 @@ var localized string strBannerBonusGained;
 /// Setup ///
 /////////////
 
-function InitializeFromActivity ()
+function InitializeFromActivity (XComGameState NewGameState)
 {
+	local X2ActivityTemplate_Infiltration ActivityTemplate;
+	local XComGameState_Activity ActivityState;
+
+	ActivityState = GetActivity();
+	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
+	
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
 	// TODO
 
-	InitalizeGeneratedMission();
-	SelectPlotAndBiome();
-}
-
-function OnActionCompleted(XComGameState NewGameState, XComGameState_CovertAction Action)
-{
 	/*if (MissionInfo.PreMissionSetup != none)
 	{
 		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
 	}*/
 
-	CopyDataFromAction(Action);
-	//Rewards = MissionInfo.InitializeRewards(NewGameState, self, MissionInfo);
+	if (ActivityTemplate.InitializeMissionRewards != none)
+	{
+		Rewards = ActivityTemplate.InitializeMissionRewards(NewGameState, ActivityState);
+	}
 
+	if (Rewards.Length = 0)
+	{
+		Rewards.Add('Reward_None');
+	}
+
+	InitalizeGeneratedMission();
+}
+
+// This is called from X2EventListener_Infiltration::CovertActionCompleted.
+// We could subscribe to the event here, but eh, we already have a catch-all listener there
+function OnActionCompleted (XComGameState NewGameState)
+{
+	CopyDataFromAction();
+	
+	SelectPlotAndBiome();
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();
 
-	SetSoldiersFromAction(Action);
+	SetSoldiersFromAction();
 	Available = true;
 
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
@@ -109,7 +126,7 @@ protected function InitalizeGeneratedMission()
 	GeneratedMission.MissionID = ObjectID;
 	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
 	
-	GeneratedMission.Mission = MissionMgr.GetMissionDefinitionForSourceReward(Source, MissionReward.DataName, ExcludeMissionFamilies, ExcludeMissionTypes);
+	GeneratedMission.Mission = class'X2Helper_Infiltration'.static.GetMissionDefinitionForActivity(GetActivity());
 	GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
 
 	if (GeneratedMission.Mission.sType == "")
@@ -127,15 +144,7 @@ protected function InitalizeGeneratedMission()
 
 	// Cosmetic stuff
 
-	if(GetMissionSource().BattleOpName != "")
-	{
-		GeneratedMission.BattleOpName = GetMissionSource().BattleOpName;
-	}
-	else
-	{
-		GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
-	}
-
+	GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
 	GenerateMissionFlavorText();
 }
 

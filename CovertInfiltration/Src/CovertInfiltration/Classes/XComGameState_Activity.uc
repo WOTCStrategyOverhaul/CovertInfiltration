@@ -155,12 +155,29 @@ protected function bool ValidateCanMarkCompletion ()
 
 static function XComGameState_Activity GetActivityFromPrimaryObject (XComGameState_BaseObject StateObject)
 {
-	return GetActivityFromPrimaryObjectID(StateObject.ObjectID);
+	local XComGameState GameState;
+
+	GameState = StateObject.GetParentGameState();
+	if (GameState.HistoryIndex != -1) GameState = none;
+
+	return GetActivityFromPrimaryObjectID(StateObject.ObjectID, GameState);
 }
 
-static function XComGameState_Activity GetActivityFromPrimaryObjectID (int StateObjectID)
+static function XComGameState_Activity GetActivityFromPrimaryObjectID (int StateObjectID, optional XComGameState NewGameState)
 {
 	local XComGameState_Activity Activity;
+
+	// If we have a pending state, search it first
+	if (NewGameState != none)
+	{
+		foreach NewGameState.IterateByClassType(class'XComGameState_Activity', Activity)
+		{
+			if (Activity.PrimaryObjectRef.ObjectID == StateObjectID)
+			{
+				return Activity;
+			}
+		}
+	}
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', Activity)
 	{
@@ -175,12 +192,29 @@ static function XComGameState_Activity GetActivityFromPrimaryObjectID (int State
 
 static function XComGameState_Activity GetActivityFromSecondaryObject (XComGameState_BaseObject StateObject)
 {
-	return GetActivityFromSecondaryObjectID(StateObject.ObjectID);
+	local XComGameState GameState;
+
+	GameState = StateObject.GetParentGameState();
+	if (GameState.HistoryIndex != -1) GameState = none;
+
+	return GetActivityFromSecondaryObjectID(StateObject.ObjectID, GameState);
 }
 
-static function XComGameState_Activity GetActivityFromSecondaryObjectID (int StateObjectID)
+static function XComGameState_Activity GetActivityFromSecondaryObjectID (int StateObjectID, optional XComGameState NewGameState)
 {
 	local XComGameState_Activity Activity;
+
+	// If we have a pending state, search it first
+	if (NewGameState != none)
+	{
+		foreach NewGameState.IterateByClassType(class'XComGameState_Activity', Activity)
+		{
+			if (Activity.SecondaryObjectRef.ObjectID == StateObjectID)
+			{
+				return Activity;
+			}
+		}
+	}
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', Activity)
 	{

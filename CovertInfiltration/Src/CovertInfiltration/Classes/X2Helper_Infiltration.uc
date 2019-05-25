@@ -315,3 +315,86 @@ static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers
 
 	return TotalInfiltration * Multiplier;
 }
+
+static function MissionDefinition GetMissionDefinitionForActivity (XComGameState_Activity ActivityState)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local ActivityMissionFamilyMapping Mapping;
+	local array<string> ValidMissionFamilies;
+	local array<string> MissionFamiliesDeck;
+	local array<string> MissionTypesDeck;
+	local string MissionFamily;
+	local string MissionType;
+	local XComTacticalMissionManager MissionManager;
+	local XComGameState_MissionSite MissionState;
+	local MissionDefinition MissionDef;
+	local X2CardManager CardManager;
+
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+
+	if (ActivityTemplate == none)
+	{
+		`RedScreen(nameof(GetMissionDefinitionForActivity) @ "only works for activitites based on X2ActivityTemplate_Mission");
+		return MissionDef;
+	}
+
+	CardManager = class'X2CardManager'.static.GetCardManager();
+	MissionState = GetMissionStateFromActivity(ActivityState);
+
+	MissionManager = `TACTICALMISSIONMGR;
+	MissionManager.CacheMissionManagerCards();
+
+	foreach default.ActivityMissionFamily (Mapping)
+	{
+		if (
+			Mapping.ActivityTemplate == ActivityTemplate.DataName &&
+			MissionState.ExcludeMissionFamilies.Find(Mapping.MissionFamily) == INDEX_NONE
+		)
+		{
+			ValidMissionFamilies.AddItem(Mapping.MissionFamily);
+		}
+	}
+
+	if (ValidMissionFamilies.Length == 0)
+	{
+		`Redscreen("Could not find a mission family for activity: " $ ActivityTemplate.DataName);
+		ValidMissionFamilies.AddItem(MissionManager.arrSourceRewardMissionTypes[0].MissionFamily);
+	}
+
+	// select the first mission type off the deck that is valid for this mapping
+	CardManager.GetAllCardsInDeck('MissionFamilies', MissionFamiliesDeck);
+	foreach MissionFamiliesDeck(MissionFamily)
+	{
+		if (ValidMissionFamilies.Find(MissionFamily) != INDEX_NONE)
+		{
+			CardManager.MarkCardUsed('MissionFamilies', MissionFamily);
+			break;
+		}
+	}
+
+	// now that we have a mission family, determine the mission type to use
+	CardManager.GetAllCardsInDeck('MissionTypes', MissionTypesDeck);
+	foreach MissionTypesDeck(MissionType)
+	{
+		if (
+			MissionState.ExcludeMissionTypes.Find(MissionType) == INDEX_NONE &&
+			MissionManager.GetMissionDefinitionForType(MissionType, MissionDef) &&
+			(
+				MissionDef.MissionFamily == MissionFamily ||
+				(MissionDef.MissionFamily == "" && MissionDef.sType == MissionFamily) // missions without families are their own family
+			)
+		)
+		{
+			CardManager.MarkCardUsed('MissionTypes', MissionType);
+			return MissionDef;
+		}
+	}
+
+	`Redscreen("Could not find a mission type for MissionFamily: " $ MissionFamily);
+	return MissionManager.arrMissions[0];
+}
+
+static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameState_Activity ActivityState)
+{
+	return XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+}

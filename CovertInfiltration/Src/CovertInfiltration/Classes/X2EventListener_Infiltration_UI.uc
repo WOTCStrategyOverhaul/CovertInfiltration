@@ -189,6 +189,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 {
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_CovertAction CovertAction;
+	local XComGameState_Activity Activity;
 	local XComHQPresentationLayer HQPres;
 
 	CovertAction = XComGameState_CovertAction(EventSource);
@@ -200,21 +201,16 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
 	{
-		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionState)
+		Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(CovertAction);
+		MissionState = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(Activity));
+
+		HQPres = `HQPRES;
+		HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
+		HQPres.PlayUISound(eSUISound_SoldierPromotion);
+
+		if (`GAME.GetGeoscape().IsScanning())
 		{
-			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
-			{
-				HQPres = `HQPRES;
-				HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
-				HQPres.PlayUISound(eSUISound_SoldierPromotion);
-
-				if (`GAME.GetGeoscape().IsScanning())
-				{
-					`HQPRES.StrategyMap2D.ToggleScan();
-				}
-
-				break;
-			}
+			`HQPRES.StrategyMap2D.ToggleScan();
 		}
 	}
 	

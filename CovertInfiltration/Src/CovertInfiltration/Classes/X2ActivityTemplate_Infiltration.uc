@@ -10,7 +10,7 @@ var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "block cleanup"
 
-delegate array<StateObjectReference> InitializeRewards(XComGameState NewGameState, XComGameState_MissionSiteInfiltration MissionSite);
+delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
 
 // TODO:
 // (1) Remove X2CovertMissionInfoTemplate
@@ -32,7 +32,6 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_ResistanceFaction FactionState;
 	local X2CovertActionTemplate ActionTemplate;
-	local StateObjectReference NewActionRef;
 	local XComGameState_CovertAction ActionState;
 
 	FactionState = ActivityState.GetActivityChain().GetFaction();
@@ -74,10 +73,10 @@ static function int CreateExpirationVariance (X2ActivityTemplate_Infiltration Ac
 	local int Variance;
 	local bool bNegVariance;
 
-	Variance = `SYNC_RAND(ActivityTemplate.ExpirationVariance);
+	Variance = `SYNC_RAND_STATIC(ActivityTemplate.ExpirationVariance);
 
 	// roll chance for negative variance
-	bNegVariance = `SYNC_RAND(2) < 1;
+	bNegVariance = `SYNC_RAND_STATIC(2) < 1;
 	if (bNegVariance) Variance *= -1;
 
 	return Variance;
@@ -89,10 +88,8 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 
 	MissionState = XComGameState_MissionSiteInfiltration(NewGameState.CreateNewStateObject(class'XComGameState_MissionSiteInfiltration'));
 	ActivityState.PrimaryObjectRef = MissionState.GetReference();
-
-	MissionState.SetupFromAction(NewGameState, CovertAction);
-
-	return MissionState.GetReference();
+	
+	MissionState.InitializeFromActivity(NewGameState);
 }
 
 defaultproperties

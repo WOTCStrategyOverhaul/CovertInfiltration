@@ -14,7 +14,6 @@ static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
-	local X2RewardTemplate Reward;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_NeutralizeCommanderInfil', true);
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, 'Activity_NeutralizeCommander');
@@ -30,7 +29,5 @@ static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
 
 static function UseActivityPrimaryRegion (XComGameState NewGameState, XComGameState_CovertAction ActionState, out array<StateObjectReference> ExcludeLocations)
 {
-	// TODO: GetActivityFromSecondaryObject may not work as it uses
-	// History.IterateByClassType internally which doesn't account for pending states
 	ActionState.LocationEntity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(ActionState).GetActivityChain().PrimaryRegionRef;
 }
