@@ -102,6 +102,8 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 {
 	local XComGameState_ActivityChain ActivityChain;
 
+	`CI_Trace(m_TemplateName @ "marked completed as" @ CompletionStatus);
+
 	GetMyTemplate();
 
 	if (m_Template.CleanupStage != none)

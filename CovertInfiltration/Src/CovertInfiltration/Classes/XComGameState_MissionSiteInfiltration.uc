@@ -339,6 +339,9 @@ function UpdateGameBoard()
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local XComHQPresentationLayer HQPres;
 
+	// Do not do anything if we didn't transition to the mission stage yet
+	if (!Available) return;
+
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
 

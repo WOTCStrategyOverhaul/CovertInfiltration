@@ -11,3 +11,8 @@ delegate CleanupChain(XComGameState NewGameState, XComGameState_Activity Activit
 // Called after the activity has been completed and if the chain has a next stage
 // If not set, true is assumed
 delegate bool ShouldProgressChain(XComGameState_Activity ActivityState);
+
+defaultproperties
+{
+	StateClass = class'XComGameState_Activity'
+}

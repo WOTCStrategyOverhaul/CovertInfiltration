@@ -394,8 +394,15 @@ exec function SpawnActivityChain (name ChainTemplateName)
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(ChainTemplateName));
 
+	`CI_Trace("Starting cheat: SpawnActivityChain" @ ChainTemplateName);
+
 	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
 	ChainState.StartNextStage(NewGameState);
 
 	`SubmitGameState(NewGameState);
+}
+
+exec function EnableCITrace (bool Enabled)
+{
+	SuppressTraceLogs = !Enabled;
 }

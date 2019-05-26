@@ -74,6 +74,8 @@ function SetupChain (XComGameState NewGameState)
 	local name ActivityTemplateName;
 	local int i;
 
+	`CI_Trace("Setting up chain" @ m_TemplateName);
+
 	TemplateManager = GetMyTemplateManager();
 	GetMyTemplate();
 
@@ -88,6 +90,8 @@ function SetupChain (XComGameState NewGameState)
 	{
 		m_Template.ChooseRegions(self, PrimaryRegionRef, SecondaryRegionRef);
 	}
+
+	`CI_Trace("Selected faction and regions, spawning stages");
 
 	// Craete the stages
 	StageRefs.Length = m_Template.Stages.Length;
@@ -106,6 +110,8 @@ function SetupChain (XComGameState NewGameState)
 		}
 	}
 
+	`CI_Trace("Spawned stages, calling lifecycle callbacks");
+
 	// First the chain callback
 	if (m_Template.SetupChain != none)
 	{
@@ -123,6 +129,8 @@ function SetupChain (XComGameState NewGameState)
 			ActivityTemplate.SetupChain(NewGameState, ActivityState);
 		}
 	}
+
+	`CI_Trace("Chain setup complete");
 }
 
 ////////////////
@@ -141,6 +149,8 @@ function StartNextStage (XComGameState NewGameState)
 	}
 
 	iCurrentStage++;
+
+	`CI_Trace("Starting stage" @ iCurrentStage @ "of" @ m_TemplateName);
 
 	ActivityState = GetCurrentActivity();
 	ActivityTemplate = ActivityState.GetMyTemplate();
@@ -164,24 +174,33 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 
+	`CI_Trace(m_TemplateName @ "current stage has reported completion, processing chain reaction");
+
 	// Check if can progress
 	if (iCurrentStage < StageRefs.Length - 1)
 	{
+		`CI_Trace("Still more stages avaliable");
+
 		ActivityState = GetCurrentActivity();
 		ActivityTemplate = ActivityState.GetMyTemplate();
 
 		if (ActivityTemplate.ShouldProgressChain == none || ActivityTemplate.ShouldProgressChain(ActivityState))
 		{
+			`CI_Trace("Progression not blocked by stage template");
 			StartNextStage(NewGameState);
 		}
 		else
 		{
+			`CI_Trace("Progression blocked by stage template");
+
 			bEnded = true;
 			EndReason = eACER_ProgressBlocked;
 		}
 	}
 	else
 	{
+		`CI_Trace("No more stages avaliable");
+
 		bEnded = true;
 		EndReason = eACER_Complete;
 		iCurrentStage++; // Do not get stuck on the last stage
@@ -189,6 +208,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 
 	if (bEnded)
 	{
+		`CI_Trace("Chain ended, calling lifecycle callbacks");
+
 		// First call callbacks on the stages
 		foreach StageRefs(ActivityRef)
 		{
@@ -208,6 +229,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			m_Template.CleanupChain(NewGameState, self);
 		}
 	}
+
+	`CI_Trace("Finished handling stage completion");
 }
 
 ///////////////

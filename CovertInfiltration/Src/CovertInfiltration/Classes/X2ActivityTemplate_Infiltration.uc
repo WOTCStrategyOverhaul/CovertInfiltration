@@ -44,6 +44,8 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	ActionState.Spawn(NewGameState);
 	ActionState.RequiredFactionInfluence = eFactionInfluence_Minimal;
 	ActionState.bNewAction = true;
+
+	FactionState.CovertActions.AddItem(ActionState.GetReference());
 }
 
 static function AddExpiration (XComGameState NewGameState, XComGameState_Activity ActivityState)
