@@ -411,3 +411,15 @@ static function StateObjectReference CreateRewardNone (XComGameState NewGameStat
 
 	return Template.CreateInstanceFromTemplate(NewGameState).GetReference();
 }
+
+static function bool GeoscapeReadyForUpdate ()
+{
+	local UIStrategyMap StrategyMap;
+
+	StrategyMap = `HQPRES.StrategyMap2D;
+
+	return
+		StrategyMap != none &&
+		StrategyMap.m_eUIState != eSMS_Flight &&
+		StrategyMap.Movie.Pres.ScreenStack.GetCurrentScreen() == StrategyMap;
+}

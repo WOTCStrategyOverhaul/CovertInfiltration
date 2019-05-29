@@ -71,6 +71,7 @@ static function Update()
 			CovertAction.RemoveEntity(NewGameState);
 
 			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
+			`XEVENTMGR.TriggerEvent('CovertActionExpired', CovertAction, CovertAction, NewGameState); // Use CovertAction as source so that we can use native filtering
 		}
 	}			
 	

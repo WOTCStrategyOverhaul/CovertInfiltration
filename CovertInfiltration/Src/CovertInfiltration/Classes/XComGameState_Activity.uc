@@ -176,7 +176,7 @@ function UpdateGameBoard ()
 	local XComGameState_Activity NewActivityState;
 	local XComGameState NewGameState;
 
-	if (bChainNeedsCompletionNotification)
+	if (bChainNeedsCompletionNotification && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
 	{
 		`CI_Trace(m_TemplateName @ "notifiying chain of completion");
 		
