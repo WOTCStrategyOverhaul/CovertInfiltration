@@ -106,3 +106,7 @@ strBannerBonusGained="Overinfiltration bonus gained"
 [OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
 BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
+
+[Activity_NeutralizeCommander X2ActivityTemplate_Infiltration]
+ActionRewardDisplayName=Rwd
+ActionRewardDetails=Rwd details

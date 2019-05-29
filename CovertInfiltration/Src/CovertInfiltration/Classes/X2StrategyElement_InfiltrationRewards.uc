@@ -14,8 +14,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
 	
-	// TODO
-	Rewards.Length = 0;
+	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
 	return Rewards;
 }
