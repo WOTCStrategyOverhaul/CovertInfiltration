@@ -122,12 +122,7 @@ function SetupChain (XComGameState NewGameState)
 	foreach StageRefs(ActivityRef)
 	{
 		ActivityState = XComGameState_Activity(NewGameState.GetGameStateForObjectID(ActivityRef.ObjectID));
-		ActivityTemplate = ActivityState.GetMyTemplate();
-
-		if (ActivityTemplate.SetupChain != none)
-		{
-			ActivityTemplate.SetupChain(NewGameState, ActivityState);
-		}
+		ActivityState.OnSetupChain(NewGameState);
 	}
 
 	`CI_Trace("Chain setup complete");
@@ -140,7 +135,6 @@ function SetupChain (XComGameState NewGameState)
 function StartNextStage (XComGameState NewGameState)
 {
 	local XComGameState_Activity ActivityState;
-	local X2ActivityTemplate ActivityTemplate;
 
 	if (bEnded)
 	{
@@ -153,15 +147,9 @@ function StartNextStage (XComGameState NewGameState)
 	`CI_Trace("Starting stage" @ iCurrentStage @ "of" @ m_TemplateName);
 
 	ActivityState = GetCurrentActivity();
-	ActivityTemplate = ActivityState.GetMyTemplate();
-
-	if (ActivityTemplate.SetupStage != none)
-	{
-		ActivityTemplate.SetupStage(NewGameState, ActivityState);
-	}
+	ActivityState.SetupStage(NewGameState);
 
 	GetMyTemplate();
-
 	if (m_Template.PostStageSetup != none)
 	{
 		m_Template.PostStageSetup(NewGameState, ActivityState);
@@ -171,7 +159,6 @@ function StartNextStage (XComGameState NewGameState)
 function CurrentStageHasCompleted (XComGameState NewGameState)
 {
 	local XComGameState_Activity ActivityState;
-	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 
 	`CI_Trace(m_TemplateName @ "current stage has reported completion, processing chain reaction");
@@ -182,9 +169,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		`CI_Trace("Still more stages avaliable");
 
 		ActivityState = GetCurrentActivity();
-		ActivityTemplate = ActivityState.GetMyTemplate();
 
-		if (ActivityTemplate.ShouldProgressChain == none || ActivityTemplate.ShouldProgressChain(ActivityState))
+		if (ActivityState.ShouldProgressChain())
 		{
 			`CI_Trace("Progression not blocked by stage template");
 			StartNextStage(NewGameState);
@@ -214,12 +200,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		foreach StageRefs(ActivityRef)
 		{
 			ActivityState = XComGameState_Activity(NewGameState.GetGameStateForObjectID(ActivityRef.ObjectID));
-			ActivityTemplate = ActivityState.GetMyTemplate();
-
-			if (ActivityTemplate.CleanupChain != none)
-			{
-				ActivityTemplate.CleanupChain(NewGameState, ActivityState);
-			}
+			ActivityState.OnCleanupChain(NewGameState);
 		}
 
 		// Then on the chain

@@ -64,14 +64,66 @@ event OnCreation (optional X2DataTemplate Template)
 /////////////////
 /// Lifecycle ///
 /////////////////
+// These are separated into specific functions for 2 reasons:
+// (1) Prettify the calling code
+// (2) Allow for additional extension point in the state classes
 
-// Runs before the lifecycle callbacks on templates are called
 function OnEarlySetup (XComGameState NewGameState)
 {
 	if (GetMyTemplate().SetupChainEarly != none)
 	{
 		GetMyTemplate().SetupChainEarly(NewGameState, self);
 	}
+}
+
+function OnSetupChain (XComGameState NewGameState)
+{
+	if (GetMyTemplate().SetupChain != none)
+	{
+		GetMyTemplate().SetupChain(NewGameState, self);
+	}
+}
+
+function SetupStage (XComGameState NewGameState)
+{
+	if (GetMyTemplate().SetupStage != none)
+	{
+		GetMyTemplate().SetupStage(NewGameState, self);
+	}
+}
+
+function CleanupStage (XComGameState NewGameState)
+{
+	if (GetMyTemplate().CleanupStage != none)
+	{
+		GetMyTemplate().CleanupStage(NewGameState, self);
+	}
+}
+
+function CleanupStageDeffered (XComGameState NewGameState)
+{
+	if (GetMyTemplate().CleanupStageDeffered != none)
+	{
+		GetMyTemplate().CleanupStageDeffered(NewGameState, self);
+	}
+}
+
+function OnCleanupChain (XComGameState NewGameState)
+{
+	if (GetMyTemplate().CleanupChain != none)
+	{
+		GetMyTemplate().CleanupChain(NewGameState, self);
+	}
+}
+
+function bool ShouldProgressChain ()
+{
+	if (GetMyTemplate().ShouldProgressChain != none)
+	{
+		return GetMyTemplate().ShouldProgressChain(self);
+	}
+
+	return true;
 }
 
 //////////////////
@@ -114,13 +166,7 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 {
 	`CI_Trace(m_TemplateName @ "marked completed as" @ CompletionStatus);
 
-	GetMyTemplate();
-
-	if (m_Template.CleanupStage != none)
-	{
-		m_Template.CleanupStage(NewGameState, self);
-	}
-
+	CleanupStage(NewGameState);
 	bChainNeedsCompletionNotification = true;
 }
 
@@ -138,7 +184,9 @@ function UpdateGameBoard ()
 		NewChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainRef.ObjectID));
 		NewActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ObjectID));
 
+		NewActivityState.CleanupStageDeffered(NewGameState);
 		NewActivityState.bChainNeedsCompletionNotification = false;
+
 		NewChainState.CurrentStageHasCompleted(NewGameState);
 
 		`SubmitGamestate(NewGameState);
