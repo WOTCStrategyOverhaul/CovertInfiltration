@@ -315,6 +315,9 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_ActivityChain.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_CovertAction.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CIReinforcementsManager.uc">
       <SubType>Content</SubType>
     </Content>

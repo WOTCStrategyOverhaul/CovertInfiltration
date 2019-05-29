@@ -6,6 +6,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	
 	//
 	CreateNeutralizeCommander(Templates);
+	CreatePrepareCounterDE(Templates);
 	
 	return Templates;
 }
@@ -35,9 +36,43 @@ static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
 	Templates.AddItem(Activity);
 }
 
+static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_CovertAction Activity;
+	local X2CovertActionTemplate CovertAction;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareCounterDE');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', CovertAction, 'CovertAction_PrepareCounterDE');
+
+	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
+	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
+	CovertAction.Narratives.AddItem('CovertActionNarrative_NeutralizeCommanderInfil'); // TODO
+
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('EleriumDust', 10));
+
+	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
+	CovertAction.Rewards.AddItem('Reward_Scientist'); // TODO: POI
+
+	Activity.CovertActionName = CovertAction.DataName;
+
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
 static function UseActivityPrimaryRegion (XComGameState NewGameState, XComGameState_CovertAction ActionState, out array<StateObjectReference> ExcludeLocations)
 {
-	ActionState.LocationEntity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(ActionState).GetActivityChain().PrimaryRegionRef;
+	local XComGameState_Activity Activity;
+
+	Activity = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(ActionState);
+
+	if (Activity == none)
+	{
+		Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(ActionState);
+	}
+	
+	ActionState.LocationEntity = Activity.GetActivityChain().PrimaryRegionRef;
 }
 
 static function int GetMissionDifficultyFromMonth (XComGameState_Activity ActivityState)
@@ -64,4 +99,46 @@ static function int GetMissionDifficultyFromMonth (XComGameState_Activity Activi
 						class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
 
 	return Difficulty;
+}
+
+//////////////////////////////////////////////////////////
+/// Copied from X2StrategyElement_DefaultCovertActions ///
+//////////////////////////////////////////////////////////
+
+static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass)
+{
+	local CovertActionSlot SoldierSlot;
+
+	SoldierSlot.StaffSlot = SlotName;
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostHP');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostAim');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostMobility');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostDodge');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostWill');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostHacking');
+	SoldierSlot.Rewards.AddItem('Reward_RankUp');
+	SoldierSlot.iMinRank = iMinRank;
+	SoldierSlot.bChanceFame = false;
+	SoldierSlot.bRandomClass = bRandomClass;
+	SoldierSlot.bFactionClass = bFactionClass;
+
+	if (SlotName == 'CovertActionRookieStaffSlot')
+	{
+		SoldierSlot.bChanceFame = false;
+	}
+
+	return SoldierSlot;
+}
+
+static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int Quantity)
+{
+	local StrategyCostReward ActionCost;
+	local ArtifactCost Resources;
+
+	Resources.ItemTemplateName = ResourceName;
+	Resources.Quantity = Quantity;
+	ActionCost.Cost.ResourceCosts.AddItem(Resources);
+	ActionCost.Reward = 'Reward_DecreaseRisk';
+	
+	return ActionCost;
 }

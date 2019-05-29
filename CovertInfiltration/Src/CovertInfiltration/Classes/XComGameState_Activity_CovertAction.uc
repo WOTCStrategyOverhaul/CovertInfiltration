@@ -3,11 +3,15 @@ class XComGameState_Activity_CovertAction extends XComGameState_Activity;
 protected function EventListenerReturn OnActionCompleted (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	MarkSuccess(GameState);
+
+	return ELR_NoInterrupt;
 }
 
 protected function EventListenerReturn OnActionExpired (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	MarkExpired(GameState);
+
+	return ELR_NoInterrupt;
 }
 
 protected function PostMarkCompleted (XComGameState NewGameState)

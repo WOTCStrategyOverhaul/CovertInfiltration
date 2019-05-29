@@ -64,8 +64,29 @@ static function AddExpiration (XComGameState NewGameState, XComGameState_Activit
 	}
 }
 
+static function int CreateExpirationVariance (X2ActivityTemplate_CovertAction ActivityTemplate)
+{
+	local int Variance;
+	local bool bNegVariance;
+
+	Variance = `SYNC_RAND_STATIC(ActivityTemplate.ExpirationVariance);
+
+	// roll chance for negative variance
+	bNegVariance = `SYNC_RAND_STATIC(2) < 1;
+	if (bNegVariance) Variance *= -1;
+
+	return Variance;
+}
+
+static function bool DefaultShouldProgressChain (XComGameState_Activity ActivityState)
+{
+	// Do not progress if the CA expired
+	return ActivityState.CompletionStatus == eActivityCompletion_Success;
+}
+
 defaultproperties
 {
 	SetupStage = DefaultCovertActionSetup
+	ShouldProgressChain = DefaultShouldProgressChain
 	StateClass = class'XComGameState_Activity_CovertAction'
 }
