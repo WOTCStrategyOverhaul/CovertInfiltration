@@ -1,4 +1,4 @@
-class XComGameState_Activity extends XComGameState_BaseObject;
+class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
 enum EActivityCompletion
 {
@@ -22,6 +22,8 @@ var protectedwrite EActivityCompletion CompletionStatus;
 // XCGS objects that this activity controls. For example, mission site, covert action, etc
 var StateObjectReference PrimaryObjectRef;
 var StateObjectReference SecondaryObjectRef;
+
+var protectedwrite bool bChainNeedsCompletionNotification;
 
 ////////////////
 /// Template ///
@@ -59,8 +61,18 @@ event OnCreation (optional X2DataTemplate Template)
 	m_TemplateName = Template.DataName;
 }
 
+/////////////////
+/// Lifecycle ///
+/////////////////
+
 // Runs before the lifecycle callbacks on templates are called
-function OnEarlySetup (XComGameState NewGameState);
+function OnEarlySetup (XComGameState NewGameState)
+{
+	if (GetMyTemplate().SetupChainEarly != none)
+	{
+		GetMyTemplate().SetupChainEarly(NewGameState, self);
+	}
+}
 
 //////////////////
 /// Completion ///
@@ -100,8 +112,6 @@ function MarkSuccess (XComGameState NewGameState)
 
 protected function PostMarkCompleted (XComGameState NewGameState)
 {
-	local XComGameState_ActivityChain ActivityChain;
-
 	`CI_Trace(m_TemplateName @ "marked completed as" @ CompletionStatus);
 
 	GetMyTemplate();
@@ -111,8 +121,28 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 		m_Template.CleanupStage(NewGameState, self);
 	}
 
-	ActivityChain = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainRef.ObjectID));
-	ActivityChain.CurrentStageHasCompleted(NewGameState);
+	bChainNeedsCompletionNotification = true;
+}
+
+function UpdateGameBoard ()
+{
+	local XComGameState_ActivityChain NewChainState;
+	local XComGameState_Activity NewActivityState;
+	local XComGameState NewGameState;
+
+	if (bChainNeedsCompletionNotification)
+	{
+		`CI_Trace(m_TemplateName @ "notifiying chain of completion");
+		
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI:" @ m_TemplateName @ "notifiying chain of completion");
+		NewChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainRef.ObjectID));
+		NewActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ObjectID));
+
+		NewActivityState.bChainNeedsCompletionNotification = false;
+		NewChainState.CurrentStageHasCompleted(NewGameState);
+
+		`SubmitGamestate(NewGameState);
+	}
 }
 
 ///////////////
@@ -149,6 +179,29 @@ protected function bool ValidateCanMarkCompletion ()
 	}
 
 	return true;
+}
+
+/////////////////////////
+/// XCGS_GE interface ///
+/////////////////////////
+
+protected function bool CanInteract ()
+{
+	return false;
+}
+
+function bool ShouldBeVisible ()
+{
+	return false;
+}
+
+///////////////
+/// Removal ///
+///////////////
+
+function RemoveEntity (XComGameState NewGameState)
+{
+	NewGameState.RemoveStateObject(ObjectID);
 }
 
 //////////////////////
