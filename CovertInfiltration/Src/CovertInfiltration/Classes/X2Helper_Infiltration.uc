@@ -423,3 +423,40 @@ static function bool GeoscapeReadyForUpdate ()
 		StrategyMap.m_eUIState != eSMS_Flight &&
 		StrategyMap.Movie.Pres.ScreenStack.GetCurrentScreen() == StrategyMap;
 }
+
+static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+	local XComTacticalMissionManager MissionMgr;
+	local X2RewardTemplate MissionReward;
+	local GeneratedMissionData EmptyData;
+	local string AdditionalTag;
+
+	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
+	MissionMgr = `TACTICALMISSIONMGR;
+	MissionState.GeneratedMission = EmptyData;
+	
+	MissionState.GeneratedMission.MissionID = MissionState.ObjectID;
+	MissionState.GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
+	
+	MissionState.GeneratedMission.Mission = GetMissionDefinitionForActivity(ActivityState);
+	MissionState.GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
+
+	if (MissionState.GeneratedMission.Mission.sType == "")
+	{
+		`Redscreen("GetMissionDefinitionForActivity() failed to generate a mission with: \n"
+						$ " Activity: " $ ActivityState.GetMyTemplateName() $ "\n RewardType: " $ MissionReward.DisplayName);
+	}
+
+	foreach AdditionalRequiredPlotObjectiveTags(AdditionalTag)
+	{
+		MissionState.GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
+	}
+
+	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
+
+	// Cosmetic stuff
+
+	MissionState.GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
+	MissionState.GenerateMissionFlavorText();
+}

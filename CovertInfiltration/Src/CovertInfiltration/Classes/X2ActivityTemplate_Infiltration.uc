@@ -10,11 +10,6 @@ var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "block cleanup"
 
-// TODO:
-// (1) Remove X2CovertMissionInfoTemplate
-// (2) Make just one infiltration mission source
-// (3) Create XComGameState_MissionSiteInfiltration when the covert action itself is created and pick the mission type then
-
 static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	CreateCovertAction(NewGameState, ActivityState);

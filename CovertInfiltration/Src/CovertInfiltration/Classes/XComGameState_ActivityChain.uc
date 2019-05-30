@@ -238,6 +238,16 @@ function XComGameState_ResistanceFaction GetFaction()
 	return XComGameState_ResistanceFaction(`XCOMHISTORY.GetGameStateForObjectID(FactionRef.ObjectID));
 }
 
+function XComGameState_WorldRegion GetPrimaryRegion ()
+{
+	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(PrimaryRegionRef.ObjectID));
+}
+
+function XComGameState_WorldRegion GetSecondaryRegion ()
+{
+	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
+}
+
 defaultproperties
 {
 	iCurrentStage = -1;

@@ -53,7 +53,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 		Rewards.AddItem(class'X2Helper_Infiltration'.static.CreateRewardNone(NewGameState));
 	}
 
-	InitalizeGeneratedMission();
+	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity());
 }
 
 // This is called from X2EventListener_Infiltration::CovertActionCompleted.
@@ -110,42 +110,6 @@ protected function CopyDataFromAction ()
 
 	// And ends at 200%
 	class'X2StrategyGameRulesetDataStructures'.static.AddHours(ExpirationDateTime, Action.HoursToComplete);
-}
-
-protected function InitalizeGeneratedMission()
-{
-	local XComTacticalMissionManager MissionMgr;
-	local X2RewardTemplate MissionReward;
-	local GeneratedMissionData EmptyData;
-	local string AdditionalTag;
-
-	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Rewards[0].ObjectID)).GetMyTemplate();
-	MissionMgr = `TACTICALMISSIONMGR;
-	GeneratedMission = EmptyData;
-	
-	GeneratedMission.MissionID = ObjectID;
-	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
-	
-	GeneratedMission.Mission = class'X2Helper_Infiltration'.static.GetMissionDefinitionForActivity(GetActivity());
-	GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
-
-	if (GeneratedMission.Mission.sType == "")
-	{
-		`Redscreen("GetMissionDataForSourceReward() failed to generate a mission with: \n"
-						$ " Source: " $ Source $ "\n RewardType: " $ MissionReward.DisplayName);
-	}
-
-	foreach AdditionalRequiredPlotObjectiveTags(AdditionalTag)
-	{
-		GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
-	}
-
-	GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(Source, MissionReward, GeneratedMission.Mission, DarkEvent.ObjectID > 0);
-
-	// Cosmetic stuff
-
-	GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
-	GenerateMissionFlavorText();
 }
 
 protected function SelectPlotAndBiome()
