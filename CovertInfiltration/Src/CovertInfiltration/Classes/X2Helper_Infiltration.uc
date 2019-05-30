@@ -432,6 +432,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 	local GeneratedMissionData EmptyData;
 	local string AdditionalTag;
 
+	MissionState = GetMissionStateFromActivity(ActivityState);
 	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
 	MissionMgr = `TACTICALMISSIONMGR;
 	MissionState.GeneratedMission = EmptyData;
@@ -440,7 +441,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 	MissionState.GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
 	
 	MissionState.GeneratedMission.Mission = GetMissionDefinitionForActivity(ActivityState);
-	MissionState.GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
+	MissionState.GeneratedMission.SitReps = MissionState.GeneratedMission.Mission.ForcedSitreps;
 
 	if (MissionState.GeneratedMission.Mission.sType == "")
 	{
@@ -448,7 +449,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 						$ " Activity: " $ ActivityState.GetMyTemplateName() $ "\n RewardType: " $ MissionReward.DisplayName);
 	}
 
-	foreach AdditionalRequiredPlotObjectiveTags(AdditionalTag)
+	foreach MissionState.AdditionalRequiredPlotObjectiveTags(AdditionalTag)
 	{
 		MissionState.GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
 	}
