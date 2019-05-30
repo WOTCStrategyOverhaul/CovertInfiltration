@@ -1,15 +1,39 @@
 class XComGameState_Activity_CovertAction extends XComGameState_Activity;
 
-protected function EventListenerReturn OnActionCompleted (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+function UpdateGameBoard ()
 {
-	MarkSuccess(GameState);
+	local XComGameState_Activity_CovertAction NewActivityState;
+	local XComGameState_CovertAction ActionState;
+	local XComGameState NewGameState;
 
-	return ELR_NoInterrupt;
+	super.UpdateGameBoard();
+
+	ActionState = GetAction();
+
+	if (!IsCompleted() && ActionState.bRemoved) // If it was expired, then the activity is marked completed already
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "registered that action was removed");
+		NewActivityState = XComGameState_Activity_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_Activity_CovertAction', ObjectID));
+
+		if (ActionState.bCompleted)
+		{
+			NewActivityState.MarkSuccess(NewGameState);
+		}
+		else
+		{
+			NewActivityState.MarkFailed(NewGameState);
+		}
+
+		`SubmitGameState(NewGameState);
+	}
 }
 
 protected function EventListenerReturn OnActionExpired (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	MarkExpired(GameState);
+	local XComGameState_Activity_CovertAction NewActivityState;
+
+	NewActivityState = XComGameState_Activity_CovertAction(GameState.ModifyStateObject(class'XComGameState_Activity_CovertAction', ObjectID));
+	NewActivityState.MarkExpired(GameState);
 
 	return ELR_NoInterrupt;
 }
@@ -35,8 +59,11 @@ function RegisterForActionEvents ()
 	ActionState = GetAction();
 	SelfObject = self;
 
-	EventManger.RegisterForEvent(SelfObject, 'CovertActionCompleted', OnActionCompleted, ELD_Immediate,, ActionState);
+	//EventManger.RegisterForEvent(SelfObject, 'CovertActionCompleted', OnActionCompleted, ELD_Immediate,, ActionState);
 	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate,, ActionState);
+
+	// Cannot use the CovertActionCompleted event as the popup of next stage will spawn before the UICovertActionReport does
+	// due to the weird way the latter is wired up. Instead we check in UpdateGameBoard if the action was removed
 }
 
 function UnRegisterFromAllEvents ()
