@@ -74,6 +74,7 @@ static function GenericOnSuccess (XComGameState NewGameState, XComGameState_Acti
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
 	MissionState.RemoveEntity(NewGameState);
 
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
 }
 
@@ -84,6 +85,7 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	MissionState.RemoveEntity(NewGameState);
 	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkFailed(NewGameState);
 }
 

@@ -2,6 +2,9 @@ class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
 enum EActivityCompletion
 {
+	// The chain hasn't progressed to this activity yet
+	eActivityCompletion_NotReached,
+
 	// The player is still able to do the activity (or is doing it now)
 	eActivityCompletion_NotCompleted,
 
@@ -86,9 +89,14 @@ function OnSetupChain (XComGameState NewGameState)
 
 function SetupStage (XComGameState NewGameState)
 {
+	local XComGameState_Activity NewActivityState;
+
+	NewActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ObjectID));
+	NewActivityState.CompletionStatus = eActivityCompletion_NotCompleted;
+
 	if (GetMyTemplate().SetupStage != none)
 	{
-		GetMyTemplate().SetupStage(NewGameState, self);
+		GetMyTemplate().SetupStage(NewGameState, NewActivityState);
 	}
 }
 
@@ -210,6 +218,16 @@ function bool IsCurrentStage ()
 function bool IsCompleted ()
 {
 	return CompletionStatus != eActivityCompletion_NotCompleted;
+}
+
+function int GetStageIndex ()
+{
+	return GetActivityChain().StageRefs.Find('ObjectID', ObjectID);
+}
+
+function bool IsOngoing ()
+{
+	return CompletionStatus == eActivityCompletion_NotCompleted;
 }
 
 protected function bool ValidateCanMarkCompletion ()

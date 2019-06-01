@@ -5,10 +5,27 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 	
 	//
+	CreateRecoverAssualt(Templates);
 	CreateNeutralizeCommander(Templates);
 	CreatePrepareCounterDE(Templates);
 	
 	return Templates;
+}
+
+static function CreateRecoverAssualt (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault Activity;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_Recover');
+
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
+	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
+	Activity.MissionRewards.AddItem('Reward_Scientist'); // TODO: POI
+	
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+
+	Templates.AddItem(Activity);
 }
 
 static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)

@@ -18,6 +18,7 @@ static function X2DataTemplate CreateSupplyRaidTemplate ()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 
+	Template.Stages.AddItem('Activity_Recover');
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_NeutralizeCommander');
 	// TODO

@@ -1,4 +1,8 @@
+// TODO: Expiration, UI aspect
+
 class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission;
+
+var class<UIMission> ScreenClass;
 
 static function DefaultAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
@@ -275,4 +279,10 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 
 	ExcludeBiomes.AddItem(Biome);
 	return false;
+}
+
+defaultproperties
+{
+	SetupStage = DefaultAssaultSetup
+	ScreenClass = class'UIMission_GOps'
 }

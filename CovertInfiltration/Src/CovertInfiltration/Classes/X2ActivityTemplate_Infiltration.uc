@@ -1,3 +1,5 @@
+// TODO: Handle expiration
+
 class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Mission config(Infiltration);
 
 var name CovertActionName;

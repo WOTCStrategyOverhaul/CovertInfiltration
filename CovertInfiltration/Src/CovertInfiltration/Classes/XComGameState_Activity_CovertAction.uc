@@ -10,7 +10,7 @@ function UpdateGameBoard ()
 
 	ActionState = GetAction();
 
-	if (!IsCompleted() && ActionState.bRemoved) // If it was expired, then the activity is marked completed already
+	if (IsOngoing() && ActionState.bRemoved) // If it was expired, then the activity is marked completed already
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "registered that action was removed");
 		NewActivityState = XComGameState_Activity_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_Activity_CovertAction', ObjectID));
