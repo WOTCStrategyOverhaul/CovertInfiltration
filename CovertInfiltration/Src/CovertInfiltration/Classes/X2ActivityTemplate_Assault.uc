@@ -1,6 +1,10 @@
-// TODO: Expiration, UI aspect
+// TODO: UI aspect
 
-class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission;
+class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission config(Infiltration);
+
+var config bool bExpires;
+var config int ExpirationBaseTime;
+var config int ExpirationVariance;
 
 var class<UIMission> ScreenClass;
 
@@ -9,13 +13,21 @@ static function DefaultAssaultSetup (XComGameState NewGameState, XComGameState_A
 	CreateMission(NewGameState, ActivityState);
 }
 
+static function DefaultOnExpire (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkExpired(NewGameState);
+}
+
 static function CreateMission (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityTemplate_Assault ActivityTemplate;
 	local XComGameState_MissionSite MissionState;
 	local X2MissionSourceTemplate MissionSource;
 	local XComGameState_WorldRegion Region;
 
+	ActivityTemplate = X2ActivityTemplate_Assault(ActivityState.GetMyTemplate());
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	MissionSource = X2MissionSourceTemplate(TemplateManager.FindStrategyElementTemplate(MISSION_SOURCE_NAME));
 	Region = ActivityState.GetActivityChain().GetPrimaryRegion();
@@ -25,13 +37,27 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	
 	MissionState.BuildMission(
 		MissionSource, Region.GetRandom2DLocationInRegion(), Region.GetReference(), InitRewardsStates(NewGameState, ActivityState), true /*bAvailable*/, 
-		false /* bExpiring */, -1 /* iHours */, -1 /* iSeconds */, // TODO: Expiry
+		ActivityTemplate.bExpires /* bExpiring */, -1 /* iHours */, ActivityTemplate.RollExpiry() /* iSeconds */,
 		/* bUseSpecifiedLevelSeed */, /* LevelSeedOverride */, false /* bSetMissionData */
 	);
 
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(ActivityState);
 	class'UIUtilities_Strategy'.static.GetAlienHQ().AddChosenTacticalTagsToMission(MissionState);
 	SelectSitrepsAndPlot(MissionState);
+}
+
+function int RollExpiry ()
+{
+	local int Variance;
+	local bool bNegVariance;
+
+	Variance = `SYNC_RAND(ExpirationVariance);
+
+	// roll chance for negative variance
+	bNegVariance = `SYNC_RAND(2) < 1;
+	if (bNegVariance) Variance *= -1;
+
+	return ExpirationBaseTime + Variance;
 }
 
 static function array<XComGameState_Reward> InitRewardsStates (XComGameState NewGameState, XComGameState_Activity ActivityState, optional bool SubstituteNone = true)

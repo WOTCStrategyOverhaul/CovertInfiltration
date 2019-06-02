@@ -1,5 +1,3 @@
-// TODO: Handle expiration
-
 class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Mission config(Infiltration);
 
 var name CovertActionName;
@@ -43,6 +41,8 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	ActionState.bNewAction = true;
 
 	FactionState.CovertActions.AddItem(ActionState.GetReference());
+
+	XComGameState_Activity_Infiltration(ActivityState).RegisterForActionEvents();
 }
 
 static function AddExpiration (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -92,4 +92,5 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
+	StateClass = class'XComGameState_Activity_Infiltration'
 }
