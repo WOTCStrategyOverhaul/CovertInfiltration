@@ -127,5 +127,5 @@ defaultproperties
 	OnSuccess = GenericOnSuccess
 	OnFailure = GenericOnFailure
 
-	ScreenClass = class'UIMission_GOps'
+	ScreenClass = class'UIMission_Council'
 }

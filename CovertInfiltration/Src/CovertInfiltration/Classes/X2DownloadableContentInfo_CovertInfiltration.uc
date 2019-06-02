@@ -406,3 +406,24 @@ exec function EnableCITrace (bool Enabled)
 {
 	SuppressTraceLogs = !Enabled;
 }
+
+exec function CompleteCurrentCovertActionImproved (optional bool bCompleted = true)
+{
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: CompleteCurrentCovertAction");
+	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
+	{
+		if (ActionState.bStarted)
+		{
+			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+			ActionState.bCompleted = bCompleted;
+			ActionState.CompleteCovertAction(NewGameState);
+		}
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
