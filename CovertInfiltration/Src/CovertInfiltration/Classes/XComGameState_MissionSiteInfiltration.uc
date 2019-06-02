@@ -443,18 +443,6 @@ protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, O
 	return ELR_NoInterrupt;
 }
 
-function MissionSelected()
-{
-	local UIMission_Infiltrated MissionUI;
-	local XComHQPresentationLayer HQPres;
-
-	HQPres = `HQPRES;
-
-	MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
-	MissionUI.MissionRef = GetReference();
-	HQPres.ScreenStack.Push(MissionUI);
-}
-
 function PostSitRepsChanged(XComGameState NewGameState)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
@@ -623,26 +611,6 @@ function StartMission()
 function class<UIStrategyMapItem> GetUIClass()
 {
 	return class'CI_UIStrategyMapItem_CovertAction';
-}
-
-function string GetUIButtonIcon()
-{
-	local string Path;
-
-	Path = X2ActivityTemplate_Mission(GetActivity().GetMyTemplate()).UIButtonIcon;
-
-	if (Path == "")
-	{
-		// Use default icon, ala parent
-		Path = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GoldenPath";
-	}
-
-	return Path;
-}
-
-simulated function string GetUIButtonTooltipTitle()
-{
-	return GetMissionObjectiveText();
 }
 
 function RemoveEntity(XComGameState NewGameState)

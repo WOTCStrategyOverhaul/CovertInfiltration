@@ -1,12 +1,8 @@
-// TODO: UI aspect
-
 class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission config(Infiltration);
 
 var config bool bExpires;
 var config int ExpirationBaseTime;
 var config int ExpirationVariance;
-
-var class<UIMission> ScreenClass;
 
 static function DefaultAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
@@ -310,5 +306,4 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 defaultproperties
 {
 	SetupStage = DefaultAssaultSetup
-	ScreenClass = class'UIMission_GOps'
 }

@@ -93,4 +93,5 @@ defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
 	StateClass = class'XComGameState_Activity_Infiltration'
+	ScreenClass = class'UIMission_Infiltrated'
 }
