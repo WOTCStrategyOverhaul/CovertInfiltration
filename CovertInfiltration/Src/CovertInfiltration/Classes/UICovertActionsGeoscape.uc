@@ -315,9 +315,10 @@ simulated protected function BuildActionReward()
 	ActionRewardHeader.SetSize(ActionRewardContainer.Width, 55);
 	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRewardHeader, bIsIn3D, true));
 
-	ActionRewardText = Spawn(class'UIText', ActionRewardContainer);
+	ActionRewardText = Spawn(class'UITextContainer', ActionRewardContainer);
 	ActionRewardText.bAnimateOnInit = false;
-	ActionRewardText.InitText('ActionRewardText');
+	ActionRewardText.InitTextContainer('ActionRewardText');
+	//ActionRewardText.InitText('ActionRewardText');
 	ActionRewardText.SetPosition(0, 50);
 	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
 }
