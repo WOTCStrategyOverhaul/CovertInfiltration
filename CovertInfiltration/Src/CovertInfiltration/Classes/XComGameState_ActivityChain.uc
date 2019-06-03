@@ -1,3 +1,12 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Represents an activity chain and acts as the centerpiece for invoking all
+//           callbacks and maintaing progress. Note that currently the finished chains
+//           are not deleted
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_ActivityChain extends XComGameState_BaseObject;
 
 enum EActivityChainEndReason

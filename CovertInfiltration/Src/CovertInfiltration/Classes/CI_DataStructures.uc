@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
+//  AUTHOR:  statusNone, Xymanek
 //  PURPOSE: Container to hold data structures that need to be accessed from multiple
 //           classes to avoid dependson mess
 //---------------------------------------------------------------------------------------

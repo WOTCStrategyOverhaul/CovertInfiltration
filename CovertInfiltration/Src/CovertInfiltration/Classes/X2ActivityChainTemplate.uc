@@ -1,9 +1,18 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Template for a chain of X2ActivityTemplates. Defines the overall behaviour
+//           of the chain, such as what region it takes place it, etc
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2ActivityChainTemplate extends X2StrategyElementTemplate;
 
 // For overview UI
 var localized string Title;
 var localized string Description;
 
+// Names of X2ActivityTemplates that act as stages for this chain
 var array<name> Stages;
 
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks

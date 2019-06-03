@@ -1,3 +1,13 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Represents an activity that currently exists in the world. Note that the
+//           activity states are created when the chain is started and as such the
+//           existance of this object doesn't mean that the activity is currently
+//           underway - care needs to be taken
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
 enum EActivityCompletion

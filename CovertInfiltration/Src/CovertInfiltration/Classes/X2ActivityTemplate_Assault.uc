@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Template for an instant mission (no infiltration) as an activity
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission config(Infiltration);
 
 var config bool bExpires;

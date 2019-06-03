@@ -1,3 +1,15 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Base template for an activity. An activity can be absolutely anything, eg.
+//           missions, CA, etc. This template controls how the underlying state object
+//           (ie. CA) is spawned and cleaned up, as well as any associated states
+//           (ie. rewards). The properties here are used by the chain to intereact with
+//           the activity, it's recommened to make a subclass for a concrete type of
+//           activity (ie. CA) and add the specific properties there
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2ActivityTemplate extends X2StrategyElementTemplate abstract config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;

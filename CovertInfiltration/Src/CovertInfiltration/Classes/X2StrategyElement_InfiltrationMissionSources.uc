@@ -1,9 +1,8 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class contains all the MissionSource templates
-//           required for the mod's infiltrations
+//  AUTHOR:  Xymanek
+//  PURPOSE: Creates a MissionSource that proxies all calls to X2ActivityTemplate_Mission
 //---------------------------------------------------------------------------------------
-//  WOTCStrategyOverhaul Team. TODO: Fix header
+//  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class X2StrategyElement_InfiltrationMissionSources extends X2StrategyElement_DefaultMissionSources;

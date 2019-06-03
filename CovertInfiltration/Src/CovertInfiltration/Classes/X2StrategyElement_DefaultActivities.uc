@@ -1,3 +1,13 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Activites that are introduced by this mod. Note that many activities need
+//           multiple templates (eg. X2ActivityTemplate + X2CovertActionTemplate) so
+//           the templates array is passed to individual Create[...] methods, instead of
+//           returning the template and adding it inside CreateTemplates() as usual
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2StrategyElement_DefaultActivities extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()

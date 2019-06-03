@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Template for an infiltration mission as an activity
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Mission config(Infiltration);
 
 var name CovertActionName;

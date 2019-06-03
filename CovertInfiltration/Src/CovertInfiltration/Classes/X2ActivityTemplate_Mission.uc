@@ -1,3 +1,14 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Base template for missions as activity. Contains code common to both
+//           assault (instant) and infiltration missions. Note that this is also used
+//           by many event listeners. Note that the mission families used are specified
+//           in X2Helper_Infiltration::ActivityMissionFamily config to allow for easy
+//           changes by other mods
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2ActivityTemplate_Mission extends X2ActivityTemplate abstract;
 
 const MISSION_SOURCE_NAME = 'MissionSource_ActivityCI';

@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Activity state for X2ActivityTemplate_CovertAction. Listens for changes in
+//           the CA's state
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_Activity_CovertAction extends XComGameState_Activity;
 
 function UpdateGameBoard ()

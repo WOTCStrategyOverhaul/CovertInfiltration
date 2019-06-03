@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Activity chains that are introduced by this mod
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2StrategyElement_DefaultActivityChains extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()

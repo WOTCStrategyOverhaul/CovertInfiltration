@@ -1,14 +1,12 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf and Xymanek
-//  PURPOSE: Rewards used in infiltration actions and missions
+//  AUTHOR:  Xymanek
+//  PURPOSE: Creates a X2RewardTemplate that proxies all calls to
+//           X2ActivityTemplate_Infiltration
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Infiltration);
-
-var config int P2_EXPIRATION_BASE_TIME;
-var config int P2_EXPIRATION_VARIANCE;
+class X2StrategyElement_InfiltrationRewards extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()
 {

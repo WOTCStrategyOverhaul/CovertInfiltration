@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Activity state for X2ActivityTemplate_Infiltration. Listens for expiry of
+//           mission-spawning covert action
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_Activity_Infiltration extends XComGameState_Activity;
 
 protected function EventListenerReturn OnActionExpired (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
