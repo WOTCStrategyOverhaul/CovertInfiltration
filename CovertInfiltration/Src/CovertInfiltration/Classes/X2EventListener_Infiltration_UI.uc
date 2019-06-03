@@ -48,6 +48,9 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate);
 	Template.AddCHEvent('OnGeoscapeEntry', OnGeoscapeEntry);
 	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted); // On submitted as we are going to pause geoscape which will cause a gamestate
+	Template.AddCHEvent('OverrideMissionSiteIconImage', OverrideMissionSiteIconImage, ELD_Immediate);
+	Template.AddCHEvent('StrategyMapMissionSiteSelected', StrategyMapMissionSiteSelected, ELD_Immediate);
+	Template.AddCHEvent('OverrideMissionSiteTooltip', OverrideMissionSiteTooltip, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -189,6 +192,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 {
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_CovertAction CovertAction;
+	local XComGameState_Activity Activity;
 	local XComHQPresentationLayer HQPres;
 
 	CovertAction = XComGameState_CovertAction(EventSource);
@@ -200,24 +204,95 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
 	{
-		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionState)
+		Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(CovertAction);
+		MissionState = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(Activity));
+
+		HQPres = `HQPRES;
+		HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
+		HQPres.PlayUISound(eSUISound_SoldierPromotion);
+
+		if (`GAME.GetGeoscape().IsScanning())
 		{
-			if (MissionState.CorrespondingActionRef == CovertAction.GetReference())
-			{
-				HQPres = `HQPRES;
-				HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
-				HQPres.PlayUISound(eSUISound_SoldierPromotion);
-
-				if (`GAME.GetGeoscape().IsScanning())
-				{
-					`HQPRES.StrategyMap2D.ToggleScan();
-				}
-
-				break;
-			}
+			`HQPRES.StrategyMap2D.ToggleScan();
 		}
 	}
 	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideMissionSiteIconImage(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionSite;
+	local XComGameState_Activity ActivityState;
+	local XComLWTuple Tuple;
+
+	MissionSite = XComGameState_MissionSite(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (MissionSite == none || Tuple == none || Tuple.Id != 'OverrideMissionSiteIconImage') return ELR_NoInterrupt;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionSite);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (ActivityTemplate == none) return ELR_NoInterrupt;
+	
+	Tuple.Data[0].s = ActivityTemplate.UIButtonIcon;
+	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn StrategyMapMissionSiteSelected(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionSite;
+	local XComGameState_Activity ActivityState;
+
+	MissionSite = XComGameState_MissionSite(EventSource);
+	if (MissionSite == none) return ELR_NoInterrupt;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionSite);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (ActivityTemplate == none) return ELR_NoInterrupt;
+	
+	ActivityTemplate.OnStrategyMapSelected(ActivityState);
+	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideMissionSiteTooltip(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_Activity ActivityState;
+	local UIStrategyMap_MissionIcon Icon;
+	local string Title, Body;
+	local XComLWTuple Tuple;
+
+	Icon = UIStrategyMap_MissionIcon(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Icon == none || Icon.MissionSite == none || Tuple == none || Tuple.Id != 'OverrideMissionSiteTooltip') return ELR_NoInterrupt;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(Icon.MissionSite);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (ActivityTemplate == none) return ELR_NoInterrupt;
+	
+	// Not allowed to pass a dynamic array element as the value for an out parameter
+	// So, proxy vars
+
+	Title = Tuple.Data[0].s;
+	Body = Tuple.Data[1].s;
+	
+	ActivityTemplate.OverrideStrategyMapIconTooltip(ActivityState, Title, Body);
+	
+	Tuple.Data[0].s = Title;
+	Tuple.Data[1].s = Body;
+
 	return ELR_NoInterrupt;
 }
 

@@ -235,7 +235,9 @@ function X2CovertActionTemplate PickActionToSpawn()
 	local name PickedActionName;
 	local array<StateObjectReference> DarkEvents;
 
-	DarkEvents = class'X2StrategyElement_InfiltrationRewards'.static.GetRandomDarkEvents(4);
+	//DarkEvents = class'X2StrategyElement_InfiltrationRewards'.static.GetRandomDarkEvents(4);
+	DarkEvents.Length = 0; // Temp hack to get the mod to compile. This class will be reworked anyway
+	
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 

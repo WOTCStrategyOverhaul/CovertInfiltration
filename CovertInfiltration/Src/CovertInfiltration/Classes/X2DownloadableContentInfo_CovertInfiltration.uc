@@ -15,7 +15,7 @@ var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 
 static event UpdateDLC()
 {
-	class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+	//class'XComGameState_PhaseOneActionsSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 }
 
@@ -381,4 +381,49 @@ exec function ClearOverInfiltrationDecks()
 			CardManager.RemoveCardFromDeck(Deck, Card);
 		}
 	}
+}
+
+exec function SpawnActivityChain (name ChainTemplateName)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_ActivityChain ChainState;
+	local X2ActivityChainTemplate ChainTemplate;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnActivityChain" @ ChainTemplateName);
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(ChainTemplateName));
+
+	`CI_Trace("Starting cheat: SpawnActivityChain" @ ChainTemplateName);
+
+	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	ChainState.StartNextStage(NewGameState);
+
+	`SubmitGameState(NewGameState);
+}
+
+exec function EnableCITrace (bool Enabled)
+{
+	SuppressTraceLogs = !Enabled;
+}
+
+exec function CompleteCurrentCovertActionImproved (optional bool bCompleted = true)
+{
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local XComGameState_CovertAction ActionState;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: CompleteCurrentCovertAction");
+	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
+	{
+		if (ActionState.bStarted)
+		{
+			ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+			ActionState.bCompleted = bCompleted;
+			ActionState.CompleteCovertAction(NewGameState);
+		}
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }

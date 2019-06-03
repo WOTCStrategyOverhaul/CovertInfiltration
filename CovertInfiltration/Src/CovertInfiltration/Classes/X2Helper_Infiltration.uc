@@ -18,6 +18,7 @@ var config array<float> OVERLOADED_MULT;
 var config array<int> RANKS_DETER;
 
 var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
+var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -190,15 +191,6 @@ static function CreateWillRecoveryProject(XComGameState NewGameState, XComGameSt
 	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
-static function X2MissionSourceTemplate GetCovertMissionSource(X2CovertMissionInfoTemplate MissionInfo)
-{
-	local X2StrategyElementTemplateManager StratMgr;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	
-	return X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionSource));
-}
-
 static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction CovertAction)
 {
 	local StrategyCost ExfiltrateCost;
@@ -217,31 +209,9 @@ static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction Cove
 	return ExfiltrateCost;
 }
 
-static function array<X2RewardTemplate> GetCovertMissionRewards(X2CovertMissionInfoTemplate MissionInfo)
-{
-	local array<X2RewardTemplate> Rewards;
-	local int i;
-	local X2StrategyElementTemplateManager StratMgr;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	for(i = 0; i < MissionInfo.MissionRewards.Length; i++)
-	{
-		Rewards.AddItem(X2RewardTemplate(StratMgr.FindStrategyElementTemplate(MissionInfo.MissionRewards[i])));
-	}
-
-	return Rewards;
-}
-
 static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
 {
-	local X2CovertMissionInfoTemplateManager InfilMgr;
-	local X2CovertMissionInfoTemplate MissionInfo;
-
-	InfilMgr = class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager();
-	MissionInfo = InfilMgr.GetCovertMissionInfoTemplateFromCA(Action.GetMyTemplateName());
-
-	return MissionInfo != none;
+	return class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action) != none;
 }
 
 static function bool ReturnFalse()
@@ -344,4 +314,150 @@ static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers
 	}
 
 	return TotalInfiltration * Multiplier;
+}
+
+static function MissionDefinition GetMissionDefinitionForActivity (XComGameState_Activity ActivityState)
+{
+	local XComTacticalMissionManager MissionManager;
+	local X2CardManager CardManager;
+	
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionState;
+	local ActivityMissionFamilyMapping Mapping;
+	local MissionDefinition MissionDef;
+	
+	local array<string> ValidMissionFamilies;
+	local array<string> MissionFamiliesDeck;
+	local array<string> MissionTypesDeck;
+	local string MissionFamily;
+	local string MissionType;
+
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+
+	if (ActivityTemplate == none)
+	{
+		`RedScreen(nameof(GetMissionDefinitionForActivity) @ "only works for activitites based on X2ActivityTemplate_Mission");
+		return MissionDef;
+	}
+
+	CardManager = class'X2CardManager'.static.GetCardManager();
+	MissionState = GetMissionStateFromActivity(ActivityState);
+
+	MissionManager = `TACTICALMISSIONMGR;
+	MissionManager.CacheMissionManagerCards();
+
+	foreach default.ActivityMissionFamily (Mapping)
+	{
+		if (
+			Mapping.ActivityTemplate == ActivityTemplate.DataName &&
+			MissionState.ExcludeMissionFamilies.Find(Mapping.MissionFamily) == INDEX_NONE
+		)
+		{
+			ValidMissionFamilies.AddItem(Mapping.MissionFamily);
+		}
+	}
+
+	if (ValidMissionFamilies.Length == 0)
+	{
+		`Redscreen("Could not find a mission family for activity: " $ ActivityTemplate.DataName);
+		ValidMissionFamilies.AddItem(MissionManager.arrSourceRewardMissionTypes[0].MissionFamily);
+	}
+
+	// select the first mission type off the deck that is valid for this mapping
+	CardManager.GetAllCardsInDeck('MissionFamilies', MissionFamiliesDeck);
+	foreach MissionFamiliesDeck(MissionFamily)
+	{
+		if (ValidMissionFamilies.Find(MissionFamily) != INDEX_NONE)
+		{
+			CardManager.MarkCardUsed('MissionFamilies', MissionFamily);
+			break;
+		}
+	}
+
+	// now that we have a mission family, determine the mission type to use
+	CardManager.GetAllCardsInDeck('MissionTypes', MissionTypesDeck);
+	foreach MissionTypesDeck(MissionType)
+	{
+		if (
+			MissionState.ExcludeMissionTypes.Find(MissionType) == INDEX_NONE &&
+			MissionManager.GetMissionDefinitionForType(MissionType, MissionDef) &&
+			(
+				MissionDef.MissionFamily == MissionFamily ||
+				(MissionDef.MissionFamily == "" && MissionDef.sType == MissionFamily) // missions without families are their own family
+			)
+		)
+		{
+			CardManager.MarkCardUsed('MissionTypes', MissionType);
+			return MissionDef;
+		}
+	}
+
+	`Redscreen("Could not find a mission type for MissionFamily: " $ MissionFamily);
+	return MissionManager.arrMissions[0];
+}
+
+static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameState_Activity ActivityState)
+{
+	return XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+}
+
+static function StateObjectReference CreateRewardNone (XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2RewardTemplate Template;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	Template = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate('Reward_None'));
+
+	return Template.CreateInstanceFromTemplate(NewGameState).GetReference();
+}
+
+static function bool GeoscapeReadyForUpdate ()
+{
+	local UIStrategyMap StrategyMap;
+
+	StrategyMap = `HQPRES.StrategyMap2D;
+
+	return
+		StrategyMap != none &&
+		StrategyMap.m_eUIState != eSMS_Flight &&
+		StrategyMap.Movie.Pres.ScreenStack.GetCurrentScreen() == StrategyMap;
+}
+
+static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+	local XComTacticalMissionManager MissionMgr;
+	local X2RewardTemplate MissionReward;
+	local GeneratedMissionData EmptyData;
+	local string AdditionalTag;
+
+	MissionState = GetMissionStateFromActivity(ActivityState);
+	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
+	MissionMgr = `TACTICALMISSIONMGR;
+	MissionState.GeneratedMission = EmptyData;
+	
+	MissionState.GeneratedMission.MissionID = MissionState.ObjectID;
+	MissionState.GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
+	
+	MissionState.GeneratedMission.Mission = GetMissionDefinitionForActivity(ActivityState);
+	MissionState.GeneratedMission.SitReps = MissionState.GeneratedMission.Mission.ForcedSitreps;
+
+	if (MissionState.GeneratedMission.Mission.sType == "")
+	{
+		`Redscreen("GetMissionDefinitionForActivity() failed to generate a mission with: \n"
+						$ " Activity: " $ ActivityState.GetMyTemplateName() $ "\n RewardType: " $ MissionReward.DisplayName);
+	}
+
+	foreach MissionState.AdditionalRequiredPlotObjectiveTags(AdditionalTag)
+	{
+		MissionState.GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
+	}
+
+	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
+
+	// Cosmetic stuff
+
+	MissionState.GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
+	MissionState.GenerateMissionFlavorText();
 }

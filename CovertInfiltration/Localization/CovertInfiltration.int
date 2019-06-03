@@ -67,41 +67,8 @@ strBody="The Skyranger has reached the action site. Awaiting orders."
 strSkyrangerExfiltrateSubtitle="READY FOR EXFILTRATION"
 strConfirmExfiltration="ABORT ACTION AND EXFILTRATE"
 
-[CovertAction_P1DarkEvent X2CovertInfiltrationTemplate]
-ActionObjective="Recover Activity Leads"
-
-[CovertAction_P1SupplyRaid X2CovertInfiltrationTemplate]
-ActionObjective="Recover Target Leads"
-
-[CovertAction_P1Jailbreak X2CovertInfiltrationTemplate]
-ActionObjective="Recover Personnel Leads"
-
-[CovertAction_P2DarkEvent X2CovertInfiltrationTemplate]
-ActionObjective="Counter Dark Event"
-
-[CovertAction_P2Engineer X2CovertInfiltrationTemplate]
-ActionObjective="Rescue Engineer"
-
-[CovertAction_P2Scientist X2CovertInfiltrationTemplate]
-ActionObjective="Rescue Scientist"
-
-[CovertAction_P2DarkVIP X2CovertInfiltrationTemplate]
-ActionObjective="Neutralize VIP"
-
-[CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="ADVENT Patrols"
-
-[CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
-RiskName="Intelligence Leak"
-
-[CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
-RiskName="ADVENT Air Patrols"
-
-[CovertActionRisk_GunneryEmplacements X2CovertActionRiskTemplate]
-RiskName="Gunnery Emplacements"
-
-[CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
-RiskName="Shoddy Intel"
+[CovertAction_NeutralizeCommanderInfil X2CovertInfiltrationTemplate]
+ActionObjective="Chop chop the commander"
 
 [UIMission_Infiltrated]
 strOverInfiltrationHeader="Over Infiltration"
@@ -139,3 +106,7 @@ strBannerBonusGained="Overinfiltration bonus gained"
 [OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
 BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
+
+[Activity_NeutralizeCommander X2ActivityTemplate_Infiltration]
+ActionRewardDisplayName=Rwd
+ActionRewardDetails=Rwd details

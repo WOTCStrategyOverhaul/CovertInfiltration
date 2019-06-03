@@ -59,91 +59,9 @@ FilledText="%UNITNAME is assisting the Resistance in organization and logistics,
 EmptyText="SOLDIER"
 BonusText="INFILTRATING"
 
-[Reward_GatherLeadActivity X2RewardTemplate]
-DisplayName="Activity Lead"
-RewardDetails="Recover a Lead on possible alien activities."
-
-[Reward_GatherLeadTarget X2RewardTemplate]
-DisplayName="Activity Lead"
-RewardDetails="Recover a Lead on vulnerable ADVENT targets."
-
-[Reward_GatherLeadPersonnel X2RewardTemplate]
-DisplayName="Activity Lead"
-RewardDetails="Recover a Lead on potential XCOM sympathizers."
-
-[Reward_P2SupplyRaid X2RewardTemplate]
-DisplayName="Reveal Supply Raid"
-RewardDetails="Uncover a mission to strike at an ADVENT supply line."
-
-[ActionReward_P1DarkEvent X2RewardTemplate]
-DisplayName="Activity Lead"
-RewardDetails="Recover a Lead on possible alien activities."
-
-[ActionReward_P1SupplyRaid X2RewardTemplate]
-DisplayName="Target Lead"
-RewardDetails="Recover a Lead on vulnerable ADVENT targets."
-
-[ActionReward_P1Jailbreak X2RewardTemplate]
-DisplayName="Personnel Lead"
-RewardDetails="Recover a Lead on potential XCOM sympathizers."
-
-[ActionReward_P2DarkVIP X2RewardTemplate]
-DisplayName="Acquire Intel"
-RewardDetails="Gain Intel and assorted Leads."
-
-[ActionReward_P2DarkEvent X2RewardTemplate]
-DisplayName="Counter Dark Event"
-RewardDetails="Counter a Dark Event and gain a small reward."
-
-[ActionReward_P2Engineer X2RewardTemplate]
-DisplayName="Acquire Engineer"
-RewardDetails="Gain the services of a skilled Engineer."
-
-[ActionReward_P2Scientist X2RewardTemplate]
-DisplayName="Acquire Scientist"
-RewardDetails="Gain the services of an insightful Scientist."
-
-[CovertActionNarrative_P1DarkEvent X2CovertActionNarrativeTemplate]
-ActionName="Recover Activity Leads"
-ActionPreNarrative="We identified a network weakpoint with leads on ADVENT's current operations, but enemy forces are securing the site."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P1SupplyRaid X2CovertActionNarrativeTemplate]
-ActionName="Recover Target Leads"
-ActionPreNarrative="We found the location of a datafile with leads on ADVENT's most important assets. Time for a smash and grab."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P1Jailbreak X2CovertActionNarrativeTemplate]
-ActionName="Recover Personnel Leads"
-ActionPreNarrative="Commander, we need more trained manpower. We should breach the ADVENT network to find the locations of potential recruits."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P2DarkEvent X2CovertActionNarrativeTemplate]
-ActionName="Counter Dark Event"
-ActionPreNarrative="Commander, the data we retrieved from the previous mission has revealed a vulnerable target critical to ADVENT's <XGParam:StrValue4/> operation. We have a chance here to halt their progress."
-ActionPostNarrative=""
-
-[CovertAction_P2SupplyRaid X2CovertActionTemplate]
-ActionObjective="Reveal Supply Raid"
-[CovertActionNarrative_P2SupplyRaid X2CovertActionNarrativeTemplate]
-ActionName="Reveal Supply Raid"
-ActionPreNarrative="We've recovered information showing the location of a future supply shipment. A small squad could sabotage the ADVENT transports and give us time to assemble a larger strike force."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P2Engineer X2CovertActionNarrativeTemplate]
-ActionName="Rescue Engineer"
-ActionPreNarrative="Commander, our breach of the ADVENT network has yielded results. A possible defector skilled in the mechanical arts is being held inside a nearby city center."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P2Scientist X2CovertActionNarrativeTemplate]
-ActionName="Rescue Scientist"
-ActionPreNarrative="Commander, we've intercepted ADVENT communications that reveal a highly-skilled scientist is being held by ADVENT for 'Treason against the Elders'. Sounds like someone we should meet."
-ActionPostNarrative=""
-
-[CovertActionNarrative_P2DarkVIP X2CovertActionNarrativeTemplate]
-ActionName="Neutralize VIP"
-ActionPreNarrative="Data recovered from the ADVENT network has revealed the location of a highly-placed human collaborator. They should be brought in for interrogation."
-ActionPostNarrative=""
+[CovertActionNarrative_NeutralizeCommanderInfil X2CovertActionNarrativeTemplate]
+ActionName="Neutralize ADVENT Commander"
+ActionPreNarrative="SHOO the bad guy"
 
 [ActivityLeadItem X2QuestItemTemplate]
 FriendlyName="Activity Lead"
@@ -299,3 +217,6 @@ CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
 CovertActionRiskLabels[3]="Severe"
 CovertActionRiskLabels[4]="Extreme" 
+
+[CovertAction_PrepareCounterDE X2CovertActionTemplate]
+ActionObjective="Test CA"

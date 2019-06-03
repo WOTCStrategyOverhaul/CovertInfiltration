@@ -11,8 +11,6 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 
 // Since spawner action will get erased from history when player launches a mission
 // we need to duplicate any info that is used after the mission site is initialized
-var StateObjectReference CorrespondingActionRef;
-var name SpawningActionName;
 var array<name> AppliedFlatRisks;
 
 var array<StateObjectReference> SoldiersOnMission;
@@ -30,43 +28,58 @@ var localized string strBannerBonusGained;
 /// Setup ///
 /////////////
 
-function X2CovertMissionInfoTemplate GetMisisonInfo()
+function InitializeFromActivity (XComGameState NewGameState)
 {
-	return class'X2CovertMissionInfoTemplateManager'.static.GetCovertMissionInfoTemplateManager()
-		.GetCovertMissionInfoTemplateFromCA(SpawningActionName);
-}
+	local X2ActivityTemplate_Infiltration ActivityTemplate;
+	local XComGameState_Activity ActivityState;
 
-function SetupFromAction(XComGameState NewGameState, XComGameState_CovertAction Action)
-{
-	local X2CovertMissionInfoTemplate MissionInfo;
-
-	SpawningActionName = Action.GetMyTemplateName();
-	MissionInfo = GetMisisonInfo();
+	ActivityState = GetActivity();
+	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
 	
-	if (MissionInfo.PreMissionSetup != none)
+	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
+
+	if (ActivityTemplate.PreMissionSetup != none)
 	{
-		MissionInfo.PreMissionSetup(NewGameState, self, MissionInfo);
+		ActivityTemplate.PreMissionSetup(NewGameState, ActivityState);
 	}
 
-	CopyDataFromAction(Action);
-	Source = class'X2Helper_Infiltration'.static.GetCovertMissionSource(MissionInfo).DataName;
-	Rewards = MissionInfo.InitializeRewards(NewGameState, self, MissionInfo);
+	if (ActivityTemplate.InitializeMissionRewards != none)
+	{
+		Rewards = ActivityTemplate.InitializeMissionRewards(NewGameState, ActivityState);
+	}
 
-	InitalizeGeneratedMission();
+	if (Rewards.Length == 0)
+	{
+		Rewards.AddItem(class'X2Helper_Infiltration'.static.CreateRewardNone(NewGameState));
+	}
+
+	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity());
+}
+
+// This is called from X2EventListener_Infiltration::CovertActionCompleted.
+// We could subscribe to the event here, but eh, we already have a catch-all listener there
+function OnActionCompleted (XComGameState NewGameState)
+{
+	CopyDataFromAction();
+	
 	SelectPlotAndBiome();
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();
 
-	SetSoldiersFromAction(Action);
+	SetSoldiersFromAction();
+	Available = true;
 
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
 }
 
-protected function CopyDataFromAction(XComGameState_CovertAction Action)
+protected function CopyDataFromAction ()
 {
 	local ActionFlatRiskSitRep FlatRiskSitRep;
+	local XComGameState_CovertAction Action;
 	local CovertActionRisk Risk;
+
+	Action = GetSpawningAction();
 
 	// Copy over the location data
 	Location.x = Action.Location.x;
@@ -74,8 +87,7 @@ protected function CopyDataFromAction(XComGameState_CovertAction Action)
 	Continent  = Action.Continent;
 	Region = Action.Region;
 
-	// Set the action ref and copy over the applied risks
-	CorrespondingActionRef = Action.GetReference();
+	// Copy over the applied risks
 	AppliedFlatRisks.Length = 0;
 
 	foreach Action.Risks(Risk)
@@ -98,50 +110,6 @@ protected function CopyDataFromAction(XComGameState_CovertAction Action)
 
 	// And ends at 200%
 	class'X2StrategyGameRulesetDataStructures'.static.AddHours(ExpirationDateTime, Action.HoursToComplete);
-}
-
-protected function InitalizeGeneratedMission()
-{
-	local XComTacticalMissionManager MissionMgr;
-	local X2RewardTemplate MissionReward;
-	local GeneratedMissionData EmptyData;
-	local string AdditionalTag;
-
-	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(Rewards[0].ObjectID)).GetMyTemplate();
-	MissionMgr = `TACTICALMISSIONMGR;
-	GeneratedMission = EmptyData;
-	
-	GeneratedMission.MissionID = ObjectID;
-	GeneratedMission.LevelSeed = class'Engine'.static.GetEngine().GetSyncSeed();
-	
-	GeneratedMission.Mission = MissionMgr.GetMissionDefinitionForSourceReward(Source, MissionReward.DataName, ExcludeMissionFamilies, ExcludeMissionTypes);
-	GeneratedMission.SitReps = GeneratedMission.Mission.ForcedSitreps;
-
-	if (GeneratedMission.Mission.sType == "")
-	{
-		`Redscreen("GetMissionDataForSourceReward() failed to generate a mission with: \n"
-						$ " Source: " $ Source $ "\n RewardType: " $ MissionReward.DisplayName);
-	}
-
-	foreach AdditionalRequiredPlotObjectiveTags(AdditionalTag)
-	{
-		GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
-	}
-
-	GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(Source, MissionReward, GeneratedMission.Mission, DarkEvent.ObjectID > 0);
-
-	// Cosmetic stuff
-
-	if(GetMissionSource().BattleOpName != "")
-	{
-		GeneratedMission.BattleOpName = GetMissionSource().BattleOpName;
-	}
-	else
-	{
-		GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
-	}
-
-	GenerateMissionFlavorText();
 }
 
 protected function SelectPlotAndBiome()
@@ -172,7 +140,7 @@ protected function SelectPlotAndBiome()
 		}
 	}
 
-	// At this point normall the CHL calls DLCInfo::PostSitRepCreation hook
+	// At this point normally the CHL calls DLCInfo::PostSitRepCreation hook
 	// TODO: decide what to do with that hook since we change sitreps later
 
 	// the plot we find should either have no defined biomes, or the requested biome type
@@ -277,9 +245,9 @@ static function name GetBonusDeckName(int Tier)
 	return name('OverInfiltrationBonusesT' $ Tier);
 }
 
-protected function SetSoldiersFromAction(XComGameState_CovertAction Action)
+protected function SetSoldiersFromAction ()
 {
-	SoldiersOnMission = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
+	SoldiersOnMission = class'X2Helper_Infiltration'.static.GetCovertActionSquad(GetSpawningAction());
 }
 
 function UpdateSitrepTags()
@@ -306,6 +274,7 @@ function UpdateSitrepTags()
 	}
 
 	// Remove obsolete tags
+	// TODO: This will break if there are non-sitreps tags. Introduce some sort of "applied sitreps" tracking system?
 	for (i = 0; i < TacticalGameplayTags.Length; ++i) {
 		if (RequiredTags.Find(TacticalGameplayTags[i]) == INDEX_NONE) {
 			TacticalGameplayTags.Remove(i, 1);
@@ -333,6 +302,9 @@ function UpdateGameBoard()
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local XComHQPresentationLayer HQPres;
+
+	// Do not do anything if we didn't transition to the mission stage yet
+	if (!Available) return;
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support 200% rewards
@@ -469,18 +441,6 @@ protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, O
 	}
 
 	return ELR_NoInterrupt;
-}
-
-function MissionSelected()
-{
-	local UIMission_Infiltrated MissionUI;
-	local XComHQPresentationLayer HQPres;
-
-	HQPres = `HQPRES;
-
-	MissionUI = HQPres.Spawn(class'UIMission_Infiltrated', HQPres);
-	MissionUI.MissionRef = GetReference();
-	HQPres.ScreenStack.Push(MissionUI);
 }
 
 function PostSitRepsChanged(XComGameState NewGameState)
@@ -653,30 +613,25 @@ function class<UIStrategyMapItem> GetUIClass()
 	return class'CI_UIStrategyMapItem_CovertAction';
 }
 
-function string GetUIButtonIcon()
-{
-	local string Path;
-
-	Path = GetMisisonInfo().UIButtonIcon;
-
-	if (Path == "")
-	{
-		// Use default icon, ala parent
-		Path = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GoldenPath";
-	}
-
-	return Path;
-}
-
-simulated function string GetUIButtonTooltipTitle()
-{
-	return GetMissionObjectiveText();
-}
-
 function RemoveEntity(XComGameState NewGameState)
 {
 	super.RemoveEntity(NewGameState);
 	UnRegisterFromEvents();
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+function XComGameState_Activity GetActivity ()
+{
+	return class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(self);
+}
+
+// Note that this might fail if we already had a mission since the CA->overinfil transition
+function XComGameState_CovertAction GetSpawningAction ()
+{
+	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GetActivity().SecondaryObjectRef.ObjectID));
 }
 
 ////////////////////////
@@ -859,6 +814,6 @@ private function bool SelectPlotDefinition(MissionDefinition MissionDef, string 
 
 defaultproperties
 {
-	Available = true;
+	Available = false;
 	Expiring = false;
 }
