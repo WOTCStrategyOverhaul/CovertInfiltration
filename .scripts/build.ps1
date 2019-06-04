@@ -290,10 +290,34 @@ Write-Host "Testing $modSrcRoot/Content"
 if(Test-Path "$modSrcRoot/Content")
 {
     Write-Host "Exists"
-    $contentfiles = Get-ChildItem "$modSrcRoot/Content\*"  -Include *.upk, *.umap -Recurse -File -Name
-    if($contentfiles.length -gt 0)
+    $contentfiles = Get-ChildItem "$modSrcRoot/Content\*"  -Include *.upk, *.umap -Recurse -File
+	$shader_cache_path = "$gamePath/XComGame/Mods/$modNameCanonical/Content/$($modNameCanonical)_ModShaderCache.upk";
+	$need_shader_precompile = $false;
+	
+	# Try to find a reason to precompile the shaders
+	if (!(Test-Path -Path $shader_cache_path))
+	{
+		$need_shader_precompile = $true;
+	} 
+	elseif ($contentfiles.length -gt 0)
     {
-        # build the mod's shader cache
+		$shader_cache = Get-Item $shader_cache_path;
+		
+		for ($i = 0; $i -lt $contentfiles.Length; $i++) 
+		{
+			$file = $contentfiles[$i];
+			
+			if ($file.LastWriteTime -gt $shader_cache.LastWriteTime -Or $file.CreationTime -gt $shader_cache.LastWriteTime)
+			{
+				$need_shader_precompile = $true;
+				break;
+			}
+		}
+    }
+	
+	if ($need_shader_precompile)
+	{
+		# build the mod's shader cache
         Write-Host "Precompiling Shaders..."
         &"$sdkPath/binaries/Win64/XComGame.com" precompileshaders -nopause platform=pc_sm4 DLC=$modNameCanonical
         if ($LASTEXITCODE -ne 0)
@@ -301,7 +325,11 @@ if(Test-Path "$modSrcRoot/Content")
             throw "Failed to compile mod shader cache!"
         }
         Write-Host "Generated Shader Cache."
-    }
+	}
+	else
+	{
+		Write-Host "No reason to precompile shaders, skipping"
+	}
 }
 
 # copy all staged files to the actual game's mods folder
