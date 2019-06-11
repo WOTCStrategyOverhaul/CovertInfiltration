@@ -16,17 +16,25 @@ simulated function InitCovertAction(XComGameState_CovertAction InAction)
 	NeedsAttention(class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action));
 }
 
-// Copied from UICovertActions
 simulated function String GetActionLocString()
 {
-	local string PrefixStr;
+	local string PrefixStr, MainStr;
 
 	if(Action.bNewAction)
 	{
 		PrefixStr = class'UICovertActions'.default.CovertActions_NewAction;
 	}
 
-	return PrefixStr $ Action.GetObjective();
+	if(Action.GetObjective() != "")
+	{
+		MainStr = Action.GetObjective();
+	}
+	else
+	{
+		MainStr = Action.GetDisplayName();
+	}
+
+	return PrefixStr $ MainStr;
 }
 
 defaultproperties

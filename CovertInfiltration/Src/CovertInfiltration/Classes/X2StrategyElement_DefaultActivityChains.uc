@@ -10,13 +10,34 @@ class X2StrategyElement_DefaultActivityChains extends X2StrategyElement;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Activites;
-
+	
+	Activites.AddItem(CreateCounterDETemplate());
 	Activites.AddItem(CreateSupplyRaidTemplate());
+	Activites.AddItem(CreateCaptureVIPTemplate());
+	Activites.AddItem(CreateRescueScientistTemplate());
+	Activites.AddItem(CreateRescueEngineerTemplate());
+	Activites.AddItem(CreateJailbreakFactionSoldierTemplate());
+	Activites.AddItem(CreateJailbreakCapturedSoldierTemplate());
 
 	return Activites;
 }
 
-static function X2DataTemplate CreateSupplyRaidTemplate ()
+static function X2DataTemplate CreateCounterDETemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_CounterDarkEvent');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_PrepareCounterDE');
+	Template.Stages.AddItem('Activity_CounterDarkEvent');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateSupplyRaidTemplate()
 {
 	local X2ActivityChainTemplate Template;
 
@@ -24,14 +45,87 @@ static function X2DataTemplate CreateSupplyRaidTemplate ()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-
-	Template.Stages.AddItem('Activity_Recover');
-	Template.Stages.AddItem('Activity_PrepareCounterDE');
-	Template.Stages.AddItem('Activity_NeutralizeCommander');
-	// TODO
+	
+	Template.Stages.AddItem('Activity_CommanderSupply');
+	Template.Stages.AddItem('Activity_SupplyRaid');
 
 	return Template;
 }
+
+static function X2DataTemplate CreateCaptureVIPTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_CaptureInformant');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_RecoverSchedule');
+	Template.Stages.AddItem('Activity_CaptureInformant');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateRescueScientistTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_RescueScientist');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_HackLocation');
+	Template.Stages.AddItem('Activity_RescueScientist');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateRescueEngineerTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_RescueEngineer');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_HackLocation');
+	Template.Stages.AddItem('Activity_RescueEngineer');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_JailbreakFactionSoldier');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_PrepareFactionJailbreak');
+	Template.Stages.AddItem('Activity_JailbreakSoldier');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_JailbreakCapturedSoldier');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem('Activity_JailbreakSoldier');
+
+	return Template;
+}
+///////////////////////////////////////////////////
 
 static function StateObjectReference ChooseMetFaction (XComGameState_ActivityChain ChainState)
 {
