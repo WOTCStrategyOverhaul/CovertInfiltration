@@ -137,7 +137,7 @@ FriendlyName="Lightning Strike"
 Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
-FriendlyName="ADVENT Patrols"
+FriendlyName="Show Of Force"
 Description="This mission's Difficulty is increased by 1 level."
 
 [OpportuneMoment X2SitRepTemplate]
@@ -189,7 +189,7 @@ FriendlyName="Comms Jamming"
 Description="The first Reinforcements dropship is guaranteed to be delayed."
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="ADVENT Patrols"
+RiskName="Show Of Force"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Intelligence Leak"
