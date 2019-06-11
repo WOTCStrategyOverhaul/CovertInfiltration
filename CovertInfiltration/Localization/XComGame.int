@@ -173,7 +173,7 @@ FriendlyName="Double Agent"
 Description="An ADVENT defector joins the squad for this operation."
 
 [IntelligenceLeak X2SitRepTemplate]
-FriendlyName="Intelligence Leak"
+FriendlyName="Full Sensor Coverage"
 Description="Start mission without concealment and compromised detection radius on concealed soldiers."
 
 [TacticalAnalysis X2SitRepTemplate]
@@ -192,7 +192,7 @@ Description="The first Reinforcements dropship is guaranteed to be delayed."
 RiskName="Show Of Force"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
-RiskName="Intelligence Leak"
+RiskName="Full Sensor Coverage"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
 RiskName="ADVENT Air Patrols"

@@ -93,7 +93,7 @@ PhysicalConditioningFriendlyDesc = "Squad receives additional dodge during this 
 MentalReadinessFriendlyName = "Mental Readiness"
 MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
 
-IntelligenceLeakFriendlyName = "Intelligence Leak"
+IntelligenceLeakFriendlyName = "Full Sensor Coverage"
 IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
 
 [X2EventListener_Infiltration_UI]
