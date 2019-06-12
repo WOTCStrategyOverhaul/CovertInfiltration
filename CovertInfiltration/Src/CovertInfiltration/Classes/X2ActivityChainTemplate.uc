@@ -15,6 +15,9 @@ var localized string Description;
 // Names of X2ActivityTemplates that act as stages for this chain
 var array<name> Stages;
 
+// If true, spawned automatically using the deck system
+var bool SpawnInDeck;
+
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
 

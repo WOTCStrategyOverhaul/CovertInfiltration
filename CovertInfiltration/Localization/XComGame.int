@@ -61,37 +61,37 @@ BonusText="INFILTRATING"
 
 [CovertActionNarrative_CommanderSupplyInfil X2CovertActionNarrativeTemplate]
 ActionName="Neutralize Logistics Officer"
-ActionPreNarrative=""
-ActionPostNarrative=""
+ActionPreNarrative="Resistance operatives have identified a high-level target. This commander is in charge of logistics for the entire region, and we know where he is."
+ActionPostNarrative="Tygan has cracked the officer's neural implant and recovered fragmentary details of a vulnerable supply line. We have work to do."
 
 [CovertActionNarrative_SupplyRaidInfil X2CovertActionNarrativeTemplate]
 ActionName="Secure ADVENT Materials"
-ActionPreNarrative=""
-ActionPostNarrative=""
+ActionPreNarrative="This location is host to an ADVENT supply convoy. Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
+ActionPostNarrative="A job well done, Commander. I trust you will put your spoils of war to good use."
 
-[CovertActionNarrative_RecoverScheduleInfil X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_RecoverInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Recover VIP Schedule"
-ActionPreNarrative=""
-ActionPostNarrative=""
+ActionPreNarrative="The Resistance has learned of a civilian ADVENT collaborator operating in this region. We should bring them in for questioning, but first they need to be found."
+ActionPostNarrative="The collaborator's whereabouts have been safely recovered. Let's go pay them a visit."
 
 [CovertActionNarrative_CaptureInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Capture ADVENT Collaborator"
-ActionPreNarrative=""
-ActionPostNarrative=""
+ActionPreNarrative="Unlike ADVENT officers, civilian traitors will talk. We know where the target will be in a few days - it's time for a kidnap job."
+ActionPostNarrative="I'm glad to see the operation was a success, Commander. Our mutual friend is being questioned as we speak."
 
 [CovertActionNarrative_PrepareCounterDE X2CovertActionNarrativeTemplate]
-ActionName="Identify Critical Data"
-ActionPreNarrative=""
+ActionName="Identify Critical Project Data"
+ActionPreNarrative="We know the aliens are working on their <DarkEventName> project, and there must be a vulnerability somewhere. All we need to do is find it."
 ActionPostNarrative=""
 
 [CovertActionNarrative_CounterDarkEventInfil X2CovertActionNarrativeTemplate]
-ActionName="Erase Critical ADVENT Data"
-ActionPreNarrative=""
+ActionName="Eliminate Critical Datalink"
+ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <DarkEventName> project. If we collapse this data relay, we have a chance to stop their progress."
 ActionPostNarrative=""
 
-[CovertActionNarrative_HackLocationInfil X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_RecoverPersonnelInfil X2CovertActionNarrativeTemplate]
 ActionName="Breach ADVENT Arrest Database"
-ActionPreNarrative=""
+ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the academic community in this region. If we hit this data vault, we can find out where they went."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RescueScientistInfil X2CovertActionNarrativeTemplate]
@@ -104,7 +104,7 @@ ActionName="Rescue Engineer"
 ActionPreNarrative=""
 ActionPostNarrative=""
 
-[CovertActionNarrative_PrepareFactionJailbreak X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
 ActionName="Consult the Faction"
 ActionPreNarrative=""
 ActionPostNarrative=""
@@ -113,36 +113,6 @@ ActionPostNarrative=""
 ActionName="Rescue Captured Soldier"
 ActionPreNarrative=""
 ActionPostNarrative=""
-
-[ActivityLeadItem X2QuestItemTemplate]
-FriendlyName="Activity Lead"
-FriendlyNamePlural="Activity Lead"
-LootTooltip=""
-
-[ActivityLeadHack X2QuestItemTemplate]
-FriendlyName="Activity Lead"
-FriendlyNamePlural="Activity Lead"
-LootTooltip=""
-
-[PersonnelLeadItem X2QuestItemTemplate]
-FriendlyName="Personnel Lead"
-FriendlyNamePlural="Personnel Lead"
-LootTooltip=""
-
-[PersonnelLeadHack X2QuestItemTemplate]
-FriendlyName="Personnel Lead"
-FriendlyNamePlural="Personnel Lead"
-LootTooltip=""
-
-[TargetLeadItem X2QuestItemTemplate]
-FriendlyName="Target Lead"
-FriendlyNamePlural="Target Lead"
-LootTooltip=""
-
-[TargetLeadHack X2QuestItemTemplate]
-FriendlyName="Target Lead"
-FriendlyNamePlural="Target Lead"
-LootTooltip=""
 
 [CovertActionNarrative_RescueSoldier_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Personnel Extraction"
@@ -256,6 +226,3 @@ CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
 CovertActionRiskLabels[3]="Severe"
 CovertActionRiskLabels[4]="Extreme" 
-
-[CovertAction_PrepareCounterDE X2CovertActionTemplate]
-ActionObjective="Test CA"

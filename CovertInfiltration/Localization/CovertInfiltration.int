@@ -124,6 +124,6 @@ BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
 ;[CovertAction_CommanderSupplyInfil X2CovertInfiltrationTemplate]
 ;ActionObjective="Neutralize Field Commander"
 
-[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
-ActionRewardDisplayName=Rwd
-ActionRewardDetails=Rwd details
+;[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
+;ActionRewardDisplayName=Rwd
+;ActionRewardDetails=Rwd details
