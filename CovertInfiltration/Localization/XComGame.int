@@ -117,8 +117,8 @@ DisplayName="Infiltration Size II"
 Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time."
 
 [InformationWar_CI X2SitRepTemplate]
-FriendlyName="Information War"
-Description="Enemy tech defense is lowered by 20 for the duration of this mission."
+FriendlyName="Updated Firewalls"
+Description="Enemy tech defense is increased by 20 for the duration of this mission, and towers cannot be hacked."
 
 [FamiliarTerrain X2SitRepTemplate]
 FriendlyName="Familiar Terrain"
