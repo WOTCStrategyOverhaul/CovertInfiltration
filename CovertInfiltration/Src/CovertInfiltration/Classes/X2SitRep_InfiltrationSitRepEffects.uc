@@ -458,5 +458,5 @@ static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
 
 static function InformationWarModFunction(out int ModValue)
 {
-	ModValue += `ScaleStrategyArrayInt(class'X2StrategyElement_XpackResistanceActions'.default.InformationWarReduction);
+	ModValue += class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_BONUS;
 }

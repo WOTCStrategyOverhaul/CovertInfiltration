@@ -7,6 +7,7 @@
 
 class X2Ability_SitRepAbilitySet_CI extends X2Ability config(GameCore);
 
+var config int UPDATED_FIREWALLS_HACK_BONUS;
 var config int FAMILIAR_TERRAIN_VALUE;
 var config int PHYSICAL_CONDITIONING_VALUE;
 var config int MENTAL_READINESS_VALUE;
@@ -55,7 +56,7 @@ static function X2AbilityTemplate InformationWarDebuff_CI()
 
     StatEffect = new class'X2Effect_PersistentStatChange';
     StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_HackDefense, -class'X2Ability_XPackAbilitySet'.default.INFORMATION_WAR_HACK_DEBUFF);
+    StatEffect.AddPersistentStatChange(eStat_HackDefense, default.UPDATED_FIREWALLS_HACK_BONUS);
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, HackDefenseDecreasedFriendlyName, HackDefenseDecreasedFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
 
