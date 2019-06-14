@@ -485,7 +485,16 @@ static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Objec
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn CustomizeStatusStringsSeparate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+/*
+	OverrideTuple.Data[0].s = Status;
+	OverrideTuple.Data[1].s = TimeLabel;
+	OverrideTuple.Data[2].s = TimeValueOverride;
+	OverrideTuple.Data[3].i = TimeNum;
+	OverrideTuple.Data[4].i = int(eState);
+	OverrideTuple.Data[5].b = HideTime != 0;
+	OverrideTuple.Data[6].b = DoTimeConversion != 0;
+*/
+static protected function EventListenerReturn OverridePersonnelStatus(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComLWTuple Tuple;
 	local XComGameState_Unit UnitState;
@@ -508,10 +517,37 @@ static protected function EventListenerReturn CustomizeStatusStringsSeparate(Obj
 
 		if (Action != none)
 		{
-			class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+			if (Action.bStarted)
+			{
+				class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
 
-			Tuple.Data[2].s = TimeLabel;
-			Tuple.Data[3].i = int(TimeValue);
+				Tuple.Data[1].s = TimeLabel $ "->100%";
+				Tuple.Data[3].i = int(TimeValue);
+				Tuple.Data[4].i = eUIState_Warning;
+				Tuple.Data[6].b = false;
+			}
+			else
+			{
+				// Squad select
+				Tuple.Data[0].s = class'UIUtilities_Strategy'.default.m_strOnMissionStatus;
+				Tuple.Data[1].s = "";
+				Tuple.Data[5].b = true;
+			}
+		}
+		else
+		{
+			foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionSite)
+			{
+				foreach MissionSite.SoldiersOnMission(UnitRef)
+				{
+					if (UnitState == XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)))
+					{
+						Tuple.Data[1].s = "";
+						Tuple.Data[2].s = MissionSite.GetCurrentInfilInt() $ "%";
+						Tuple.Data[4].i = eUIState_Warning;
+					}
+				}
+			}
 		}
 	}
 
