@@ -37,7 +37,7 @@ var UIPanel ActionRewardContainer;
 var UIImage ActionRewardHeaderBG;
 var UIText ActionRewardHeader;
 var UIPanel ActionRewardTextBG;
-var UIText ActionRewardText;
+var UITextContainer ActionRewardText;
 
 // UI - progress bar
 var UIProgressBar ActionProgressBar;

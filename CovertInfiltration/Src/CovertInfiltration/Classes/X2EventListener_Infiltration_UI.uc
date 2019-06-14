@@ -413,7 +413,7 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
-	Template.AddCHEvent('CustomizeStatusStringsSeparate', CustomizeStatusStringsSeparate, ELD_Immediate);
+	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -485,33 +485,70 @@ static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Objec
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn CustomizeStatusStringsSeparate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+/*
+	OverrideTuple.Data[0].s = Status;
+	OverrideTuple.Data[1].s = TimeLabel;
+	OverrideTuple.Data[2].s = TimeValueOverride;
+	OverrideTuple.Data[3].i = TimeNum;
+	OverrideTuple.Data[4].i = int(eState);
+	OverrideTuple.Data[5].b = HideTime != 0;
+	OverrideTuple.Data[6].b = DoTimeConversion != 0;
+*/
+static protected function EventListenerReturn OverridePersonnelStatus(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComLWTuple Tuple;
+	local StateObjectReference UnitRef;
 	local XComGameState_Unit UnitState;
 	local XComGameState_StaffSlot OccupiedSlot;
 	local XComGameState_CovertAction Action;
+	local XComGameState_MissionSiteInfiltration MissionSite;
 	local string TimeValue, TimeLabel;
 
 	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'CustomizeStatusStringsSeparate') return ELR_NoInterrupt;
+	if (Tuple == none || Tuple.Id != 'OverridePersonnelStatus') return ELR_NoInterrupt;
 
 	UnitState = XComGameState_Unit(EventSource);
 	OccupiedSlot = UnitState.GetStaffSlot();
 
 	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
-	{	
-		Tuple.Data[0].b = true;
-		Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();	
+	{
+		Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();	
 
 		Action = OccupiedSlot.GetCovertAction();
 
-		if (Action != none)
+		if (Action != none && !Action.bRemoved)
 		{
-			class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+			if (Action.bStarted)
+			{
+				class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
 
-			Tuple.Data[2].s = TimeLabel;
-			Tuple.Data[3].i = int(TimeValue);
+				Tuple.Data[1].s = TimeLabel $ "->100%";
+				Tuple.Data[3].i = int(TimeValue);
+				Tuple.Data[4].i = eUIState_Warning;
+				Tuple.Data[6].b = false;
+			}
+			else
+			{
+				// Squad select
+				Tuple.Data[0].s = class'UIUtilities_Strategy'.default.m_strOnMissionStatus;
+				Tuple.Data[1].s = "";
+				Tuple.Data[5].b = true;
+			}
+		}
+		else
+		{
+			foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionSite)
+			{
+				foreach MissionSite.SoldiersOnMission(UnitRef)
+				{
+					if (UnitState == XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)))
+					{
+						Tuple.Data[1].s = "";
+						Tuple.Data[2].s = MissionSite.GetCurrentInfilInt() $ "%";
+						Tuple.Data[4].i = eUIState_Warning;
+					}
+				}
+			}
 		}
 	}
 
