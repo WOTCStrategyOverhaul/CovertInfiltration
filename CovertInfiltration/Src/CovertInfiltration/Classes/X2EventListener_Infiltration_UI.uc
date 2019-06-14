@@ -413,7 +413,7 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
-	Template.AddCHEvent('CustomizeStatusStringsSeparate', CustomizeStatusStringsSeparate, ELD_Immediate);
+	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -497,25 +497,26 @@ static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Objec
 static protected function EventListenerReturn OverridePersonnelStatus(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComLWTuple Tuple;
+	local StateObjectReference UnitRef;
 	local XComGameState_Unit UnitState;
 	local XComGameState_StaffSlot OccupiedSlot;
 	local XComGameState_CovertAction Action;
+	local XComGameState_MissionSiteInfiltration MissionSite;
 	local string TimeValue, TimeLabel;
 
 	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'CustomizeStatusStringsSeparate') return ELR_NoInterrupt;
+	if (Tuple == none || Tuple.Id != 'OverridePersonnelStatus') return ELR_NoInterrupt;
 
 	UnitState = XComGameState_Unit(EventSource);
 	OccupiedSlot = UnitState.GetStaffSlot();
 
 	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
-	{	
-		Tuple.Data[0].b = true;
-		Tuple.Data[1].s = OccupiedSlot.GetBonusDisplayString();	
+	{
+		Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();	
 
 		Action = OccupiedSlot.GetCovertAction();
 
-		if (Action != none)
+		if (Action != none && !Action.bRemoved)
 		{
 			if (Action.bStarted)
 			{
