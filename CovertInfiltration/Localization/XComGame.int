@@ -120,14 +120,6 @@ Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time.
 FriendlyName="Updated Firewalls"
 Description="Enemy tech defense is increased by 20 for the duration of this mission, and towers cannot be hacked."
 
-[FamiliarTerrain X2SitRepTemplate]
-FriendlyName="Familiar Terrain"
-Description="Gain 1 additional mobility during this mission."
-
-[PhysicalConditioning X2SitRepTemplate]
-FriendlyName="Physical Conditioning"
-Description="Squad receives additional dodge during this mission."
-
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
 Description="Squad receives additional mental fortitude during this mission."
