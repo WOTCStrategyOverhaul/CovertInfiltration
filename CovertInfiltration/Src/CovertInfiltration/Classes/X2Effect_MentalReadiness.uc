@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2Effect_MentalReadiness extends X2Effect_Persistent;
+class X2Effect_MentalReadiness extends X2Effect_PersistentStatChange;
 
 var int HitMod;
 

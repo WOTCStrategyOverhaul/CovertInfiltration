@@ -122,7 +122,7 @@ Description="Enemy tech defense is increased by 20 for the duration of this miss
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description="Squad receives additional mental fortitude during this mission."
+Description="+<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"

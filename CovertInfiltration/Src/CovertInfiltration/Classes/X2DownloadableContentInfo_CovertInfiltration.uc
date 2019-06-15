@@ -173,6 +173,21 @@ static protected function MarkPlotsForCovertEscape()
 	}
 }
 
+///////////
+/// Loc ///
+///////////
+
+static function bool AbilityTagExpandHandler (string InString, out string OutString)
+{
+	if (InString == "MENTAL_READINESS_VALUE")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.MENTAL_READINESS_VALUE);
+		return true;
+	}
+
+	return false;
+}
+
 /// ////////////// ///
 /// DLC (HL) HOOKS ///
 /// ////////////// ///
