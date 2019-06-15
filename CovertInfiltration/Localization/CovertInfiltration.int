@@ -83,9 +83,6 @@ BonusName="Remove risk"
 BonusDescription="The first bonus always negates the risk"
 
 [X2Ability_SitRepAbilitySet_CI]
-FamiliarTerrainFriendlyName = "Familiar Terrain"
-FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mission."
-
 MentalReadinessFriendlyName = "Mental Readiness"
 MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
 

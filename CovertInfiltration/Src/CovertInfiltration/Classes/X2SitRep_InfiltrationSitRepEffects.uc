@@ -13,7 +13,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	
 	// granted abilities
 	Templates.AddItem(CreateInformationWarDebuffEffect_CI());
-	Templates.AddItem(CreateFamiliarTerrainEffectTemplate());
 	Templates.AddItem(CreateMentalReadinessEffectTemplate());
 	Templates.AddItem(CreateLightningStrikeEffect());
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
@@ -54,18 +53,6 @@ static function X2SitRepEffectTemplate CreateInformationWarDebuffEffect_CI()
 
 	Template.Teams.AddItem(eTeam_Alien);
 	Template.RequireRobotic = true;
-
-	return Template;
-}
-
-static function X2SitRepEffectTemplate CreateFamiliarTerrainEffectTemplate()
-{
-	local X2SitRepEffect_GrantAbilities Template;
-	
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FamiliarTerrainEffect')
-
-	Template.AbilityTemplateNames.AddItem('FamiliarTerrainBuff');
-	Template.GrantToSoldiers = true;
 
 	return Template;
 }
