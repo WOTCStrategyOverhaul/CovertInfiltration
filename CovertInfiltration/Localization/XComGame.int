@@ -132,10 +132,6 @@ Description="Units gain a mobility boost for the first few turns of battle while
 FriendlyName="Show Of Force"
 Description="This mission's Difficulty is increased by 1 level."
 
-[OpportuneMoment X2SitRepTemplate]
-FriendlyName="Opportune Moment"
-Description="This mission's Difficulty is decreased by 1 level."
-
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"
 Description="ADVENT has increased static defenses in this location."
