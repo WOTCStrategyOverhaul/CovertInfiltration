@@ -86,10 +86,6 @@ BonusDescription="The first bonus always negates the risk"
 FamiliarTerrainFriendlyName = "Familiar Terrain"
 FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mission."
 
-PhysicalConditioningFriendlyName = "Physical Conditioning"
-PhysicalConditioningFriendlyDesc = "Squad receives additional dodge during this mission."
-
-
 MentalReadinessFriendlyName = "Mental Readiness"
 MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
 

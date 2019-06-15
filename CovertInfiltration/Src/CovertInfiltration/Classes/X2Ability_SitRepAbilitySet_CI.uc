@@ -9,14 +9,11 @@ class X2Ability_SitRepAbilitySet_CI extends X2Ability config(GameCore);
 
 var config int UPDATED_FIREWALLS_HACK_BONUS;
 var config int FAMILIAR_TERRAIN_VALUE;
-var config int PHYSICAL_CONDITIONING_VALUE;
 var config int MENTAL_READINESS_VALUE;
 var config int INTELLIGENCE_LEAK_DEBUFF;
 
 var localized string FamiliarTerrainFriendlyName;
 var localized string FamiliarTerrainFriendlyDesc;
-var localized string PhysicalConditioningFriendlyName;
-var localized string PhysicalConditioningFriendlyDesc;
 var localized string MentalReadinessFriendlyName;
 var localized string MentalReadinessFriendlyDesc;
 var localized string IntelligenceLeakFriendlyName;
@@ -28,7 +25,6 @@ static function array<X2DataTemplate> CreateTemplates()
 
     Templates.AddItem(InformationWarDebuff_CI());
     Templates.AddItem(FamiliarTerrainBuff());
-    Templates.AddItem(PhysicalConditioningBuff());
     Templates.AddItem(MentalReadinessBuff());
     Templates.AddItem(IntelligenceLeakDebuff());
 
@@ -84,32 +80,6 @@ static function X2AbilityTemplate FamiliarTerrainBuff()
     StatEffect.BuildPersistentEffect(1, true, false, true);
     StatEffect.AddPersistentStatChange(eStat_Mobility, default.FAMILIAR_TERRAIN_VALUE);
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.FamiliarTerrainFriendlyName, default.FamiliarTerrainFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
-    Template.AddTargetEffect(StatEffect);
-
-    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-    return Template;
-}
-
-static function X2AbilityTemplate PhysicalConditioningBuff()
-{
-    local X2AbilityTemplate Template;
-    local X2Effect_PersistentStatChange StatEffect;
-
-    `CREATE_X2ABILITY_TEMPLATE(Template, 'PhysicalConditioningBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_implacable";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
-    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-    Template.Hostility = eHostility_Neutral;
-    Template.AbilityToHitCalc = default.DeadEye;
-    Template.AbilityTargetStyle = default.SelfTarget;
-    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-    Template.bIsPassive = true;
-
-    StatEffect = new class'X2Effect_PersistentStatChange';
-    StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_Dodge, default.PHYSICAL_CONDITIONING_VALUE);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.PhysicalConditioningFriendlyName, default.PhysicalConditioningFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;

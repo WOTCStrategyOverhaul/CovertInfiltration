@@ -14,7 +14,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	// granted abilities
 	Templates.AddItem(CreateInformationWarDebuffEffect_CI());
 	Templates.AddItem(CreateFamiliarTerrainEffectTemplate());
-	Templates.AddItem(CreatePhysicalConditioningEffectTemplate());
 	Templates.AddItem(CreateMentalReadinessEffectTemplate());
 	Templates.AddItem(CreateLightningStrikeEffect());
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
@@ -66,18 +65,6 @@ static function X2SitRepEffectTemplate CreateFamiliarTerrainEffectTemplate()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FamiliarTerrainEffect')
 
 	Template.AbilityTemplateNames.AddItem('FamiliarTerrainBuff');
-	Template.GrantToSoldiers = true;
-
-	return Template;
-}
-
-static function X2SitRepEffectTemplate CreatePhysicalConditioningEffectTemplate()
-{
-	local X2SitRepEffect_GrantAbilities Template;
-	
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'PhysicalConditioningEffect')
-
-	Template.AbilityTemplateNames.AddItem('PhysicalConditioningBuff');
 	Template.GrantToSoldiers = true;
 
 	return Template;
