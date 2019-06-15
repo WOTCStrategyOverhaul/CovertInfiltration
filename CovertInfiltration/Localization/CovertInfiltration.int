@@ -31,7 +31,7 @@ strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
-[X2EventListener_Infiltration]
+[X2EventListener_Infiltration_SitReps]
 strReinforcementDelayBannerMessage="Comms Jamming.."
 strReinforcementDelayBannerSubtitle="ADVENT Reinforcements Delayed:"
 strReinforcementDelayBannerValue="1 Turn"
