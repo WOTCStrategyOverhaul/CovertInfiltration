@@ -10,6 +10,7 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	Templates.AddItem(CreateAdventAirPatrolListeners());
 	Templates.AddItem(CreateCommsJammingListeners());
+	Templates.AddItem(CreateUpdatedFirewallsListeners());
 
 	return Templates;
 }
@@ -104,7 +105,7 @@ static function EventListenerReturn CommsJamming_ReinforcementDelay(Object Event
 		return ELR_NoInterrupt;
 	}
 	
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Changing Reinforcement Spawner Countdown");
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: CommsJamming_ReinforcementDelay");
 
 	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
 	ReinforcementSpawner.Countdown += 1;
@@ -115,13 +116,48 @@ static function EventListenerReturn CommsJamming_ReinforcementDelay(Object Event
 	return ELR_NoInterrupt;
 }
 
-function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameState)
+static function XComReinforcementsDelayedVisualizationFn(XComGameState VisualizeGameState)
 {
 	local VisualizationActionMetadata ActionMetadata;
 	local X2Action_PlayMessageBanner MessageBanner;
 
 	MessageBanner = X2Action_PlayMessageBanner(class'X2Action_PlayMessageBanner'.static.AddToVisualizationTree(ActionMetadata, VisualizeGameState.GetContext()));
 	MessageBanner.AddMessageBanner(default.strReinforcementDelayBannerMessage, , default.strReinforcementDelayBannerSubtitle, default.strReinforcementDelayBannerValue, eUIState_Good);
+}
+
+/////////////////////////
+/// Updated Firewalls ///
+/////////////////////////
+
+static function CHEventListenerTemplate CreateUpdatedFirewallsListeners ()
+{
+	local X2SitrepEventListenerTemplate Template;
+
+	Template = CreateForSitRep('UpdatedFirewalls');
+	Template.AddCHEvent('AllowInteractHack', UpdatedFirewalls_AllowInteractHack, ELD_Immediate);
+
+	return Template;
+}
+
+static function EventListenerReturn UpdatedFirewalls_AllowInteractHack (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_InteractiveObject ObjectState;
+	local XComInteractiveLevelActor ObjectActor;
+	local XComLWTuple Tuple;
+
+	ObjectState = XComGameState_InteractiveObject(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (ObjectState == none || Tuple == none || Tuple.Id != 'AllowInteractHack') return ELR_NoInterrupt;
+
+	ObjectActor = XComInteractiveLevelActor(ObjectState.GetVisualizer());
+	
+	if (ObjectActor.ActorType == Type_AdventTower)
+	{
+		Tuple.Data[0].b = false;
+	}
+	
+	return ELR_NoInterrupt;
 }
 
 ///////////////

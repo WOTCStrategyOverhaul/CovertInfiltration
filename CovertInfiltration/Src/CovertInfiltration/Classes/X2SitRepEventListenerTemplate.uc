@@ -42,6 +42,22 @@ function RegisterForEvents()
 	}
 }
 
+function bool ValidateTemplate (out string strError)
+{
+	local X2SitRepTemplateManager TemplateManager;
+	
+	if (!super.ValidateTemplate(strError)) return false;
+
+	TemplateManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+	if (TemplateManager.FindSitRepTemplate(RequiredSitRep) == none)
+	{
+		strError = "SitRep" @ RequiredSitRep @ "does not exist";
+		return false;
+	}
+
+	return true;
+}
+
 defaultproperties
 {
 	RegisterInTactical = true
