@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
+//  AUTHOR:  statusNone and Xymanek
 //  PURPOSE: Class to add custom SitReps Templates
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -12,7 +12,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 	
 	// granted abilities
-	Templates.AddItem(CreateInformationWarDebuffEffect_CI());
+	Templates.AddItem(CreateUpdatedFirewallsBuffEffect());
 	Templates.AddItem(CreateMentalReadinessEffectTemplate());
 	Templates.AddItem(CreateLightningStrikeEffect());
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
@@ -34,7 +34,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
 
 	// misc
-	Templates.AddItem(CreateInformationWarEffectTemplate_CI());
+	Templates.AddItem(CreateUpdatedFirewallsEffect());
 
 	return Templates;
 }
@@ -43,13 +43,13 @@ static function array<X2DataTemplate> CreateTemplates()
 /// Granted Abilities ///
 /////////////////////////
 
-static function X2SitRepEffectTemplate CreateInformationWarDebuffEffect_CI()
+static function X2SitRepEffectTemplate CreateUpdatedFirewallsBuffEffect()
 {
 	local X2SitRepEffect_GrantAbilities Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'InformationWarDebuffEffect_CI');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'UpdatedFirewallsBuffEffect');
 	
-	Template.AbilityTemplateNames.AddItem('InformationWarDebuff_CI');
+	Template.AbilityTemplateNames.AddItem('UpdatedFirewallsBuff');
 
 	Template.Teams.AddItem(eTeam_Alien);
 	Template.RequireRobotic = true;
@@ -419,18 +419,18 @@ static function TacticalAnalysisStartModifier(XComGameState StartState)
 /// Misc ///
 ////////////
 
-static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
+static function X2SitRepEffectTemplate CreateUpdatedFirewallsEffect()
 {
 	local X2SitRepEffect_ModifyHackDefenses Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'InformationWarEffect_CI');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'UpdatedFirewallsEffect');
 
-	Template.DefenseDeltaFn = InformationWarModFunction;
+	Template.DefenseDeltaFn = UpdatedFirewallsModFunction;
 
 	return Template;
 }
 
-static function InformationWarModFunction(out int ModValue)
+static function UpdatedFirewallsModFunction(out int ModValue)
 {
-	ModValue += class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_BONUS;
+	ModValue += class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
 }

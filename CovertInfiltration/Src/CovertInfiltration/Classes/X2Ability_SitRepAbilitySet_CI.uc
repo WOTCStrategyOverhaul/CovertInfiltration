@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
+//  AUTHOR:  statusNone and Xymanek
 //  PURPOSE: Class to add abilities to be used by X2SitRep_InfiltrationSitRepEffects
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -7,7 +7,7 @@
 
 class X2Ability_SitRepAbilitySet_CI extends X2Ability config(GameCore);
 
-var config int UPDATED_FIREWALLS_HACK_BONUS;
+var config int UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
 var config int MENTAL_READINESS_VALUE;
 var config int INTELLIGENCE_LEAK_DEBUFF;
 
@@ -20,23 +20,23 @@ static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
 
-    Templates.AddItem(InformationWarDebuff_CI());
+    Templates.AddItem(UpdatedFirewallsBuff());
     Templates.AddItem(MentalReadinessBuff());
     Templates.AddItem(IntelligenceLeakDebuff());
 
     return Templates;
 }
 
-static function X2AbilityTemplate InformationWarDebuff_CI()
+static function X2AbilityTemplate UpdatedFirewallsBuff()
 {
     local X2AbilityTemplate Template;
     local X2Effect_PersistentStatChange StatEffect;
-    local string HackDefenseDecreasedFriendlyName, HackDefenseDecreasedFriendlyDesc;
+    local string FriendlyName, FriendlyDesc;
 
-    HackDefenseDecreasedFriendlyName = class'X2StatusEffects'.default.HackDefenseDecreasedFriendlyName;
-    HackDefenseDecreasedFriendlyDesc = class'X2StatusEffects'.default.HackDefenseDecreasedFriendlyDesc;
+    FriendlyName = class'X2StatusEffects'.default.HackDefenseIncreasedFriendlyName;
+    FriendlyDesc = class'X2StatusEffects'.default.HackDefenseIncreasedFriendlyDesc;
 
-    `CREATE_X2ABILITY_TEMPLATE(Template, 'InformationWarDebuff_CI');
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'UpdatedFirewallsBuff');
     Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_hack";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
@@ -48,8 +48,8 @@ static function X2AbilityTemplate InformationWarDebuff_CI()
 
     StatEffect = new class'X2Effect_PersistentStatChange';
     StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_HackDefense, default.UPDATED_FIREWALLS_HACK_BONUS);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, HackDefenseDecreasedFriendlyName, HackDefenseDecreasedFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
+    StatEffect.AddPersistentStatChange(eStat_HackDefense, default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS);
+    StatEffect.SetDisplayInfo(ePerkBuff_Passive, FriendlyName, FriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;

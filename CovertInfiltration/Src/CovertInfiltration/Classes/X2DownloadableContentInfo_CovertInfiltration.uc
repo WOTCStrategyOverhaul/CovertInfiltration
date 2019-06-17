@@ -185,6 +185,12 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 		return true;
 	}
 
+	if (InString == "UPDATED_FIREWALLS_HACK_DEFENSE_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS);
+		return true;
+	}
+
 	return false;
 }
 
