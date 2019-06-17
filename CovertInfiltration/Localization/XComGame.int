@@ -118,7 +118,7 @@ Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time.
 
 [UpdatedFirewalls X2SitRepTemplate]
 FriendlyName="Updated Firewalls"
-Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> for the duration of this mission, and towers cannot be hacked."
+Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> and towers cannot be hacked"
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
