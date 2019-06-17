@@ -21,7 +21,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Activites.AddItem(CreateGatherSuppliesTemplate());
 	Activites.AddItem(CreateGatherIntelTemplate());
 	Activites.AddItem(CreateLandedUFOTemplate());
-	Activites.AddItem(CreateHuntChosenTemplate());
+	//Activites.AddItem(CreateHuntChosenTemplate());
 	Activites.AddItem(CreateDestroyFacilityTemplate());
 
 	return Activites;
@@ -186,7 +186,7 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 
 	return Template;
 }
-
+/*
 static function X2DataTemplate CreateHuntChosenTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -205,7 +205,7 @@ static function X2DataTemplate CreateHuntChosenTemplate()
 
 	return Template;
 }
-
+*/
 static function X2DataTemplate CreateDestroyFacilityTemplate()
 {
 	local X2ActivityChainTemplate Template;

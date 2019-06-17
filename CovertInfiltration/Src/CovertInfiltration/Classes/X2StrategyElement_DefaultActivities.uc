@@ -35,11 +35,11 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardInfilActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Intel'); // TODO: datapad + intel if capture
 	CreateStandardInfilActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_Intel'); // TODO: intel if capture
 	CreateStandardInfilActivity(Templates, "RecoverInformant", "ResOps", Resistance, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "RecoverChosen", "ResOps", Resistance, 'Reward_None'); // TODO: POI
+	//CreateStandardInfilActivity(Templates, "RecoverChosen", "ResOps", Resistance, 'Reward_None'); // TODO: POI
 	CreateStandardInfilActivity(Templates, "RecoverPersonnel", "ResOps", Resistance, 'Reward_None'); // TODO: POI
 	CreateStandardInfilActivity(Templates, "RecoverUFO", "ResOps", Resistance, 'Reward_None'); // TODO: POI
 	CreateStandardInfilActivity(Templates, "CommanderSupply", "GorillaOps", Guerilla, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None'); // TODO: POI
+	//CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None'); // TODO: POI
 	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_Intel'); // TODO: POI
 	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_Supplies'); // TODO: assorted loot
 	
@@ -53,7 +53,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	// Covert Actions
 	CreatePrepareCounterDE(Templates, "PrepareCounterDE", "CovertAction");
 	CreatePrepareFactionJB(Templates, "PrepareFactionJB", "CovertAction");
-	CreatePrepareChosen(Templates, "PrepareChosen", "CovertAction");
+	//CreatePrepareChosen(Templates, "PrepareChosen", "CovertAction");
 	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
 	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
 	
@@ -101,7 +101,7 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates, str
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
-
+/*
 static function CreatePrepareChosen (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
 {
 	local X2ActivityTemplate_CovertAction Activity;
@@ -123,7 +123,7 @@ static function CreatePrepareChosen (out array<X2DataTemplate> Templates, string
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
-
+*/
 static function CreatePrepareFacility (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
 {
 	local X2ActivityTemplate_CovertAction Activity;
