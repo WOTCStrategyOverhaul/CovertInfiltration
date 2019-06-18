@@ -17,6 +17,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateLightningStrikeEffect());
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
 	Templates.AddItem(CreateTacticalAnalysisAbilityTemplate());
+	Templates.AddItem(CreateFoxholesBuffEffect());
 
 	// podsize & encounters
 	Templates.AddItem(CreateGunneryEmplacementsEffectTemplate());
@@ -100,6 +101,18 @@ static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'TacticalAnalysisAbility');
 
 	Template.AbilityTemplateNames.AddItem('TacticalAnalysis');
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateFoxholesBuffEffect()
+{
+	local X2SitRepEffect_GrantAbilities  Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FoxholesBuffEffect');
+
+	Template.AbilityTemplateNames.AddItem('FoxholesBuff');
+	Template.GrantToSoldiers = true;
 
 	return Template;
 }

@@ -23,6 +23,7 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(UpdatedFirewallsBuff());
     Templates.AddItem(MentalReadinessBuff());
     Templates.AddItem(IntelligenceLeakDebuff());
+    Templates.AddItem(FoxholesBuff());
 
     return Templates;
 }
@@ -106,6 +107,45 @@ static function X2AbilityTemplate IntelligenceLeakDebuff()
     StatEffect.AddPersistentStatChange(eStat_DetectionModifier, -default.INTELLIGENCE_LEAK_DEBUFF);
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.IntelligenceLeakFriendlyName, default.IntelligenceLeakFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate FoxholesBuff()
+{
+	local XMBEffect_ConditionalStatChange MobilityEffect;
+	local X2Effect_CoverHitModifier HitModEffect;
+	local XMBCondition_CoverType CoverCondition;
+    local X2AbilityTemplate Template;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'FoxholesBuff');
+    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_slow";
+    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+
+	HitModEffect = new class'X2Effect_CoverHitModifier';
+    HitModEffect.BuildPersistentEffect(1, true, false, true);
+    HitModEffect.SetDisplayInfo(ePerkBuff_Passive, "Foxholes", "+2 mobility and +5 defense while in low cover", Template.IconImage, true,, Template.AbilitySourceName);
+	HitModEffect.RequiredCoverType = CT_MidLevel;
+	HitModEffect.HitModValue = -5;
+    Template.AddTargetEffect(HitModEffect);
+
+	CoverCondition = new class'XMBCondition_CoverType';
+	CoverCondition.AllowedCoverTypes.AddItem(CT_MidLevel);
+	CoverCondition.bCheckRelativeToSource = false;
+
+	MobilityEffect = new class'XMBEffect_ConditionalStatChange';
+    MobilityEffect.BuildPersistentEffect(1, true, false, false);
+	MobilityEffect.AddPersistentStatChange(eStat_Mobility, 2);
+    MobilityEffect.SetDisplayInfo(ePerkBuff_Bonus, "Foxholes", "+2 mobility and +5 defense while in low cover", Template.IconImage, true,, Template.AbilitySourceName);
+	MobilityEffect.Conditions.AddItem(CoverCondition);
+    Template.AddTargetEffect(MobilityEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 
