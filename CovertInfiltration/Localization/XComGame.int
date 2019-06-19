@@ -162,7 +162,7 @@ Description="An ADVENT defector joins the squad for this operation."
 
 [IntelligenceLeak X2SitRepTemplate]
 FriendlyName="Full Sensor Coverage"
-Description="Start mission without concealment and compromised detection radius on concealed soldiers."
+Description="The squad does not start with concealment, and detection ranges are increased by 33%"
 
 [Foxholes X2SitRepTemplate]
 FriendlyName="Foxholes"
