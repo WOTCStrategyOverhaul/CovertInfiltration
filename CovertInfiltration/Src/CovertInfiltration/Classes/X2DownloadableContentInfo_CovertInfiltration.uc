@@ -191,6 +191,18 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 		return true;
 	}
 
+	if (InString == "FOXHOLES_MOBILITY")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.FOXHOLES_MOBILITY);
+		return true;
+	}
+
+	if (InString == "FOXHOLES_DEFENSE")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.FOXHOLES_DEFENSE);
+		return true;
+	}
+
 	return false;
 }
 

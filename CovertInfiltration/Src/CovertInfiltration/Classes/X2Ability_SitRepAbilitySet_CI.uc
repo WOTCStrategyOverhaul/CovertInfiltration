@@ -10,11 +10,15 @@ class X2Ability_SitRepAbilitySet_CI extends X2Ability config(GameCore);
 var config int UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
 var config int MENTAL_READINESS_VALUE;
 var config int INTELLIGENCE_LEAK_DEBUFF;
+var config int FOXHOLES_MOBILITY;
+var config int FOXHOLES_DEFENSE;
 
 var localized string MentalReadinessFriendlyName;
 var localized string MentalReadinessFriendlyDesc;
 var localized string IntelligenceLeakFriendlyName;
 var localized string IntelligenceLeakFriendlyDesc;
+var localized string FoxholesFriendlyName;
+var localized string FoxholesFriendlyDesc;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -131,9 +135,9 @@ static function X2AbilityTemplate FoxholesBuff()
 
 	HitModEffect = new class'X2Effect_CoverHitModifier';
     HitModEffect.BuildPersistentEffect(1, true, false, true);
-    HitModEffect.SetDisplayInfo(ePerkBuff_Passive, "Foxholes", "+2 mobility and +5 defense while in low cover", Template.IconImage, true,, Template.AbilitySourceName);
+    HitModEffect.SetDisplayInfo(ePerkBuff_Passive, default.FoxholesFriendlyName, default.FoxholesFriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
 	HitModEffect.RequiredCoverType = CT_MidLevel;
-	HitModEffect.HitModValue = -5;
+	HitModEffect.HitModValue = -default.FOXHOLES_DEFENSE;
     Template.AddTargetEffect(HitModEffect);
 
 	CoverCondition = new class'XMBCondition_CoverType';
@@ -142,8 +146,8 @@ static function X2AbilityTemplate FoxholesBuff()
 
 	MobilityEffect = new class'XMBEffect_ConditionalStatChange';
     MobilityEffect.BuildPersistentEffect(1, true, false, false);
-	MobilityEffect.AddPersistentStatChange(eStat_Mobility, 2);
-    MobilityEffect.SetDisplayInfo(ePerkBuff_Bonus, "Foxholes", "+2 mobility and +5 defense while in low cover", Template.IconImage, true,, Template.AbilitySourceName);
+	MobilityEffect.AddPersistentStatChange(eStat_Mobility, default.FOXHOLES_MOBILITY);
+    MobilityEffect.SetDisplayInfo(ePerkBuff_Bonus, default.FoxholesFriendlyName, default.FoxholesFriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
 	MobilityEffect.Conditions.AddItem(CoverCondition);
     Template.AddTargetEffect(MobilityEffect);
 

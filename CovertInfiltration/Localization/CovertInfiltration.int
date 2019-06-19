@@ -89,6 +89,9 @@ MentalReadinessFriendlyDesc="+<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hac
 IntelligenceLeakFriendlyName = "Full Sensor Coverage"
 IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
 
+FoxholesFriendlyName="Foxholes"
+FoxholesFriendlyDesc="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
+
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission ready"
 strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"

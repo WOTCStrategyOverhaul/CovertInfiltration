@@ -164,6 +164,10 @@ Description="An ADVENT defector joins the squad for this operation."
 FriendlyName="Full Sensor Coverage"
 Description="Start mission without concealment and compromised detection radius on concealed soldiers."
 
+[Foxholes X2SitRepTemplate]
+FriendlyName="Foxholes"
+Description="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
+
 [TacticalAnalysis X2SitRepTemplate]
 FriendlyName="Tactical Analysis"
 Description="Enemies activated on the XCOM turn will receive only one action on their turn."
