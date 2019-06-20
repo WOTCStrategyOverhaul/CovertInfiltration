@@ -156,10 +156,6 @@ Description="Mission timer is increased by 1."
 FriendlyName="Volunteer Army"
 Description="A Resistance soldier joins the squad for this operation."
 
-[DoubleAgent X2SitRepTemplate]
-FriendlyName="Double Agent"
-Description="An ADVENT defector joins the squad for this operation."
-
 [IntelligenceLeak X2SitRepTemplate]
 FriendlyName="Full Sensor Coverage"
 Description="The squad does not start with concealment, and detection ranges are increased by 33%"

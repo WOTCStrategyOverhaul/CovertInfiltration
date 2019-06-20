@@ -31,7 +31,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	// tactical startstate
 	Templates.AddItem(CreateNoSquadConcealmentEffectTemplate());
 	Templates.AddItem(CreateVolunteerArmyEffectTemplate());
-	Templates.AddItem(CreateDoubleAgentEffectTemplate());
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
 	
 	// misc
@@ -253,61 +252,6 @@ static function VolunteerArmyTacticalStartModifier(XComGameState StartState)
 	}
 
 	XComTeamSoldierSpawnTacticalStartModifier(VolunteerCharacterTemplate, StartState);
-}
-
-static function X2SitRepEffectTemplate CreateDoubleAgentEffectTemplate()
-{
-	local X2SitRepEffect_ModifyTacticalStartState Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'DoubleAgentEffect');
-
-	Template.ModifyTacticalStartStateFn = DoubleAgentTacticalStartModifier;
-	
-	return Template;
-}
-
-static function DoubleAgentTacticalStartModifier(XComGameState StartState)
-{
-	local array<DoubleAgentData> DoubleAgentPotentials;
-	local XComGameState_BattleData BattleData;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local DoubleAgentData DoubleAgent;
-	local int CurrentForceLevel, Rand;
-
-	DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
-
-	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
-	{
-		break;
-	}
-	`assert( XComHQ != none );
-
-	foreach StartState.IterateByClassType(class'XComGameState_BattleData', BattleData)
-	{
-		break;
-	}
-	`assert( BattleData != none );
-
-	CurrentForceLevel = BattleData.GetForceLevel();
-	foreach DoubleAgentPotentials(DoubleAgent)
-	{
-		if ((CurrentForceLevel < DoubleAgent.MinForceLevel) || (CurrentForceLevel > DoubleAgent.MaxForceLevel))
-		{
-			DoubleAgentPotentials.RemoveItem(DoubleAgent);
-		}
-	}
-
-	if (DoubleAgentPotentials.Length > 0)
-	{
-		Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
-		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
-	}
-	else
-	{
-		DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
-		Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
-		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
-	}
 }
 
 static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName, XComGameState StartState)
