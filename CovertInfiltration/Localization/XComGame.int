@@ -130,7 +130,7 @@ Description="Units gain a mobility boost for the first few turns of battle while
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Show Of Force"
-Description="This mission's Difficulty is increased by 1 level."
+Description="Enemy podsizes increased by 1"
 
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"

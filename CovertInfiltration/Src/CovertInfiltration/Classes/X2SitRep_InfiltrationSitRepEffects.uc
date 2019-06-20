@@ -33,9 +33,10 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateVolunteerArmyEffectTemplate());
 	Templates.AddItem(CreateDoubleAgentEffectTemplate());
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
-
+	
 	// misc
 	Templates.AddItem(CreateUpdatedFirewallsEffect());
+	Templates.AddItem(CreatePodSizeIncreaseByOneEffectTemplate());
 
 	return Templates;
 }
@@ -128,8 +129,8 @@ static function X2SitRepEffectTemplate CreateGunneryEmplacementsEffectTemplate()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTurretCount', Template, 'GunneryEmplacementsEffect');
 
 	Template.CountDelta = 2;
-	Template.ZoneWidthDelta = 16;
-	Template.ZoneOffsetDelta = -16;
+	Template.ZoneWidthDelta = 999;
+	//Template.ZoneOffsetDelta = -16;
 
 	return Template;
 }
@@ -446,4 +447,15 @@ static function X2SitRepEffectTemplate CreateUpdatedFirewallsEffect()
 static function UpdatedFirewallsModFunction(out int ModValue)
 {
 	ModValue += class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
+}
+
+static function X2SitRepEffectTemplate CreatePodSizeIncreaseByOneEffectTemplate()
+{
+	local X2SitRepEffect_ModifyPodSize Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyPodSize', Template, 'PodSizeIncreaseByOneEffect');
+
+	Template.PodSizeDelta = 1;
+
+	return Template;
 }
