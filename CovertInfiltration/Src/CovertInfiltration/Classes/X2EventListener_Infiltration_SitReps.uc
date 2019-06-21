@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Event listeners that facilitate functionality for certain SitReps
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2EventListener_Infiltration_SitReps extends X2EventListener;
 
 var localized string strReinforcementDelayBannerMessage;

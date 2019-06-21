@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Adds a modifier when the target is in a certain type of cover
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2Effect_CoverHitModifier extends X2Effect_Persistent;
 
 var ECoverType RequiredCoverType;

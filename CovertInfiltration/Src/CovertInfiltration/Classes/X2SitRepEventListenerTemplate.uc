@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: Registers the listeners only when the required SitRep is active
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2SitRepEventListenerTemplate extends CHEventListenerTemplate;
 
 var name RequiredSitRep;
