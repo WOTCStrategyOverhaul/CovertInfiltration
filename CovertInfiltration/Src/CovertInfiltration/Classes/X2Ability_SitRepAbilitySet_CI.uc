@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
+//  AUTHOR:  statusNone and Xymanek
 //  PURPOSE: Class to add abilities to be used by X2SitRep_InfiltrationSitRepEffects
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -7,43 +7,41 @@
 
 class X2Ability_SitRepAbilitySet_CI extends X2Ability config(GameCore);
 
-var config int FAMILIAR_TERRAIN_VALUE;
-var config int PHYSICAL_CONDITIONING_VALUE;
+var config int UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
 var config int MENTAL_READINESS_VALUE;
 var config int INTELLIGENCE_LEAK_DEBUFF;
+var config int FOXHOLES_MOBILITY;
+var config int FOXHOLES_DEFENSE;
 
-var localized string FamiliarTerrainFriendlyName;
-var localized string FamiliarTerrainFriendlyDesc;
-var localized string PhysicalConditioningFriendlyName;
-var localized string PhysicalConditioningFriendlyDesc;
 var localized string MentalReadinessFriendlyName;
 var localized string MentalReadinessFriendlyDesc;
 var localized string IntelligenceLeakFriendlyName;
 var localized string IntelligenceLeakFriendlyDesc;
+var localized string FoxholesFriendlyName;
+var localized string FoxholesFriendlyDesc;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
 
-    Templates.AddItem(InformationWarDebuff_CI());
-    Templates.AddItem(FamiliarTerrainBuff());
-    Templates.AddItem(PhysicalConditioningBuff());
+    Templates.AddItem(UpdatedFirewallsBuff());
     Templates.AddItem(MentalReadinessBuff());
     Templates.AddItem(IntelligenceLeakDebuff());
+    Templates.AddItem(FoxholesBuff());
 
     return Templates;
 }
 
-static function X2AbilityTemplate InformationWarDebuff_CI()
+static function X2AbilityTemplate UpdatedFirewallsBuff()
 {
     local X2AbilityTemplate Template;
     local X2Effect_PersistentStatChange StatEffect;
-    local string HackDefenseDecreasedFriendlyName, HackDefenseDecreasedFriendlyDesc;
+    local string FriendlyName, FriendlyDesc;
 
-    HackDefenseDecreasedFriendlyName = class'X2StatusEffects'.default.HackDefenseDecreasedFriendlyName;
-    HackDefenseDecreasedFriendlyDesc = class'X2StatusEffects'.default.HackDefenseDecreasedFriendlyDesc;
+    FriendlyName = class'X2StatusEffects'.default.HackDefenseIncreasedFriendlyName;
+    FriendlyDesc = class'X2StatusEffects'.default.HackDefenseIncreasedFriendlyDesc;
 
-    `CREATE_X2ABILITY_TEMPLATE(Template, 'InformationWarDebuff_CI');
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'UpdatedFirewallsBuff');
     Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_hack";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
@@ -55,60 +53,8 @@ static function X2AbilityTemplate InformationWarDebuff_CI()
 
     StatEffect = new class'X2Effect_PersistentStatChange';
     StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_HackDefense, -class'X2Ability_XPackAbilitySet'.default.INFORMATION_WAR_HACK_DEBUFF);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, HackDefenseDecreasedFriendlyName, HackDefenseDecreasedFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
-    Template.AddTargetEffect(StatEffect);
-
-    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-    return Template;
-}
-
-static function X2AbilityTemplate FamiliarTerrainBuff()
-{
-    local X2AbilityTemplate Template;
-    local X2Effect_PersistentStatChange StatEffect;
-
-    `CREATE_X2ABILITY_TEMPLATE(Template, 'FamiliarTerrainBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_runandgun";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
-    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-    Template.Hostility = eHostility_Neutral;
-    Template.AbilityToHitCalc = default.DeadEye;
-    Template.AbilityTargetStyle = default.SelfTarget;
-    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-    Template.bIsPassive = true;
-
-    StatEffect = new class'X2Effect_PersistentStatChange';
-    StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_Mobility, default.FAMILIAR_TERRAIN_VALUE);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.FamiliarTerrainFriendlyName, default.FamiliarTerrainFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
-    Template.AddTargetEffect(StatEffect);
-
-    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-    return Template;
-}
-
-static function X2AbilityTemplate PhysicalConditioningBuff()
-{
-    local X2AbilityTemplate Template;
-    local X2Effect_PersistentStatChange StatEffect;
-
-    `CREATE_X2ABILITY_TEMPLATE(Template, 'PhysicalConditioningBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_implacable";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
-    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-    Template.Hostility = eHostility_Neutral;
-    Template.AbilityToHitCalc = default.DeadEye;
-    Template.AbilityTargetStyle = default.SelfTarget;
-    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
-    Template.bIsPassive = true;
-
-    StatEffect = new class'X2Effect_PersistentStatChange';
-    StatEffect.BuildPersistentEffect(1, true, false, true);
-    StatEffect.AddPersistentStatChange(eStat_Dodge, default.PHYSICAL_CONDITIONING_VALUE);
-    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.PhysicalConditioningFriendlyName, default.PhysicalConditioningFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
+    StatEffect.AddPersistentStatChange(eStat_HackDefense, default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS);
+    StatEffect.SetDisplayInfo(ePerkBuff_Passive, FriendlyName, FriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
@@ -134,6 +80,9 @@ static function X2AbilityTemplate MentalReadinessBuff()
     ReadinessEffect = new class'X2Effect_MentalReadiness';
     ReadinessEffect.BuildPersistentEffect(1, true, false, true);
     ReadinessEffect.Hitmod = -default.MENTAL_READINESS_VALUE;
+	ReadinessEffect.AddPersistentStatChange(eStat_CritChance, default.MENTAL_READINESS_VALUE);
+	ReadinessEffect.AddPersistentStatChange(eStat_Dodge, default.MENTAL_READINESS_VALUE);
+	ReadinessEffect.AddPersistentStatChange(eStat_Hacking, default.MENTAL_READINESS_VALUE);
     ReadinessEffect.SetDisplayInfo(ePerkBuff_Passive, default.MentalReadinessFriendlyName, default.MentalReadinessFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
     Template.AddTargetEffect(ReadinessEffect);
 
@@ -162,6 +111,45 @@ static function X2AbilityTemplate IntelligenceLeakDebuff()
     StatEffect.AddPersistentStatChange(eStat_DetectionModifier, -default.INTELLIGENCE_LEAK_DEBUFF);
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.IntelligenceLeakFriendlyName, default.IntelligenceLeakFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate FoxholesBuff()
+{
+	local XMBEffect_ConditionalStatChange MobilityEffect;
+	local X2Effect_CoverHitModifier HitModEffect;
+	local XMBCondition_CoverType CoverCondition;
+    local X2AbilityTemplate Template;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'FoxholesBuff');
+    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_slow";
+    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+
+	HitModEffect = new class'X2Effect_CoverHitModifier';
+    HitModEffect.BuildPersistentEffect(1, true, false, true);
+    HitModEffect.SetDisplayInfo(ePerkBuff_Passive, default.FoxholesFriendlyName, default.FoxholesFriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
+	HitModEffect.RequiredCoverType = CT_MidLevel;
+	HitModEffect.HitModValue = -default.FOXHOLES_DEFENSE;
+    Template.AddTargetEffect(HitModEffect);
+
+	CoverCondition = new class'XMBCondition_CoverType';
+	CoverCondition.AllowedCoverTypes.AddItem(CT_MidLevel);
+	CoverCondition.bCheckRelativeToSource = false;
+
+	MobilityEffect = new class'XMBEffect_ConditionalStatChange';
+    MobilityEffect.BuildPersistentEffect(1, true, false, false);
+	MobilityEffect.AddPersistentStatChange(eStat_Mobility, default.FOXHOLES_MOBILITY);
+    MobilityEffect.SetDisplayInfo(ePerkBuff_Bonus, default.FoxholesFriendlyName, default.FoxholesFriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
+	MobilityEffect.Conditions.AddItem(CoverCondition);
+    Template.AddTargetEffect(MobilityEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 

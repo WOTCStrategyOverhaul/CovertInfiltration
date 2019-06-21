@@ -31,7 +31,7 @@ strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 
-[X2EventListener_Infiltration]
+[X2EventListener_Infiltration_SitReps]
 strReinforcementDelayBannerMessage="Comms Jamming.."
 strReinforcementDelayBannerSubtitle="ADVENT Reinforcements Delayed:"
 strReinforcementDelayBannerValue="1 Turn"
@@ -83,18 +83,14 @@ BonusName="Remove risk"
 BonusDescription="The first bonus always negates the risk"
 
 [X2Ability_SitRepAbilitySet_CI]
-FamiliarTerrainFriendlyName = "Familiar Terrain"
-FamiliarTerrainFriendlyDesc = "Squad receives additional mobility during this mission."
+MentalReadinessFriendlyName="Mental Readiness"
+MentalReadinessFriendlyDesc="+<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
 
-PhysicalConditioningFriendlyName = "Physical Conditioning"
-PhysicalConditioningFriendlyDesc = "Squad receives additional dodge during this mission."
-
-
-MentalReadinessFriendlyName = "Mental Readiness"
-MentalReadinessFriendlyDesc = "Squad receives additional will during this mission."
-
-IntelligenceLeakFriendlyName = "Intelligence Leak"
+IntelligenceLeakFriendlyName = "Full Sensor Coverage"
 IntelligenceLeakFriendlyDesc = "Start mission without concealment and compromised detection radius on concealed soldiers."
+
+FoxholesFriendlyName="Foxholes"
+FoxholesFriendlyDesc="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission ready"

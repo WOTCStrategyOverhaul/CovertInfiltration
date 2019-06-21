@@ -29,14 +29,45 @@ function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState New
 function X2CovertActionRiskTemplate SelectFlatRisk()
 {
 	local X2StrategyElementTemplateManager StratMgr;
-	local X2CovertActionRiskTemplate RiskTemplate;
-	local int Selection;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local ActionFlatRiskSitRep FlatRiskDef;
+	local X2CardManager CardManager;
+	local array<string> CardLabels;
+	local string sRisk;
+	local name RiskName;
+	local int i;
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	Selection = `SYNC_RAND(class'X2Helper_Infiltration'.default.FlatRiskSitReps.Length);
-	RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(class'X2Helper_Infiltration'.default.FlatRiskSitReps[Selection].FlatRiskName));
+	CardManager = class'X2CardManager'.static.GetCardManager();
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 
-	return RiskTemplate;
+	// Build the deck
+	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskDef)
+	{
+		CardManager.AddCardToDeck('FlatRisks', string(FlatRiskDef.FlatRiskName));
+	}
+
+	// Try to find a matching one
+	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
+	foreach CardLabels(sRisk)
+	{
+		RiskName = name(sRisk);
+		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
+
+		if (i != INDEX_NONE)
+		{
+			FlatRiskDef = class'X2Helper_Infiltration'.default.FlatRiskSitReps[i];
+
+			if (AlienHQ.GetForceLevel() >= FlatRiskDef.MinForceLevel)
+			{
+				CardManager.MarkCardUsed('FlatRisks', sRisk);
+				return X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(FlatRiskDef.SitRepName));
+			}
+		}
+	}
+
+	`RedScreen("CI: Failed to find a flat risk to use for action");
+	return none;
 }
 
 function AddRisk(X2CovertActionRiskTemplate RiskTemplate, XComGameState_CovertAction ActionState)

@@ -45,7 +45,7 @@ simulated function InitRow ()
 		strTitle = class'UIUtilities_Text'.static.GetColoredText(SitRepTemplate.GetFriendlyName(), ColorState);
 
 		Title.SetTitle(strTitle);
-		Description.SetText(SitRepTemplate.Description);
+		Description.SetText(SitRepTemplate.GetDescriptionExpanded());
 	}
 	else
 	{
@@ -54,7 +54,7 @@ simulated function InitRow ()
 		Description.SetPosition(10, 27);
 
 		Title.SetSubTitle(SitRepEffectTemplate.GetFriendlyName());
-		Description.SetText(SitRepEffectTemplate.Description);
+		Description.SetText(SitRepEffectTemplate.GetDescriptionExpanded());
 	}
 
 	Title.SetWidth(Width - Title.X);

@@ -173,6 +173,39 @@ static protected function MarkPlotsForCovertEscape()
 	}
 }
 
+///////////
+/// Loc ///
+///////////
+
+static function bool AbilityTagExpandHandler (string InString, out string OutString)
+{
+	if (InString == "MENTAL_READINESS_VALUE")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.MENTAL_READINESS_VALUE);
+		return true;
+	}
+
+	if (InString == "UPDATED_FIREWALLS_HACK_DEFENSE_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS);
+		return true;
+	}
+
+	if (InString == "FOXHOLES_MOBILITY")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.FOXHOLES_MOBILITY);
+		return true;
+	}
+
+	if (InString == "FOXHOLES_DEFENSE")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.FOXHOLES_DEFENSE);
+		return true;
+	}
+
+	return false;
+}
+
 /// ////////////// ///
 /// DLC (HL) HOOKS ///
 /// ////////////// ///

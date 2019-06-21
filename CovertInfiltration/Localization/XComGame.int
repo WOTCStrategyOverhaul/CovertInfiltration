@@ -116,33 +116,21 @@ Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time.
 DisplayName="Infiltration Size II"
 Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time."
 
-[InformationWar_CI X2SitRepTemplate]
-FriendlyName="Information War"
-Description="Enemy tech defense is lowered by 20 for the duration of this mission."
-
-[FamiliarTerrain X2SitRepTemplate]
-FriendlyName="Familiar Terrain"
-Description="Gain 1 additional mobility during this mission."
-
-[PhysicalConditioning X2SitRepTemplate]
-FriendlyName="Physical Conditioning"
-Description="Squad receives additional dodge during this mission."
+[UpdatedFirewalls X2SitRepTemplate]
+FriendlyName="Updated Firewalls"
+Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> and towers cannot be hacked"
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description="Squad receives additional mental fortitude during this mission."
+Description="+<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
 Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
-FriendlyName="ADVENT Patrols"
-Description="This mission's Difficulty is increased by 1 level."
-
-[OpportuneMoment X2SitRepTemplate]
-FriendlyName="Opportune Moment"
-Description="This mission's Difficulty is decreased by 1 level."
+FriendlyName="Show Of Force"
+Description="Enemy podsizes increased by 1"
 
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"
@@ -168,13 +156,13 @@ Description="Mission timer is increased by 1."
 FriendlyName="Volunteer Army"
 Description="A Resistance soldier joins the squad for this operation."
 
-[DoubleAgent X2SitRepTemplate]
-FriendlyName="Double Agent"
-Description="An ADVENT defector joins the squad for this operation."
-
 [IntelligenceLeak X2SitRepTemplate]
-FriendlyName="Intelligence Leak"
-Description="Start mission without concealment and compromised detection radius on concealed soldiers."
+FriendlyName="Full Sensor Coverage"
+Description="The squad does not start with concealment, and detection ranges are increased by 33%"
+
+[Foxholes X2SitRepTemplate]
+FriendlyName="Foxholes"
+Description="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
 
 [TacticalAnalysis X2SitRepTemplate]
 FriendlyName="Tactical Analysis"
@@ -189,10 +177,10 @@ FriendlyName="Comms Jamming"
 Description="The first Reinforcements dropship is guaranteed to be delayed."
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="ADVENT Patrols"
+RiskName="Show Of Force"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
-RiskName="Intelligence Leak"
+RiskName="Full Sensor Coverage"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
 RiskName="ADVENT Air Patrols"

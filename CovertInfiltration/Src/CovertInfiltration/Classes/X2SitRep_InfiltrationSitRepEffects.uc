@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
+//  AUTHOR:  statusNone and Xymanek
 //  PURPOSE: Class to add custom SitReps Templates
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -12,13 +12,12 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 	
 	// granted abilities
-	Templates.AddItem(CreateInformationWarDebuffEffect_CI());
-	Templates.AddItem(CreateFamiliarTerrainEffectTemplate());
-	Templates.AddItem(CreatePhysicalConditioningEffectTemplate());
+	Templates.AddItem(CreateUpdatedFirewallsBuffEffect());
 	Templates.AddItem(CreateMentalReadinessEffectTemplate());
 	Templates.AddItem(CreateLightningStrikeEffect());
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
 	Templates.AddItem(CreateTacticalAnalysisAbilityTemplate());
+	Templates.AddItem(CreateFoxholesBuffEffect());
 
 	// podsize & encounters
 	Templates.AddItem(CreateGunneryEmplacementsEffectTemplate());
@@ -32,11 +31,11 @@ static function array<X2DataTemplate> CreateTemplates()
 	// tactical startstate
 	Templates.AddItem(CreateNoSquadConcealmentEffectTemplate());
 	Templates.AddItem(CreateVolunteerArmyEffectTemplate());
-	Templates.AddItem(CreateDoubleAgentEffectTemplate());
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
-
+	
 	// misc
-	Templates.AddItem(CreateInformationWarEffectTemplate_CI());
+	Templates.AddItem(CreateUpdatedFirewallsEffect());
+	Templates.AddItem(CreatePodSizeIncreaseByOneEffectTemplate());
 
 	return Templates;
 }
@@ -45,40 +44,16 @@ static function array<X2DataTemplate> CreateTemplates()
 /// Granted Abilities ///
 /////////////////////////
 
-static function X2SitRepEffectTemplate CreateInformationWarDebuffEffect_CI()
+static function X2SitRepEffectTemplate CreateUpdatedFirewallsBuffEffect()
 {
 	local X2SitRepEffect_GrantAbilities Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'InformationWarDebuffEffect_CI');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'UpdatedFirewallsBuffEffect');
 	
-	Template.AbilityTemplateNames.AddItem('InformationWarDebuff_CI');
+	Template.AbilityTemplateNames.AddItem('UpdatedFirewallsBuff');
 
 	Template.Teams.AddItem(eTeam_Alien);
 	Template.RequireRobotic = true;
-
-	return Template;
-}
-
-static function X2SitRepEffectTemplate CreateFamiliarTerrainEffectTemplate()
-{
-	local X2SitRepEffect_GrantAbilities Template;
-	
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FamiliarTerrainEffect')
-
-	Template.AbilityTemplateNames.AddItem('FamiliarTerrainBuff');
-	Template.GrantToSoldiers = true;
-
-	return Template;
-}
-
-static function X2SitRepEffectTemplate CreatePhysicalConditioningEffectTemplate()
-{
-	local X2SitRepEffect_GrantAbilities Template;
-	
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'PhysicalConditioningEffect')
-
-	Template.AbilityTemplateNames.AddItem('PhysicalConditioningBuff');
-	Template.GrantToSoldiers = true;
 
 	return Template;
 }
@@ -130,6 +105,18 @@ static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate()
 	return Template;
 }
 
+static function X2SitRepEffectTemplate CreateFoxholesBuffEffect()
+{
+	local X2SitRepEffect_GrantAbilities  Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FoxholesBuffEffect');
+
+	Template.AbilityTemplateNames.AddItem('FoxholesBuff');
+	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
 //////////////////
 /// Encounters ///
 //////////////////
@@ -141,8 +128,8 @@ static function X2SitRepEffectTemplate CreateGunneryEmplacementsEffectTemplate()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTurretCount', Template, 'GunneryEmplacementsEffect');
 
 	Template.CountDelta = 2;
-	Template.ZoneWidthDelta = 16;
-	Template.ZoneOffsetDelta = -16;
+	Template.ZoneWidthDelta = 999;
+	//Template.ZoneOffsetDelta = -16;
 
 	return Template;
 }
@@ -265,61 +252,6 @@ static function VolunteerArmyTacticalStartModifier(XComGameState StartState)
 	}
 
 	XComTeamSoldierSpawnTacticalStartModifier(VolunteerCharacterTemplate, StartState);
-}
-
-static function X2SitRepEffectTemplate CreateDoubleAgentEffectTemplate()
-{
-	local X2SitRepEffect_ModifyTacticalStartState Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'DoubleAgentEffect');
-
-	Template.ModifyTacticalStartStateFn = DoubleAgentTacticalStartModifier;
-	
-	return Template;
-}
-
-static function DoubleAgentTacticalStartModifier(XComGameState StartState)
-{
-	local array<DoubleAgentData> DoubleAgentPotentials;
-	local XComGameState_BattleData BattleData;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local DoubleAgentData DoubleAgent;
-	local int CurrentForceLevel, Rand;
-
-	DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
-
-	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
-	{
-		break;
-	}
-	`assert( XComHQ != none );
-
-	foreach StartState.IterateByClassType(class'XComGameState_BattleData', BattleData)
-	{
-		break;
-	}
-	`assert( BattleData != none );
-
-	CurrentForceLevel = BattleData.GetForceLevel();
-	foreach DoubleAgentPotentials(DoubleAgent)
-	{
-		if ((CurrentForceLevel < DoubleAgent.MinForceLevel) || (CurrentForceLevel > DoubleAgent.MaxForceLevel))
-		{
-			DoubleAgentPotentials.RemoveItem(DoubleAgent);
-		}
-	}
-
-	if (DoubleAgentPotentials.Length > 0)
-	{
-		Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
-		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
-	}
-	else
-	{
-		DoubleAgentPotentials = class'X2StrategyElement_XpackResistanceActions'.default.DoubleAgentCharacterTemplates;
-		Rand = `SYNC_RAND_STATIC(DoubleAgentPotentials.Length);
-		XComTeamSoldierSpawnTacticalStartModifier(DoubleAgentPotentials[Rand].TemplateName, StartState);
-	}
 }
 
 static function XComTeamSoldierSpawnTacticalStartModifier(name CharTemplateName, XComGameState StartState)
@@ -445,18 +377,29 @@ static function TacticalAnalysisStartModifier(XComGameState StartState)
 /// Misc ///
 ////////////
 
-static function X2SitRepEffectTemplate CreateInformationWarEffectTemplate_CI()
+static function X2SitRepEffectTemplate CreateUpdatedFirewallsEffect()
 {
 	local X2SitRepEffect_ModifyHackDefenses Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'InformationWarEffect_CI');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyHackDefenses', Template, 'UpdatedFirewallsEffect');
 
-	Template.DefenseDeltaFn = InformationWarModFunction;
+	Template.DefenseDeltaFn = UpdatedFirewallsModFunction;
 
 	return Template;
 }
 
-static function InformationWarModFunction(out int ModValue)
+static function UpdatedFirewallsModFunction(out int ModValue)
 {
-	ModValue += `ScaleStrategyArrayInt(class'X2StrategyElement_XpackResistanceActions'.default.InformationWarReduction);
+	ModValue += class'X2Ability_SitRepAbilitySet_CI'.default.UPDATED_FIREWALLS_HACK_DEFENSE_BONUS;
+}
+
+static function X2SitRepEffectTemplate CreatePodSizeIncreaseByOneEffectTemplate()
+{
+	local X2SitRepEffect_ModifyPodSize Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyPodSize', Template, 'PodSizeIncreaseByOneEffect');
+
+	Template.PodSizeDelta = 1;
+
+	return Template;
 }
