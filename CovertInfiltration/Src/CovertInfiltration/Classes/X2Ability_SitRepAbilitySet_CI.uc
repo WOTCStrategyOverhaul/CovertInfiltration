@@ -42,7 +42,7 @@ static function X2AbilityTemplate UpdatedFirewallsBuff()
     FriendlyDesc = class'X2StatusEffects'.default.HackDefenseIncreasedFriendlyDesc;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'UpdatedFirewallsBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_hack";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_updated_firewalls";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
@@ -68,7 +68,7 @@ static function X2AbilityTemplate MentalReadinessBuff()
     local X2Effect_MentalReadiness ReadinessEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'MentalReadinessBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_mentalfortress";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_bonus_mental_readiness";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
@@ -97,7 +97,7 @@ static function X2AbilityTemplate IntelligenceLeakDebuff()
     local X2Effect_PersistentStatChange StatEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'IntelligenceLeakDebuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_slow";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
@@ -125,7 +125,7 @@ static function X2AbilityTemplate FoxholesBuff()
     local X2AbilityTemplate Template;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'FoxholesBuff');
-    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_slow";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_bonus_foxholes";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
