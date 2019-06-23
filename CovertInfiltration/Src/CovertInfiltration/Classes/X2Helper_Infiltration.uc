@@ -214,6 +214,21 @@ static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
 	return class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action) != none;
 }
 
+static function XComGameState_MissionSite GetMissionSiteFromAction (XComGameState_CovertAction Action)
+{
+	local XComGameState_MissionSite MissionSite;
+	local XComGameState_Activity ActivityState;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action);
+	
+	if (ActivityState != none)
+	{
+		MissionSite = GetMissionStateFromActivity(ActivityState);
+	}
+
+	return MissionSite;
+}
+
 static function bool ReturnFalse()
 {
 	return false;

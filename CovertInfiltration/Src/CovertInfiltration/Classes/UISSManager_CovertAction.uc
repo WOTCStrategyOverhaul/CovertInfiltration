@@ -22,6 +22,7 @@ var protected UISS_CostSlotsContainer CostSlots;
 var localized string strSlotOptionalNote;
 var localized string strSlotPenaltyNote;
 var localized string strSlotRequiredPrefix;
+var localized string strConfirmInfiltration;
 
 simulated function OpenSquadSelect()
 {
@@ -34,6 +35,7 @@ simulated function OpenSquadSelect()
 
 simulated protected function PostScreenInit()
 {
+	local UISS_TerrainDisplay TerrainDisplay;
 	local UISS_CovertActionInfo ActionInfo;
 
 	ActionInfo = SquadSelect.Spawn(class'UISS_CovertActionInfo', SquadSelect);
@@ -47,6 +49,12 @@ simulated protected function PostScreenInit()
 	CostSlots = SquadSelect.Spawn(class'UISS_CostSlotsContainer', SquadSelect);
 	CostSlots.PostAnySlotStateChanged = UpdateUIElements;
 	CostSlots.InitCostSlots(GetAction().GetReference());
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	{
+		TerrainDisplay = SquadSelect.Spawn(class'UISS_TerrainDisplay', SquadSelect);
+		TerrainDisplay.InitTerrainDisplay(GetAction());
+	}
 
 	bCreatedUIElements = true;
 	UpdateUIElements();
@@ -103,7 +111,15 @@ simulated protected function BuildConfiguration()
 	
 	Configuration.SetCanClickLaunchFn(CanClickLaunch);
 	Configuration.SetLaunchBehaviour(OnLaunch, false);
-	Configuration.EnableLaunchLabelReplacement(class'UICovertActions'.default.CovertActions_LaunchAction, "");
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		Configuration.EnableLaunchLabelReplacement(strConfirmInfiltration, "");
+	}
+	else
+	{
+		Configuration.EnableLaunchLabelReplacement(class'UICovertActions'.default.CovertActions_LaunchAction, "");
+	}
 	
 	Configuration.SetPreventOnSizeLimitedEvent(true);
 	Configuration.SetPreventOnSuperSizeEvent(true);

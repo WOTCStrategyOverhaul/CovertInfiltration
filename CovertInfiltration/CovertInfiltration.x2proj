@@ -173,6 +173,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UISS_InfiltrationReadout.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_TerrainDisplay.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStackingIcon.uc">
       <SubType>Content</SubType>
     </Content>

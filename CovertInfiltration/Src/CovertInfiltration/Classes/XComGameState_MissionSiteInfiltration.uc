@@ -54,6 +54,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	}
 
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity());
+	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout
 }
 
 // This is called from X2EventListener_Infiltration::CovertActionCompleted.
@@ -62,7 +63,6 @@ function OnActionCompleted (XComGameState NewGameState)
 {
 	CopyDataFromAction();
 	
-	SelectPlotAndBiome();
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();

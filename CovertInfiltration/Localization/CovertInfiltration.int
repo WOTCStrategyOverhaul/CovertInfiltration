@@ -22,6 +22,7 @@ strDialogDataText="WARNING PREMATURE EVACUATION NOT ADVISED!"
 strSlotOptionalNote="Optional"
 strSlotPenaltyNote="Overload Penalty"
 strSlotRequiredPrefix="Required:"
+strConfirmInfiltration="CONFIRM INFILTRATION"
 
 [UISS_InfiltrationReadout]
 strTotalDurationTitle="TOTAL DURATION:"
@@ -30,6 +31,25 @@ strSquadDurationTitle="INFILTRATION MODIFIER:"
 strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+
+[UISS_TerrainDisplay]
+strAbandoned=Abandoned
+strAbandoned_Indoors=Abandoned Indoor
+strAbandoned_Occluded=Abandoned Occluded
+strCityCenter=City Center
+strDerelictFacility=Dr. Vahlen's Facility
+strLostTower=Lost Towers
+strFacility=ADVENT Facility
+strRooftops=Rooftops
+strSarcophagusRoom=Chosen Room
+strSlums=Slums
+strShanty=Shanty
+strSmallTown=Small Town
+strStronghold=Chosen Stronghold
+strWilderness=Wilderness
+strTunnels_Reverb=Tunnels
+strTunnels_Sewer=Sewer
+strTunnels_Subway=Subway
 
 [X2EventListener_Infiltration_SitReps]
 strReinforcementDelayBannerMessage="Comms Jamming.."
