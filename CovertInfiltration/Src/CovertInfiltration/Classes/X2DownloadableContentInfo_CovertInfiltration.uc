@@ -392,27 +392,18 @@ exec function SpawnNextP1 ()
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-exec function ClearOverInfiltrationDecks()
+exec function ClearOverInfiltrationBonusesDeck()
 {
 	local X2CardManager CardManager;
 	local array<string> CardLabels;
 	local string Card;
-	local name Deck;
-	local int i;
 
 	CardManager = class'X2CardManager'.static.GetCardManager();
+	CardManager.GetAllCardsInDeck('OverInfiltrationBonuses', CardLabels);
 
-	for (i = 0; i < class'XComGameState_MissionSiteInfiltration'.default.OverInfiltartionThresholds.Length; i++)
+	foreach CardLabels(Card)
 	{
-		Deck = class'XComGameState_MissionSiteInfiltration'.static.GetBonusDeckName(i);
-		CardLabels.Length = 0;
-		
-		CardManager.GetAllCardsInDeck(Deck, CardLabels);
-
-		foreach CardLabels(Card)
-		{
-			CardManager.RemoveCardFromDeck(Deck, Card);
-		}
+		CardManager.RemoveCardFromDeck('OverInfiltrationBonuses', Card);
 	}
 }
 

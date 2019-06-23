@@ -42,10 +42,7 @@ function X2CovertActionRiskTemplate SelectFlatRisk()
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 
 	// Build the deck
-	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskDef)
-	{
-		CardManager.AddCardToDeck('FlatRisks', string(FlatRiskDef.FlatRiskName));
-	}
+	class'X2Helper_Infiltration'.static.BuildFlatRisksDeck();
 
 	// Try to find a matching one
 	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
@@ -58,10 +55,10 @@ function X2CovertActionRiskTemplate SelectFlatRisk()
 		{
 			FlatRiskDef = class'X2Helper_Infiltration'.default.FlatRiskSitReps[i];
 
-			if (AlienHQ.GetForceLevel() >= FlatRiskDef.MinForceLevel)
+			if (AlienHQ.GetForceLevel() >= FlatRiskDef.MinForceLevel) // TODO: It's better to use X2SitRepTemplate for this check, to avoid discrepancy
 			{
 				CardManager.MarkCardUsed('FlatRisks', sRisk);
-				return X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(FlatRiskDef.SitRepName));
+				return X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(FlatRiskDef.FlatRiskName));
 			}
 		}
 	}

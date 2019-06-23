@@ -174,8 +174,6 @@ protected function SelectOverInfiltrationBonuses()
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2CardManager CardManager;
 	local array<string> CardLabels;
-	local X2DataTemplate Template;
-	local name DeckName;
 	local string Card;
 	local int i;
 
@@ -183,17 +181,7 @@ protected function SelectOverInfiltrationBonuses()
 	CardManager = class'X2CardManager'.static.GetCardManager();
 
 	// Build the decks
-	foreach TemplateManager.IterateTemplates(Template, none)
-	{
-		BonusTemplate = X2OverInfiltrationBonusTemplate(Template);
-		if (BonusTemplate == none) continue;
-
-		CardManager.AddCardToDeck(
-			GetBonusDeckName(BonusTemplate.Tier),
-			string(BonusTemplate.DataName),
-			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
-		);
-	}
+	BuildBonusesDeck();
 
 	// Reset the bonuses just in case
 	SelectedOverInfiltartionBonuses.Length = 0;
@@ -201,10 +189,9 @@ protected function SelectOverInfiltrationBonuses()
 
 	for (i = 0; i < OverInfiltartionThresholds.Length; i++)
 	{
-		DeckName = GetBonusDeckName(i);
-
+		// Need to do this every time to get freshly sorted array
 		CardLabels.Length = 0;
-		CardManager.GetAllCardsInDeck(DeckName, CardLabels);
+		CardManager.GetAllCardsInDeck('OverInfiltrationBonuses', CardLabels);
 
 		foreach CardLabels(Card)
 		{
@@ -212,8 +199,7 @@ protected function SelectOverInfiltrationBonuses()
 
 			if (BonusTemplate == none || BonusTemplate.Tier != i)
 			{
-				// Something changed, just remove the card from deck
-				CardManager.RemoveCardFromDeck(DeckName, Card);
+				// Something changed or a different tier
 				continue;
 			}
 
@@ -228,10 +214,10 @@ protected function SelectOverInfiltrationBonuses()
 
 			if (!BonusTemplate.DoNotMarkUsed)
 			{
-				CardManager.MarkCardUsed(DeckName, Card);
+				CardManager.MarkCardUsed('OverInfiltrationBonuses', Card);
 			}
 
-			// Do not attempt to check 
+			// We are done for this tier
 			break;
 		}
 
@@ -240,9 +226,27 @@ protected function SelectOverInfiltrationBonuses()
 	}
 }
 
-static function name GetBonusDeckName(int Tier)
+static function BuildBonusesDeck ()
 {
-	return name('OverInfiltrationBonusesT' $ Tier);
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local X2CardManager CardManager;
+	local X2DataTemplate Template;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
+
+	foreach TemplateManager.IterateTemplates(Template, none)
+	{
+		BonusTemplate = X2OverInfiltrationBonusTemplate(Template);
+		if (BonusTemplate == none) continue;
+
+		CardManager.AddCardToDeck(
+			'OverInfiltrationBonuses',
+			string(BonusTemplate.DataName),
+			BonusTemplate.Weight > 0 ? BonusTemplate.Weight : 1
+		);
+	}
 }
 
 protected function SetSoldiersFromAction ()
