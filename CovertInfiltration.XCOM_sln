@@ -5,16 +5,28 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "CovertInfiltration", "CovertInfiltration\CovertInfiltration.x2proj", "{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}"
 EndProject
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "X2WOTCCommunityHighlander", "X2WOTCCommunityHighlander\X2WOTCCommunityHighlander\X2WOTCCommunityHighlander.x2proj", "{D8026E40-05DA-4006-8708-C36137E37D8B}"
+EndProject
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "SquadSelectAtAnyTime", "SquadSelectAnyTime\SquadSelectAtAnyTime\SquadSelectAtAnyTime.x2proj", "{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|XCOM 2 = Debug|XCOM 2
 		Default|XCOM 2 = Default|XCOM 2
+		Release|XCOM 2 = Release|XCOM 2
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
 		{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}.Debug|XCOM 2.Build.0 = Debug|XCOM 2
 		{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
 		{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}.Default|XCOM 2.Build.0 = Default|XCOM 2
+		{8FB7CAB2-6A58-4701-AA3C-BF18F61B8749}.Release|XCOM 2.ActiveCfg = Default|XCOM 2
+		{D8026E40-05DA-4006-8708-C36137E37D8B}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
+		{D8026E40-05DA-4006-8708-C36137E37D8B}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{D8026E40-05DA-4006-8708-C36137E37D8B}.Release|XCOM 2.ActiveCfg = Release|XCOM 2
+		{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
+		{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}.Release|XCOM 2.ActiveCfg = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
