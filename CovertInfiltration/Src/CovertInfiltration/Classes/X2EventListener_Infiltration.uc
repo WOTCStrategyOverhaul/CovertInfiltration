@@ -38,6 +38,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
 	Template.AddCHEvent('OnResearchReport', TriggerPrototypeAlert, ELD_OnStateSubmitted);
+	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -261,6 +262,22 @@ static protected function EventListenerReturn TriggerPrototypeAlert(Object Event
 			`HQPRES.UIItemReceived(ItemTemplate);
 		}
 	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn SitRepCheckAdditionalRequirements(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_MissionSite MissionState;
+	local X2SitRepTemplate SitRepTemplate;
+	local XComLWTuple Tuple;
+
+	SitRepTemplate = X2SitRepTemplate(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (SitRepTemplate == none || Tuple == none || Tuple.Id != 'SitRepCheckAdditionalRequirements') return ELR_NoInterrupt;
+
+	// TODO
 
 	return ELR_NoInterrupt;
 }
