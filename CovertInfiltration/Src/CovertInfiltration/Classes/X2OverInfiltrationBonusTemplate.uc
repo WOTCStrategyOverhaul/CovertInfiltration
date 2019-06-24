@@ -1,6 +1,7 @@
 class X2OverInfiltrationBonusTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var name MetatdataName;
+var bool bSitRep; // If true, then this bonus adds a sitrep to the mission. MetatdataName must be the template name of the sitrep
 
 var config int Tier;
 var config int Weight;

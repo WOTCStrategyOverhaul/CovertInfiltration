@@ -7,9 +7,17 @@
 
 class X2EventListener_Infiltration extends X2EventListener config(Infiltration);
 
-//values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
+// Unrealscript doesn't support nested arrays, so we place a struct inbetween
+struct SitRepsArray
+{
+	var array<name> SitReps;
+};
+
+// Values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
 var config int MIN_WILL_LOSS;
 var config int MAX_WILL_LOSS;
+
+var config(GameData) array<SitRepsArray> SITREPS_EXCLUSIVE_BUCKETS;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -266,18 +274,72 @@ static protected function EventListenerReturn TriggerPrototypeAlert(Object Event
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn SitRepCheckAdditionalRequirements(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static protected function EventListenerReturn SitRepCheckAdditionalRequirements (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local X2StrategyElementTemplateManager StratMgr;
 	local XComGameState_MissionSite MissionState;
-	local X2SitRepTemplate SitRepTemplate;
+	local X2SitRepTemplate TestedSitRepTemplate;
+	local SitRepsArray ExclusivityBucket;
+	local array<name> CurrentSitReps;
 	local XComLWTuple Tuple;
+	local name BonusName, SitRepName;
 
-	SitRepTemplate = X2SitRepTemplate(EventSource);
+	TestedSitRepTemplate = X2SitRepTemplate(EventSource);
 	Tuple = XComLWTuple(EventData);
 
-	if (SitRepTemplate == none || Tuple == none || Tuple.Id != 'SitRepCheckAdditionalRequirements') return ELR_NoInterrupt;
+	if (TestedSitRepTemplate == none || Tuple == none || Tuple.Id != 'SitRepCheckAdditionalRequirements') return ELR_NoInterrupt;
 
-	// TODO
+	// Check if another listener already blocks this sitrep - in this case we don't need to do anything
+	if (Tuple.Data[0].b == false) return ELR_NoInterrupt;
+
+	MissionState = XComGameState_MissionSite(Tuple.Data[1].o);
+	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
+
+	// Get the current sitreps, accounting for selected bonuses
+
+	CurrentSitReps = MissionState.GeneratedMission.SitReps;
+
+	if (InfiltrationState != none)
+	{
+		StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+		foreach InfiltrationState.SelectedOverInfiltartionBonuses(BonusName)
+		{
+			if (BonusName == '') continue;
+
+			BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(BonusName));
+
+			if (BonusTemplate.bSitRep)
+			{
+				CurrentSitReps.AddItem(BonusTemplate.MetatdataName);
+			}
+		}
+	}
+
+	// Check for exclusivity with other sitreps
+
+	foreach default.SITREPS_EXCLUSIVE_BUCKETS(ExclusivityBucket)
+	{
+		if (ExclusivityBucket.SitReps.Find(TestedSitRepTemplate.DataName) == INDEX_NONE) continue;
+
+		// This bucket includes the tested sitrep, check if any other is already included
+		foreach ExclusivityBucket.SitReps(SitRepName)
+		{
+			// Cannot be incompatible with itself
+			if (SitRepName == TestedSitRepTemplate.DataName) continue;
+
+			if (CurrentSitReps.Find(SitRepName) != INDEX_NONE)
+			{
+				// Found incompatibility - exit early
+				Tuple.Data[0].b = false;
+				return ELR_NoInterrupt;
+			}
+		}
+	}
+
+	// TODO: check by mission type (concealed start)
 
 	return ELR_NoInterrupt;
 }

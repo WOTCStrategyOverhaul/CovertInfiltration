@@ -545,15 +545,12 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 	{
 		BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(name(Card)));
 
-		if (BonusTemplate == none || BonusTemplate.Tier != default.ASSAULT_MISSION_POSITIVE_SITREP_TIER)
+		if (
+			BonusTemplate == none || // Something changed
+			BonusTemplate.Tier != default.ASSAULT_MISSION_POSITIVE_SITREP_TIER || // Different tier
+			!BonusTemplate.bSitRep // We only consider sitrep bonuses here
+		)
 		{
-			// Something changed or a different tier
-			continue;
-		}
-
-		if (class'X2StrategyElement_DefaultOverInfiltrationBonuses'.default.SitRepBonuses.Find('BonusName', BonusTemplate.DataName) == INDEX_NONE)
-		{
-			// We only consider sitrep bonuses here
 			continue;
 		}
 

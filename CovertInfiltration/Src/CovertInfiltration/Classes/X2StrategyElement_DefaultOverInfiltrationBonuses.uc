@@ -35,6 +35,7 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 
 	`CREATE_X2TEMPLATE(class'X2OverInfiltrationBonusTemplate', Template, Mapping.BonusName);
 	
+	Template.bSitRep = true;
 	Template.MetatdataName = Mapping.SitRepName;
 	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
 	Template.ApplyFn = ApplySitRepBonus;
