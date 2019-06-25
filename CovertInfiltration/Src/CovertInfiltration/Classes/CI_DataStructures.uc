@@ -19,7 +19,6 @@ struct ActionFlatRiskSitRep
 {
 	var name FlatRiskName;
 	var name SitRepName;
-	var int MinForceLevel;
 };
 
 struct DelayedReinforcementOrder
