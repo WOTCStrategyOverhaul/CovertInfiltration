@@ -13,11 +13,19 @@ struct SitRepsArray
 	var array<name> SitReps;
 };
 
+struct SitRepMissionPair
+{
+	var string MissionType; // Will be preffered if set
+	var string MissionFamily;
+	var name SitRep;
+};
+
 // Values from config represent a percentage to be removed from total will e.g.(25 = 25%, 50 = 50%)
 var config int MIN_WILL_LOSS;
 var config int MAX_WILL_LOSS;
 
 var config(GameData) array<SitRepsArray> SITREPS_EXCLUSIVE_BUCKETS;
+var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -279,12 +287,14 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2StrategyElementTemplateManager StratMgr;
+	local SitRepMissionPair SitRepMissionExclusion;
 	local XComGameState_MissionSite MissionState;
 	local X2SitRepTemplate TestedSitRepTemplate;
 	local SitRepsArray ExclusivityBucket;
 	local array<name> CurrentSitReps;
-	local XComLWTuple Tuple;
 	local name BonusName, SitRepName;
+	local bool bMissionMatched;
+	local XComLWTuple Tuple;
 
 	TestedSitRepTemplate = X2SitRepTemplate(EventSource);
 	Tuple = XComLWTuple(EventData);
@@ -296,6 +306,39 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 
 	MissionState = XComGameState_MissionSite(Tuple.Data[1].o);
 	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
+
+	// Check mission blacklist
+
+	foreach default.SITREPS_MISSION_BLACKLIST(SitRepMissionExclusion)
+	{
+		if (SitRepMissionExclusion.SitRep != TestedSitRepTemplate.DataName) continue;
+
+		if (SitRepMissionExclusion.MissionType != "")
+		{
+			bMissionMatched = MissionState.GeneratedMission.Mission.sType == SitRepMissionExclusion.MissionType;
+		}
+		else if (SitRepMissionExclusion.MissionFamily != "")
+		{
+			bMissionMatched =
+				MissionState.GeneratedMission.Mission.MissionFamily == SitRepMissionExclusion.MissionFamily ||
+				(
+					MissionState.GeneratedMission.Mission.MissionFamily == "" && // missions without families are their own family
+					MissionState.GeneratedMission.Mission.sType == SitRepMissionExclusion.MissionFamily
+				);
+		}
+		else
+		{
+			`RedScreen("SITREPS_MISSION_BLACKLIST entry encoutered without mission type or family");
+			continue;
+		}
+
+		if (bMissionMatched)
+		{
+			// Found incompatibility - exit early
+			Tuple.Data[0].b = false;
+			return ELR_NoInterrupt;
+		}
+	}
 
 	// Get the current sitreps, accounting for selected bonuses
 
@@ -338,8 +381,6 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 			}
 		}
 	}
-
-	// TODO: check by mission type (concealed start)
 
 	return ELR_NoInterrupt;
 }
