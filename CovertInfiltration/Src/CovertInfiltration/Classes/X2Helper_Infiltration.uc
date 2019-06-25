@@ -499,16 +499,16 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 	local X2StrategyElementTemplateManager StratMgr;
 	local X2SitRepTemplateManager SitRepManager;
 	local X2SitRepTemplate SitRepTemplate;
-	local array<name> SelectedSitReps;
 	local X2CardManager CardManager;
 	local array<string> CardLabels;
+	local array<name> EmptyArray;
 	local string Card;
 	local int i;
 
 	if (!class'X2StrategyGameRulesetDataStructures'.static.Roll(default.ASSAULT_MISSION_SITREPS_CHANCE))
 	{
 		// Failed the roll, no sitreps
-		return SelectedSitReps;
+		return EmptyArray;
 	}
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
@@ -518,24 +518,6 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 	// Prepare the decks
 	class'XComGameState_MissionSiteInfiltration'.static.BuildBonusesDeck();
 	BuildFlatRisksDeck();
-
-	// Select a negative sitrep. TODO: Do this after positive sitreps, since there are more risks and some are not compatible
-	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
-	foreach CardLabels(Card)
-	{
-		i = default.FlatRiskSitReps.Find('FlatRiskName', name(Card));
-
-		if (i != INDEX_NONE)
-		{
-			SitRepTemplate = SitRepManager.FindSitRepTemplate(default.FlatRiskSitReps[i].SitRepName);
-
-			if (SitRepTemplate != none && SitRepTemplate.MeetsRequirements(MissionState))
-			{
-				SelectedSitReps.AddItem(SitRepTemplate.DataName);
-				break;
-			}
-		}
-	}
 
 	// Select a positive sitrep
 	CardLabels.Length = 0;
@@ -561,7 +543,8 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 		}
 
 		// All good, use the sitrep
-		SelectedSitReps.AddItem(SitRepTemplate.DataName);
+		// We add directly instead of returning the array so that the MeetsRequirements call later accounts for this sitrep
+		MissionState.GeneratedMission.SitReps.AddItem(SitRepTemplate.DataName);
 
 		if (!BonusTemplate.DoNotMarkUsed)
 		{
@@ -572,5 +555,26 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 		break;
 	}
 
-	return SelectedSitReps;
+	// Select a negative sitrep. Do this after positive sitreps, since there are more risks and some are not compatible
+	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
+	foreach CardLabels(Card)
+	{
+		i = default.FlatRiskSitReps.Find('FlatRiskName', name(Card));
+
+		if (i != INDEX_NONE)
+		{
+			SitRepTemplate = SitRepManager.FindSitRepTemplate(default.FlatRiskSitReps[i].SitRepName);
+
+			if (SitRepTemplate != none && SitRepTemplate.MeetsRequirements(MissionState))
+			{
+				MissionState.GeneratedMission.SitReps.AddItem(SitRepTemplate.DataName);
+				break;
+			}
+		}
+	}
+
+	return EmptyArray;
+
+	// Prevent compiler warning
+	EmptyArray.Length = 0;
 }
