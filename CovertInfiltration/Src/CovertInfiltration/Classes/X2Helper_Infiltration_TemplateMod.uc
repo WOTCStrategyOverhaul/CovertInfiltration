@@ -362,6 +362,7 @@ static function PatchRetailationMissionSource()
 	{
 		MissionSource = X2MissionSourceTemplate(DataTemplate);
 		MissionSource.SpawnMissionsFn = SpawnRetaliationMission;
+		MissionSource.GetSitrepsFn = class'X2Helper_Infiltration'.static.GetSitrepsForAssaultMission;
 	}
 }
 

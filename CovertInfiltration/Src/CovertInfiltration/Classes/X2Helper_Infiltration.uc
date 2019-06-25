@@ -20,6 +20,9 @@ var config array<int> RANKS_DETER;
 var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
 var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
+var config int ASSAULT_MISSION_SITREPS_CHANCE;
+var config int ASSAULT_MISSION_POSITIVE_SITREP_TIER;
+
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
 {
@@ -475,4 +478,103 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 
 	MissionState.GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
 	MissionState.GenerateMissionFlavorText();
+}
+
+static function BuildFlatRisksDeck ()
+{
+	local ActionFlatRiskSitRep FlatRiskDef;
+	local X2CardManager CardManager;
+	
+	CardManager = class'X2CardManager'.static.GetCardManager();
+	
+	foreach default.FlatRiskSitReps(FlatRiskDef)
+	{
+		CardManager.AddCardToDeck('FlatRisks', string(FlatRiskDef.FlatRiskName));
+	}
+}
+
+static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSite MissionState)
+{
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2SitRepTemplateManager SitRepManager;
+	local X2SitRepTemplate SitRepTemplate;
+	local X2CardManager CardManager;
+	local array<string> CardLabels;
+	local array<name> EmptyArray;
+	local string Card;
+	local int i;
+
+	if (!class'X2StrategyGameRulesetDataStructures'.static.Roll(default.ASSAULT_MISSION_SITREPS_CHANCE))
+	{
+		// Failed the roll, no sitreps
+		return EmptyArray;
+	}
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	SitRepManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
+	
+	// Prepare the decks
+	class'XComGameState_MissionSiteInfiltration'.static.BuildBonusesDeck();
+	BuildFlatRisksDeck();
+
+	// Select a positive sitrep
+	CardLabels.Length = 0;
+	CardManager.GetAllCardsInDeck('OverInfiltrationBonuses', CardLabels);
+
+	foreach CardLabels(Card)
+	{
+		BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(name(Card)));
+
+		if (
+			BonusTemplate == none || // Something changed
+			BonusTemplate.Tier != default.ASSAULT_MISSION_POSITIVE_SITREP_TIER || // Different tier
+			!BonusTemplate.bSitRep // We only consider sitrep bonuses here
+		)
+		{
+			continue;
+		}
+
+		SitRepTemplate = SitRepManager.FindSitRepTemplate(BonusTemplate.MetatdataName);
+		if (SitRepTemplate == none || !SitRepTemplate.MeetsRequirements(MissionState))
+		{
+			continue;
+		}
+
+		// All good, use the sitrep
+		// We add directly instead of returning the array so that the MeetsRequirements call later accounts for this sitrep
+		MissionState.GeneratedMission.SitReps.AddItem(SitRepTemplate.DataName);
+
+		if (!BonusTemplate.DoNotMarkUsed)
+		{
+			CardManager.MarkCardUsed('OverInfiltrationBonuses', Card);
+		}
+
+		// We are done
+		break;
+	}
+
+	// Select a negative sitrep. Do this after positive sitreps, since there are more risks and some are not compatible
+	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
+	foreach CardLabels(Card)
+	{
+		i = default.FlatRiskSitReps.Find('FlatRiskName', name(Card));
+
+		if (i != INDEX_NONE)
+		{
+			SitRepTemplate = SitRepManager.FindSitRepTemplate(default.FlatRiskSitReps[i].SitRepName);
+
+			if (SitRepTemplate != none && SitRepTemplate.MeetsRequirements(MissionState))
+			{
+				MissionState.GeneratedMission.SitReps.AddItem(SitRepTemplate.DataName);
+				break;
+			}
+		}
+	}
+
+	return EmptyArray;
+
+	// Prevent compiler warning
+	EmptyArray.Length = 0;
 }

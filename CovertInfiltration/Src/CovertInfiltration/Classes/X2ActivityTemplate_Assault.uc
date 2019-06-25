@@ -23,6 +23,11 @@ static function DefaultOnExpire (XComGameState NewGameState, XComGameState_Activ
 	ActivityState.MarkExpired(NewGameState);
 }
 
+static function array<name> DefaultGetSitreps (XComGameState_MissionSite MissionState, XComGameState_Activity ActivityState)
+{
+	return class'X2Helper_Infiltration'.static.GetSitrepsForAssaultMission(MissionState);
+}
+
 static function CreateMission (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
@@ -352,4 +357,5 @@ simulated function CouncilAlertCB(Name eAction, out DynamicPropertySet AlertData
 defaultproperties
 {
 	SetupStage = DefaultAssaultSetup
+	GetSitreps = DefaultGetSitreps
 }
