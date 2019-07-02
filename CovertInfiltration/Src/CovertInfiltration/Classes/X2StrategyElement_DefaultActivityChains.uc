@@ -36,13 +36,28 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = false;
+	
+	Template.SetupChain = SetupDarkEventChain;
+	Template.CleanupChain = CleanupDarkEventChain;
 
-	// TODO: Pause dark events while in progress
 	// TODO: Spawn 3 of these then despawn the other two when one is selected
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_CounterDarkEvent');
-
+	// TODO: attach Dark Event to stage two's missionsite
+	// TODO: resume the Dark Event when stage one expires
+	// TODO: trigger the Dark Event when stage two expires
+	
 	return Template;
+}
+
+static function SetupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+{
+	ChainState.PauseChainDarkEvent(NewGameState);
+}
+
+static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+{
+	ChainState.CounterChainDarkEvent(NewGameState);
 }
 
 static function X2DataTemplate CreateSupplyRaidTemplate()

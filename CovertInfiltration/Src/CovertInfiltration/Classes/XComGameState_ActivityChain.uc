@@ -223,6 +223,68 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	`CI_Trace("Finished handling stage completion");
 }
 
+/////////////////
+// Dark Events //
+/////////////////
+
+function XComGameState_DarkEvent GetChainDarkEvent()
+{
+	local XComGameStateHistory History;
+	local StateObjectReference DarkEventRef;
+	local XComGameState_DarkEvent DarkEventState;
+	
+	History = `XCOMHISTORY;
+
+	foreach ChainObjectRefs(DarkEventRef)
+	{
+		DarkEventState = XComGameState_DarkEvent(History.GetGameStateForObjectID(DarkEventRef.ObjectID));
+
+		if (DarkEventState != none)
+		{
+			return DarkEventState;
+		}
+	}
+}
+
+function PauseChainDarkEvent(XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = GetChainDarkEvent();
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+	DarkEventState.PauseTimer();
+}
+
+function ResumeChainDarkEvent(XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = GetChainDarkEvent();
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+	DarkEventState.ResumeTimer();
+}
+
+function TriggerChainDarkEvent(XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = GetChainDarkEvent();
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+	DarkEventState.EndDateTime = `STRATEGYRULES.GameTime;
+}
+
+function CounterChainDarkEvent(XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	
+	DarkEventState = GetChainDarkEvent();
+	AlienHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddAlienHQ(NewGameState);
+
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, DarkEventState.GetPostMissionText(true), false);
+	AlienHQ.CancelDarkEvent(NewGameState, DarkEventState.GetReference());
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

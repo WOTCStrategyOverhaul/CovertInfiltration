@@ -12,9 +12,29 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
 	
+	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
 	return Rewards;
+}
+static function X2DataTemplate CreateDatapadRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Datapad');
+
+	Template.RewardObjectTemplateName = 'AdventDatapad';
+
+	Template.GenerateRewardFn = class'X2StrategyElement_DefaultRewards'.static.GenerateItemReward;
+	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetItemReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveItemReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardString;
+	Template.GetRewardImageFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardImage;
+	Template.GetBlackMarketStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemBlackMarketString;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+	Template.RewardPopupFn = class'X2StrategyElement_DefaultRewards'.static.ItemRewardPopup;
+
+	return Template;
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()

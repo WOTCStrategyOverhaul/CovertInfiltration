@@ -32,21 +32,23 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardInfilActivity(Templates, "JailbreakSoldier", "RescueOps", Rescue, 'Reward_Soldier'); // TODO: captured soldier or faction soldier
 	CreateStandardInfilActivity(Templates, "RescueEngineer", "Council_VIP", Council, 'Reward_Engineer');
 	CreateStandardInfilActivity(Templates, "RescueScientist", "Council_VIP", Council, 'Reward_Scientist');
-	CreateStandardInfilActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Intel'); // TODO: datapad + intel if capture
-	CreateStandardInfilActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_Intel'); // TODO: intel if capture
-	CreateStandardInfilActivity(Templates, "RecoverInformant", "ResOps", Resistance, 'Reward_None'); // TODO: POI
-	//CreateStandardInfilActivity(Templates, "RecoverChosen", "ResOps", Resistance, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "RecoverPersonnel", "ResOps", Resistance, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "RecoverUFO", "ResOps", Resistance, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "CommanderSupply", "GorillaOps", Guerilla, 'Reward_None'); // TODO: POI
-	//CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_Intel'); // TODO: POI
-	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_Supplies'); // TODO: assorted loot
+	CreateStandardInfilActivity(Templates, "RecoverInformant", "ResOps", Resistance, 'Reward_None', true);
+	//CreateStandardInfilActivity(Templates, "RecoverChosen", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "RecoverPersonnel", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "RecoverUFO", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "CommanderSupply", "GorillaOps", Guerilla, 'Reward_None', true);
+	//CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_None');
 	
+	CreateStandardDVIPActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Datapad', 'Reward_Intel');
+	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_None', 'Reward_Intel');
+
 	// Assaults
+	// TODO: config-ize the expirations
 	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');//, true, 24, 4);
-	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_Supplies');//, true, 24, 4);
-	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_Supplies');//, true, 36, 6); // TODO: assorted loot
+	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None');//, true, 24, 4);
+	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');//, true, 36, 6);
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
 
@@ -173,7 +175,50 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates, string Ac
 //                    Helpers                       //
 //////////////////////////////////////////////////////
 
-static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName)
+static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional bool bPOI)
+{
+	local X2ActivityTemplate_Infiltration Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_" $ ActivityName $ "Infil"), true);
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, name("Activity_" $ ActivityName));
+	
+	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
+	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	
+	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName $ "Infil"));
+	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
+
+	Activity.CovertActionName = CovertAction.DataName;
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	Activity.UIButtonIcon = MissionIcon;
+
+	if (bPOI)
+		Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.MissionRewards.AddItem(RewardName);
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
+
+	class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
+	MissionState.RemoveEntity(NewGameState);
+
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkSuccess(NewGameState);
+}
+
+static function CreateStandardDVIPActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name AlwaysReward, name CaptureReward)
 {
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
@@ -191,12 +236,30 @@ static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
 	Activity.UIButtonIcon = MissionIcon;
 	
-	Activity.MissionRewards.AddItem(RewardName);
+	Activity.MissionRewards.AddItem(AlwaysReward);
+	Activity.MissionRewards.AddItem(CaptureReward);
+
+	Activity.OnSuccess = DarkVIPOnSuccess;
+
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
+}
+
+static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local array<int> ExcludeIndices;
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	ExcludeIndices = class'X2StrategyElement_DefaultMissionSources'.static.GetCouncilExcludeRewards(MissionState);
+
+	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	MissionState.RemoveEntity(NewGameState);
+	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 }
 
 static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName)
