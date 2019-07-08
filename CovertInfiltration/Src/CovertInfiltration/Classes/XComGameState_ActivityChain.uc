@@ -91,7 +91,7 @@ function SetupChain (XComGameState NewGameState)
 	// First, we choose the faction. Stages or regions may need this during setup
 	if (m_Template.ChooseFaction != none)
 	{
-		FactionRef = m_Template.ChooseFaction(self);
+		FactionRef = m_Template.ChooseFaction(self, NewGameState);
 	}
 
 	// Next, choose the region(s). Stages may need this during setup

@@ -114,6 +114,16 @@ ActionName="Rescue Captured Soldier"
 ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the enemy recently, and we know where they're being held. It's time for a jailbreak."
 ActionPostNarrative=""
 
+[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Captured Soldier"
+ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the Chosen recently, and we know where they're being held. It's time for a jailbreak."
+ActionPostNarrative=""
+
+[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Captured Faction Soldier"
+ActionPreNarrative="The factions have reported to us that one of their most skilled operatives was ambushed and taken captive recently. We'll be generously rewarded should we break them out."
+ActionPostNarrative=""
+
 [CovertActionNarrative_RecoverUFOInfil X2CovertActionNarrativeTemplate]
 ActionName="Recover UFO Command Codes"
 ActionPreNarrative="That damned UFO has been a thorn in our sides for too long. Resistance operatives have identified an opportunity to steal a copy of their command codes, and force it to the ground."

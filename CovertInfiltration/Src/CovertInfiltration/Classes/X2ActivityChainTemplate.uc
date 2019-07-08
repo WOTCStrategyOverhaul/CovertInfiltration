@@ -24,7 +24,7 @@ delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain Ch
 delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);
-delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState);
+delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
 
 function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState)
 {

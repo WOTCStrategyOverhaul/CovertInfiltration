@@ -29,7 +29,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	Chosen = "img:///UILibrary_XPACK_Common.MissionIcon_ChosenStronghold";
 	
 	// Infiltrations
-	CreateStandardInfilActivity(Templates, "JailbreakSoldier", "RescueOps", Rescue, 'Reward_Soldier'); // TODO: captured soldier or faction soldier
+	CreateStandardInfilActivity(Templates, "JailbreakSoldier", "RescueOps", Rescue, 'Reward_SoldierCaptured');
+	CreateStandardInfilActivity(Templates, "JailbreakChosenSoldier", "RescueOps", Rescue, 'Reward_ChosenSoldierCaptured');
+	CreateStandardInfilActivity(Templates, "JailbreakFactionSoldier", "RescueOps", Rescue, 'Reward_ExtraFactionSoldier');
 	CreateStandardInfilActivity(Templates, "RescueEngineer", "Council_VIP", Council, 'Reward_Engineer');
 	CreateStandardInfilActivity(Templates, "RescueScientist", "Council_VIP", Council, 'Reward_Scientist');
 	CreateStandardInfilActivity(Templates, "RecoverInformant", "ResOps", Resistance, 'Reward_None', true);

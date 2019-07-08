@@ -130,14 +130,30 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_JailbreakFactionSoldier');
 	
-	Template.ChooseFaction = ChooseMetFaction; // TODO: Pick faction that has high influence and hasn't already had this chain
+	Template.ChooseFaction = ChooseExtraSoldierFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_PrepareFactionJB');
-	Template.Stages.AddItem('Activity_JailbreakSoldier');
+	Template.Stages.AddItem('Activity_JailbreakFactionSoldier');
 
 	return Template;
+}
+
+static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
+{
+	local XComGameState_ResistanceFaction FactionState;
+	local array<StateObjectReference> FactionRefs;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+	{
+		if (FactionState.bMetXCom && FactionState.GetInfluence() >= eFactionInfluence_Influential && FactionState.IsExtraFactionSoldierRewardAllowed(NewGameState))
+		{
+			FactionRefs.AddItem(FactionState.GetReference());
+		}
+	}
+
+	return FactionRefs[`SYNC_RAND_STATIC(FactionRefs.Length)];
 }
 
 static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
@@ -151,6 +167,21 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_JailbreakSoldier');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_JailbreakChosenSoldier');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+	Template.SpawnInDeck = false;
+
+	Template.Stages.AddItem('Activity_JailbreakChosenSoldier');
 
 	return Template;
 }
@@ -243,7 +274,7 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 //                    Helpers                       //
 //////////////////////////////////////////////////////
 
-static function StateObjectReference ChooseMetFaction (XComGameState_ActivityChain ChainState)
+static function StateObjectReference ChooseMetFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
 {
 	local XComGameState_ResistanceFaction FactionState;
 	local array<StateObjectReference> FactionRefs;
