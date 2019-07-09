@@ -31,22 +31,33 @@ static function X2SitRepEventListenerTemplate CreateAdventAirPatrolListeners ()
 	local X2SitRepEventListenerTemplate Template;
 
 	Template = CreateForSitRep('AdventAirPatrols');
-	Template.AddEvent('SquadConcealmentBroken', AdventAirPatrol_ConcealmentBroken);
+	Template.AddEvent('ScamperEnd', AdventAirPatrol_ScamperEnd);
 
 	return Template;
 }
 
-static function EventListenerReturn AdventAirPatrol_ConcealmentBroken (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+static function EventListenerReturn AdventAirPatrol_ScamperEnd (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComGameState NewGameState;
+	local XComGameState_AIGroup GroupState;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_CIReinforcementsManager ManagerState;
 	local DelayedReinforcementOrder DelayedReinforcementOrder;
 	local name EncounterID;
 	local int PodStrength, SpawnerDelay, DelayCrit;
 
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	GroupState = XComGameState_AIGroup(EventSource);
+
+	if (GroupState == none || GroupState.TeamName != eTeam_Alien || CIInfo.bAirPatrolsTriggered)
+	{
+		return ELR_NoInterrupt;
+	}
+
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: AdventAirPatrol_ConcealmentBroken");
 	ManagerState = class'XComGameState_CIReinforcementsManager'.static.GetReinforcementsManager();
 	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
 
 	PodStrength = `SYNC_RAND_STATIC(100) + 1;
 	DelayCrit = `SYNC_RAND_STATIC(2);
@@ -73,6 +84,7 @@ static function EventListenerReturn AdventAirPatrol_ConcealmentBroken (Object Ev
 	DelayedReinforcementOrder.TurnsUntilSpawn = SpawnerDelay;
 
 	ManagerState.DelayedReinforcementOrders.AddItem(DelayedReinforcementOrder);
+	CIInfo.bAirPatrolsTriggered = true;
 
 	`TACTICALRULES.SubmitGameState(NewGameState);
 

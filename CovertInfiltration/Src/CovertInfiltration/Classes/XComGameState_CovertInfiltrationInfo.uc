@@ -8,9 +8,40 @@
 
 class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
 
+/////////////////////
+/// Strategy vars ///
+/////////////////////
+
 var bool bCompletedFirstOrdersAssignment; // If false (just built the ring) - allow player to assign orders at any time without waiting for supply drop
 var bool bRingStaffReplacement; // True if we are replacing the staff assigned to resistance ring and no empty wildcard slots - do not un-grant/grant slot
 var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
+
+/////////////////////
+/// Tactical vars ///
+/////////////////////
+
+var bool bAirPatrolsTriggered;
+
+////////////////////////
+/// Tactical helpers ///
+////////////////////////
+
+static function ResetForBeginTacticalPlay ()
+{
+	local XComGameState_CovertInfiltrationInfo NewInfo;
+	local XComGameState NewGameState;
+	
+	// Make sure info already exists - required for tql/skirmish
+	CreateInfo();
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Resetting XCGS_CovertInfiltrationInfo for begin play");
+	NewInfo = GetInfo();
+	NewInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
+
+	NewInfo.bAirPatrolsTriggered = false;
+
+	`SubmitGameState(NewGameState);
+}
 
 /////////////////
 /// Accessors ///

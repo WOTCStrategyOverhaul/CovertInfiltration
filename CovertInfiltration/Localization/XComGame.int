@@ -170,7 +170,7 @@ Description="Enemies activated on the XCOM turn will receive only one action on 
 
 [AdventAirPatrols X2SitRepTemplate]
 FriendlyName="ADVENT Air Patrols"
-Description="Extra ADVENT reinforcements will be dropped into the mission site once squad concealment is lost."
+Description="Extra ADVENT reinforcements will be dropped into the mission site once first enemy group is activated"
 
 [CommsJamming X2SitRepTemplate]
 FriendlyName="Comms Jamming"
