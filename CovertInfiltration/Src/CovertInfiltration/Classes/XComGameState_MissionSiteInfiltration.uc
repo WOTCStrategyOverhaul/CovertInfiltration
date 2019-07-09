@@ -19,6 +19,7 @@ var config array<int> OverInfiltartionThresholds;
 var config float ChosenAppearenceModAt100;
 var config float ChosenAppearenceModAt200;
 
+var array<name> AppliedSitRepTags;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
 
@@ -278,9 +279,8 @@ function UpdateSitrepTags()
 	}
 
 	// Remove obsolete tags
-	// TODO: This will break if there are non-sitreps tags. Introduce some sort of "applied sitreps" tracking system?
 	for (i = 0; i < TacticalGameplayTags.Length; ++i) {
-		if (RequiredTags.Find(TacticalGameplayTags[i]) == INDEX_NONE) {
+		if (AppliedSitRepTags.Find(TacticalGameplayTags[i]) != INDEX_NONE && RequiredTags.Find(TacticalGameplayTags[i]) == INDEX_NONE) {
 			TacticalGameplayTags.Remove(i, 1);
 			i--;
 		}
@@ -289,11 +289,14 @@ function UpdateSitrepTags()
 	// Add missing tags
 	foreach RequiredTags(GameplayTag)
 	{
-		if(TacticalGameplayTags.Find(GameplayTag) == INDEX_NONE)
+		if (TacticalGameplayTags.Find(GameplayTag) == INDEX_NONE)
 		{
 			TacticalGameplayTags.AddItem(GameplayTag);
 		}
 	}
+
+	// Store which tags we applied
+	AppliedSitRepTags = RequiredTags;
 }
 
 /////////////////
