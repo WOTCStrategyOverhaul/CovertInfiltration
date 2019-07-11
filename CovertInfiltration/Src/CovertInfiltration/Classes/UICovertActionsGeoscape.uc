@@ -1161,6 +1161,7 @@ simulated function PostActionDeployed()
 	local XComGameState NewGameState;
 	local array<StateObjectReference> CurrentSquad;
 	local StateObjectReference UnitRef;
+	local XComGameState_MissionSiteInfiltration Infiltration;
 
 	CovertAction = GetAction();
 	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
@@ -1180,6 +1181,13 @@ simulated function PostActionDeployed()
 		{
 			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
 		}
+	}
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		Infiltration = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(CovertAction));
+		Infiltration = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', Infiltration.ObjectID));
+		Infiltration.OnActionStarted();
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);

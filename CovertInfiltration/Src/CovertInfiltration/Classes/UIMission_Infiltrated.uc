@@ -184,7 +184,7 @@ simulated function BuildOptionsPanel()
 	// We cannot actually set the button labels here as that will screw up controller positioning
 	LibraryPanel.MC.FunctionString(
 		"UpdateMissionButtonBlade",
-		strInfiltration @ "-" @ GetInfiltration().GetCurrentInfilInt() $ "%"
+		GetButtonBladeTitle(GetInfiltration().GetCurrentInfilInt(), GetInfiltration().MaxAllowedInfil)
 	);
 
 	if (`ISCONTROLLERACTIVE)
@@ -204,6 +204,17 @@ simulated function BuildOptionsPanel()
 		Button1.Show();
 		Button2.Show();
 	}
+}
+
+static function string GetButtonBladeTitle (int CurrentInfil, int MaxInfil)
+{
+	local XGParamTag ParamTag;
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.IntValue0 = CurrentInfil;
+	ParamTag.IntValue1 = MaxInfil;
+
+	return `XEXPAND.ExpandString(default.strInfiltration);
 }
 
 simulated function OnButton1SizeRealized()

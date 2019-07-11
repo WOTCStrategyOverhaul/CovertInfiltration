@@ -12,16 +12,17 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 // Since spawner action will get erased from history when player launches a mission
 // we need to duplicate any info that is used after the mission site is initialized
 var array<name> AppliedFlatRisks;
+var int MaxAllowedInfil;
 
 var array<StateObjectReference> SoldiersOnMission;
-
-var config array<int> OverInfiltartionThresholds;
-var config float ChosenAppearenceModAt100;
-var config float ChosenAppearenceModAt200;
 
 var array<name> AppliedSitRepTags;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
+
+var config array<int> OverInfiltartionThresholds;
+var config float ChosenAppearenceModAt100;
+var config float ChosenAppearenceModAt200;
 
 var localized string strBannerBonusGained;
 
@@ -58,6 +59,12 @@ function InitializeFromActivity (XComGameState NewGameState)
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout
 }
 
+function OnActionStarted ()
+{
+	SetSoldiersFromAction();
+	MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(SoldiersOnMission, GetSpawningAction());
+}
+
 // This is called from X2EventListener_Infiltration::CovertActionCompleted.
 // We could subscribe to the event here, but eh, we already have a catch-all listener there
 function OnActionCompleted (XComGameState NewGameState)
@@ -67,8 +74,6 @@ function OnActionCompleted (XComGameState NewGameState)
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();
-
-	SetSoldiersFromAction();
 	Available = true;
 
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
@@ -423,7 +428,7 @@ function int GetNextValidBonusIndex()
 
 function bool MustLaunch()
 {
-	return class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationDateTime, GetCurrentTime());
+	return GetCurrentInfilInt() >= MaxAllowedInfil;
 }
 
 protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)

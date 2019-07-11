@@ -14,6 +14,7 @@ var config int EXFIL_INTEL_COST_BASEAMOUNT;
 var config int EXFIL_INTEL_COST_MULTIPLIER;
 
 var config array<float> OVERLOADED_MULT;
+var config array<int> MAX_INFIL_PER_EXTRA_SOLDIER;
 
 var config array<int> RANKS_DETER;
 
@@ -306,32 +307,46 @@ static function int GetSquadSize(array<StateObjectReference> Soldiers)
 	return Size;
 }
 
-static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction, int TotalInfiltration)
+static function int CountUnupgradedSlots(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
-	local int                            SquadSize, MaxSize, CurrentSlot, OverloadSlot;
 	local XComGameState_HeadquartersXCom XComHQ;
-	local float                          Multiplier;
+	local int SquadSize, MaxSize;
 
 	XComHQ = `XCOMHQ;
 
 	MaxSize = GetRequiredStaffSlots(CovertAction);
-	MaxSize += (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0) + (XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0);
+	MaxSize += XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') ? 1 : 0;
+	MaxSize += XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2') ? 1 : 0;
 	
 	SquadSize = GetSquadSize(Soldiers);
 
-	if (MaxSize < 1 || SquadSize < 1) 
-		return 0;
+	return Max(SquadSize - MaxSize, 0);
 
-	Multiplier = 0.0;
-	OverloadSlot = 0;
+}
 
-	for (CurrentSlot = MaxSize + 1; CurrentSlot <= SquadSize; CurrentSlot++)
+static function int GetSquadOverloadPenalty(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction, int TotalInfiltration)
+{
+	local int OverloadSlot, UnupgradedSlots;
+	local float Multiplier;
+
+	UnupgradedSlots = CountUnupgradedSlots(Soldiers, CovertAction);
+
+	for (OverloadSlot = 0; OverloadSlot < UnupgradedSlots; OverloadSlot++)
 	{
 		Multiplier += default.OVERLOADED_MULT[OverloadSlot];
-		OverloadSlot++;
 	}
 
 	return TotalInfiltration * Multiplier;
+}
+
+static function int GetMaxAllowedInfil (array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
+{
+	local int UnupgradedSlots, i;
+	
+	UnupgradedSlots = CountUnupgradedSlots(Soldiers, CovertAction);
+	i = Min(default.MAX_INFIL_PER_EXTRA_SOLDIER.Length, UnupgradedSlots);
+	
+	return default.MAX_INFIL_PER_EXTRA_SOLDIER[i];
 }
 
 static function MissionDefinition GetMissionDefinitionForActivity (XComGameState_Activity ActivityState)

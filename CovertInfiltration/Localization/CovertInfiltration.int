@@ -31,6 +31,7 @@ strSquadDurationTitle="INFILTRATION MODIFIER:"
 strOverloadPenaltyTitle="OVERLOAD PENALTY:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+strMaxAllowedInfil="Max allowed infil: <XGParam:IntValue0>"
 
 [UISS_TerrainDisplay]
 strAbandoned=Abandoned
@@ -94,7 +95,7 @@ ActionObjective="Chop chop the commander"
 strOverInfiltrationHeader="Over Infiltration"
 strOverInfiltrationNextBonus="Next bonus"
 strMissionReady="MISSION READY"
-strInfiltration="INFILTRATION"
+strInfiltration="INFILTRATION - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
 strWait="WAIT"
 strReturnToAvenger="RETURN TO AVENGER"
 

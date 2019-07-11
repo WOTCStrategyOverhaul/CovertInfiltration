@@ -12,7 +12,7 @@ var UIList DurationBreadownItems;
 var UISS_InfiltrationItem TotalDurationLabel, TotalDurationValue;
 var UISS_InfiltrationItem BaseDurationLabel, BaseDurationValue;
 var UISS_InfiltrationItem SquadDurationLabel, SquadDurationValue;
-var UISS_InfiltrationItem OverloadPenaltyLabel, OverloadPenaltyValue;
+var UISS_InfiltrationItem OverloadPenaltyLabel, OverloadPenaltyValue, MaxInfilValue;
 
 var UISS_InfiltrationItem RisksLabel;
 var UIList RiskEntries;
@@ -25,6 +25,7 @@ var localized string strRisksTitle;
 
 var localized string strDaysAndHours;
 var localized string strPlusDaysAndHours;
+var localized string strMaxAllowedInfil;
 
 simulated function InitReadout(XComGameState_CovertAction Action)
 {
@@ -72,6 +73,9 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 
 		OverloadPenaltyValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
 		OverloadPenaltyValue.InitObjectiveListItem('OverloadPenaltyValue');
+
+		MaxInfilValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+		MaxInfilValue.InitObjectiveListItem('MaxInfilValue');
 	}
 
 	// For reasons unknown this doesn't happen automatically
@@ -90,8 +94,9 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {	
+	local int BaseDuration, SquadDuration, OverloadPenalty, ExtraSoldiers, MaxInfil;
 	local XComGameState_HeadquartersXCom XComHQ;
-	local int BaseDuration, SquadDuration, OverloadPenalty;
+	local string OverloadColour;
 
 	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
@@ -109,8 +114,13 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	if (OverloadPenaltyValue != none)
 	{
 		OverloadPenalty = class'X2Helper_Infiltration'.static.GetSquadOverloadPenalty(XComHQ.Squad, CurrentAction, SquadDuration);
+		ExtraSoldiers = class'X2Helper_Infiltration'.static.CountUnupgradedSlots(XComHQ.Squad, CurrentAction);
+		MaxInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(XComHQ.Squad, CurrentAction);
 
-		OverloadPenaltyValue.SetInfoValue(GetDaysAndHoursString(OverloadPenalty, default.strPlusDaysAndHours), class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
+		OverloadColour = ExtraSoldiers > 0 ? class'UIUtilities_Colors'.const.BAD_HTML_COLOR : class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR;
+
+		OverloadPenaltyValue.SetInfoValue(GetDaysAndHoursString(OverloadPenalty, default.strPlusDaysAndHours), OverloadColour);
+		MaxInfilValue.SetInfoValue(GetMaxAllowedInfilString(MaxInfil), OverloadColour);
 	}
 	
 	UpdateRiskLabels(CurrentAction);
@@ -156,6 +166,16 @@ static function string GetDaysAndHoursString(int iHours, optional string locStri
 	ReturnString = `XEXPAND.ExpandString(locString);
 
 	return ReturnString;
+}
+
+static function string GetMaxAllowedInfilString (int Value)
+{
+	local XGParamTag ParamTag;
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.IntValue0 = Value;
+
+	return `XEXPAND.ExpandString(default.strMaxAllowedInfil);
 }
 
 simulated function UISS_InfiltrationItem GetRiskLabel(int Index)
