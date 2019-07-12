@@ -43,9 +43,6 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	// TODO: Spawn 3 of these then despawn the other two when one is selected
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_CounterDarkEvent');
-	// TODO: attach Dark Event to stage two's missionsite
-	// TODO: resume the Dark Event when stage one expires
-	// TODO: trigger the Dark Event when stage two expires
 	
 	return Template;
 }
@@ -69,6 +66,7 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
 	
 	Template.Stages.AddItem('Activity_CommanderSupply');
 	Template.Stages.AddItem('Activity_SupplyRaid');
@@ -85,6 +83,7 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
 
 	Template.Stages.AddItem('Activity_RecoverInformant');
 	Template.Stages.AddItem('Activity_CaptureInformant');
@@ -101,6 +100,7 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueScientist');
@@ -117,6 +117,7 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueEngineer');
@@ -132,7 +133,9 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	
 	Template.ChooseFaction = ChooseExtraSoldierFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
+	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
+	Template.DeckReq = IsExtraSoldierChainAvailable;
 
 	Template.Stages.AddItem('Activity_PrepareFactionJB');
 	Template.Stages.AddItem('Activity_JailbreakFactionSoldier');
@@ -156,6 +159,20 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 	return FactionRefs[`SYNC_RAND_STATIC(FactionRefs.Length)];
 }
 
+static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	local StateObjectReference FactionRef;
+
+	FactionRef = ChooseExtraSoldierFaction(ChainState, NewGameState);
+
+	if (FactionRef.ObjectID > 0)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -164,11 +181,18 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
+	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
+	Template.DeckReq = IsCapturedSoldierChainAvailable;
 
 	Template.Stages.AddItem('Activity_JailbreakSoldier');
 
 	return Template;
+}
+
+static function bool IsCapturedSoldierChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	return class'X2StrategyElement_DefaultRewards'.static.IsCapturedSoldierRewardAvailable(NewGameState);
 }
 
 static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
@@ -179,11 +203,18 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
+	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
+	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
 
 	Template.Stages.AddItem('Activity_JailbreakChosenSoldier');
 
 	return Template;
+}
+
+static function bool IsChosenCapturedSoldierChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	return class'X2StrategyElement_XpackRewards'.static.IsChosenCapturedSoldierRewardAvailable(NewGameState);
 }
 
 static function X2DataTemplate CreateGatherSuppliesTemplate()
@@ -194,7 +225,7 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = true;
+	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_GatherSupplies');
 
@@ -209,7 +240,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = true;
+	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_GatherIntel');
 
@@ -225,6 +256,8 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
+	Template.DeckReq = IsUFOChainAvailable;
 	
 	Template.Stages.AddItem('Activity_RecoverUFO');
 	Template.Stages.AddItem('Activity_PrepareUFO');
@@ -232,6 +265,12 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 
 	return Template;
 }
+
+static function bool IsUFOChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	return false;
+}
+
 /*
 static function X2DataTemplate CreateHuntChosenTemplate()
 {

@@ -45,3 +45,10 @@ struct ActivityMissionFamilyMapping
 	var name ActivityTemplate;
 	var string MissionFamily;
 };
+
+struct ChainDeckEntry
+{
+	var name ChainName;
+	var X2ActivityChainTemplate ChainTemplate;
+	var int NumInDeck;
+};

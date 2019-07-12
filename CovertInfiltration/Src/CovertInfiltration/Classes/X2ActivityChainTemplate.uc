@@ -17,6 +17,14 @@ var array<name> Stages;
 
 // If true, spawned automatically using the deck system
 var bool SpawnInDeck;
+// The larger the number, the more common this chain is
+var int NumInDeck;
+// Additional entries that will be added if conditions are met
+var int BonusNumInDeck;
+// Conditions that must be met for the chain to be added to the deck
+delegate bool DeckReq(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState);
+// Conditions that must be met for extra entries to be added to the deck
+delegate bool BonusDeckReq(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState);
 
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
