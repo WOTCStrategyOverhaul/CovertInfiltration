@@ -55,6 +55,8 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
 	Template.AddCHEvent('OnResearchReport', TriggerPrototypeAlert, ELD_OnStateSubmitted);
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
+	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
+	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -381,6 +383,52 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 			}
 		}
 	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertActionAllowCheckForProjectOverlap (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionAllowCheckForProjectOverlap') return ELR_NoInterrupt;
+
+	// For now preserve the vanilla behaviour for non-infil CAs
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	{
+		Tuple.Data[0].b = false;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local array<StateObjectReference> CurrentSquad;
+	local XComGameState_CovertAction ActionState;
+	local StateObjectReference UnitRef;
+	local XComGameState NewGameState;
+
+	ActionState = XComGameState_CovertAction(EventSource);
+	if (ActionState == none) return ELR_NoInterrupt;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Stop will recovery at action start");
+	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(ActionState);
+
+	foreach CurrentSquad(UnitRef)
+	{
+		//make sure soldier actually uses will system before we nuke it cuz reasons
+		if (XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)).UsesWillSystem())
+		{
+			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
+		}
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
 }

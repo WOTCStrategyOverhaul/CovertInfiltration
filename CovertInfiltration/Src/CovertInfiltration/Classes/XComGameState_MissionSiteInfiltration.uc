@@ -57,12 +57,20 @@ function InitializeFromActivity (XComGameState NewGameState)
 
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity());
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout
+
+	InitRegisterEvents();
 }
 
-function OnActionStarted ()
+protected function EventListenerReturn OnActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	SetSoldiersFromAction();
-	MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(SoldiersOnMission, GetSpawningAction());
+	local XComGameState_MissionSiteInfiltration NewInfiltration;
+
+	NewInfiltration = XComGameState_MissionSiteInfiltration(GameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
+
+	NewInfiltration.SetSoldiersFromAction();
+	NewInfiltration.MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(NewInfiltration.SoldiersOnMission, GetSpawningAction());
+
+	return ELR_NoInterrupt;
 }
 
 // This is called from X2EventListener_Infiltration::CovertActionCompleted.
@@ -649,6 +657,17 @@ function XComGameState_CovertAction GetSpawningAction ()
 ////////////////////////
 /// Event management ///
 ////////////////////////
+
+protected function InitRegisterEvents ()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,,, GetSpawningAction());
+}
 
 protected function EnablePreventTick()
 {

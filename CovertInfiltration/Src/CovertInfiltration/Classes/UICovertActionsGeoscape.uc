@@ -1050,7 +1050,6 @@ simulated function OnReceiveFocus()
 		if (GetAction().bStarted)
 		{
 			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
-			PostActionDeployed();
 
 			// Need to save ActionRef before updating list as it will reset the selected action
 			LaunchedActionRef = ActionRef;
@@ -1154,44 +1153,6 @@ simulated protected function CleanupSSManager()
 //////////////////////////////
 /// Gamestate manipulation ///
 //////////////////////////////
-
-simulated function PostActionDeployed()
-{
-	local XComGameState_CovertAction CovertAction;
-	local XComGameState NewGameState;
-	local array<StateObjectReference> CurrentSquad;
-	local StateObjectReference UnitRef;
-	local XComGameState_MissionSiteInfiltration Infiltration;
-
-	CovertAction = GetAction();
-	CurrentSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(CovertAction);
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Post Action Deployed");
-
-	//if we launched while the mission was still flagged as 'new' we need to unflag or it will be stuck
-	if (CovertAction.bNewAction)
-	{
-		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
-		CovertAction.bNewAction = false;
-	}
-
-	foreach CurrentSquad(UnitRef)
-	{
-		//make sure soldier actually uses will system before we nuke it cuz reasons
-		if (XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)).UsesWillSystem())
-		{
-			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
-		}
-	}
-
-	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
-	{
-		Infiltration = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(CovertAction));
-		Infiltration = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', Infiltration.ObjectID));
-		Infiltration.OnActionStarted();
-	}
-
-	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-}
 
 simulated function ClearUnitsFromAction()
 {

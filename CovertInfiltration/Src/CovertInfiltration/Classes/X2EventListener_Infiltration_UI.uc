@@ -51,6 +51,8 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('OverrideMissionSiteIconImage', OverrideMissionSiteIconImage, ELD_Immediate);
 	Template.AddCHEvent('StrategyMapMissionSiteSelected', StrategyMapMissionSiteSelected, ELD_Immediate);
 	Template.AddCHEvent('OverrideMissionSiteTooltip', OverrideMissionSiteTooltip, ELD_Immediate);
+	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate);
+	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -292,6 +294,38 @@ static protected function EventListenerReturn OverrideMissionSiteTooltip(Object 
 	
 	Tuple.Data[0].s = Title;
 	Tuple.Data[1].s = Body;
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertActionAllowEngineerPopup (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionAllowEngineerPopup') return ELR_NoInterrupt;
+
+	// Ring no longer deals with CAs
+	Tuple.Data[0].b = false;
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction ActionState;
+
+	ActionState = XComGameState_CovertAction(EventSource);
+	if (ActionState == none) return ELR_NoInterrupt;
+	
+	// Get the pending state (EventData always comes from history which isn't updated yet)
+	ActionState = XComGameState_CovertAction(GameState.GetGameStateForObjectID(ActionState.ObjectID));
+
+	// If we launched while the mission was still flagged as 'new' we need to unflag or it will be stuck
+	ActionState.bNewAction = false;
 
 	return ELR_NoInterrupt;
 }
