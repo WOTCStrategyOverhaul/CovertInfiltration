@@ -9,7 +9,6 @@ class XComGameState_CIReinforcementsManager extends XComGameState_BaseObject;
 
 var array<DelayedReinforcementOrder> DelayedReinforcementOrders;
 
-var protectedwrite bool bNeedsUpdate;
 var const int Threshold;
 
 static function CreateReinforcementsManager()
@@ -36,14 +35,49 @@ function EventListenerReturn OnPlayerTurnBegun(Object EventData, Object EventSou
 {
 	local XComGameState NewGameState;
 	local XComGameState_CIReinforcementsManager ManagerState;
+	local DelayedReinforcementOrder DRO, NewDRO;
+	local array<DelayedReinforcementOrder> PendingDROs;
+	local int idx;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
 	ManagerState = GetReinforcementsManager();
 	ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
 
-	ManagerState.bNeedsUpdate = true;
+	// Decrement the countdown and start those which are at the threshold
+	for (idx = 0; idx < ManagerState.DelayedReinforcementOrders.Length; idx++)
+	{
+		ManagerState.DelayedReinforcementOrders[idx].TurnsUntilSpawn--;
+
+		if (ManagerState.DelayedReinforcementOrders[idx].TurnsUntilSpawn <= Threshold)
+		{
+			PendingDROs.AddItem(ManagerState.DelayedReinforcementOrders[idx]);
+
+			ManagerState.DelayedReinforcementOrders.Remove(idx, 1); // TODO: Check
+			idx--;
+		}
+	}
+
+	// Queue the ones which are repeating and were started
+	foreach PendingDROs(DRO)
+	{
+		if (DRO.Repeating)
+		{	
+			NewDRO.EncounterID = DRO.EncounterID;
+			NewDRO.TurnsUntilSpawn = DRO.RepeatTime + 1;
+			NewDRO.Repeating = true;
+			NewDRO.RepeatTime = DRO.RepeatTime;
+				
+			ManagerState.DelayedReinforcementOrders.AddItem(NewDRO);
+		}
+	}
 
 	`TACTICALRULES.SubmitGameState(NewGameState);
+
+	// We need a fresh gamestate to do this
+	foreach PendingDROs(DRO)
+	{
+		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(DRO.EncounterID, default.Threshold, , , 6, , , , , , , , true);
+	}
 
 	return ELR_NoInterrupt;
 }
@@ -53,46 +87,28 @@ static function XComGameState_CIReinforcementsManager GetReinforcementsManager(o
 	return XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CIReinforcementsManager', AllowNull));
 }
 
-function Update()
-{
-	local int idx;
-
-	for (idx = 0; idx < DelayedReinforcementOrders.Length; idx++)
-	{
-		if (DelayedReinforcementOrders[idx].TurnsUntilSpawn > Threshold)
-		{
-			DelayedReinforcementOrders[idx].TurnsUntilSpawn--;
-		}
-	}
-}
-
 function bool GetNextOrder(out DelayedReinforcementOrder NextDRO)
 {
 	local DelayedReinforcementOrder CurrentDRO;
 
+	// Reset just in case
+	NextDRO = CurrentDRO;
+
 	foreach DelayedReinforcementOrders(CurrentDRO)
 	{
-		if (CurrentDRO.TurnsUntilSpawn > Threshold && (CurrentDRO.TurnsUntilSpawn < NextDRO.TurnsUntilSpawn || NextDRO.TurnsUntilSpawn == 0))
+		if (CurrentDRO.TurnsUntilSpawn < NextDRO.TurnsUntilSpawn || NextDRO.TurnsUntilSpawn == 0)
 		{
 			NextDRO = CurrentDRO;
-		}
-		else if (CurrentDRO.TurnsUntilSpawn <= Threshold)
-		{
-			NextDRO = CurrentDRO;
-			DelayedReinforcementOrders.RemoveItem(CurrentDRO);
-			return true;
 		}
 	}
 
 	return false;
 }
 
-static function int GetNextReinforcements()
+static function int GetNextReinforcements (optional XComGameState AssociatedGameState)
 {
-	local XComGameState NewGameState;
 	local XComGameState_CIReinforcementsManager ManagerState;
-	local DelayedReinforcementOrder NextDRO, NewDRO;
-	local bool bOrderCompleted;
+	local DelayedReinforcementOrder NextDRO;
 
 	ManagerState = GetReinforcementsManager(true);
 
@@ -101,36 +117,12 @@ static function int GetNextReinforcements()
 		return 0;
 	}
 
-	if (ManagerState.bNeedsUpdate)
+	if (AssociatedGameState != none)
 	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Reinforcements Manager");
-		ManagerState = XComGameState_CIReinforcementsManager(NewGameState.ModifyStateObject(class'XComGameState_CIReinforcementsManager', ManagerState.ObjectID));
-
-		ManagerState.Update();
-		bOrderCompleted = ManagerState.GetNextOrder(NextDRO);
-		ManagerState.bNeedsUpdate = false;
-
-		`TACTICALRULES.SubmitGameState(NewGameState);
-
-		if (bOrderCompleted)
-		{// we need a fresh gamestate to do this
-			class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(NextDRO.EncounterID, default.Threshold, , , 6, , , , , , , , true);
-
-			if (NextDRO.Repeating)
-			{	
-				NewDRO.EncounterID = NextDRO.EncounterID;
-				NewDRO.TurnsUntilSpawn = NextDRO.RepeatTime + 1;
-				NewDRO.Repeating = true;
-				NewDRO.RepeatTime = NextDRO.RepeatTime;
-				
-				ManagerState.DelayedReinforcementOrders.AddItem(NewDRO);
-			}
-		}
+		ManagerState = XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetGameStateForObjectID(ManagerState.ObjectID,, AssociatedGameState.HistoryIndex));
 	}
-	else
-	{
-		ManagerState.GetNextOrder(NextDRO);
-	}
+
+	ManagerState.GetNextOrder(NextDRO);
 
 	return NextDRO.TurnsUntilSpawn;
 }

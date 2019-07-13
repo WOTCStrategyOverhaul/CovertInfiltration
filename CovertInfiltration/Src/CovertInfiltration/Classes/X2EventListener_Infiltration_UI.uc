@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek and robojumper
+//  AUTHOR:  Xymanek, robojumper and statusNone
 //  PURPOSE: Houses X2EventListenerTemplates that affect UI. Mostly CHL hooks
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
@@ -709,8 +709,9 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
-	local XComLWTuple Tuple;
+	local XComGameState AssociatedGameState;
 	local int DelayedRNF, NextRNF;
+	local XComLWTuple Tuple;
 
 	Tuple = XComLWTuple(EventData);
 
@@ -719,7 +720,9 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 		return ELR_NoInterrupt;
 	}
 
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner)
+	AssociatedGameState = XComGameState(Tuple.Data[4].o);
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner,,, AssociatedGameState.HistoryIndex)
 	{
 		if (ReinforcementSpawner.Countdown > 0)
 		{
@@ -730,7 +733,7 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 		}
 	}
 	
-	DelayedRNF = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements();
+	DelayedRNF = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements(AssociatedGameState);
 
 	if (NextRNF == 0 || NextRNF > DelayedRNF)
 	{
