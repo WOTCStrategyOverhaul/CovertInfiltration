@@ -27,7 +27,9 @@ var const config array<int> WorkRequiredForSpawn;
 var const config array<int> WorkRequiredForSpawnVariance;
 
 var config int MinSupplies;
+var config array<name> SupplyChains;
 var config int MinIntel;
+var config array<name> IntelChains;
 
 static function Update()
 {
@@ -246,10 +248,7 @@ function SpawnActivityChain (XComGameState NewGameState)
 function X2ActivityChainTemplate PickChainToSpawn(XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager Manager;
-	local XComGameState_HeadquartersXCom XComHQ;
 	local name PickedChainName;
-	
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
 	if (ChainDeck.Length == 0)
 	{
@@ -284,7 +283,10 @@ function RegenerateChainDeck(XComGameState NewGameState)
 				DeckEntry.NumInDeck = ChainTemplate.NumInDeck;
 				ChainDeck.AddItem(DeckEntry);
 
-				// TODO: add in support for bonus deck entries based on another condition as defined in chain template
+				if (ChainTemplate.BonusDeckReq != none && ChainTemplate.BonusDeckReq(NewGameState))
+				{
+					ChainDeck[ChainDeck.Length - 1].NumInDeck += ChainTemplate.BonusNumInDeck;
+				}
 			}
 		}
 	}
@@ -292,7 +294,41 @@ function RegenerateChainDeck(XComGameState NewGameState)
 
 function name PickFromChainDeck()
 {
-	// TODO: turn the deck entries into a regular array and random draw from that
+	local ChainDeckEntry Entry;
+	local array<name> ChainList;
+	local name Pick;
+	local int x;
+
+	foreach ChainDeck(Entry)
+	{
+		for (x = 0; x < Entry.NumInDeck; x++)
+		{
+			ChainList.AddItem(Entry.ChainName);
+		}
+	}
+
+	if (ChainList.Length == 0)
+	{
+		`RedScreen("CI: ChainDeck is empty after regeneration");
+		return '';
+	}
+	
+	Pick = ChainList[`SYNC_RAND_STATIC(ChainList.Length)];
+
+	foreach ChainDeck(Entry)
+	{
+		if (Entry.ChainName == Pick)
+		{
+			Entry.NumInDeck -= 1;
+
+			if (Entry.NumInDeck <= 0)
+			{
+				ChainDeck.RemoveItem(Entry);
+			}
+		}
+	}
+
+	return Pick;
 }
 
 ///////////////////////////

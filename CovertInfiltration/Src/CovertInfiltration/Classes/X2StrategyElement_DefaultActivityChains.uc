@@ -232,6 +232,36 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	return Template;
 }
 
+static function bool IsGatherSuppliesChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_ActivityChain Chain;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local name InProgress;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', Chain)
+	{
+		if (!Chain.bEnded)
+		{
+			foreach class'XComGameState_ActivityChainSpawner'.default.SupplyChains(InProgress)
+			{
+				if (InProgress == Chain.GetMyTemplate().DataName)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	if (class'XComGameState_ActivityChainSpawner'.default.MinSupplies > XComHQ.GetSupplies())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 static function X2DataTemplate CreateGatherIntelTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -245,6 +275,36 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.Stages.AddItem('Activity_GatherIntel');
 
 	return Template;
+}
+
+static function bool IsGatherIntelChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_ActivityChain Chain;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local name InProgress;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', Chain)
+	{
+		if (!Chain.bEnded)
+		{
+			foreach class'XComGameState_ActivityChainSpawner'.default.IntelChains(InProgress)
+			{
+				if (InProgress == Chain.GetMyTemplate().DataName)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	if (class'XComGameState_ActivityChainSpawner'.default.MinSupplies > XComHQ.GetIntel())
+	{
+		return true;
+	}
+
+	return false;
 }
 
 static function X2DataTemplate CreateLandedUFOTemplate()
