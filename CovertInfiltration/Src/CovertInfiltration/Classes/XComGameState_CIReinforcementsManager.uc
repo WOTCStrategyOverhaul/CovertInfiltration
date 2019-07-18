@@ -90,6 +90,7 @@ static function XComGameState_CIReinforcementsManager GetReinforcementsManager(o
 function bool GetNextOrder(out DelayedReinforcementOrder NextDRO)
 {
 	local DelayedReinforcementOrder CurrentDRO;
+	local bool bFoundDRO;
 
 	// Reset just in case
 	NextDRO = CurrentDRO;
@@ -99,10 +100,11 @@ function bool GetNextOrder(out DelayedReinforcementOrder NextDRO)
 		if (CurrentDRO.TurnsUntilSpawn < NextDRO.TurnsUntilSpawn || NextDRO.TurnsUntilSpawn == 0)
 		{
 			NextDRO = CurrentDRO;
+			bFoundDRO = true;
 		}
 	}
 
-	return false;
+	return bFoundDRO;
 }
 
 static function int GetNextReinforcements (optional XComGameState AssociatedGameState)
@@ -114,7 +116,7 @@ static function int GetNextReinforcements (optional XComGameState AssociatedGame
 
 	if (ManagerState == none)
 	{
-		return 0;
+		return -1;
 	}
 
 	if (AssociatedGameState != none)
@@ -122,9 +124,12 @@ static function int GetNextReinforcements (optional XComGameState AssociatedGame
 		ManagerState = XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetGameStateForObjectID(ManagerState.ObjectID,, AssociatedGameState.HistoryIndex));
 	}
 
-	ManagerState.GetNextOrder(NextDRO);
+	if (ManagerState.GetNextOrder(NextDRO))
+	{
+		return NextDRO.TurnsUntilSpawn;
+	}
 
-	return NextDRO.TurnsUntilSpawn;
+	return -1;
 }
 
 defaultproperties 

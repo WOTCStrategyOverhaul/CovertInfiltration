@@ -709,33 +709,33 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 static function EventListenerReturn IncomingReinforcementsDisplay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local UITacticalHUD_Countdown UICountdown;
 	local XComGameState AssociatedGameState;
 	local int DelayedRNF, NextRNF;
 	local XComLWTuple Tuple;
 
+	UICountdown = UITacticalHUD_Countdown(EventSource);
 	Tuple = XComLWTuple(EventData);
 
-	if (Tuple == none)
+	if (UICountdown == none || Tuple == none || Tuple.Id != 'OverrideReinforcementsAlert')
 	{
 		return ELR_NoInterrupt;
 	}
 
 	AssociatedGameState = XComGameState(Tuple.Data[4].o);
+	NextRNF = -1;
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner,,, AssociatedGameState.HistoryIndex)
 	{
-		if (ReinforcementSpawner.Countdown > 0)
+		if (ReinforcementSpawner.Countdown > 0 && (NextRNF == -1 || NextRNF > ReinforcementSpawner.Countdown))
 		{
-			if (NextRNF > ReinforcementSpawner.Countdown || NextRNF == 0)
-			{
-				NextRNF = ReinforcementSpawner.Countdown;
-			}
+			NextRNF = ReinforcementSpawner.Countdown;
 		}
 	}
 	
 	DelayedRNF = class'XComGameState_CIReinforcementsManager'.static.GetNextReinforcements(AssociatedGameState);
 
-	if (NextRNF == 0 || NextRNF > DelayedRNF)
+	if (NextRNF == -1 || (DelayedRNF != -1 && NextRNF > DelayedRNF))
 	{
 		NextRNF = DelayedRNF;
 	}
@@ -743,6 +743,11 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 	if (class'UIUtilities_Infiltration'.static.SetCountdownTextAndColor(NextRNF, Tuple))
 	{
 		Tuple.Data[0].b = true;
+	}
+	else
+	{
+		// Hide previously shown alert. Anything wants to show it again will unhide it anyway
+		UICountdown.Hide();
 	}
 
 	return ELR_NoInterrupt;
