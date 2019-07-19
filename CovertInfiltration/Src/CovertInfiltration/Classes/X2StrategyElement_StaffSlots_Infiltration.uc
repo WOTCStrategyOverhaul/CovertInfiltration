@@ -218,8 +218,8 @@ static function bool IsUnitValidForInfiltration(XComGameState_StaffSlot SlotStat
 	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
 
 	if (
-		Unit.IsSoldier()
-		&& Unit.IsActive(true)
+		Unit.IsSoldier() // the following robotic & status check is a baid-aid fix for wounded sparks
+		&& (Unit.IsActive(true) || (Unit.IsRobotic() && Unit.GetStatus() != eStatus_CovertAction))
 		&& (SlotState.RequiredClass == '' || Unit.GetSoldierClassTemplateName() == SlotState.RequiredClass)
 		&& (SlotState.RequiredMinRank == 0 || Unit.GetRank() >= SlotState.RequiredMinRank)
 		&& (!SlotState.bRequireFamous || Unit.bIsFamous)
