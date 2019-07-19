@@ -17,7 +17,7 @@ var config array<name> arrDataSetsToForceVariants;
 var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
-var config(StrategyTuning) array<name> arrRemoveFactionCard;
+var config(GameData) array<name> arrRemoveFactionCard;
 
 var config array<name> arrPrototypesToDisable;
 var config bool PrototypePrimaries;
