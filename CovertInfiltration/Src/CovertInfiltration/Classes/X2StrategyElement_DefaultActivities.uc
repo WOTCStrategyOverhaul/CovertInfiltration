@@ -44,7 +44,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_None');
 	
 	CreateStandardDVIPActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Datapad', 'Reward_Intel');
-	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_None', 'Reward_Intel');
+	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_None', 'Reward_FacilityLead');
 
 	// Assaults
 	// TODO: config-ize the expirations

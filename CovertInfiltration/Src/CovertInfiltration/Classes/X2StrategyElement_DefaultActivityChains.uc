@@ -40,7 +40,6 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
-	// TODO: Spawn 3 of these then despawn the other two when one is selected
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_CounterDarkEvent');
 	
@@ -328,6 +327,15 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 
 static function bool IsUFOChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
 {
+	local XComGameState_HeadquartersAlien AlienHQ;
+
+	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	
+	if (AlienHQ.bHasPlayerBeenIntercepted || AlienHQ.bHasGoldenPathUFOAppeared || AlienHQ.bHasPlayerAvoidedUFO)
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -357,17 +365,38 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_DestroyFacility');
 	
-	Template.ChooseFaction = ChooseMetFaction; // TODO: spawn immediately when facility is built
+	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion; // TODO: choose region where a facility is
-	Template.SpawnInDeck = false;
+	Template.SpawnInDeck = true;
+	Template.NumInDeck = 1;
+	Template.DeckReq = IsFacilityChainAvailable;
 	
 	Template.Stages.AddItem('Activity_PrepareFacility');
 	Template.Stages.AddItem('Activity_FacilityInformant');
 	//Template.Stages.AddItem('Activity_AvatarFacility');
-	// TODO: when done, unlock facility
 
 	return Template;
 }
+
+static function bool IsFacilityChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_FacilityAlien FacilityState;
+	local XComGameState_WorldRegion RegionState;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_FacilityAlien', FacilityState)
+	{
+		RegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(FacilityState.Region.ObjectID));
+
+		if (!RegionState.HaveMadeContact())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+// TODO: make something to remove this from the deck if these conditions are ever not met
+
 
 //////////////////////////////////////////////////////
 //                    Helpers                       //

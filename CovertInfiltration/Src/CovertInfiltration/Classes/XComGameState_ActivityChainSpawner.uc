@@ -360,7 +360,7 @@ function SpawnDarkEventChains (XComGameState NewGameState)
 
 	ChainTemplate = X2ActivityChainTemplate(Manager.FindStrategyElementTemplate('ActivityChain_CounterDarkEvent'));
 
-	//`log("Conditions good, spawning Dark Event chains",, 'CI_ACSpawner');
+	`log("Conditions good, spawning Dark Event chains",, 'CI_ACSpawner');
 
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 
