@@ -16,6 +16,7 @@ var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
 var array<ChainDeckEntry> ChainDeck;
+var bool bDarkEventsActive;
 
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
@@ -34,6 +35,8 @@ var config array<name> IntelChains;
 static function Update()
 {
 	local XComGameState_ActivityChainSpawner Spawner;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState NewGameState;
 	local UIStrategyMap StrategyMap;
 	local bool bDirty;
@@ -69,6 +72,22 @@ static function Update()
 		
 		Spawner.SubmitWorkDone();
 		Spawner.SetCachedWorkRate();
+	}
+
+	// STEP 3: Check if it's time to spawn Dark Event chains
+    ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
+	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+
+	if (AlienHQ.ChosenDarkEvents.Length > 0 && Spawner.bDarkEventsActive)
+	{
+		bDirty = true;
+		Spawner.bDarkEventsActive = false;
+		Spawner.SpawnDarkEventChains(NewGameState);
+	}
+	
+	if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ResHQ.MonthIntervalEndTime, `STRATEGYRULES.GameTime))
+	{
+		Spawner.bDarkEventsActive = true;
 	}
 
 	if (bDirty)
@@ -329,6 +348,28 @@ function name PickFromChainDeck()
 	}
 
 	return Pick;
+}
+
+function SpawnDarkEventChains (XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager Manager;
+	local XComGameState_ActivityChain ChainState;
+	local X2ActivityChainTemplate ChainTemplate;
+	local StateObjectReference DarkEventRef;
+	local XComGameState_HeadquartersAlien AlienHQ;
+
+	ChainTemplate = X2ActivityChainTemplate(Manager.FindStrategyElementTemplate('ActivityChain_CounterDarkEvent'));
+
+	//`log("Conditions good, spawning Dark Event chains",, 'CI_ACSpawner');
+
+	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+
+	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
+	{
+		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+		ChainState.ChainObjectRefs.AddItem(DarkEventRef);
+		ChainState.StartNextStage(NewGameState);
+	}
 }
 
 ///////////////////////////
