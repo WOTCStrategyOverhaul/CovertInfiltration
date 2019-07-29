@@ -15,13 +15,13 @@ var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 
 static event UpdateDLC()
 {
-	//class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 }
 
 static event OnLoadedSavedGameToStrategy()
 {
-	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
+	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
 }
 
 ///////////////////////
@@ -31,7 +31,7 @@ static event OnLoadedSavedGameToStrategy()
 static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
-	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner(StartState);
+	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
@@ -41,7 +41,7 @@ static event InstallNewCampaign(XComGameState StartState)
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
-	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner();
+	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner();
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
@@ -373,7 +373,7 @@ exec function SpawnCovertAction(name TemplateName, optional name FactionTemplate
 exec function PrintP1SpawnerDebugInfo()
 {
 	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ConsoleCommand("UnSuppress CI_P1Spawner");
-	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
+	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
 }
 
 exec function SpawnNextP1 ()

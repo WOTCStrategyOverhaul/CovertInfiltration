@@ -66,6 +66,7 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = AlwaysAvailable;
 	
 	Template.Stages.AddItem('Activity_CommanderSupply');
 	Template.Stages.AddItem('Activity_SupplyRaid');
@@ -83,6 +84,7 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverInformant');
 	Template.Stages.AddItem('Activity_CaptureInformant');
@@ -100,6 +102,7 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueScientist');
@@ -117,6 +120,7 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueEngineer');
@@ -401,6 +405,11 @@ static function bool IsFacilityChainAvailable(XComGameState NewGameState, option
 //////////////////////////////////////////////////////
 //                    Helpers                       //
 //////////////////////////////////////////////////////
+
+static function bool AlwaysAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+{
+	return true;
+}
 
 static function StateObjectReference ChooseMetFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
 {

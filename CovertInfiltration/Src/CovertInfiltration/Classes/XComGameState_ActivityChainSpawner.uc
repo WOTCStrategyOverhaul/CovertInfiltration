@@ -283,29 +283,41 @@ function X2ActivityChainTemplate PickChainToSpawn(XComGameState NewGameState)
 
 function RegenerateChainDeck(XComGameState NewGameState)
 {
-	local XComGameStateHistory History;
+	local X2StrategyElementTemplateManager StratMgr;
+	local array<X2StrategyElementTemplate> AllChains;
+	local X2StrategyElementTemplate StratTemplate;
 	local X2ActivityChainTemplate ChainTemplate;
 	local ChainDeckEntry DeckEntry;
 
-	History = `XCOMHISTORY;
+	`log("Regenerating Chain Deck from a length of " $ string(ChainDeck.Length),, 'CI_ACSpawner');
 
 	ChainDeck.Length = 0;
-	
-	foreach History.IterateByClassType(class'X2ActivityChainTemplate', ChainTemplate)
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	AllChains = StratMgr.GetAllTemplatesOfClass(class'X2ActivityChainTemplate');
+
+	foreach AllChains(StratTemplate)
 	{
+		ChainTemplate = X2ActivityChainTemplate(StratTemplate);
+		`log("Evaluating chain " $ string(ChainTemplate.DataName),, 'CI_ACSpawner');
 		if (ChainTemplate.SpawnInDeck)
 		{
-			if (ChainTemplate.DeckReq == none || ChainTemplate.DeckReq(NewGameState))
+			if (ChainTemplate.DeckReq(NewGameState))
 			{
+				`log("Adding chain " $ string(ChainTemplate.DataName) $ " to deck",, 'CI_ACSpawner');
 				DeckEntry.ChainName = ChainTemplate.DataName;
 				DeckEntry.ChainTemplate = ChainTemplate;
 				DeckEntry.NumInDeck = ChainTemplate.NumInDeck;
 				ChainDeck.AddItem(DeckEntry);
 
-				if (ChainTemplate.BonusDeckReq != none && ChainTemplate.BonusDeckReq(NewGameState))
+				if (ChainTemplate.BonusDeckReq(NewGameState))
 				{
 					ChainDeck[ChainDeck.Length - 1].NumInDeck += ChainTemplate.BonusNumInDeck;
 				}
+			}
+			else
+			{
+				`log("Failed to add chain " $ string(ChainTemplate.DataName) $ " to deck",, 'CI_ACSpawner');
 			}
 		}
 	}
@@ -317,7 +329,13 @@ function name PickFromChainDeck()
 	local array<name> ChainList;
 	local name Pick;
 	local int x;
-
+	
+	if (ChainDeck.Length == 0)
+	{
+		`RedScreen("CI: ChainDeck is empty after regeneration");
+		return '';
+	}
+	
 	foreach ChainDeck(Entry)
 	{
 		for (x = 0; x < Entry.NumInDeck; x++)
@@ -326,12 +344,6 @@ function name PickFromChainDeck()
 		}
 	}
 
-	if (ChainList.Length == 0)
-	{
-		`RedScreen("CI: ChainDeck is empty after regeneration");
-		return '';
-	}
-	
 	Pick = ChainList[`SYNC_RAND_STATIC(ChainList.Length)];
 
 	foreach ChainDeck(Entry)
