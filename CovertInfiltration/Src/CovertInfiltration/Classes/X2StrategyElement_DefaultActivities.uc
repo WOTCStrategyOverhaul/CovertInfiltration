@@ -61,6 +61,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
 	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
 	
+	// Misc
+	CreateWaitActivity(Templates);
+
 	return Templates;
 }
 
@@ -170,6 +173,18 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates, string Ac
 	Activity.CovertActionName = CovertAction.DataName;
 
 	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function CreateWaitActivity (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate Activity;
+
+	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_Wait');
+	Activity.StateClass = class'XComGameState_Activity_Wait';
+
 	Templates.AddItem(Activity);
 }
 
