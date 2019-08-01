@@ -304,6 +304,11 @@ function XComGameState_Activity GetCurrentActivity ()
 	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[iCurrentStage].ObjectID));
 }
 
+function XComGameState_Activity GetLastActivity ()
+{
+	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[StageRefs.Length - 1].ObjectID));
+}
+
 function XComGameState_ResistanceFaction GetFaction()
 {
 	return XComGameState_ResistanceFaction(`XCOMHISTORY.GetGameStateForObjectID(FactionRef.ObjectID));

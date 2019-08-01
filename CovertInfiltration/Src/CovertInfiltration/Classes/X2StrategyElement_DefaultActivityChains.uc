@@ -41,7 +41,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.CleanupChain = CleanupDarkEventChain;
 
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
-	Template.Stages.AddItem('Activity_CounterDarkEvent');
+	Template.Stages.AddItem('Activity_CounterDarkEvent'); // TODO: Handle applying DE to mission
 	
 	return Template;
 }
@@ -53,7 +53,14 @@ static function SetupDarkEventChain(XComGameState NewGameState, XComGameState_Ac
 
 static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	ChainState.CounterChainDarkEvent(NewGameState);
+	if (ChainState.IsCompleted() && ChainState.GetLastActivity().CompletionStatus == eActivityCompletion_Success)
+	{
+		ChainState.CounterChainDarkEvent(NewGameState);
+	}
+	else
+	{
+		ChainState.ResumeChainDarkEvent(NewGameState);
+	}
 }
 
 static function X2DataTemplate CreateSupplyRaidTemplate()
