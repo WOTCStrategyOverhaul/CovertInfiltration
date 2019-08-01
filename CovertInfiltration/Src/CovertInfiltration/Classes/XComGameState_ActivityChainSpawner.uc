@@ -53,7 +53,7 @@ static function Update()
 	// STEP 1: we check if we are due spawning an action at CachedWorkRate
 	if (Spawner.ShouldSpawnChain() && StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
 	{
-		`CI_Tarce("Enough work for activity chain, starting spawning");
+		`CI_Trace("Enough work for activity chain, starting spawning");
 		bDirty = true;
 		
 		Spawner.SpawnActivityChain(NewGameState);
@@ -64,7 +64,7 @@ static function Update()
 	// STEP 2: See if we need to adjust current work rate
 	if (Spawner.CachedWorkRate != GetCurrentWorkRate())
 	{
-		`CI_Tarce("Cached work rate (" $ Spawner.CachedWorkRate $ ") doesn't match current, submitting work done and caching new work rate");
+		`CI_Trace("Cached work rate (" $ Spawner.CachedWorkRate $ ") doesn't match current, submitting work done and caching new work rate");
 		bDirty = true;
 		
 		Spawner.SubmitWorkDone();
@@ -96,7 +96,7 @@ function bool ShouldSpawnChain()
 
 function ResetProgress()
 {
-	`CI_Tarce("Reset progress for next chain");
+	`CI_Trace("Reset progress for next chain");
 
 	PreviousWork = 0;
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
@@ -107,7 +107,7 @@ function SubmitWorkDone()
 	PreviousWork += GetWorkDoneInCurrentPeriod();
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
 
-	`CI_Tarce("Submitted work done, now" $ PreviousWork);
+	`CI_Trace("Submitted work done, now" $ PreviousWork);
 }
 
 function float GetWorkDoneInCurrentPeriod()
@@ -137,7 +137,7 @@ static function int GetCurrentWorkRate()
 function SetCachedWorkRate()
 {
 	CachedWorkRate = GetCurrentWorkRate();
-	`CI_Tarce("New cached work rate - " $ CachedWorkRate);
+	`CI_Trace("New cached work rate - " $ CachedWorkRate);
 }
 
 static function GetNumContactsAndRelays(out int Contacts, out int Relays)
@@ -184,7 +184,7 @@ function SetNextSpawnAt()
 
 	NextSpawnAt = WorkRequired + Variance;
 
-	`CI_Tarce("Next chain at" @ NextSpawnAt @ "work");
+	`CI_Trace("Next chain at" @ NextSpawnAt @ "work");
 }
 
 ////////////////

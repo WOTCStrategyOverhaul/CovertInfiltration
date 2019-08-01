@@ -307,7 +307,7 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_DestroyFacility');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseRandomContactedRegion; // TODO: choose region where a facility is
+	Template.ChooseRegions = ChooseFacilityRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsFacilityChainAvailable;
@@ -316,28 +316,56 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	Template.Stages.AddItem('Activity_FacilityInformant');
 	//Template.Stages.AddItem('Activity_AvatarFacility');
 
+	// We can't really make the mission itself into an activity as the facility itself is THE mission
+	// As such, we workaround by rewarding 2nd stage with a facility lead, so that the player can unlock the mission
+
 	return Template;
+}
+
+static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef)
+{
+	PrimaryRegionRef = FindRegionForFacilityChain();
 }
 
 static function bool IsFacilityChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
 {
-	local XComGameState_FacilityAlien FacilityState;
-	local XComGameState_WorldRegion RegionState;
-
-	foreach NewGameState.IterateByClassType(class'XComGameState_FacilityAlien', FacilityState)
-	{
-		RegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(FacilityState.Region.ObjectID));
-
-		if (!RegionState.HaveMadeContact())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return FindRegionForFacilityChain().ObjectID > 0;
 }
 // TODO: make something to remove this from the deck if these conditions are ever not met
 
+static function StateObjectReference FindRegionForFacilityChain ()
+{
+	local array<XComGameState_MissionSite> Missions;
+	local XComGameState_MissionSite FacilityMission;
+	local XComGameState_ActivityChain ChainState;
+	local StateObjectReference EmptyRef;
+	local XComGameStateHistory History;
+	local bool bOngoingChain;
+	
+	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(true);
+	History = `XCOMHISTORY;
+
+	foreach Missions(FacilityMission)
+	{
+		bOngoingChain = false;
+
+		foreach History.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
+		{
+			if (ChainState.GetMyTemplateName() == 'ActivityChain_DestroyFacility' && ChainState.PrimaryRegionRef == FacilityMission.Region)
+			{
+				bOngoingChain = true;
+				break;
+			}
+		}
+
+		if (!bOngoingChain)
+		{
+			return FacilityMission.Region;
+		}
+	}
+
+	return EmptyRef;
+}
 
 ///////////////
 /// Helpers ///
