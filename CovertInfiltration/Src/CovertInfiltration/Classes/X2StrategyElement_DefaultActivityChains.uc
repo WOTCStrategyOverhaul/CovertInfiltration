@@ -35,7 +35,6 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
 	
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
@@ -74,7 +73,6 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = AlwaysAvailable;
 	
 	Template.Stages.AddItem('Activity_CommanderSupply');
 	Template.Stages.AddItem('Activity_SupplyRaid');
@@ -92,7 +90,6 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverInformant');
 	Template.Stages.AddItem('Activity_CaptureInformant');
@@ -110,7 +107,6 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueScientist');
@@ -128,7 +124,6 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = AlwaysAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverPersonnel');
 	Template.Stages.AddItem('Activity_RescueEngineer');
@@ -158,6 +153,7 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 {
 	local XComGameState_ResistanceFaction FactionState;
 	local array<StateObjectReference> FactionRefs;
+	local StateObjectReference EmptyRef;
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
@@ -167,21 +163,17 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 		}
 	}
 
+	if (FactionRefs.Length == 0)
+	{
+		return EmptyRef;
+	}
+
 	return FactionRefs[`SYNC_RAND_STATIC(FactionRefs.Length)];
 }
 
 static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
 {
-	local StateObjectReference FactionRef;
-
-	FactionRef = ChooseExtraSoldierFaction(ChainState, NewGameState);
-
-	if (FactionRef.ObjectID > 0)
-	{
-		return true;
-	}
-
-	return false;
+	return ChooseExtraSoldierFaction(ChainState, NewGameState).ObjectID > 0;
 }
 
 static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
@@ -236,41 +228,10 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_GatherSupplies');
 
 	return Template;
-}
-
-static function bool IsGatherSuppliesChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
-{
-	local XComGameState_ActivityChain Chain;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local name InProgress;
-
-	foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', Chain)
-	{
-		if (!Chain.bEnded)
-		{
-			foreach class'XComGameState_ActivityChainSpawner'.default.SupplyChains(InProgress)
-			{
-				if (InProgress == Chain.GetMyTemplate().DataName)
-				{
-					return false;
-				}
-			}
-		}
-	}
-
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-
-	if (class'XComGameState_ActivityChainSpawner'.default.MinSupplies > XComHQ.GetSupplies())
-	{
-		return true;
-	}
-
-	return false;
 }
 
 static function X2DataTemplate CreateGatherIntelTemplate()
@@ -281,41 +242,10 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction;
 	Template.ChooseRegions = ChooseRandomContactedRegion;
-	Template.SpawnInDeck = false;
 
 	Template.Stages.AddItem('Activity_GatherIntel');
 
 	return Template;
-}
-
-static function bool IsGatherIntelChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
-{
-	local XComGameState_ActivityChain Chain;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local name InProgress;
-
-	foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', Chain)
-	{
-		if (!Chain.bEnded)
-		{
-			foreach class'XComGameState_ActivityChainSpawner'.default.IntelChains(InProgress)
-			{
-				if (InProgress == Chain.GetMyTemplate().DataName)
-				{
-					return false;
-				}
-			}
-		}
-	}
-
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-
-	if (class'XComGameState_ActivityChainSpawner'.default.MinSupplies > XComHQ.GetIntel())
-	{
-		return true;
-	}
-
-	return false;
 }
 
 static function X2DataTemplate CreateLandedUFOTemplate()
@@ -360,7 +290,6 @@ static function X2DataTemplate CreateHuntChosenTemplate()
 	
 	Template.ChooseFaction = ChooseMetFaction; // TODO: spawn immediately when contacting faction
 	Template.ChooseRegions = ChooseRandomContactedRegion; // TODO: choose region that the chosen is at
-	Template.SpawnInDeck = false;
 	
 	Template.Stages.AddItem('Activity_PrepareChosen');
 	Template.Stages.AddItem('Activity_RecoverChosen');
@@ -410,14 +339,9 @@ static function bool IsFacilityChainAvailable(XComGameState NewGameState, option
 // TODO: make something to remove this from the deck if these conditions are ever not met
 
 
-//////////////////////////////////////////////////////
-//                    Helpers                       //
-//////////////////////////////////////////////////////
-
-static function bool AlwaysAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
-{
-	return true;
-}
+///////////////
+/// Helpers ///
+///////////////
 
 static function StateObjectReference ChooseMetFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
 {

@@ -30,16 +30,9 @@ var const config array<int> WorkRequiredForSpawnVariance;
 var const config int MinCounterDarkEventDay;
 var const config int MaxCounterDarkEventDay;
 
-var config int MinSupplies;
-var config array<name> SupplyChains;
-var config int MinIntel;
-var config array<name> IntelChains;
-
 static function Update()
 {
 	local XComGameState_ActivityChainSpawner Spawner;
-	local XComGameState_HeadquartersResistance ResHQ;
-	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState NewGameState;
 	local UIStrategyMap StrategyMap;
 	local bool bDirty;
@@ -478,9 +471,4 @@ static function PrintDebugInfo()
 	`log("Next spawn at" @ Spawner.NextSpawnAt,, 'CI_ACSpawner');
 	`log("Cached work rate - " $ Spawner.CachedWorkRate,, 'CI_ACSpawner');
 	`log("Current work rate - " $ Spawner.GetCurrentWorkRate(),, 'CI_ACSpawner');
-}
-
-defaultproperties
-{
-
 }

@@ -208,7 +208,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		// First call callbacks on the stages
 		foreach StageRefs(ActivityRef)
 		{
-			ActivityState = XComGameState_Activity(NewGameState.GetGameStateForObjectID(ActivityRef.ObjectID));
+			ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityRef.ObjectID));
 			ActivityState.OnCleanupChain(NewGameState);
 		}
 
