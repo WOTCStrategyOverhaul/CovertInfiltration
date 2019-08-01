@@ -188,9 +188,9 @@ static function CreateWaitActivity (out array<X2DataTemplate> Templates)
 	Templates.AddItem(Activity);
 }
 
-//////////////////////////////////////////////////////
-//                    Helpers                       //
-//////////////////////////////////////////////////////
+///////////////
+/// Helpers ///
+///////////////
 
 static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional bool bPOI)
 {
@@ -348,7 +348,9 @@ static function int GetMissionDifficultyFromMonth (XComGameState_Activity Activi
 	return Difficulty;
 }
 
-// Copied from X2StrategyElement_DefaultCovertActions
+//////////////////////////////////////////////////////////
+/// Copied from X2StrategyElement_DefaultCovertActions ///
+//////////////////////////////////////////////////////////
 
 static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass)
 {
