@@ -16,7 +16,6 @@ var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
 var array<ChainDeckEntry> ChainDeck;
-var bool bDarkEventsActive;
 
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
@@ -72,22 +71,6 @@ static function Update()
 		
 		Spawner.SubmitWorkDone();
 		Spawner.SetCachedWorkRate();
-	}
-
-	// STEP 3: Check if it's time to spawn Dark Event chains
-    ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
-	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-
-	if (AlienHQ.ChosenDarkEvents.Length > 0 && Spawner.bDarkEventsActive)
-	{
-		bDirty = true;
-		Spawner.bDarkEventsActive = false;
-		Spawner.SpawnDarkEventChains(NewGameState);
-	}
-	
-	if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ResHQ.MonthIntervalEndTime, `STRATEGYRULES.GameTime))
-	{
-		Spawner.bDarkEventsActive = true;
 	}
 
 	if (bDirty)
@@ -209,41 +192,6 @@ function SetNextSpawnAt()
 ////////////////
 /// Spawning ///
 ////////////////
-/*
-function SpawnAction(XComGameState NewGameState)
-{
-	local X2CovertActionTemplate ActionTemplate;
-	local XComGameState_ResistanceFaction Faction;
-	local StateObjectReference NewActionRef;
-
-	ActionTemplate = PickActionToSpawn();
-	Faction = GetFactionForNewAction();
-
-	if (ActionTemplate == none)
-	{
-		`RedScreen("CI: Cannot spawn P1 actions - the template is none");
-		return;
-	}
-	if (Faction == none)
-	{
-		`RedScreen("CI: Cannot spawn P1 actions - no faction that met XCom");
-		return;
-	}
-
-	`log("All inputs ok, spawning action",, 'CI_ACSpawner');
-
-	// Spawn
-	Faction = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', Faction.ObjectID));
-	NewActionRef = Faction.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
-	Faction.CovertActions.AddItem(NewActionRef);
-	AddExpiration(NewGameState, NewActionRef);
-
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(NewActionRef, NewGameState);
-	class'X2EventManager'.static.GetEventManager().TriggerEvent('P1ActionSpawned', NewGameState.GetGameStateForObjectID(NewActionRef.ObjectID), self, NewGameState);
-
-	LastChainSpawned = ActionTemplate.DataName;
-}
-*/
 
 function SpawnActivityChain (XComGameState NewGameState)
 {
@@ -362,25 +310,37 @@ function name PickFromChainDeck()
 	return Pick;
 }
 
-function SpawnDarkEventChains (XComGameState NewGameState)
+///////////////////
+/// Dark events ///
+///////////////////
+
+// Called from X2EventListener_Infiltration::PostEndOfMonth
+static function SpawnCounterDarkEvents (XComGameState NewGameState)
 {
-	local X2StrategyElementTemplateManager Manager;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_DarkEvent DarkEventState;
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 	local StateObjectReference DarkEventRef;
-	local XComGameState_HeadquartersAlien AlienHQ;
 
-	ChainTemplate = X2ActivityChainTemplate(Manager.FindStrategyElementTemplate('ActivityChain_CounterDarkEvent'));
-
-	`log("Conditions good, spawning Dark Event chains",, 'CI_ACSpawner');
-
-	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_CounterDarkEvent'));
 
 	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
 	{
+		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
+		if (DarkEventState == none) continue;
+
+		// Chosen-initiated DEs cannot be countered
+		if (DarkEventState.bChosenActionEvent) continue;
+
 		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
 		ChainState.ChainObjectRefs.AddItem(DarkEventRef);
 		ChainState.StartNextStage(NewGameState);
+
+		// TODO: Set timeout
 	}
 }
 

@@ -57,6 +57,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
+	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -430,6 +431,17 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn PostEndOfMonth (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling post end of month");
+	class'XComGameState_ActivityChainSpawner'.static.SpawnCounterDarkEvents(NewGameState);
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	return ELR_NoInterrupt;
 }
 
