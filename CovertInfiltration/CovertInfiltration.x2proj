@@ -354,9 +354,6 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_MissionSiteInfiltration.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\XComGameState_PhaseOneActionsSpawner.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_SquadPickupPoint.uc">
       <SubType>Content</SubType>
     </Content>

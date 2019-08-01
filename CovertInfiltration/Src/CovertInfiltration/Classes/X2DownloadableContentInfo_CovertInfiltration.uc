@@ -370,22 +370,21 @@ exec function SpawnCovertAction(name TemplateName, optional name FactionTemplate
 	}
 }
 
-exec function PrintP1SpawnerDebugInfo()
+exec function PrintChainSpawnerDebugInfo()
 {
-	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ConsoleCommand("UnSuppress CI_P1Spawner");
 	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
 }
 
-exec function SpawnNextP1 ()
+exec function SpawnNextActivityChain ()
 {
-	local XComGameState_PhaseOneActionsSpawner Spawner;
+	local XComGameState_ActivityChainSpawner Spawner;
 	local XComGameState NewGameState;
 
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnNextP1");
-	Spawner = class'XComGameState_PhaseOneActionsSpawner'.static.GetSpawner();
-	Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.ModifyStateObject(class'XComGameState_PhaseOneActionsSpawner', Spawner.ObjectID));
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnNextActivityChain");
+	Spawner = class'XComGameState_ActivityChainSpawner'.static.GetSpawner();
+	Spawner = XComGameState_ActivityChainSpawner(NewGameState.ModifyStateObject(class'XComGameState_ActivityChainSpawner', Spawner.ObjectID));
 
-	Spawner.SpawnAction(NewGameState);
+	Spawner.SpawnActivityChain(NewGameState);
 	Spawner.ResetProgress();
 	Spawner.SetNextSpawnAt();
 
