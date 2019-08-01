@@ -40,6 +40,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
+	Template.Stages.AddItem('Activity_Wait');
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_CounterDarkEvent'); // TODO: Handle applying DE to mission
 	

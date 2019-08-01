@@ -26,6 +26,10 @@ var const config array<int> GameStartWork; // How much work to add when the camp
 var const config array<int> WorkRequiredForSpawn;
 var const config array<int> WorkRequiredForSpawnVariance;
 
+// These 2 control the interval in which the counter-DE ops will pop
+var const config int MinCounterDarkEventDay;
+var const config int MaxCounterDarkEventDay;
+
 var config int MinSupplies;
 var config array<name> SupplyChains;
 var config int MinIntel;
@@ -319,14 +323,23 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_HeadquartersAlien AlienHQ;
+	
 	local XComGameState_DarkEvent DarkEventState;
+	local StateObjectReference DarkEventRef;
+	
+	local array<XComGameState_ActivityChain> SpawnedChains;
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
-	local StateObjectReference DarkEventRef;
+
+	local int SecondsDelay, SecondsDuration, WindowDuration, SecondsChainDelay;
+	local XComGameState_Activity_Wait WaitActivity;
+	local int i;
 
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_CounterDarkEvent'));
+
+	// Step 1: spawn the chains
 
 	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
 	{
@@ -340,8 +353,70 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		ChainState.ChainObjectRefs.AddItem(DarkEventRef);
 		ChainState.StartNextStage(NewGameState);
 
-		// TODO: Set timeout
+		SpawnedChains.AddItem(ChainState);
 	}
+
+	// Step 2: spread them randomly over the beginning of the month
+
+	GetCounterDarkEventPeriodStartAndDuration(SecondsDelay, SecondsDuration);
+	WindowDuration = SpawnedChains.Length / SecondsDuration;
+	SpawnedChains = SortChainsRandomly(SpawnedChains);
+
+	foreach SpawnedChains(ChainState, i)
+	{
+		WaitActivity = XComGameState_Activity_Wait(ChainState.GetActivityAtIndex(0));
+		// No need to call NewGameState.ModifyStateObject here as the object was just created above
+
+		if (WaitActivity == none)
+		{
+			`RedScreen("Counter DE chain should start with XComGameState_Activity_Wait so that it can be delayed by the spawner");
+			continue;
+		}
+
+		SecondsChainDelay =
+			SecondsDelay + // The global delay for all counter DE chains
+			i * WindowDuration + // Account for previous chains
+			`SYNC_RAND_STATIC(WindowDuration); // Pop somewhere randomly within our window
+
+		WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
+		class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsChainDelay);
+	}
+}
+
+static protected function array<XComGameState_ActivityChain> SortChainsRandomly (array<XComGameState_ActivityChain> Chains)
+{
+	local array<XComGameState_ActivityChain> Result;
+	local XComGameState_ActivityChain Chain;
+
+	while (Chains.Length > 0)
+	{
+		Chain = Chains[`SYNC_RAND_STATIC(Chains.Length)];
+
+		Chains.RemoveItem(Chain);
+		Result.AddItem(Chain);
+	}
+
+	return Result;
+}
+
+static protected function GetCounterDarkEventPeriodStartAndDuration (out int SecondsDelay, out int SecondsDuration)
+{
+	local int Min, Max;
+
+	Min = default.MinCounterDarkEventDay;
+	Max = default.MaxCounterDarkEventDay;
+
+	// Make sure that the values are sensible
+	if (Min < 0) Min = 0;
+	if (Max < Min) Max = Min; // This will probably won't work properly -.-
+
+	// Convert to seconds
+	Min *= 86400;
+	Max *= 86400;
+
+	// Return
+	SecondsDelay = Min;
+	SecondsDuration = Max - Min;
 }
 
 ///////////////////////////

@@ -301,12 +301,30 @@ function bool IsCompleted ()
 
 function XComGameState_Activity GetCurrentActivity ()
 {
-	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[iCurrentStage].ObjectID));
+	if (!HasStarted() || bEnded)
+	{
+		// Prevent warnings from GetActivityAtIndex()
+		return none;
+	}
+
+	return GetActivityAtIndex(iCurrentStage);
 }
 
 function XComGameState_Activity GetLastActivity ()
 {
-	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[StageRefs.Length - 1].ObjectID));
+	return GetActivityAtIndex(StageRefs.Length - 1);
+}
+
+function XComGameState_Activity GetActivityAtIndex (int i)
+{
+	if (i < 0 || i > StageRefs.Length - 1)
+	{
+		`CI_Warn("GetActivityAtIndex called with invalid index");
+		ScriptTrace();
+		return none;
+	}
+
+	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(StageRefs[i].ObjectID));
 }
 
 function XComGameState_ResistanceFaction GetFaction()
