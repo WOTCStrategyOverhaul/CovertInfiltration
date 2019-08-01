@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
-//  PURPOSE: Replacement for base game MissionCalendar which instead spawns CAs based on
-///          "work" done by XCom (base) and contacted regions and relays built (bonus)
+//  AUTHOR:  Xymanek and NotSoLoneWolf
+//  PURPOSE: Replacement for base game MissionCalendar which instead spawns activity 
+//           chains based on "work" done by XCom (base) and contacted regions
+//           and relays built (bonus)
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ static function Update()
 	// STEP 1: we check if we are due spawning an action at CachedWorkRate
 	if (Spawner.ShouldSpawnChain() && StrategyMap != none && StrategyMap.m_eUIState != eSMS_Flight)
 	{
-		`log("Enough work for P1, starting spawning",, 'CI_ACSpawner');
+		`CI_Tarce("Enough work for activity chain, starting spawning");
 		bDirty = true;
 		
 		Spawner.SpawnActivityChain(NewGameState);
@@ -63,7 +64,7 @@ static function Update()
 	// STEP 2: See if we need to adjust current work rate
 	if (Spawner.CachedWorkRate != GetCurrentWorkRate())
 	{
-		`log("Cached work rate (" $ Spawner.CachedWorkRate $ ") doesn't match current, submitting work done and caching new work rate",, 'CI_ACSpawner');
+		`CI_Tarce("Cached work rate (" $ Spawner.CachedWorkRate $ ") doesn't match current, submitting work done and caching new work rate");
 		bDirty = true;
 		
 		Spawner.SubmitWorkDone();
@@ -95,7 +96,7 @@ function bool ShouldSpawnChain()
 
 function ResetProgress()
 {
-	`log("Reset progress for P1",, 'CI_ACSpawner');
+	`CI_Tarce("Reset progress for next chain");
 
 	PreviousWork = 0;
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
@@ -106,7 +107,7 @@ function SubmitWorkDone()
 	PreviousWork += GetWorkDoneInCurrentPeriod();
 	PreviousWorkSubmittedAt = `STRATEGYRULES.GameTime;
 
-	`log("Submitted work done, now" $ PreviousWork,, 'CI_ACSpawner');
+	`CI_Tarce("Submitted work done, now" $ PreviousWork);
 }
 
 function float GetWorkDoneInCurrentPeriod()
@@ -136,7 +137,7 @@ static function int GetCurrentWorkRate()
 function SetCachedWorkRate()
 {
 	CachedWorkRate = GetCurrentWorkRate();
-	`log("New cached work rate - " $ CachedWorkRate,, 'CI_ACSpawner');
+	`CI_Tarce("New cached work rate - " $ CachedWorkRate);
 }
 
 static function GetNumContactsAndRelays(out int Contacts, out int Relays)
@@ -183,7 +184,7 @@ function SetNextSpawnAt()
 
 	NextSpawnAt = WorkRequired + Variance;
 
-	`log("Next chain at" @ NextSpawnAt @ "work",, 'CI_ACSpawner');
+	`CI_Tarce("Next chain at" @ NextSpawnAt @ "work");
 }
 
 ////////////////
@@ -203,7 +204,7 @@ function SpawnActivityChain (XComGameState NewGameState)
 		return;
 	}
 
-	`log("All inputs ok, spawning chain",, 'CI_ACSpawner');
+	`CI_Trace("All inputs ok, spawning chain");
 
 	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
 	ChainState.StartNextStage(NewGameState);
@@ -467,8 +468,8 @@ static function PrintDebugInfo()
 		return;
 	}
 
-	`log("Submitted work - " $ Spawner.PreviousWork,, 'CI_ACSpawner'); // TODO: Figure out how to concatenate TDateTime
-	`log("Next spawn at" @ Spawner.NextSpawnAt,, 'CI_ACSpawner');
-	`log("Cached work rate - " $ Spawner.CachedWorkRate,, 'CI_ACSpawner');
-	`log("Current work rate - " $ Spawner.GetCurrentWorkRate(),, 'CI_ACSpawner');
+	`CI_Trace("Submitted work - " $ Spawner.PreviousWork); // TODO: Figure out how to concatenate TDateTime
+	`CI_Trace("Next spawn at" @ Spawner.NextSpawnAt);
+	`CI_Trace("Cached work rate - " $ Spawner.CachedWorkRate);
+	`CI_Trace("Current work rate - " $ Spawner.GetCurrentWorkRate());
 }
