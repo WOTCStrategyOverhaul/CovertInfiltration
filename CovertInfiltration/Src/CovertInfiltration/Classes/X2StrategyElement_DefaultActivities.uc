@@ -13,20 +13,20 @@ class X2StrategyElement_DefaultActivities extends X2StrategyElement;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
-	local string Guerilla, Council, SupplyRaid, SupplyLift, Radio, Advent, Resistance, Rescue, Ambush, DarkEvent, Chosen, Facility;
+	local string Guerilla, Council, SupplyRaid, SupplyLift, Radio, Advent, Resistance, Rescue, Ambush, DarkEvent/*, Chosen, Facility*/;
 
 	Guerilla = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	Council = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	SupplyRaid = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid";
 	Radio = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	Advent = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
-	Facility = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Alien";
 	SupplyLift = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
 	Resistance = "img:///UILibrary_XPACK_Common.MissionIcon_ResOps";
 	Rescue = "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier";
 	Ambush = "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush";
 	DarkEvent = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
-	Chosen = "img:///UILibrary_XPACK_Common.MissionIcon_ChosenStronghold";
+	//Facility = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Alien";
+	//Chosen = "img:///UILibrary_XPACK_Common.MissionIcon_ChosenStronghold";
 	
 	// Infiltrations
 	CreateStandardInfilActivity(Templates, "JailbreakSoldier", "RescueOps", Rescue, 'Reward_SoldierCaptured');
