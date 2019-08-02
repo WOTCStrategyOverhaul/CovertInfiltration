@@ -149,7 +149,7 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	return Template;
 }
 
-static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
+static function StateObjectReference FindFactionForExtraSoldier (XComGameState NewGameState)
 {
 	local XComGameState_ResistanceFaction FactionState;
 	local array<StateObjectReference> FactionRefs;
@@ -171,9 +171,14 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 	return FactionRefs[`SYNC_RAND_STATIC(FactionRefs.Length)];
 }
 
-static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
 {
-	return ChooseExtraSoldierFaction(ChainState, NewGameState).ObjectID > 0;
+	return FindFactionForExtraSoldier(NewGameState);
+}
+
+static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState)
+{
+	return FindFactionForExtraSoldier(NewGameState).ObjectID > 0;
 }
 
 static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
@@ -193,7 +198,7 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	return Template;
 }
 
-static function bool IsCapturedSoldierChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function bool IsCapturedSoldierChainAvailable(XComGameState NewGameState)
 {
 	return class'X2StrategyElement_DefaultRewards'.static.IsCapturedSoldierRewardAvailable(NewGameState);
 }
@@ -215,7 +220,7 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	return Template;
 }
 
-static function bool IsChosenCapturedSoldierChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function bool IsChosenCapturedSoldierChainAvailable(XComGameState NewGameState)
 {
 	return class'X2StrategyElement_XpackRewards'.static.IsChosenCapturedSoldierRewardAvailable(NewGameState);
 }
@@ -267,7 +272,7 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 	return Template;
 }
 
-static function bool IsUFOChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function bool IsUFOChainAvailable(XComGameState NewGameState)
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
 
@@ -327,7 +332,7 @@ static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, ou
 	PrimaryRegionRef = FindRegionForFacilityChain();
 }
 
-static function bool IsFacilityChainAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function bool IsFacilityChainAvailable(XComGameState NewGameState)
 {
 	return FindRegionForFacilityChain().ObjectID > 0;
 }

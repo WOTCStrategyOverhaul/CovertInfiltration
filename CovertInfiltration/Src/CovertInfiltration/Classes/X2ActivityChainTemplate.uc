@@ -15,13 +15,10 @@ var localized string Description;
 // Names of X2ActivityTemplates that act as stages for this chain
 var array<name> Stages;
 
-
 var bool SpawnInDeck; // If true, spawned automatically using the deck system
 var int NumInDeck; // The larger the number, the more common this chain is
-var int BonusNumInDeck; // Additional entries that will be added if conditions are met
 
-delegate bool DeckReq(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState); // Conditions that must be met for the chain to be added to the deck
-delegate bool BonusDeckReq(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState); // Conditions that must be met for extra entries to be added to the deck
+delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be met for the chain to be added to the deck
 
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
@@ -73,7 +70,7 @@ function bool ValidateTemplate (out string strError)
 /// Defaults ///
 ////////////////
 
-static function bool AlwaysAvailable(XComGameState NewGameState, optional XComGameState_ActivityChain ChainState)
+static function bool AlwaysAvailable(XComGameState NewGameState)
 {
 	return true;
 }

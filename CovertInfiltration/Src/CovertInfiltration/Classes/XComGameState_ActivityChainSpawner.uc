@@ -16,8 +16,6 @@ var protectedwrite TDateTime PreviousWorkSubmittedAt;
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
 
-var array<ChainDeckEntry> ChainDeck;
-
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
@@ -196,11 +194,12 @@ function SpawnActivityChain (XComGameState NewGameState)
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 
+	BuildChainDeck();
 	ChainTemplate = PickChainToSpawn(NewGameState);
 	
 	if (ChainTemplate == none)
 	{
-		`RedScreen("CI: Cannot spawn chain - the template is none");
+		`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
 		return;
 	}
 
@@ -210,102 +209,52 @@ function SpawnActivityChain (XComGameState NewGameState)
 	ChainState.StartNextStage(NewGameState);
 }
 
-function X2ActivityChainTemplate PickChainToSpawn(XComGameState NewGameState)
+static protected function BuildChainDeck ()
 {
-	local X2StrategyElementTemplateManager Manager;
-	local name PickedChainName;
-
-	if (ChainDeck.Length == 0)
-	{
-		RegenerateChainDeck(NewGameState);
-	}
-
-	PickedChainName = PickFromChainDeck();
-	
-	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	return X2ActivityChainTemplate(Manager.FindStrategyElementTemplate(PickedChainName));
-}
-
-function RegenerateChainDeck(XComGameState NewGameState)
-{
-	local X2StrategyElementTemplateManager StratMgr;
-	local array<X2StrategyElementTemplate> AllChains;
-	local X2StrategyElementTemplate StratTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityChainTemplate ChainTemplate;
-	local ChainDeckEntry DeckEntry;
+	local X2DataTemplate DataTemplate;
+	local X2CardManager CardManager;
 
-	`log("Regenerating Chain Deck from a length of " $ string(ChainDeck.Length),, 'CI_ACSpawner');
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
 
-	ChainDeck.Length = 0;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	AllChains = StratMgr.GetAllTemplatesOfClass(class'X2ActivityChainTemplate');
-
-	foreach AllChains(StratTemplate)
+	foreach TemplateManager.IterateTemplates(DataTemplate)
 	{
-		ChainTemplate = X2ActivityChainTemplate(StratTemplate);
-		`log("Evaluating chain " $ string(ChainTemplate.DataName),, 'CI_ACSpawner');
+		ChainTemplate = X2ActivityChainTemplate(DataTemplate);
+		if (ChainTemplate == none) continue;
+
 		if (ChainTemplate.SpawnInDeck)
 		{
-			if (ChainTemplate.DeckReq(NewGameState))
-			{
-				`log("Adding chain " $ string(ChainTemplate.DataName) $ " to deck",, 'CI_ACSpawner');
-				DeckEntry.ChainName = ChainTemplate.DataName;
-				DeckEntry.ChainTemplate = ChainTemplate;
-				DeckEntry.NumInDeck = ChainTemplate.NumInDeck;
-				ChainDeck.AddItem(DeckEntry);
-
-				if (ChainTemplate.BonusDeckReq(NewGameState))
-				{
-					ChainDeck[ChainDeck.Length - 1].NumInDeck += ChainTemplate.BonusNumInDeck;
-				}
-			}
-			else
-			{
-				`log("Failed to add chain " $ string(ChainTemplate.DataName) $ " to deck",, 'CI_ACSpawner');
-			}
+			CardManager.AddCardToDeck('ActivityChainSpawner', string(ChainTemplate.DataName), ChainTemplate.NumInDeck);
 		}
 	}
 }
 
-function name PickFromChainDeck()
+static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState)
 {
-	local ChainDeckEntry Entry;
-	local array<name> ChainList;
-	local name Pick;
-	local int x;
-	
-	if (ChainDeck.Length == 0)
-	{
-		`RedScreen("CI: ChainDeck is empty after regeneration");
-		return '';
-	}
-	
-	foreach ChainDeck(Entry)
-	{
-		for (x = 0; x < Entry.NumInDeck; x++)
-		{
-			ChainList.AddItem(Entry.ChainName);
-		}
-	}
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityChainTemplate ChainTemplate;
+	local X2CardManager CardManager;
+	local array<string> CardLabels;
+	local string Card;
 
-	Pick = ChainList[`SYNC_RAND_STATIC(ChainList.Length)];
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
 
-	foreach ChainDeck(Entry)
+	CardManager.GetAllCardsInDeck('ActivityChainSpawner', CardLabels);
+	foreach CardLabels(Card)
 	{
-		if (Entry.ChainName == Pick)
-		{
-			Entry.NumInDeck -= 1;
+		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(name(Card)));
+		if (ChainTemplate == none) continue;
+		
+		if (!ChainTemplate.SpawnInDeck) continue;
+		if (!ChainTemplate.DeckReq(NewGameState)) continue;
 
-			if (Entry.NumInDeck <= 0)
-			{
-				ChainDeck.RemoveItem(Entry);
-			}
-		}
+		return ChainTemplate;
 	}
 
-	return Pick;
+	return none;
 }
 
 ///////////////////
