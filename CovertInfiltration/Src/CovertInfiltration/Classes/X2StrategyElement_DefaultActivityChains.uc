@@ -41,7 +41,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 
 	Template.Stages.AddItem('Activity_Wait');
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
-	Template.Stages.AddItem('Activity_CounterDarkEvent'); // TODO: Handle applying DE to mission
+	Template.Stages.AddItem('Activity_CounterDarkEvent');
 	
 	return Template;
 }

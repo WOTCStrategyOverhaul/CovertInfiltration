@@ -40,7 +40,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardInfilActivity(Templates, "RecoverUFO", "ResOps", Resistance, 'Reward_None', true);
 	CreateStandardInfilActivity(Templates, "CommanderSupply", "GorillaOps", Guerilla, 'Reward_None', true);
 	//CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None', true);
-	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_None', true, true);
 	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_None');
 	
 	CreateStandardDVIPActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Datapad', 'Reward_Intel');
@@ -192,7 +192,7 @@ static function CreateWaitActivity (out array<X2DataTemplate> Templates)
 /// Helpers ///
 ///////////////
 
-static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional bool bPOI)
+static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional bool bPOI, optional bool bDarkEvent)
 {
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
@@ -210,8 +210,8 @@ static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
 	Activity.UIButtonIcon = MissionIcon;
 
-	if (bPOI)
-		Activity.OnSuccess = OnSuccessPOI;
+	if (bPOI) Activity.OnSuccess = OnSuccessPOI;
+	if (bDarkEvent) Activity.PreMissionSetup = PreMissionSetup_DE;
 	
 	Activity.MissionRewards.AddItem(RewardName);
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -346,6 +346,20 @@ static function int GetMissionDifficultyFromMonth (XComGameState_Activity Activi
 						class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
 
 	return Difficulty;
+}
+
+static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_DarkEvent DarkEventState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
+
+	if (DarkEventState != none)
+	{
+		MissionState.DarkEvent = DarkEventState.GetReference();
+	}
 }
 
 //////////////////////////////////////////////////////////

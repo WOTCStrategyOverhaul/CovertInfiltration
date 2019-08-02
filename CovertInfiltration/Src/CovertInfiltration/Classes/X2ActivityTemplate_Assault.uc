@@ -44,6 +44,11 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
 	ActivityState.PrimaryObjectRef = MissionState.GetReference();
 	
+	if (ActivityTemplate.PreMissionSetup != none)
+	{
+		ActivityTemplate.PreMissionSetup(NewGameState, ActivityState);
+	}
+
 	MissionState.BuildMission(
 		MissionSource, Region.GetRandom2DLocationInRegion(), Region.GetReference(), InitRewardsStates(NewGameState, ActivityState), true /*bAvailable*/, 
 		ActivityTemplate.bExpires /* bExpiring */, -1 /* iHours */, ActivityTemplate.RollExpiry() /* iSeconds */,
