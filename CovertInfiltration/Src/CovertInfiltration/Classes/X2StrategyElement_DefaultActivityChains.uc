@@ -336,7 +336,6 @@ static function bool IsFacilityChainAvailable(XComGameState NewGameState)
 {
 	return FindRegionForFacilityChain().ObjectID > 0;
 }
-// TODO: make something to remove this from the deck if these conditions are ever not met
 
 static function StateObjectReference FindRegionForFacilityChain ()
 {
