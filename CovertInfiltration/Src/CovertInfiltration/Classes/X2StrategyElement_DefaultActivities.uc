@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
+//  AUTHOR:  Xymanek and NotSoLoneWolf
 //  PURPOSE: Activites that are introduced by this mod. Note that many activities need
 //           multiple templates (eg. X2ActivityTemplate + X2CovertActionTemplate) so
 //           the templates array is passed to individual Create[...] methods, instead of
@@ -47,10 +47,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_None', 'Reward_FacilityLead');
 
 	// Assaults
-	// TODO: config-ize the expirations
-	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');//, true, 24, 4);
-	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None');//, true, 24, 4);
-	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');//, true, 36, 6);
+	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');
+	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
 

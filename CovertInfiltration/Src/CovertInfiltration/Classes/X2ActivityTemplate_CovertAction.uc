@@ -9,6 +9,7 @@ class X2ActivityTemplate_CovertAction extends X2ActivityTemplate;
 
 var name CovertActionName;
 
+// Expiry in hours
 var config bool bExpires;
 var config int ExpirationBaseTime;
 var config int ExpirationVariance;
@@ -65,7 +66,7 @@ static function AddExpiration (XComGameState NewGameState, XComGameState_Activit
 		ActionExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
 		ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
 
-		class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, ActivityTemplate.ExpirationBaseTime * 24 + CreateExpirationVariance(ActivityTemplate));
+		class'X2StrategyGameRulesetDataStructures'.static.AddHours(Expiration, ActivityTemplate.ExpirationBaseTime + CreateExpirationVariance(ActivityTemplate));
 
 		ActionExpirationManager.AddActionExpirationInfo(ActivityState.PrimaryObjectRef, Expiration, !ActivityTemplate.ExpirationNotBlocksCleanup);
 	}
