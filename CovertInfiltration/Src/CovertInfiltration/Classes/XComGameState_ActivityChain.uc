@@ -285,6 +285,24 @@ function CounterChainDarkEvent(XComGameState NewGameState)
 	AlienHQ.CancelDarkEvent(NewGameState, DarkEventState.GetReference());
 }
 
+function PreventChainDarkEventFromCompleting (XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+	
+	DarkEventState = GetChainDarkEvent();
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+	DarkEventState.bTemporaryPreventCompletion = true;
+}
+
+function RestoreChainDarkEventCompleting (XComGameState NewGameState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+	
+	DarkEventState = GetChainDarkEvent();
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+	DarkEventState.bTemporaryPreventCompletion = false;
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

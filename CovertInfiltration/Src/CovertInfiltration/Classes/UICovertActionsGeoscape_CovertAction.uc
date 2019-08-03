@@ -13,7 +13,11 @@ simulated function InitCovertAction(XComGameState_CovertAction InAction)
 {
 	Action = InAction;
 	InitListItem(GetActionLocString());
-	NeedsAttention(class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action));
+
+	NeedsAttention(
+		class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(InAction) != none ||
+		class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(InAction) != none
+	);
 }
 
 simulated function String GetActionLocString()

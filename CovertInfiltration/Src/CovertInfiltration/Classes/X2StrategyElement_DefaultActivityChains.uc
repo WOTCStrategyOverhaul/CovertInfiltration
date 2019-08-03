@@ -48,7 +48,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 
 static function SetupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	ChainState.PauseChainDarkEvent(NewGameState);
+	ChainState.PreventChainDarkEventFromCompleting(NewGameState);
 }
 
 static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
@@ -59,7 +59,7 @@ static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_
 	}
 	else
 	{
-		ChainState.ResumeChainDarkEvent(NewGameState);
+		ChainState.RestoreChainDarkEventCompleting(NewGameState);
 	}
 }
 

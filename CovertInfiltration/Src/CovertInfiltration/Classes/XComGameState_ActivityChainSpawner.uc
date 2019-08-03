@@ -251,6 +251,8 @@ static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameStat
 		if (!ChainTemplate.SpawnInDeck) continue;
 		if (!ChainTemplate.DeckReq(NewGameState)) continue;
 
+		CardManager.MarkCardUsed('ActivityChainSpawner', Card);
+
 		return ChainTemplate;
 	}
 
@@ -267,6 +269,7 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_HeadquartersAlien AlienHQ;
 	
+	local array<StateObjectReference> ChainObjectRefs;
 	local XComGameState_DarkEvent DarkEventState;
 	local StateObjectReference DarkEventRef;
 	
@@ -292,17 +295,22 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		// Chosen-initiated DEs cannot be countered
 		if (DarkEventState.bChosenActionEvent) continue;
 
-		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
-		ChainState.ChainObjectRefs.AddItem(DarkEventRef);
+		ChainObjectRefs.Length = 0;
+		ChainObjectRefs.AddItem(DarkEventRef);
+
+		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
 		ChainState.StartNextStage(NewGameState);
 
 		SpawnedChains.AddItem(ChainState);
 	}
 
+	// If we didn't manage to make any chains, don't bother with the timing
+	if (SpawnedChains.Length == 0) return;
+
 	// Step 2: spread them randomly over the beginning of the month
 
 	GetCounterDarkEventPeriodStartAndDuration(SecondsDelay, SecondsDuration);
-	WindowDuration = SpawnedChains.Length / SecondsDuration;
+	WindowDuration = SecondsDuration / SpawnedChains.Length;
 	SpawnedChains = SortChainsRandomly(SpawnedChains);
 
 	foreach SpawnedChains(ChainState, i)

@@ -28,11 +28,12 @@ delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity Activ
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);
 delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
 
-function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState)
+function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState, optional array<StateObjectReference> ChainObjectRefs)
 {
 	local XComGameState_ActivityChain ActivityState;
 
 	ActivityState = XComGameState_ActivityChain(NewGameState.CreateNewStateObject(class'XComGameState_ActivityChain', self));
+	ActivityState.ChainObjectRefs = ChainObjectRefs;
 	ActivityState.SetupChain(NewGameState);
 
 	return ActivityState;

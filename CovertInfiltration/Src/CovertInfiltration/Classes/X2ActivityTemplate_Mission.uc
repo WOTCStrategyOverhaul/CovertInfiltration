@@ -128,6 +128,11 @@ static function DefaultOverrideStrategyMapIconTooltip (XComGameState_Activity Ac
 	Title = MissionSite.GetMissionObjectiveText();
 }
 
+static function bool DefaultShouldProgressChain (XComGameState_Activity ActivityState)
+{
+	return ActivityState.CompletionStatus == eActivityCompletion_Success || ActivityState.CompletionStatus == eActivityCompletion_PartialSuccess;
+}
+
 defaultproperties
 {
 	InitializeMissionRewards = GenericInitializeMissionRewards
@@ -138,5 +143,6 @@ defaultproperties
 	OnSuccess = GenericOnSuccess
 	OnFailure = GenericOnFailure
 
+	ShouldProgressChain = DefaultShouldProgressChain
 	ScreenClass = class'UIMission_Council'
 }

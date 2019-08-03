@@ -10,7 +10,7 @@ function UpdateGameBoard ()
 	super.UpdateGameBoard();
 
 	if (
-		IsCurrentStage() &&
+		IsOngoing() &&
 		ProgressAt.m_iYear >= class'X2StrategyGameRulesetDataStructures'.default.START_YEAR && // The value was set
 		class'X2StrategyGameRulesetDataStructures'.static.LessThan(ProgressAt, GetCurrentTime())
 	)

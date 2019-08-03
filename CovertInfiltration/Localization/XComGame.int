@@ -81,12 +81,12 @@ ActionPostNarrative="I'm glad to see the operation was a success, Commander. Our
 
 [CovertActionNarrative_PrepareCounterDE X2CovertActionNarrativeTemplate]
 ActionName="Identify Critical Project Data"
-ActionPreNarrative="We know the aliens are working on their <DarkEventName> project, and there must be a vulnerability somewhere. All we need to do is find it."
-ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <DarkEventName>."
+ActionPreNarrative="We know the aliens are working on their <XGParam:StrValue4/> project, and there must be a vulnerability somewhere. All we need to do is find it."
+ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <XGParam:StrValue4/>."
 
 [CovertActionNarrative_CounterDarkEventInfil X2CovertActionNarrativeTemplate]
 ActionName="Eliminate Critical Datalink"
-ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <DarkEventName> project. If we collapse this data relay, we have a chance to stop their progress."
+ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <XGParam:StrValue4/> project. If we collapse this data relay, we have a chance to stop their progress."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RecoverPersonnelInfil X2CovertActionNarrativeTemplate]
