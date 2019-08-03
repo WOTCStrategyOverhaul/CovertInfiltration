@@ -327,10 +327,16 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_ActivityChain.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_ActivityChainSpawner.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_Infiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_Wait.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CIReinforcementsManager.uc">
@@ -346,9 +352,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_MissionSiteInfiltration.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\XComGameState_PhaseOneActionsSpawner.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_SquadPickupPoint.uc">

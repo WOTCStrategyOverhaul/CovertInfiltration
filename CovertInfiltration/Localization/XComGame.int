@@ -59,54 +59,90 @@ FilledText="%UNITNAME is assisting the Resistance in organization and logistics,
 EmptyText="SOLDIER"
 BonusText="INFILTRATING"
 
-[CovertActionNarrative_NeutralizeCommanderInfil X2CovertActionNarrativeTemplate]
-ActionName="Neutralize ADVENT Commander"
-ActionPreNarrative="SHOO the bad guy"
+[CovertActionNarrative_CommanderSupplyInfil X2CovertActionNarrativeTemplate]
+ActionName="Neutralize Logistics Officer"
+ActionPreNarrative="Resistance operatives have identified a high-level target. This commander is in charge of logistics for the entire region, and we know where he is."
+ActionPostNarrative="Tygan has cracked the officer's neural implant and recovered fragmentary details of a vulnerable supply line. We have work to do."
 
-[ActivityLeadItem X2QuestItemTemplate]
-FriendlyName="Activity Lead"
-FriendlyNamePlural="Activity Lead"
-LootTooltip=""
+[CovertActionNarrative_SupplyRaidInfil X2CovertActionNarrativeTemplate]
+ActionName="Secure ADVENT Materials"
+ActionPreNarrative="This location is host to an ADVENT supply convoy. Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
+ActionPostNarrative="A job well done, Commander. I trust you will put your spoils of war to good use."
 
-[ActivityLeadHack X2QuestItemTemplate]
-FriendlyName="Activity Lead"
-FriendlyNamePlural="Activity Lead"
-LootTooltip=""
+[CovertActionNarrative_RecoverInformantInfil X2CovertActionNarrativeTemplate]
+ActionName="Recover VIP Schedule"
+ActionPreNarrative="The Resistance has learned of a civilian ADVENT collaborator operating in this region. We should bring them in for questioning, but first they need to be found."
+ActionPostNarrative="The collaborator's whereabouts have been safely recovered. Let's go pay them a visit."
 
-[PersonnelLeadItem X2QuestItemTemplate]
-FriendlyName="Personnel Lead"
-FriendlyNamePlural="Personnel Lead"
-LootTooltip=""
+[CovertActionNarrative_CaptureInformantInfil X2CovertActionNarrativeTemplate]
+ActionName="Capture ADVENT Collaborator"
+ActionPreNarrative="Unlike ADVENT officers, civilian traitors will talk. We know where the target will be in a few days - it's time for a kidnap job."
+ActionPostNarrative="I'm glad to see the operation was a success, Commander. Our mutual friend is being questioned as we speak."
 
-[PersonnelLeadHack X2QuestItemTemplate]
-FriendlyName="Personnel Lead"
-FriendlyNamePlural="Personnel Lead"
-LootTooltip=""
+[CovertActionNarrative_PrepareCounterDE X2CovertActionNarrativeTemplate]
+ActionName="Identify Critical Project Data"
+ActionPreNarrative="We know the aliens are working on their <XGParam:StrValue4/> project, and there must be a vulnerability somewhere. All we need to do is find it."
+ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <XGParam:StrValue4/>."
 
-[TargetLeadItem X2QuestItemTemplate]
-FriendlyName="Target Lead"
-FriendlyNamePlural="Target Lead"
-LootTooltip=""
+[CovertActionNarrative_CounterDarkEventInfil X2CovertActionNarrativeTemplate]
+ActionName="Eliminate Critical Datalink"
+ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <XGParam:StrValue4/> project. If we collapse this data relay, we have a chance to stop their progress."
+ActionPostNarrative=""
 
-[TargetLeadHack X2QuestItemTemplate]
-FriendlyName="Target Lead"
-FriendlyNamePlural="Target Lead"
-LootTooltip=""
+[CovertActionNarrative_RecoverPersonnelInfil X2CovertActionNarrativeTemplate]
+ActionName="Breach ADVENT Arrest Database"
+ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the academic community in this region. If we hit this data vault, we can find out where they went."
+ActionPostNarrative=""
 
-[CovertActionNarrative_RescueSoldier_Skirmishers X2CovertActionNarrativeTemplate]
-ActionName="Personnel Extraction"
-ActionPreNarrative="My kind still hold great knowledge of <XGParam:StrValue1/!ChosenName/>'s facilities and operations. Together, I am confident we will find your comrade."
-ActionPostNarrative="Your ally lives, and their prison is known to us. We must move quickly to ensure their rescue."
+[CovertActionNarrative_RescueScientistInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Scientist"
+ActionPreNarrative="The breach of the data vault has revealed that one of ADVENT's recent arrests posesses high scientific knowledge and is currently underdefended. It would be foolish to refuse this invitation."
+ActionPostNarrative=""
 
-[CovertActionNarrative_RescueSoldier_Reapers X2CovertActionNarrativeTemplate]
-ActionName="Personnel Extraction"
-ActionPreNarrative="My people were born to hunt, to track and pursue our prey undetected. Send a few of your soldiers to help and I'm sure we'll have no problem figuring out where <XGParam:StrValue1/!ChosenName/> took your fallen hero."
-ActionPostNarrative="We found 'em, just like I expected. Now you just need to send in some of your heavies to pull off the rescue."
+[CovertActionNarrative_RescueEngineerInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Engineer"
+ActionPreNarrative="Our newfound access to the ADVENT database shows that a recent detainee has extensive experience in the technical arts. Not to mention they're sitting in a blindspot of ADVENT's security grid. Let's go get 'em."
+ActionPostNarrative=""
 
-[CovertActionNarrative_RescueSoldier_Templars X2CovertActionNarrativeTemplate]
-ActionName="Personnel Extraction"
-ActionPreNarrative="Blessed with the Earth's power, my followers have a gift for finding that which cannot be found. Together, we will find this lost soul, no matter where <XGParam:StrValue1/!ChosenName/> has hidden them."
-ActionPostNarrative="Your friend has been revealed, and they await your rescue."
+[CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
+ActionName="Consult the Faction"
+ActionPreNarrative="We could use additional field support from the <FactionName>. If we send a delegation, they may be willing to commit another soldier to XCOM's ranks."
+ActionPostNarrative="Good news, the <FactionName> has agreed with our proposal. Bad news, the soldier pledged to our cause has recently been captured. If we want their support, we'll have to stage a jailbreak."
+
+[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Captured Soldier"
+ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the enemy recently, and we know where they're being held. It's time for a jailbreak."
+ActionPostNarrative=""
+
+[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Captured Soldier"
+ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the Chosen recently, and we know where they're being held. It's time for a jailbreak."
+ActionPostNarrative=""
+
+[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+ActionName="Rescue Captured Faction Soldier"
+ActionPreNarrative="The factions have reported to us that one of their most skilled operatives was ambushed and taken captive recently. We'll be generously rewarded should we break them out."
+ActionPostNarrative=""
+
+[CovertActionNarrative_RecoverUFOInfil X2CovertActionNarrativeTemplate]
+ActionName="Recover UFO Command Codes"
+ActionPreNarrative="That damned UFO has been a thorn in our sides for too long. Resistance operatives have identified an opportunity to steal a copy of their command codes, and force it to the ground."
+ActionPostNarrative=""
+
+[CovertActionNarrative_PrepareUFO X2CovertActionNarrativeTemplate]
+ActionName="Force the UFO to Ground"
+ActionPreNarrative="With the command codes in hand, we can trick the UFO into setting down. Then we must set up a jamming net to delay its calls for help once the main assault squad goes in. We won't get another chance at this."
+ActionPostNarrative="Commander, we've achieved stunning success! The alien ship has touched down, and the jamming net is in place. I think they're starting to get wise, though, so we should strike immediately."
+
+[CovertActionNarrative_PrepareFacility X2CovertActionNarrativeTemplate]
+ActionName="Identify Avatar Project Collaborators"
+ActionPreNarrative="The aliens have buried the construction of Avatar facilities fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
+ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of that facility. Even better, we know where they are."
+
+[CovertActionNarrative_FacilityInformant X2CovertActionNarrativeTemplate]
+ActionName="Capture Avatar Collaborator"
+ActionPreNarrative="Our friends in the Resistance have found someone who may know where the hidden facility is. All that's left is the hard part - bringing them in for questioning."
+ActionPostNarrative=""
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size I"
@@ -205,6 +241,3 @@ CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
 CovertActionRiskLabels[3]="Severe"
 CovertActionRiskLabels[4]="Extreme" 
-
-[CovertAction_PrepareCounterDE X2CovertActionTemplate]
-ActionObjective="Test CA"

@@ -13,20 +13,32 @@ simulated function InitCovertAction(XComGameState_CovertAction InAction)
 {
 	Action = InAction;
 	InitListItem(GetActionLocString());
-	NeedsAttention(class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action));
+
+	NeedsAttention(
+		class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(InAction) != none ||
+		class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(InAction) != none
+	);
 }
 
-// Copied from UICovertActions
 simulated function String GetActionLocString()
 {
-	local string PrefixStr;
+	local string PrefixStr, MainStr;
 
 	if(Action.bNewAction)
 	{
 		PrefixStr = class'UICovertActions'.default.CovertActions_NewAction;
 	}
 
-	return PrefixStr $ Action.GetObjective();
+	if(Action.GetObjective() != "")
+	{
+		MainStr = Action.GetObjective();
+	}
+	else
+	{
+		MainStr = Action.GetDisplayName();
+	}
+
+	return PrefixStr $ MainStr;
 }
 
 defaultproperties

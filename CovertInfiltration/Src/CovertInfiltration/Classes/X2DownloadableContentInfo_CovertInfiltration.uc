@@ -15,13 +15,13 @@ var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 
 static event UpdateDLC()
 {
-	//class'XComGameState_PhaseOneActionsSpawner'.static.Update();
+	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 }
 
 static event OnLoadedSavedGameToStrategy()
 {
-	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
+	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
 }
 
 ///////////////////////
@@ -31,7 +31,7 @@ static event OnLoadedSavedGameToStrategy()
 static event InstallNewCampaign(XComGameState StartState)
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
-	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner(StartState);
+	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
@@ -41,7 +41,7 @@ static event InstallNewCampaign(XComGameState StartState)
 static event OnLoadedSavedGame()
 {
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
-	class'XComGameState_PhaseOneActionsSpawner'.static.CreateSpawner();
+	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner();
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
@@ -370,22 +370,21 @@ exec function SpawnCovertAction(name TemplateName, optional name FactionTemplate
 	}
 }
 
-exec function PrintP1SpawnerDebugInfo()
+exec function PrintChainSpawnerDebugInfo()
 {
-	class'WorldInfo'.static.GetWorldInfo().GetALocalPlayerController().ConsoleCommand("UnSuppress CI_P1Spawner");
-	class'XComGameState_PhaseOneActionsSpawner'.static.PrintDebugInfo();
+	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
 }
 
-exec function SpawnNextP1 ()
+exec function SpawnNextActivityChain ()
 {
-	local XComGameState_PhaseOneActionsSpawner Spawner;
+	local XComGameState_ActivityChainSpawner Spawner;
 	local XComGameState NewGameState;
 
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnNextP1");
-	Spawner = class'XComGameState_PhaseOneActionsSpawner'.static.GetSpawner();
-	Spawner = XComGameState_PhaseOneActionsSpawner(NewGameState.ModifyStateObject(class'XComGameState_PhaseOneActionsSpawner', Spawner.ObjectID));
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnNextActivityChain");
+	Spawner = class'XComGameState_ActivityChainSpawner'.static.GetSpawner();
+	Spawner = XComGameState_ActivityChainSpawner(NewGameState.ModifyStateObject(class'XComGameState_ActivityChainSpawner', Spawner.ObjectID));
 
-	Spawner.SpawnAction(NewGameState);
+	Spawner.SpawnActivityChain(NewGameState);
 	Spawner.ResetProgress();
 	Spawner.SetNextSpawnAt();
 

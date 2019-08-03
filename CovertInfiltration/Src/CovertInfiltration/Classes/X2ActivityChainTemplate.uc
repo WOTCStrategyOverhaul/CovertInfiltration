@@ -15,19 +15,25 @@ var localized string Description;
 // Names of X2ActivityTemplates that act as stages for this chain
 var array<name> Stages;
 
+var bool SpawnInDeck; // If true, spawned automatically using the deck system
+var int NumInDeck; // The larger the number, the more common this chain is
+
+delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be met for the chain to be added to the deck
+
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
 
 delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);
-delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState);
+delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
 
-function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState)
+function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState, optional array<StateObjectReference> ChainObjectRefs)
 {
 	local XComGameState_ActivityChain ActivityState;
 
 	ActivityState = XComGameState_ActivityChain(NewGameState.CreateNewStateObject(class'XComGameState_ActivityChain', self));
+	ActivityState.ChainObjectRefs = ChainObjectRefs;
 	ActivityState.SetupChain(NewGameState);
 
 	return ActivityState;
@@ -59,4 +65,18 @@ function bool ValidateTemplate (out string strError)
 	}
 
 	return true;
+}
+
+////////////////
+/// Defaults ///
+////////////////
+
+static function bool AlwaysAvailable(XComGameState NewGameState)
+{
+	return true;
+}
+
+defaultproperties
+{
+	DeckReq = AlwaysAvailable
 }

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  Xymanek
+//  AUTHOR:  Xymanek and NotSoLoneWolf
 //  PURPOSE: Activites that are introduced by this mod. Note that many activities need
 //           multiple templates (eg. X2ActivityTemplate + X2CovertActionTemplate) so
 //           the templates array is passed to individual Create[...] methods, instead of
@@ -13,79 +13,298 @@ class X2StrategyElement_DefaultActivities extends X2StrategyElement;
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
+	local string Guerilla, Council, SupplyRaid, SupplyLift, Radio, Advent, Resistance, Rescue, Ambush, DarkEvent/*, Chosen, Facility*/;
+
+	Guerilla = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
+	Council = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
+	SupplyRaid = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid";
+	Radio = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
+	Advent = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
+	SupplyLift = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
+	Resistance = "img:///UILibrary_XPACK_Common.MissionIcon_ResOps";
+	Rescue = "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier";
+	Ambush = "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush";
+	DarkEvent = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
+	//Facility = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Alien";
+	//Chosen = "img:///UILibrary_XPACK_Common.MissionIcon_ChosenStronghold";
 	
-	//
-	CreateRecoverAssualt(Templates);
-	CreateNeutralizeCommander(Templates);
-	CreatePrepareCounterDE(Templates);
+	// Infiltrations
+	CreateStandardInfilActivity(Templates, "JailbreakSoldier", "RescueOps", Rescue, 'Reward_SoldierCaptured');
+	CreateStandardInfilActivity(Templates, "JailbreakChosenSoldier", "RescueOps", Rescue, 'Reward_ChosenSoldierCaptured');
+	CreateStandardInfilActivity(Templates, "JailbreakFactionSoldier", "RescueOps", Rescue, 'Reward_ExtraFactionSoldier');
+	CreateStandardInfilActivity(Templates, "RescueEngineer", "Council_VIP", Council, 'Reward_Engineer');
+	CreateStandardInfilActivity(Templates, "RescueScientist", "Council_VIP", Council, 'Reward_Scientist');
+	CreateStandardInfilActivity(Templates, "RecoverInformant", "ResOps", Resistance, 'Reward_None', true);
+	//CreateStandardInfilActivity(Templates, "RecoverChosen", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "RecoverPersonnel", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "RecoverUFO", "ResOps", Resistance, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "CommanderSupply", "GorillaOps", Guerilla, 'Reward_None', true);
+	//CreateStandardInfilActivity(Templates, "CommanderChosen", "GorillaOps", Guerilla, 'Reward_None', true);
+	CreateStandardInfilActivity(Templates, "CounterDarkEvent", "Retribution", DarkEvent, 'Reward_None', true, true);
+	CreateStandardInfilActivity(Templates, "SupplyRaid", "SupplyRaid_AdvConvoy", SupplyRaid, 'Reward_None');
 	
+	CreateStandardDVIPActivity(Templates, "CaptureInformant", "EscapeAmbush", Ambush, 'Reward_Datapad', 'Reward_Intel');
+	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_None', 'Reward_FacilityLead');
+
+	// Assaults
+	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');
+	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');
+	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
+	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
+
+	// Covert Actions
+	CreatePrepareCounterDE(Templates, "PrepareCounterDE", "CovertAction");
+	CreatePrepareFactionJB(Templates, "PrepareFactionJB", "CovertAction");
+	//CreatePrepareChosen(Templates, "PrepareChosen", "CovertAction");
+	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
+	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
+	
+	// Misc
+	CreateWaitActivity(Templates);
+
 	return Templates;
 }
 
-static function CreateRecoverAssualt (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Assault Activity;
-
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_Recover');
-
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
-	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
-	Activity.MissionRewards.AddItem('Reward_Scientist'); // TODO: POI
-	
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-
-	Templates.AddItem(Activity);
-}
-
-static function CreateNeutralizeCommander (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_NeutralizeCommanderInfil', true);
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, 'Activity_NeutralizeCommander');
-
-	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
-	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
-	
-	CovertAction.Narratives.AddItem('CovertActionNarrative_NeutralizeCommanderInfil');
-	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
-
-	Activity.CovertActionName = CovertAction.DataName;
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
-	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
-	
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
+static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
 {
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
-
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareCounterDE');
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', CovertAction, 'CovertAction_PrepareCounterDE');
-
-	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
-	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps"; // Yes, Firaxis did in fact call it Gorilla Ops
-	CovertAction.Narratives.AddItem('CovertActionNarrative_NeutralizeCommanderInfil'); // TODO
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_" $ ActivityName));
+	CovertAction = CreateStandardActivityCA(ActivityName, MeshPath);
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('EleriumDust', 10));
+	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('Supplies', 25));
 
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
-	CovertAction.Rewards.AddItem('Reward_Scientist'); // TODO: POI
+	CovertAction.Rewards.AddItem('Reward_None');
 
 	Activity.CovertActionName = CovertAction.DataName;
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
+}
+
+static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
+{
+	local X2ActivityTemplate_CovertAction Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_" $ ActivityName));
+	CovertAction = CreateStandardActivityCA(ActivityName, MeshPath);
+
+	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
+	CovertAction.bDisplayIgnoresInfluence = true;
+
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Rewards.AddItem('Reward_None');
+
+	Activity.CovertActionName = CovertAction.DataName;
+
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+/*
+static function CreatePrepareChosen (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
+{
+	local X2ActivityTemplate_CovertAction Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_" $ ActivityName));
+	CovertAction = CreateStandardActivityCA(ActivityName, MeshPath);
+
+	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
+	CovertAction.bDisplayIgnoresInfluence = true;
+
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Risks.AddItem('CovertActionRisk_Ambush');
+	CovertAction.Rewards.AddItem('Reward_None');
+
+	Activity.CovertActionName = CovertAction.DataName;
+
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+*/
+static function CreatePrepareFacility (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
+{
+	local X2ActivityTemplate_CovertAction Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_" $ ActivityName));
+	CovertAction = CreateStandardActivityCA(ActivityName, MeshPath);
+
+	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
+	CovertAction.bDisplayIgnoresInfluence = true;
+
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Risks.AddItem('CovertActionRisk_Ambush');
+	CovertAction.Rewards.AddItem('Reward_None');
+
+	Activity.CovertActionName = CovertAction.DataName;
+
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function CreatePrepareUFO (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath)
+{
+	local X2ActivityTemplate_CovertAction Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_" $ ActivityName));
+	CovertAction = CreateStandardActivityCA(ActivityName, MeshPath);
+
+	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
+	CovertAction.bDisplayIgnoresInfluence = true;
+
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Risks.AddItem('CovertActionRisk_SoldierCaptured');
+	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
+	CovertAction.Rewards.AddItem('Reward_None');
+
+	Activity.CovertActionName = CovertAction.DataName;
+
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function CreateWaitActivity (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate Activity;
+
+	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_Wait');
+	Activity.StateClass = class'XComGameState_Activity_Wait';
+
+	Templates.AddItem(Activity);
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+static function CreateStandardInfilActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional bool bPOI, optional bool bDarkEvent)
+{
+	local X2ActivityTemplate_Infiltration Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_" $ ActivityName $ "Infil"), true);
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, name("Activity_" $ ActivityName));
+	
+	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
+	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	
+	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName $ "Infil"));
+	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
+
+	Activity.CovertActionName = CovertAction.DataName;
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	Activity.UIButtonIcon = MissionIcon;
+
+	if (bPOI) Activity.OnSuccess = OnSuccessPOI;
+	if (bDarkEvent) Activity.PreMissionSetup = PreMissionSetup_DE;
+	
+	Activity.MissionRewards.AddItem(RewardName);
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
+
+	class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
+	MissionState.RemoveEntity(NewGameState);
+
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkSuccess(NewGameState);
+}
+
+static function CreateStandardDVIPActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name AlwaysReward, name CaptureReward)
+{
+	local X2ActivityTemplate_Infiltration Activity;
+	local X2CovertActionTemplate CovertAction;
+	
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_" $ ActivityName $ "Infil"), true);
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, name("Activity_" $ ActivityName));
+	
+	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
+	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	
+	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName $ "Infil"));
+	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
+
+	Activity.CovertActionName = CovertAction.DataName;
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	Activity.UIButtonIcon = MissionIcon;
+	
+	Activity.MissionRewards.AddItem(AlwaysReward);
+	Activity.MissionRewards.AddItem(CaptureReward);
+
+	Activity.OnSuccess = DarkVIPOnSuccess;
+
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(Activity);
+}
+
+static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local array<int> ExcludeIndices;
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	ExcludeIndices = class'X2StrategyElement_DefaultMissionSources'.static.GetCouncilExcludeRewards(MissionState);
+
+	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	MissionState.RemoveEntity(NewGameState);
+	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
+}
+
+static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName)
+{
+	local X2ActivityTemplate_Assault Activity;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_" $ ActivityName));
+	
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	Activity.UIButtonIcon = MissionIcon;
+	
+	Activity.MissionRewards.AddItem(RewardName);
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	
+	Templates.AddItem(Activity);
+}
+
+static function X2CovertActionTemplate CreateStandardActivityCA (string ActivityName, string MeshPath)
+{
+	local X2CovertActionTemplate CovertAction;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', CovertAction, name("CovertAction_" $ ActivityName));
+
+	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
+	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName));
+
+	return CovertAction;
 }
 
 static function UseActivityPrimaryRegion (XComGameState NewGameState, XComGameState_CovertAction ActionState, out array<StateObjectReference> ExcludeLocations)
@@ -126,6 +345,20 @@ static function int GetMissionDifficultyFromMonth (XComGameState_Activity Activi
 						class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
 
 	return Difficulty;
+}
+
+static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_DarkEvent DarkEventState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
+
+	if (DarkEventState != none)
+	{
+		MissionState.DarkEvent = DarkEventState.GetReference();
+	}
 }
 
 //////////////////////////////////////////////////////////

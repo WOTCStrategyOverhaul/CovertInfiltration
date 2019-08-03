@@ -27,6 +27,8 @@ var config int MAX_WILL_LOSS;
 var config(GameData) array<SitRepsArray> SITREPS_EXCLUSIVE_BUCKETS;
 var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
+var config(GameBoard) array<name> CovertActionsPreventRandomSpawn;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -57,6 +59,8 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
+	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
+	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -429,6 +433,59 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn PostEndOfMonth (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling post end of month");
+	class'XComGameState_ActivityChainSpawner'.static.SpawnCounterDarkEvents(NewGameState);
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn AllowActionToSpawnRandomly (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local X2CovertActionTemplate ActionTemplate;
+	local XComLWTuple Tuple;
+
+	local X2ActivityTemplate_Infiltration InfiltrationActivityTemplate;
+	local X2ActivityTemplate_CovertAction ActionActivityTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2DataTemplate DataTemplate;
+	
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'AllowActionToSpawnRandomly') return ELR_NoInterrupt;
+
+	ActionTemplate = X2CovertActionTemplate(Tuple.Data[1].o);
+
+	if (default.CovertActionsPreventRandomSpawn.Find(ActionTemplate.DataName) != INDEX_NONE)
+	{
+		Tuple.Data[0].b = false;
+		return ELR_NoInterrupt;
+	}
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		InfiltrationActivityTemplate = X2ActivityTemplate_Infiltration(DataTemplate);
+		if (InfiltrationActivityTemplate != none && InfiltrationActivityTemplate.CovertActionName == ActionTemplate.DataName)
+		{
+			Tuple.Data[0].b = false;
+			return ELR_NoInterrupt;
+		}
+
+		ActionActivityTemplate = X2ActivityTemplate_CovertAction(DataTemplate);
+		if (ActionActivityTemplate != none && ActionActivityTemplate.CovertActionName == ActionTemplate.DataName)
+		{
+			Tuple.Data[0].b = false;
+			return ELR_NoInterrupt;
+		}
+	}
 
 	return ELR_NoInterrupt;
 }

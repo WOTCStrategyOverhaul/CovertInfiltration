@@ -128,6 +128,8 @@ static protected function EventListenerReturn CovertAction_ActionSelectedOverrid
 
 static protected function EventListenerReturn CovertAction_ModifyNarrativeParamTag(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local XComGameState_DarkEvent DarkEventState;
+	local XComGameState_Activity ActivityState;
 	local XComGameState_CovertAction Action;
 	local XGParamTag Tag;
 
@@ -136,11 +138,31 @@ static protected function EventListenerReturn CovertAction_ModifyNarrativeParamT
 	
 	if (Action == none || Tag == none) return ELR_NoInterrupt;
 
-	// There is probably a nicer way to this check...
-	if (Action.GetMyTemplate().Rewards[0] == 'ActionReward_P2DarkEvent')
+	if (
+		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_PrepareCounterDE' &&
+		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_CounterDarkEventInfil'
+	)
 	{
-		Tag.StrValue4 = GetDarkEventString(Action);
+		return ELR_NoInterrupt;
 	}
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(Action);
+	if (ActivityState == none) ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action);
+	
+	if (ActivityState == none)
+	{
+		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative doesn't belong to an activity");
+		return ELR_NoInterrupt;
+	}
+
+	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
+	if (DarkEventState == none)
+	{
+		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative belongs to a chain with no DE");
+		return ELR_NoInterrupt;
+	}
+	
+	Tag.StrValue4 = DarkEventState.GetDisplayName();
 
 	return ELR_NoInterrupt;
 }

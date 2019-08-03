@@ -10,7 +10,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2ActivityTemplate extends X2StrategyElementTemplate abstract config(Infiltration);
+class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
 

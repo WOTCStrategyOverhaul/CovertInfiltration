@@ -7,6 +7,7 @@
 
 class X2ActivityTemplate_Assault extends X2ActivityTemplate_Mission config(Infiltration);
 
+// Expiry in hours
 var config bool bExpires;
 var config int ExpirationBaseTime;
 var config int ExpirationVariance;
@@ -44,9 +45,14 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
 	ActivityState.PrimaryObjectRef = MissionState.GetReference();
 	
+	if (ActivityTemplate.PreMissionSetup != none)
+	{
+		ActivityTemplate.PreMissionSetup(NewGameState, ActivityState);
+	}
+
 	MissionState.BuildMission(
 		MissionSource, Region.GetRandom2DLocationInRegion(), Region.GetReference(), InitRewardsStates(NewGameState, ActivityState), true /*bAvailable*/, 
-		ActivityTemplate.bExpires /* bExpiring */, -1 /* iHours */, ActivityTemplate.RollExpiry() /* iSeconds */,
+		ActivityTemplate.bExpires /* bExpiring */, ActivityTemplate.RollExpiry() /* iHours */, -1 /* iSeconds */,
 		/* bUseSpecifiedLevelSeed */, /* LevelSeedOverride */, false /* bSetMissionData */
 	);
 

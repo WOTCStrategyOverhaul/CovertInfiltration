@@ -220,11 +220,6 @@ function XComGameState_ActivityChain GetActivityChain ()
 	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainRef.ObjectID));
 }
 
-function bool IsCurrentStage ()
-{
-	return GetActivityChain().GetCurrentActivity().ObjectID == ObjectID;
-}
-
 function bool IsCompleted ()
 {
 	return CompletionStatus != eActivityCompletion_NotCompleted;
@@ -242,7 +237,7 @@ function bool IsOngoing ()
 
 protected function bool ValidateCanMarkCompletion ()
 {
-	if (!IsCurrentStage())
+	if (!IsOngoing())
 	{
 		`RedScreen("Cannot change activity completion status - not current stage");
 		return false;
