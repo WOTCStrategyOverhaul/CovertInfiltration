@@ -219,7 +219,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			m_Template.CleanupChain(NewGameState, self);
 		}
 
-		`XEVENTMGR.TriggerEvent('GuerillaOpComplete', , , NewGameState);
+		`XEVENTMGR.TriggerEvent('CI_ChainComplete', , , NewGameState);
 	}
 
 	`CI_Trace("Finished handling stage completion");
