@@ -27,7 +27,7 @@ var array<StateObjectReference> StageRefs;
 var array<StateObjectReference> ChainObjectRefs;
 
 // Chain Complications
-var array<X2ComplicationTemplate> Complications;
+var array<name> Complications;
 var array<int> CompChances;
 
 // The faction associated with this chain, if any
@@ -160,7 +160,7 @@ function SetupChain (XComGameState NewGameState)
 				CompRoll = CompTemplate.MinChance;
 			}
 			
-			Complications.AddItem(CompTemplate);
+			Complications.AddItem(CompTemplate.DataName);
 			CompChances.AddItem(CompRoll);
 		}
 	}
@@ -198,6 +198,7 @@ function StartNextStage (XComGameState NewGameState)
 
 function CurrentStageHasCompleted (XComGameState NewGameState)
 {
+	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference ActivityRef;
 	local X2ComplicationTemplate ChainComp;
@@ -228,17 +229,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	else
 	{
 		`CI_Trace("No more stages avaliable");
-
-		for (i = 0; i < Complications.Length; i++)
-		{
-			ChainComp = Complications[i];
-
-			CompRoll = `SYNC_RAND_STATIC(100);
-			
-			if (CompRoll < CompChances[i])
-				ChainComp.CompEffect(NewGameState, self);
-		}
-
+		
 		bEnded = true;
 		EndReason = eACER_Complete;
 		iCurrentStage++; // Do not get stuck on the last stage
@@ -261,8 +252,26 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		{
 			m_Template.CleanupChain(NewGameState, self);
 		}
-
+		
 		`XEVENTMGR.TriggerEvent('ActivityChainEnded', self, self, NewGameState);
+		
+		// Fire off chain complications
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+		
+		for (i = 0; i < Complications.Length; i++)
+		{
+			ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[i]));
+
+			CompRoll = `SYNC_RAND_STATIC(100);
+			
+			if (CompRoll < CompChances[i])
+			{
+				if (EndReason == eACER_Complete)
+					ChainComp.OnChainComplete(NewGameState, self);
+				if (EndReason == eACER_ProgressBlocked)
+					ChainComp.OnChainFailed(NewGameState, self);
+			}
+		}
 	}
 
 	`CI_Trace("Finished handling stage completion");

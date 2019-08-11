@@ -1,5 +1,5 @@
 
-class X2StrategyElement_DefaultComplications extends X2StrategyElement;
+class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -16,25 +16,22 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	local X2ComplicationTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_RewardInterception');
-	
-	Template.CompName = 'Reward Interception';
 
-	Template.AlwaysSelect = false;
-	Template.MinChance = 30;
-	Template.MaxChance = 70;
-
-	Template.CompEffect = SpawnRescueMission;
-	Template.CanBeChosen = Always;
+	Template.OnChainComplete = SpawnRescueMission;
+	Template.OnChainFailed = DoNothing;
+	Template.CanBeChosen = AlwaysChoose; // TODO: change this to something that detects supply/intel rewards
 
 	return Template;
 }
 
+function DoNothing(XComGameState NewGameState, XComGameState_ActivityChain ChainState) {}
+
 function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-
+	// TODO: make this spawn something
 }
 
-function bool Always(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function bool AlwaysChoose(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	return true;
 }
