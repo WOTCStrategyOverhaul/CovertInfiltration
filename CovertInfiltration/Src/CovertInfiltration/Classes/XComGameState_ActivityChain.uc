@@ -26,6 +26,10 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+// Chain Complications
+var array<X2ComplicationTemplate> Complications;
+var array<int> CompChances;
+
 // The faction associated with this chain, if any
 var protectedwrite StateObjectReference FactionRef;
 
@@ -81,7 +85,9 @@ function SetupChain (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
-	local int i;
+	local int i, CompRoll;
+	local X2ComplicationTemplate CompTemplate;
+	local X2DataTemplate DataTemplate;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
 
@@ -134,6 +140,31 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		CompTemplate = X2ComplicationTemplate(DataTemplate);
+
+		if (CompTemplate == none) continue;
+
+		if (CompTemplate.CanBeChosen(NewGameState, self))
+		{			
+			CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
+
+			if (CompRoll < CompTemplate.MinChance)
+			{
+				if (!CompTemplate.AlwaysSelect)
+					continue;
+
+				CompRoll = CompTemplate.MinChance;
+			}
+			
+			Complications.AddItem(CompTemplate);
+			CompChances.AddItem(CompRoll);
+		}
+	}
+
 	`CI_Trace("Chain setup complete");
 }
 
@@ -169,6 +200,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 {
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference ActivityRef;
+	local X2ComplicationTemplate ChainComp;
+	local int CompRoll, i;
 
 	`CI_Trace(m_TemplateName @ "current stage has reported completion, processing chain reaction");
 
@@ -195,6 +228,16 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	else
 	{
 		`CI_Trace("No more stages avaliable");
+
+		for (i = 0; i < Complications.Length; i++)
+		{
+			ChainComp = Complications[i];
+
+			CompRoll = `SYNC_RAND_STATIC(100);
+			
+			if (CompRoll < CompChances[i])
+				ChainComp.CompEffect(NewGameState, self);
+		}
 
 		bEnded = true;
 		EndReason = eACER_Complete;

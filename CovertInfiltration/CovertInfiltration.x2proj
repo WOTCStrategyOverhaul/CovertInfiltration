@@ -233,6 +233,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ComplicationTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2CovertInfiltrationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
@@ -304,6 +307,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivityChains.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultComplications.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultOverInfiltrationBonuses.uc">

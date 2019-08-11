@@ -60,6 +60,10 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
 	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
 	
+	// Rescues/Recoveries
+	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_None');
+
 	// Misc
 	CreateWaitActivity(Templates);
 
