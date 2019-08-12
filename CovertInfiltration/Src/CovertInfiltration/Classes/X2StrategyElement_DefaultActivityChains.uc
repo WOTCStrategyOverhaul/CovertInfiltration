@@ -23,6 +23,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Activites.AddItem(CreateLandedUFOTemplate());
 	//Activites.AddItem(CreateHuntChosenTemplate());
 	Activites.AddItem(CreateDestroyFacilityTemplate());
+	Activites.AddItem(CreateIntelInterceptionTemplate());
+	Activites.AddItem(CreateSupplyInterceptionTemplate());
 
 	return Activites;
 }
@@ -369,6 +371,44 @@ static function StateObjectReference FindRegionForFacilityChain ()
 	}
 
 	return EmptyRef;
+}
+
+static function X2DataTemplate CreateIntelInterceptionTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_IntelIntercept');
+	
+	Template.ChooseFaction = LastFaction;
+	Template.ChooseRegions = LastRegion;
+
+	Template.Stages.AddItem('Activity_IntelRescue');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateSupplyInterceptionTemplate()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_SupplyIntercept');
+	
+	Template.ChooseFaction = LastFaction;
+	Template.ChooseRegions = LastRegion;
+
+	Template.Stages.AddItem('Activity_SupplyRescue');
+
+	return Template;
+}
+
+static function StateObjectReference LastFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState)
+{
+	return ChainState.ChainObjectRefs[0];
+}
+
+static function LastRegion(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef)
+{
+	PrimaryRegionRef = ChainState.ChainObjectRefs[1];
 }
 
 ///////////////

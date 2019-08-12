@@ -18,6 +18,8 @@ var array<name> Stages;
 var bool SpawnInDeck; // If true, spawned automatically using the deck system
 var int NumInDeck; // The larger the number, the more common this chain is
 
+var bool bAllowComplications; // If true, complications can be attached to this chain type
+
 delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be met for the chain to be added to the deck
 
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
@@ -78,5 +80,6 @@ static function bool AlwaysAvailable(XComGameState NewGameState)
 
 defaultproperties
 {
-	DeckReq = AlwaysAvailable
+	DeckReq = AlwaysAvailable;
+	bAllowComplications = true;
 }

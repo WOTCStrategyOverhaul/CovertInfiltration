@@ -52,6 +52,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
+	
+	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_None');
 
 	// Covert Actions
 	CreatePrepareCounterDE(Templates, "PrepareCounterDE", "CovertAction");
@@ -59,10 +62,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	//CreatePrepareChosen(Templates, "PrepareChosen", "CovertAction");
 	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
 	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
-	
-	// Rescues/Recoveries
-	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_None');
-	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_None');
 
 	// Misc
 	CreateWaitActivity(Templates);

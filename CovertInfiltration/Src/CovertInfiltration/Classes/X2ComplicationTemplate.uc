@@ -27,4 +27,4 @@ delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChai
 
 // What does this complication do when the chain ends in various states
 delegate OnChainComplete(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
-delegate OnChainFailed(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
+delegate OnChainBlocked(XComGameState NewGameState, XComGameState_ActivityChain ChainState);

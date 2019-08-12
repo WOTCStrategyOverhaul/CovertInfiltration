@@ -140,28 +140,31 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	foreach TemplateManager.IterateTemplates(DataTemplate)
+	if (m_Template.bAllowComplications)
 	{
-		CompTemplate = X2ComplicationTemplate(DataTemplate);
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-		if (CompTemplate == none) continue;
+		foreach TemplateManager.IterateTemplates(DataTemplate)
+		{
+			CompTemplate = X2ComplicationTemplate(DataTemplate);
 
-		if (CompTemplate.CanBeChosen(NewGameState, self))
-		{			
-			CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
+			if (CompTemplate == none) continue;
 
-			if (CompRoll < CompTemplate.MinChance)
-			{
-				if (!CompTemplate.AlwaysSelect)
-					continue;
+			if (CompTemplate.CanBeChosen(NewGameState, self))
+			{			
+				CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
 
-				CompRoll = CompTemplate.MinChance;
-			}
+				if (CompRoll < CompTemplate.MinChance)
+				{
+					if (!CompTemplate.AlwaysSelect)
+						continue;
+
+					CompRoll = CompTemplate.MinChance;
+				}
 			
-			Complications.AddItem(CompTemplate.DataName);
-			CompChances.AddItem(CompRoll);
+				Complications.AddItem(CompTemplate.DataName);
+				CompChances.AddItem(CompRoll);
+			}
 		}
 	}
 
@@ -256,20 +259,23 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		`XEVENTMGR.TriggerEvent('ActivityChainEnded', self, self, NewGameState);
 		
 		// Fire off chain complications
-		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-		
-		for (i = 0; i < Complications.Length; i++)
+		if (m_Template.bAllowComplications)
 		{
-			ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[i]));
-
-			CompRoll = `SYNC_RAND_STATIC(100);
-			
-			if (CompRoll < CompChances[i])
+			TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+		
+			for (i = 0; i < Complications.Length; i++)
 			{
-				if (EndReason == eACER_Complete)
-					ChainComp.OnChainComplete(NewGameState, self);
-				if (EndReason == eACER_ProgressBlocked)
-					ChainComp.OnChainFailed(NewGameState, self);
+				ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[i]));
+
+				CompRoll = `SYNC_RAND_STATIC(100);
+			
+				if (CompRoll < CompChances[i])
+				{
+					if (EndReason == eACER_Complete)
+						ChainComp.OnChainComplete(NewGameState, self);
+					if (EndReason == eACER_ProgressBlocked)
+						ChainComp.OnChainBlocked(NewGameState, self);
+				}
 			}
 		}
 	}
