@@ -1,6 +1,8 @@
 
 class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
+var config array<name> LootcrateMissions;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Complications;
@@ -71,7 +73,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	if (ActivityTemplate == none) return false;
 
 	// If there is a supply or intel rewarding chain
-	if (ActivityTemplate.MissionRewards.Find('Reward_None') > -1 || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
+	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
 		// and if no other chains already have this complication
 		foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
@@ -87,4 +89,9 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	}
 
 	return false;
+}
+
+static function bool IsLootcrateActivity(X2ActivityTemplate Template)
+{
+	return (default.LootcrateMissions.Find(Template.DataName) > -1);
 }
