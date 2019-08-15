@@ -219,7 +219,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			m_Template.CleanupChain(NewGameState, self);
 		}
 
-		`XEVENTMGR.TriggerEvent('CI_ChainComplete', , , NewGameState);
+		`XEVENTMGR.TriggerEvent('ActivityChainEnded', self, self, NewGameState);
 	}
 
 	`CI_Trace("Finished handling stage completion");

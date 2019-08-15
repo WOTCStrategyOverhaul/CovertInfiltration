@@ -553,7 +553,7 @@ static function ReplaceNarrativeStartObjectives()
 	}
 	else
 	{
-		Template.CompletionEvent = 'CI_ChainComplete';
+		Template.CompletionEvent = 'ActivityChainEnded';
 	}
 	
 	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_L0_BlacksiteReveal'));
@@ -563,7 +563,7 @@ static function ReplaceNarrativeStartObjectives()
 	}
 	else
 	{
-		Template.CompletionEvent = 'CI_ChainComplete';
+		Template.CompletionEvent = 'ActivityChainEnded';
 	}
 	
 	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('XP0_M5_ActivateChosenLostAndAbandoned'));
@@ -573,7 +573,7 @@ static function ReplaceNarrativeStartObjectives()
 	}
 	else
 	{
-		Template.CompletionEvent = 'CI_ChainComplete';
+		Template.CompletionEvent = 'ActivityChainEnded';
 	}
 }
 
