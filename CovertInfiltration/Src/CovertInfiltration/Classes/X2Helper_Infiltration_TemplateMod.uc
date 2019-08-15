@@ -539,6 +539,44 @@ static function RemoveNoCovertActionNags()
 	}
 }
 
+static function ReplaceNarrativeStartObjectives()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ObjectiveTemplate Template;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_CompleteGuerillaOps'));
+	if (Template == none)
+	{
+		`REDSCREEN("CI: Failed to find T2_M0_CompleteGuerillaOps template");
+	}
+	else
+	{
+		Template.CompletionEvent = 'ActivityChainEnded';
+	}
+	
+	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_L0_BlacksiteReveal'));
+	if (Template == none)
+	{
+		`REDSCREEN("CI: Failed to find T2_M0_L0_BlacksiteReveal template");
+	}
+	else
+	{
+		Template.CompletionEvent = 'ActivityChainEnded';
+	}
+	
+	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('XP0_M5_ActivateChosenLostAndAbandoned'));
+	if (Template == none)
+	{
+		`REDSCREEN("CI: Failed to find XP0_M5_ActivateChosenLostAndAbandoned template");
+	}
+	else
+	{
+		Template.CompletionEvent = 'ActivityChainEnded';
+	}
+}
+
 //////////////////
 /// Facilities ///
 //////////////////
