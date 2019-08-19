@@ -434,6 +434,21 @@ static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameS
 	return XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
 }
 
+static function XComGameState_Activity GetActivityStateFromMission (XComGameState_MissionSite MissionState)
+{
+	local XComGameState_Activity ActivityState;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', ActivityState)
+	{
+		if (MissionState == XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID)))
+		{
+			return ActivityState;
+		}
+	}
+
+	return none;
+}
+
 static function StateObjectReference CreateRewardNone (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;

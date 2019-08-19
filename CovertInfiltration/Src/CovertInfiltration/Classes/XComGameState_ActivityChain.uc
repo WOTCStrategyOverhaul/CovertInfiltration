@@ -420,6 +420,11 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
 }
 
+function bool HasComplication (name Complication)
+{
+	return (Complications.Find(Complication) > -1);
+}
+
 defaultproperties
 {
 	iCurrentStage = -1;

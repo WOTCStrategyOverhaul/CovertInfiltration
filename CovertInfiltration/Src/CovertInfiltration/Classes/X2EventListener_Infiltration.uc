@@ -61,6 +61,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
+	Template.AddCHEvent('MultiplyLootCrates', MultiplyLootCaches, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -490,6 +491,29 @@ static protected function EventListenerReturn AllowActionToSpawnRandomly (Object
 	return ELR_NoInterrupt;
 }
 
+static protected function EventListenerReturn MultiplyLootCaches(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_Activity ActivityState;
+	local XComLWTuple Tuple;
+	
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none || Tuple.Id != 'MultiplyLootCaches') return ELR_NoInterrupt;
+
+	XComHQ = XComGameState_HeadquartersXCom(EventSource);
+	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
+	ActivityState = class'X2Helper_Infiltration'.static.GetActivityStateFromMission(MissionState);
+
+	if (ActivityState.GetActivityChain().HasComplication('Complication_RewardInterception'))
+	{
+		Tuple.Data[0].f = 0.5;
+	}
+
+	// TODO: figure out some way to stash the lost resources in the chain to be rewarded later
+
+	return ELR_NoInterrupt;
+}
 ////////////////
 /// Tactical ///
 ////////////////
