@@ -5,6 +5,8 @@ var UIList ActivitiesList;
 
 var array<XComGameState_ActivityChain> Chains;
 
+var bool bInstantInterp;
+
 var localized string strOngoing;
 var localized string strEnded;
 
@@ -12,11 +14,15 @@ var localized string strEnded;
 /// Init ///
 ////////////
 
-simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
+simulated function InitScreen (XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	BuildScreen();
+	UpdateNavHelp();
+
+	bInstantInterp = !Movie.Stack.Screens[1].IsA(class'UIFacility_CIC'.Name);
+	`HQPRES.CAMLookAtNamedLocation("UIDisplayCam_ResistanceScreen", bInstantInterp ? float(0) : `HQINTERPTIME);
 }
 
 simulated protected function BuildScreen ()
@@ -168,6 +174,43 @@ simulated function OnActivitySizeRealized (UIChainsOverview_Activity Activity)
 
 	ActivitiesList.Show();
 	ActivitiesList.EnableNavigation();
+}
+
+/////////////
+/// Input ///
+/////////////
+
+simulated function bool OnUnrealCommand (int cmd, int arg)
+{
+	if (!CheckInputIsReleaseOrDirectionRepeat(cmd, arg))
+		return false;
+
+	switch (cmd)
+	{
+		case class'UIUtilities_Input'.const.FXS_BUTTON_B:
+		case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
+		case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
+			CloseScreen();
+			return true;
+	}
+
+	return super.OnUnrealCommand(cmd, arg);
+}
+
+simulated function UpdateNavHelp ()
+{
+	local UINavigationHelp NavHelp;
+
+	NavHelp = `HQPRES.m_kAvengerHUD.NavHelp;
+	NavHelp.ClearButtonHelp();
+	NavHelp.AddBackButton(CloseScreen);
+}
+
+simulated event Removed()
+{
+	super.Removed();
+
+	`HQPRES.m_kAvengerHUD.NavHelp.ClearButtonHelp();
 }
 
 ///////////////

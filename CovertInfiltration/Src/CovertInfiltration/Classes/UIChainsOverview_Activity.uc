@@ -38,7 +38,7 @@ simulated function InitActivity (optional name InitName)
 	Description = Spawn(class'UIText', self);
 	Description.OnTextSizeRealized = OnDesciptionSizeRealized;
 	Description.InitText('Description');
-	Description.SetPosition(ContentTopLeft.X, ContentTopLeft.Y + Header.Y);
+	Description.SetPosition(ContentTopLeft.X, Header.Y + Header.Height);
 	Description.SetWidth(ContentWidth);
 
 	StatusLineBG = Spawn(class'UIBGBox', self);
@@ -93,7 +93,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
 			Screen.bIsIn3D
-		)
+		),, true // Disable lazy refresh, otherwise we get stuck on bSizeRealizePending
 	);
 
 	bSizeRealizePending = true;

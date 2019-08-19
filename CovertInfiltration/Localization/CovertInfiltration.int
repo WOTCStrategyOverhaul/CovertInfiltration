@@ -141,3 +141,10 @@ strOverviewHeader=Infiltration
 
 [X2ActivityTemplate_Assault]
 strOverviewHeader=Assault
+
+[UIListener_AvengerHUD]
+ChainsOverview_Label=Activity chains
+
+[UIChainsOverview]
+strOngoing=Ongoing
+strEnded=Ended
