@@ -12,6 +12,10 @@ const CONTENT_PADDING = 10;
 var Vector2D ContentTopLeft;
 var float ContentWidth;
 
+var protectedwrite bool bSizeRealizePending;
+
+var localized string strCompletionStatusLabels[EActivityCompletion.EnumCount]<BoundEnum = EActivityCompletion>;
+
 simulated function InitActivity (optional name InitName)
 {
 	InitPanel(InitName);
@@ -32,18 +36,78 @@ simulated function InitActivity (optional name InitName)
 	Header.SetHeaderWidth(ContentWidth);
 
 	Description = Spawn(class'UIText', self);
+	Description.OnTextSizeRealized = OnDesciptionSizeRealized;
 	Description.InitText('Description');
 	Description.SetPosition(ContentTopLeft.X, ContentTopLeft.Y + Header.Y);
-	Description.SetHeaderWidth(ContentWidth);
+	Description.SetWidth(ContentWidth);
 
-	// TODO:
-	// (1) status line
-	// (2) description size realize + queue in the screen + flush commands queue after updating the activities
+	StatusLineBG = Spawn(class'UIBGBox', self);
+	StatusLineBG.InitBG('StatusLineBG');
+	StatusLineBG.SetSize(Width, 40);
+
+	StatusLine = Spawn(class'UIScrollingText', self);
+	StatusLine.InitScrollingText('StatusLine');
+	StatusLine.SetX(CONTENT_PADDING);
+	StatusLine.SetWidth(ContentWidth);
 }
 
 simulated function UpdateFromState (XComGameState_Activity ActivityState)
 {
 	local EUIState UIState;
+
+	switch (ActivityState.CompletionStatus)
+	{
+		case eActivityCompletion_NotReached:
+			UIState = eUIState_Disabled;
+		break;
+
+		case eActivityCompletion_NotCompleted:
+			UIState = eUIState_Highlight;
+		break;
+
+		case eActivityCompletion_Expired:
+			UIState = eUIState_Faded;
+		break;
+
+		case eActivityCompletion_Failure:
+			UIState = eUIState_Bad;
+		break;
+
+		case eActivityCompletion_PartialSuccess:
+			UIState = eUIState_Warning;
+		break;
+
+		case eActivityCompletion_Success:
+			UIState = eUIState_Good;
+		break;
+	}
+
+	BG.SetBGColorState(UIState);
+	Header.SetColor(class'UIUtilities_Colors'.static.GetColorLabelFromState(UIState));
+	StatusLineBG.SetBGColorState(UIState);
+	StatusLineBG.SetHighlighed(true);
+
+	Header.SetText(ActivityState.GetOverviewHeader());
+	Description.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
+			Screen.bIsIn3D
+		)
+	);
+
+	StatusLine.SetText(strCompletionStatusLabels[ActivityState.CompletionStatus]);
+}
+
+simulated protected function OnDesciptionSizeRealized ()
+{
+	StatusLineBG.SetY(Description.Y + Description.Height + 5);
+	StatusLine.SetY(StatusLineBG.Y + 2);
+
+	SetHeight(StatusLineBG.Y + StatusLineBG.Height);
+	BG.SetHeight(Height);
+
+	bSizeRealizePending = false;
+	UIChainsOverview(GetParent(class'UIChainsOverview', true)).OnActivitySizeRealized(self);
 }
 
 defaultproperties

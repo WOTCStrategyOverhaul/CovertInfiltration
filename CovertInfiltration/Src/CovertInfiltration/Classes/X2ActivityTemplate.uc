@@ -14,6 +14,14 @@ class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
 
+///////////
+/// Loc ///
+///////////
+
+var localized string strOverviewHeader;
+
+delegate string GetOverviewDescription (XComGameState_Activity ActivityState);
+
 /////////////////
 /// Lifecycle ///
 /////////////////

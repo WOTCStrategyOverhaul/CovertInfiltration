@@ -100,20 +100,14 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	local int i;
 
 	History = `XCOMHISTORY;
+	ActivitiesList.Hide();
+	ActivitiesList.DisableNavigation();
 
 	ChainListItem = UIListItemString(ContainerList.GetItem(ItemIndex));
-	if (ChainListItem == none)
-	{
-		ActivitiesList.Hide();
-		return;
-	}
+	if (ChainListItem == none) return;
 
 	ChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(ChainListItem.metadataInt));
-	if (ChainState == none)
-	{
-		ActivitiesList.Hide();
-		return;
-	}
+	if (ChainState == none) return;
 
 	// Show/Spawn entries we need
 	for (i = 0; i < ChainState.StageRefs.Length; i++)
@@ -132,7 +126,6 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 		ActivityElement.UpdateFromState(ActivityState);
 
 		ActivityElement.Show();
-		ActivityElement.AnimateIn();
 		ActivityElement.EnableNavigation();
 	}
 
@@ -143,7 +136,38 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 		ActivitiesList.GetItem(i).DisableNavigation();
 	}
 
+	// This is required so that we don't wait a frame for the descriptions size to realize
+	Movie.ProcessQueuedCommands();
+}
+
+simulated function OnActivitySizeRealized (UIChainsOverview_Activity Activity)
+{
+	local UIChainsOverview_Activity ActivityElement;
+	local UIPanel Panel;
+
+	// Check if all activities are realized
+	foreach ActivitiesList.ItemContainer.ChildPanels(Panel)
+	{
+		if (!Panel.bIsVisible) continue;
+
+		ActivityElement = UIChainsOverview_Activity(Panel);
+		if (ActivityElement == none) continue;
+
+		if (ActivityElement.bSizeRealizePending) return;
+	}
+
+	// All activities are realized, now realize the list
+	ActivitiesList.RealizeItems();
+	ActivitiesList.RealizeList();
+
+	// Animate in the elements
+	foreach ActivitiesList.ItemContainer.ChildPanels(Panel)
+	{
+		Panel.AnimateIn();
+	}
+
 	ActivitiesList.Show();
+	ActivitiesList.EnableNavigation();
 }
 
 ///////////////

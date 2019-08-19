@@ -10,22 +10,6 @@
 
 class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
-enum EActivityCompletion
-{
-	// The chain hasn't progressed to this activity yet
-	eActivityCompletion_NotReached,
-
-	// The player is still able to do the activity (or is doing it now)
-	eActivityCompletion_NotCompleted,
-
-	// The player failed to handle this activity in time limit
-	eActivityCompletion_Expired,
-	
-	eActivityCompletion_Failure,
-	eActivityCompletion_PartialSuccess,
-	eActivityCompletion_Success
-};
-
 var protected name m_TemplateName;
 var protected X2ActivityTemplate m_Template;
 
@@ -250,6 +234,30 @@ protected function bool ValidateCanMarkCompletion ()
 	}
 
 	return true;
+}
+
+///////////
+/// Loc ///
+///////////
+
+function string GetOverviewHeader ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().strOverviewHeader;
+	if (strReturn == "") strReturn = "(MISSING HEADER)";
+
+	return strReturn;
+}
+
+function string GetOverviewDescription ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().GetOverviewDescription(self);
+	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
+
+	return strReturn;
 }
 
 /////////////////////////
