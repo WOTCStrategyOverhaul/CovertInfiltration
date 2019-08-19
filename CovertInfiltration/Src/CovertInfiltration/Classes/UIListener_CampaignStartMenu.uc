@@ -14,8 +14,6 @@ event OnInit(UIScreen Screen)
 {
     local UIShellDifficulty ShellDifficulty;
     local UIShellNarrativeContent ShellNarrativeContent;
-
-    if (UIShellDifficulty(Screen) == none && UIShellNarrativeContent(Screen) == none) return;
     
     if (UIShellDifficulty(Screen) != none)
     {
