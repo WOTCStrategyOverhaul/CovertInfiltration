@@ -127,3 +127,7 @@ BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
 ;[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
 ;ActionRewardDisplayName=Rwd
 ;ActionRewardDetails=Rwd details
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
+strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
