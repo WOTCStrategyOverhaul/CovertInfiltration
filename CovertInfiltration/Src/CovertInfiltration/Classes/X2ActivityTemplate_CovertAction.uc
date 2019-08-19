@@ -92,9 +92,19 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 	return ActivityState.CompletionStatus == eActivityCompletion_Success;
 }
 
+static function string DefaultGetOverviewDescription (XComGameState_Activity ActivityState)
+{
+	local XComGameState_CovertAction ActionState;
+
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+	return ActionState.GetNarrative();
+}
+
 defaultproperties
 {
 	SetupStage = DefaultCovertActionSetup
 	ShouldProgressChain = DefaultShouldProgressChain
 	StateClass = class'XComGameState_Activity_CovertAction'
+	GetOverviewDescription = DefaultGetOverviewDescription
 }

@@ -88,6 +88,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	StatusLineBG.SetHighlighed(true);
 
 	Header.SetText(ActivityState.GetOverviewHeader());
+	StatusLine.SetText(strCompletionStatusLabels[ActivityState.CompletionStatus]);
 	Description.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
@@ -95,7 +96,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 		)
 	);
 
-	StatusLine.SetText(strCompletionStatusLabels[ActivityState.CompletionStatus]);
+	bSizeRealizePending = true;
 }
 
 simulated protected function OnDesciptionSizeRealized ()

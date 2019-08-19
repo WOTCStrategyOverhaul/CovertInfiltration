@@ -97,9 +97,19 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState.InitializeFromActivity(NewGameState);
 }
 
+static function string DefaultGetOverviewDescription (XComGameState_Activity ActivityState)
+{
+	local XComGameState_CovertAction ActionState;
+
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.SecondaryObjectRef.ObjectID));
+
+	return ActionState.GetNarrative();
+}
+
 defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'
+	GetOverviewDescription = DefaultGetOverviewDescription
 }

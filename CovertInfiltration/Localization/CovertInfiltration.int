@@ -132,3 +132,12 @@ ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
+
+[X2ActivityTemplate_CovertAction]
+strOverviewHeader=Covert Action
+
+[X2ActivityTemplate_Infiltration]
+strOverviewHeader=Infiltration
+
+[X2ActivityTemplate_Assault]
+strOverviewHeader=Assault
