@@ -496,6 +496,8 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_Activity ActivityState;
+	local XComGameState_Item ItemState;
+	local array<XComGameState_Item> SavedItems;
 	local XComLWTuple Tuple;
 	
 	Tuple = XComLWTuple(EventData);
@@ -503,14 +505,18 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 
 	XComHQ = XComGameState_HeadquartersXCom(EventSource);
 	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
-	ActivityState = class'X2Helper_Infiltration'.static.GetActivityStateFromMission(MissionState);
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionState);
 
 	if (ActivityState.GetActivityChain().HasComplication('Complication_RewardInterception'))
 	{
-		Tuple.Data[0].f = 0.5;
+		ItemState = XComGameState_Item(Tuple.Data[1].o);
+		if (class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
+		{
+			Tuple.Data[0].f = 0.5;
+			SavedItems.AddItem(ItemState);
+			// TODO: send SavedItems over to chain/complication
+		}
 	}
-
-	// TODO: figure out some way to stash the lost resources in the chain to be rewarded later
 
 	return ELR_NoInterrupt;
 }

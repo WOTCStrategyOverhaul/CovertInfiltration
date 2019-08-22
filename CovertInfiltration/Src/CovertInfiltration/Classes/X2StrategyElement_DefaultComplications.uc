@@ -1,7 +1,11 @@
 
 class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
+// Missions that feature lootcrates or other rewards not otherwise listed
 var config array<name> LootcrateMissions;
+
+// Items that can have their quantity halved by interception complications
+var config array<name> InterceptableItems;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -19,7 +23,7 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_RewardInterception');
 
 	Template.OnChainComplete = SpawnRescueMission;
-	Template.OnChainBlocked = DoNothing;
+	//Template.OnChainBlocked = DoNothing;
 	Template.CanBeChosen = SupplyAndIntelChains;
 
 	// TODO: Subtract half of last chain's resource reward then give it back upon successful completion of intercept chain
@@ -27,19 +31,13 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	return Template;
 }
 
-function DoNothing(XComGameState NewGameState, XComGameState_ActivityChain ChainState) {}
-
 function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	local array<StateObjectReference> PassRefs;
 	local XComGameState_ActivityChain NewChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 	local XComGameState_Activity ActivityState;
 	local X2ActivityTemplate_Mission ActivityTemplate;
 	local X2StrategyElementTemplateManager TemplateManager;
-	
-	PassRefs.AddItem(ChainState.FactionRef);
-	PassRefs.AddItem(ChainState.PrimaryRegionRef);
 
 	ActivityState = ChainState.GetLastActivity();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
@@ -57,7 +55,9 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_SupplyIntercept'));;
 	}
 
-	NewChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, PassRefs);
+	NewChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	NewChainState.FactionRef = ChainState.FactionRef;
+	NewChainState.PrimaryRegionRef = ChainState.PrimaryRegionRef;
 	NewChainState.StartNextStage(NewGameState);
 }
 
@@ -76,7 +76,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
 		// and if no other chains already have this complication
-		foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
 		{
 			if (OtherChainState.bEnded == false && OtherChainState.Complications.Find('Complication_RewardInterception') > -1)
 			{
@@ -93,5 +93,10 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 
 static function bool IsLootcrateActivity(X2ActivityTemplate Template)
 {
-	return (default.LootcrateMissions.Find(Template.DataName) > -1);
+	return default.LootcrateMissions.Find(Template.DataName) > -1;
+}
+
+static function bool IsInterceptableItem(X2ItemTemplate Template)
+{
+	return default.InterceptableItems.Find(Template.DataName) > -1;
 }

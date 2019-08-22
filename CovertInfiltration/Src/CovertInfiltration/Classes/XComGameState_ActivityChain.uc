@@ -31,11 +31,11 @@ var array<name> Complications;
 var array<int> CompChances;
 
 // The faction associated with this chain, if any
-var protectedwrite StateObjectReference FactionRef;
+var StateObjectReference FactionRef;
 
 // Region(s) where this chain is taking place
-var protectedwrite StateObjectReference PrimaryRegionRef;
-var protectedwrite StateObjectReference SecondaryRegionRef;
+var StateObjectReference PrimaryRegionRef;
+var StateObjectReference SecondaryRegionRef;
 
 // Progress tracking
 var protectedwrite int iCurrentStage;
@@ -271,9 +271,9 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			
 				if (CompRoll < CompChances[i])
 				{
-					if (EndReason == eACER_Complete)
+					if (EndReason == eACER_Complete && ChainComp.OnChainComplete != none)
 						ChainComp.OnChainComplete(NewGameState, self);
-					if (EndReason == eACER_ProgressBlocked)
+					if (EndReason == eACER_ProgressBlocked && ChainComp.OnChainBlocked != none)
 						ChainComp.OnChainBlocked(NewGameState, self);
 				}
 			}
@@ -422,7 +422,7 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 
 function bool HasComplication (name Complication)
 {
-	return (Complications.Find(Complication) > -1);
+	return Complications.Find(Complication) > -1;
 }
 
 defaultproperties
