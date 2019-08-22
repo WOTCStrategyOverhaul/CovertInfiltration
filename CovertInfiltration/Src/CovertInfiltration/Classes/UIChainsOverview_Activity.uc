@@ -14,7 +14,13 @@ var float ContentWidth;
 
 var protectedwrite bool bSizeRealizePending;
 
-var localized string strCompletionStatusLabels[EActivityCompletion.EnumCount]<BoundEnum = EActivityCompletion>;
+// Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
+var localized string strCompletionStatusLabel_NotReached;
+var localized string strCompletionStatusLabel_NotCompleted;
+var localized string strCompletionStatusLabel_Expired;
+var localized string strCompletionStatusLabel_Failure;
+var localized string strCompletionStatusLabel_PartialSuccess;
+var localized string strCompletionStatusLabel_Success;
 
 simulated function InitActivity (optional name InitName)
 {
@@ -109,6 +115,32 @@ simulated protected function OnDesciptionSizeRealized ()
 
 	bSizeRealizePending = false;
 	UIChainsOverview(GetParent(class'UIChainsOverview', true)).OnActivitySizeRealized(self);
+}
+
+static function string GetLabelForCompletionStatus (EActivityCompletion eCompletion)
+{
+	switch (eCompletion)
+	{
+		case eActivityCompletion_NotReached:
+			return default.strCompletionStatusLabel_NotReached;
+
+		case eActivityCompletion_NotCompleted:
+			return default.strCompletionStatusLabel_NotCompleted;
+
+		case eActivityCompletion_Expired:
+			return default.strCompletionStatusLabel_Expired;
+
+		case eActivityCompletion_Failure:
+			return default.strCompletionStatusLabel_Failure;
+
+		case eActivityCompletion_PartialSuccess:
+			return default.strCompletionStatusLabel_PartialSuccess;
+
+		case eActivityCompletion_Success:
+			return default.strCompletionStatusLabel_Success;
+	}
+
+	return "WRONG EActivityCompletion";
 }
 
 defaultproperties

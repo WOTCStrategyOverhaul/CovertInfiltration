@@ -148,3 +148,12 @@ ChainsOverview_Label=Activity chains
 [UIChainsOverview]
 strOngoing=Ongoing
 strEnded=Ended
+
+[UIChainsOverview_Activity]
+strCompletionStatusLabel_NotReached=Not reached
+strCompletionStatusLabel_NotCompleted=Not completed yet
+strCompletionStatusLabel_Expired=Expired
+strCompletionStatusLabel_Failure=Failed
+strCompletionStatusLabel_PartialSuccess=Partial success
+strCompletionStatusLabel_Success=Success
+
