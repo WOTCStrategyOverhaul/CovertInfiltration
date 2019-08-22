@@ -34,6 +34,7 @@ simulated protected function BuildScreen ()
 	ChainsList.SetSize(400, 630);
 
 	ActivitiesList = Spawn(class'UIList', self);
+	ActivitiesList.ItemPadding = 10;
 	ActivitiesList.InitList('ActivitiesList',,,,,, true);
 	ActivitiesList.SetPosition(930, 220);
 	ActivitiesList.SetSize(580, 630);

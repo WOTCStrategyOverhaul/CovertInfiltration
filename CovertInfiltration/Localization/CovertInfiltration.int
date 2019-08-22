@@ -134,13 +134,13 @@ strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltrati
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
 
 [X2ActivityTemplate_CovertAction]
-strOverviewHeader=Covert Action
+strOverviewHeader=COVERT ACTION
 
 [X2ActivityTemplate_Infiltration]
-strOverviewHeader=Infiltration
+strOverviewHeader=INFILTRATION
 
 [X2ActivityTemplate_Assault]
-strOverviewHeader=Assault
+strOverviewHeader=ASSAULT
 
 [UIListener_AvengerHUD]
 ChainsOverview_Label=Activity chains

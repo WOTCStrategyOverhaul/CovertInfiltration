@@ -2,7 +2,7 @@ class UIChainsOverview_Activity extends UIPanel;
 
 var UIBGBox BG;
 
-var UIX2PanelHeader Header;
+var UIText Header;
 var UIText Description;
 
 var UIBGBox StatusLineBG;
@@ -35,16 +35,18 @@ simulated function InitActivity (optional name InitName)
 	BG.InitBG('BG');
 	BG.SetWidth(Width);
 	
-	Header = Spawn(class'UIX2PanelHeader', self);
-	Header.bIsNavigable = false;
-	Header.InitPanelHeader('Header');
+	Header = Spawn(class'UIText', self);
+	Header.InitText('Header');
 	Header.SetPosition(ContentTopLeft.X, ContentTopLeft.Y);
-	Header.SetHeaderWidth(ContentWidth);
+	Header.SetWidth(ContentWidth);
+	Header.SetAlpha(50);
+
+	class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(Header);
 
 	Description = Spawn(class'UIText', self);
 	Description.OnTextSizeRealized = OnDesciptionSizeRealized;
 	Description.InitText('Description');
-	Description.SetPosition(ContentTopLeft.X, Header.Y + Header.Height);
+	Description.SetPosition(ContentTopLeft.X, Header.Y + Header.Height + 2);
 	Description.SetWidth(ContentWidth);
 
 	StatusLineBG = Spawn(class'UIBGBox', self);
@@ -89,12 +91,20 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	}
 
 	BG.SetBGColorState(UIState);
-	Header.SetColor(class'UIUtilities_Colors'.static.GetColorLabelFromState(UIState));
 	StatusLineBG.SetBGColorState(UIState);
+	StatusLineBG.IsHighlighted = false;
 	StatusLineBG.SetHighlighed(true);
 
-	Header.SetText(ActivityState.GetOverviewHeader());
-	StatusLine.SetText(strCompletionStatusLabels[ActivityState.CompletionStatus]);
+	StatusLine.SetText(GetLabelForCompletionStatus(ActivityState.CompletionStatus)); // TODO: smaller text
+	Header.SetHTMLText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			class'UIUtilities_Infiltration'.static.ColourText(
+				ActivityState.GetOverviewHeader(),
+				class'UIUtilities_Colors'.const.PERK_HTML_COLOR
+			),
+			Screen.bIsIn3D, true,, 24
+		)
+	);
 	Description.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
@@ -107,7 +117,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 
 simulated protected function OnDesciptionSizeRealized ()
 {
-	StatusLineBG.SetY(Description.Y + Description.Height + 5);
+	StatusLineBG.SetY(Description.Y + Description.Height + 10);
 	StatusLine.SetY(StatusLineBG.Y + 2);
 
 	SetHeight(StatusLineBG.Y + StatusLineBG.Height);
