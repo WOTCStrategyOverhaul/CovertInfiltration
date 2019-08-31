@@ -140,33 +140,7 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 
-	if (m_Template.bAllowComplications)
-	{
-		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-		foreach TemplateManager.IterateTemplates(DataTemplate)
-		{
-			CompTemplate = X2ComplicationTemplate(DataTemplate);
-
-			if (CompTemplate == none) continue;
-
-			if (CompTemplate.CanBeChosen(NewGameState, self))
-			{			
-				CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
-
-				if (CompRoll < CompTemplate.MinChance)
-				{
-					if (!CompTemplate.AlwaysSelect)
-						continue;
-
-					CompRoll = CompTemplate.MinChance;
-				}
-			
-				Complications.AddItem(CompTemplate.DataName);
-				CompChances.AddItem(CompRoll);
-			}
-		}
-	}
+	SetupComplications(NewGameState);
 
 	`CI_Trace("Chain setup complete");
 }
@@ -418,6 +392,57 @@ function XComGameState_WorldRegion GetPrimaryRegion ()
 function XComGameState_WorldRegion GetSecondaryRegion ()
 {
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
+}
+
+function SetupComplications (XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ComplicationTemplate CompTemplate;
+	local X2DataTemplate DataTemplate;
+	local int CompRoll;
+
+	if (m_Template.bAllowComplications)
+	{
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+		foreach TemplateManager.IterateTemplates(DataTemplate)
+		{
+			CompTemplate = X2ComplicationTemplate(DataTemplate);
+
+			if (CompTemplate == none) continue;
+
+			if (CompTemplate.CanBeChosen(NewGameState, self))
+			{			
+				CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
+
+				if (CompRoll < CompTemplate.MinChance)
+				{
+					if (!CompTemplate.AlwaysSelect)
+						continue;
+
+					CompRoll = CompTemplate.MinChance;
+				}
+			
+				Complications.AddItem(CompTemplate.DataName);
+				CompChances.AddItem(CompRoll);
+			}
+		}
+	}
+}
+
+function TriggerComplication (XComGameState NewGameState, name Complication)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ComplicationTemplate ChainComp;
+
+	if (HasComplication(Complication))
+	{
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+		ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[Complications.Find(Complication)]));
+
+		ChainComp.OnManualTrigger(NewGameState, self);
+	}
 }
 
 function bool HasComplication (name Complication)

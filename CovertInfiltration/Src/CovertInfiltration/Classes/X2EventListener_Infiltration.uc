@@ -496,8 +496,8 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_Activity ActivityState;
+	local XComGameState_ActivityChain ChainState;
 	local XComGameState_Item ItemState;
-	local array<XComGameState_Item> SavedItems;
 	local XComLWTuple Tuple;
 	
 	Tuple = XComLWTuple(EventData);
@@ -506,18 +506,24 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	XComHQ = XComGameState_HeadquartersXCom(EventSource);
 	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionState);
+	ChainState = ActivityState.GetActivityChain();
 
-	if (ActivityState.GetActivityChain().HasComplication('Complication_RewardInterception'))
+	if (ChainState.HasComplication('Complication_RewardInterception'))
 	{
 		ItemState = XComGameState_Item(Tuple.Data[1].o);
 		if (class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
 		{
 			Tuple.Data[0].f = 0.5;
-			SavedItems.AddItem(ItemState);
-			// TODO: send SavedItems over to chain/complication
+		}
+		else
+		{
+			return ELR_NoInterrupt;
 		}
 	}
 
+	ChainState.ChainObjectRefs.AddItem(ItemState.GetReference());
+	ChainState.TriggerComplication(GameState, 'Complication_RewardInterception');
+	
 	return ELR_NoInterrupt;
 }
 ////////////////
