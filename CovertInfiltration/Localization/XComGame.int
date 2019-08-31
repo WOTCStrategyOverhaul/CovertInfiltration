@@ -114,12 +114,12 @@ ActionName="Rescue Captured Soldier"
 ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the enemy recently, and we know where they're being held. It's time for a jailbreak."
 ActionPostNarrative=""
 
-[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_JailbreakChosenSoldierInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Captured Soldier"
 ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the Chosen recently, and we know where they're being held. It's time for a jailbreak."
 ActionPostNarrative=""
 
-[CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_JailbreakFactionSoldierInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Captured Faction Soldier"
 ActionPreNarrative="The factions have reported to us that one of their most skilled operatives was ambushed and taken captive recently. We'll be generously rewarded should we break them out."
 ActionPostNarrative=""
@@ -139,7 +139,7 @@ ActionName="Identify Avatar Project Collaborators"
 ActionPreNarrative="The aliens have buried the construction of Avatar facilities fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
 ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of that facility. Even better, we know where they are."
 
-[CovertActionNarrative_FacilityInformant X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_FacilityInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Capture Avatar Collaborator"
 ActionPreNarrative="Our friends in the Resistance have found someone who may know where the hidden facility is. All that's left is the hard part - bringing them in for questioning."
 ActionPostNarrative=""

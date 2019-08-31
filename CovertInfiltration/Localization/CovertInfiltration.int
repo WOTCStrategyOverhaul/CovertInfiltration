@@ -121,12 +121,13 @@ strBannerBonusGained="Overinfiltration bonus gained"
 BonusName="TacticalAnalysis"
 BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
 
-;[CovertAction_CommanderSupplyInfil X2CovertInfiltrationTemplate]
-;ActionObjective="Neutralize Field Commander"
+[Activity_CaptureInformant X2ActivityTemplate_Infiltration]
+ActionRewardDisplayName="Enemy Intelligence"
+ActionRewardDetails="Datapad (on Kill or Capture) and Intel Cache (on Capture)"
 
-;[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
-;ActionRewardDisplayName=Rwd
-;ActionRewardDetails=Rwd details
+[Activity_FacilityInformant X2ActivityTemplate_Infiltration]
+ActionRewardDisplayName="Enemy Intelligence"
+ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)"
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
