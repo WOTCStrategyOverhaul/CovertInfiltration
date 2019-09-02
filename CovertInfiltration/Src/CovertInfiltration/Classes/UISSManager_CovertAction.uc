@@ -270,7 +270,10 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 
 		if (IsSlotFilled)
 		{
-			StaffSlot.AssignStaffToSlot(CreateStaffInfo(UnitRef));
+			if (!StaffSlot.AssignStaffToSlot(CreateStaffInfo(UnitRef)))
+			{
+				`Redscreen("CI: Failed to assign" @ XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectId(UnitRef.ObjectID)).GetFullName() @ "to a staff slot");
+			}
 		}
 		else
 		{	

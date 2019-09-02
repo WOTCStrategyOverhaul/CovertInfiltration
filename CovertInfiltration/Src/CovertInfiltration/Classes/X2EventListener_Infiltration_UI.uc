@@ -566,7 +566,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	UnitState = XComGameState_Unit(EventSource);
 	OccupiedSlot = UnitState.GetStaffSlot();
 
-	if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
+	if (OccupiedSlot != none && OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
 	{
 		Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();	
 
