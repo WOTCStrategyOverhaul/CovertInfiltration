@@ -360,18 +360,8 @@ simulated function CouncilAlertCB(Name eAction, out DynamicPropertySet AlertData
 	}
 }
 
-static function string DefaultGetOverviewDescription (XComGameState_Activity ActivityState)
-{
-	local XComGameState_MissionSite MissionState;
-
-	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
-
-	return MissionState.GetMissionObjectiveText();
-}
-
 defaultproperties
 {
 	SetupStage = DefaultAssaultSetup
 	GetSitreps = DefaultGetSitreps
-	GetOverviewDescription = DefaultGetOverviewDescription
 }

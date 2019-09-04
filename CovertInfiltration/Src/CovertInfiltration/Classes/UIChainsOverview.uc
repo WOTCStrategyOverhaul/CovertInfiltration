@@ -1,6 +1,10 @@
 class UIChainsOverview extends UIScreen;
 
 var UIList ChainsList;
+
+var UIPanel ChainPanel;
+var UIBGBox ChainPanelBG;
+var UIX2PanelHeader ChainHeader;
 var UIList ActivitiesList;
 
 var array<XComGameState_ActivityChain> Chains;
@@ -33,12 +37,31 @@ simulated protected function BuildScreen ()
 	ChainsList.SetPosition(500, 220);
 	ChainsList.SetSize(400, 630);
 
-	ActivitiesList = Spawn(class'UIList', self);
+	ChainPanel = Spawn(class'UIPanel', self);
+	ChainPanel.InitPanel('ChainPanel');
+	ChainPanel.SetPosition(920, 210);
+	ChainPanel.SetSize(590, 640);
+	ChainPanel.Hide();
+
+	ChainPanelBG = Spawn(class'UIBGBox', ChainPanel);
+	ChainPanelBG.LibID = class'UIUtilities_Controls'.const.MC_X2Background;
+	ChainPanelBG.InitBG('BG', 0, 0, ChainPanel.Width, ChainPanel.Height);
+
+	ChainHeader = Spawn(class'UIX2PanelHeader', ChainPanel);
+	ChainHeader.bIsNavigable = false;
+	ChainHeader.InitPanelHeader('Header');
+	ChainHeader.SetHeaderWidth(ChainPanelBG.Width - 20);
+	ChainHeader.SetPosition(ChainPanelBG.X + 10, ChainPanelBG.Y + 10);
+
+	ActivitiesList = Spawn(class'UIList', ChainPanel);
 	ActivitiesList.ItemPadding = 10;
 	ActivitiesList.InitList('ActivitiesList',,,,,, true);
-	ActivitiesList.SetPosition(930, 220);
-	ActivitiesList.SetSize(580, 630);
-	ActivitiesList.Hide();
+	ActivitiesList.SetPosition(ChainHeader.X, ChainHeader.Y + ChainHeader.Height);
+	ActivitiesList.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ActivitiesList.Y - 10);
+
+	// The BG is required so that mousewheel scrolling doesn't jerk when the cursor is between the items
+	// But we also don't want to have the "fake" BG be visible to the player - we already have our BG
+	ActivitiesList.BG.Hide();
 
 	Navigator.HorizontalNavigation = true;
 }
@@ -86,10 +109,12 @@ simulated protected function FillChainsList ()
 
 		ListItem = Spawn(class'UIListItemString', ChainsList.ItemContainer);
 		ListItem.metadataInt = ChainState.ObjectID;
-		ListItem.InitListItem(ChainState.GetMyTemplate().Title);
+		ListItem.InitListItem(ChainState.GetMyTemplate().strTitle);
 
 		PreviousChainState = ChainState;
 	}
+
+	ChainsList.Navigator.SelectFirstAvailableIfNoCurrentSelection();
 }
 
 //////////////////
@@ -107,14 +132,18 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	local int i;
 
 	History = `XCOMHISTORY;
-	ActivitiesList.Hide();
-	ActivitiesList.DisableNavigation();
+	ChainPanel.Hide();
+	ChainPanel.DisableNavigation();
 
 	ChainListItem = UIListItemString(ContainerList.GetItem(ItemIndex));
 	if (ChainListItem == none) return;
 
 	ChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(ChainListItem.metadataInt));
 	if (ChainState == none) return;
+
+	// Chain info
+	ChainHeader.SetText(ChainState.GetMyTemplate().strTitle, ChainState.GetMyTemplate().strDescription);
+	ChainHeader.MC.FunctionVoid("realize");
 
 	// Show/Spawn entries we need
 	for (i = 0; i < ChainState.StageRefs.Length; i++)
@@ -173,8 +202,8 @@ simulated function OnActivitySizeRealized (UIChainsOverview_Activity Activity)
 		Panel.AnimateIn();
 	}
 
-	ActivitiesList.Show();
-	ActivitiesList.EnableNavigation();
+	ChainPanel.Show();
+	ChainPanel.EnableNavigation();
 }
 
 /////////////

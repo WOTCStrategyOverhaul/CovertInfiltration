@@ -9,8 +9,8 @@
 class X2ActivityChainTemplate extends X2StrategyElementTemplate;
 
 // For overview UI
-var localized string Title;
-var localized string Description;
+var localized string strTitle;
+var localized string strDescription;
 
 // Names of X2ActivityTemplates that act as stages for this chain
 var array<name> Stages;

@@ -157,3 +157,9 @@ strCompletionStatusLabel_Failure=Failed
 strCompletionStatusLabel_PartialSuccess=Partial success
 strCompletionStatusLabel_Success=Success
 
+[Activity_RecoverPersonnel X2ActivityTemplate_Infiltration]
+strOverviewDescription="Recover item"
+
+[ActivityChain_RescueScientist X2ActivityChainTemplate]
+strTitle=Rescue scientist
+strDescription=Placeholder description
