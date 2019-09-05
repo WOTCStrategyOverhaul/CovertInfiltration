@@ -53,8 +53,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
 	
-	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_None');
-	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_Container');
+	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_Container');
 
 	// Covert Actions
 	CreatePrepareCounterDE(Templates, "PrepareCounterDE", "CovertAction");

@@ -45,3 +45,8 @@ struct ActivityMissionFamilyMapping
 	var name ActivityTemplate;
 	var string MissionFamily;
 };
+
+struct ResourcePackage {
+	var name ItemType;
+	var int ItemAmount;
+};

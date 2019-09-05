@@ -13,10 +13,13 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Rewards;
 	
 	Rewards.AddItem(CreateDatapadRewardTemplate());
+	Rewards.AddItem(CreateContainerRewardTemplate());
+
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
 	return Rewards;
 }
+
 static function X2DataTemplate CreateDatapadRewardTemplate()
 {
 	local X2RewardTemplate Template;
@@ -35,6 +38,110 @@ static function X2DataTemplate CreateDatapadRewardTemplate()
 	Template.RewardPopupFn = class'X2StrategyElement_DefaultRewards'.static.ItemRewardPopup;
 
 	return Template;
+}
+
+static function X2DataTemplate CreateContainerRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Container');
+
+	Template.GenerateRewardFn = GenerateContainerReward;
+	Template.SetRewardFn = SetContainerReward;
+	Template.GiveRewardFn = GiveContainerReward;
+	/*
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardString;
+	Template.GetRewardImageFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardImage;
+	Template.GetBlackMarketStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemBlackMarketString;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+	Template.RewardPopupFn = class'X2StrategyElement_DefaultRewards'.static.ItemRewardPopup;
+	*/
+	return Template;
+}
+
+static function GenerateContainerReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
+{
+	local XComGameState_ResourceContainer ResConState;
+	local XComGameState_Activity ActivityState;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_Reward MissionReward;
+	local XComGameStateHistory History;
+	local int x, y;
+	
+	History = `XCOMHISTORY;
+
+	// Loop through all activities
+	foreach History.IterateByClassType(class'XComGameState_Activity', ActivityState)
+	{
+		MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+		// Loop through all the activity's rewards
+		for (x = 0; x < MissionState.Rewards.Length; x++)
+		{
+			MissionReward = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[x].ObjectID));
+			
+			// If this activity has this reward
+			if (MissionReward == RewardState)
+			{
+				// Loop through the activity's refs
+				for (y = 0; y < ActivityState.GetActivityChain().ChainObjectRefs.Length; y++)
+				{
+					ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ActivityState.GetActivityChain().ChainObjectRefs[y].ObjectID));
+					
+					// Find the resource container in the activity's refs
+					if (ResConState != none)
+					{
+						// Attach the container to the reward state for later use
+						RewardState.RewardObjectReference = ResConState.GetReference();
+					}
+				}
+			}
+		}
+	}
+}
+
+static function SetContainerReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.RewardObjectReference = RewardObjectRef;
+}
+
+static function GiveContainerReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	local XComGameState_ResourceContainer ResConState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_Item ItemState;
+	local XComGameStateHistory History;
+	local bool bXComHQGameStateCreated;
+	local X2ItemTemplateManager ItemManager;
+	local X2ItemTemplate ItemTemplate;
+	local ResourcePackage Package;
+
+	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	History = `XCOMHISTORY;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
+	{
+		break;
+	}
+
+	if (XComHQ == none)
+	{
+		XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		bXComHQGameStateCreated = true;
+	}
+	
+	ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	foreach ResConState.Packages(Package)
+	{
+		ItemTemplate = ItemManager.FindItemTemplate(Package.ItemType);
+
+		ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+		ItemState.Quantity = Package.ItemAmount;
+
+		XComHQ.PutItemInInventory(NewGameState, ItemState);
+	}
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()

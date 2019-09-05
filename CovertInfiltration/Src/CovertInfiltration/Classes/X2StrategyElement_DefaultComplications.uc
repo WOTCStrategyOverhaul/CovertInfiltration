@@ -41,6 +41,8 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_Item ItemState;
 	local array<XComGameState_Item> SavedItems;
+	local XComGameState_ResourceContainer ResContainer;
+	local ResourcePackage Package;
 	local int i;
 
 	ActivityState = ChainState.GetLastActivity();
@@ -58,11 +60,9 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_SupplyIntercept'));
 	}
-	
-	NewChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
-	NewChainState.FactionRef = ChainState.FactionRef;
-	NewChainState.PrimaryRegionRef = ChainState.PrimaryRegionRef;
 
+	ResContainer = XComGameState_ResourceContainer(NewGameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
+	
 	for (i = 0; i < ChainState.ChainObjectRefs.Length; i++)
 	{
 		if (ChainState.ChainObjectRefs[i].ObjectID > 0)
@@ -71,12 +71,18 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 
 			if (ItemState != none)
 			{
-				NewChainState.ChainObjectRefs.AddItem(ChainState.ChainObjectRefs[i]);
+				Package.ItemType = ItemState.GetMyTemplateName();
+				Package.ItemAmount = ItemState.Quantity;
+				ResContainer.Packages.AddItem(Package);
 				// TODO: in spawned chain, make the rewards reflect the saved items
 			}
 		}
 	}
-
+	
+	NewChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	NewChainState.FactionRef = ChainState.FactionRef;
+	NewChainState.PrimaryRegionRef = ChainState.PrimaryRegionRef;
+	NewChainState.ChainObjectRefs.AddItem(ResContainer.GetReference());
 	NewChainState.StartNextStage(NewGameState);
 }
 
