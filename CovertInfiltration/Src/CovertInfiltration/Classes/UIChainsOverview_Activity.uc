@@ -41,7 +41,7 @@ simulated function InitActivity (optional name InitName)
 	Header.SetWidth(ContentWidth);
 	Header.SetAlpha(50);
 
-	class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(Header);
+	class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(Header,, -2);
 
 	Description = Spawn(class'UIText', self);
 	Description.OnTextSizeRealized = OnDesciptionSizeRealized;

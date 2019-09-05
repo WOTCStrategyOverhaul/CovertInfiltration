@@ -49,6 +49,7 @@ simulated protected function BuildScreen ()
 
 	ChainHeader = Spawn(class'UIX2PanelHeader', ChainPanel);
 	ChainHeader.bIsNavigable = false;
+	ChainHeader.bRealizeOnSetText = true;
 	ChainHeader.InitPanelHeader('Header');
 	ChainHeader.SetHeaderWidth(ChainPanelBG.Width - 20);
 	ChainHeader.SetPosition(ChainPanelBG.X + 10, ChainPanelBG.Y + 10);
@@ -143,7 +144,6 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 
 	// Chain info
 	ChainHeader.SetText(ChainState.GetMyTemplate().strTitle, ChainState.GetMyTemplate().strDescription);
-	ChainHeader.MC.FunctionVoid("realize");
 
 	// Show/Spawn entries we need
 	for (i = 0; i < ChainState.StageRefs.Length; i++)
