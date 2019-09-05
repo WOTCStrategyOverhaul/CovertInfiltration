@@ -293,7 +293,7 @@ simulated public function OnLaunchClicked(UIButton button)
 {
 	local XComGameState_MissionSiteInfiltration MissionSite;
 	
-	CloseScreen();
+	CloseScreenOnly();
 
 	// TODO: Music. The geoscape music in dropship sounds very weird but the start of SS music is also rather not fitting.
 	// Maybe move it to when the screen opens? But happens then if player exits to avenger and then back?
@@ -311,13 +311,19 @@ simulated public function OnLaunchClicked(UIButton button)
 
 simulated function CloseScreen()
 {
-	super.CloseScreen();
+	CloseScreenOnly();
 
 	if (GetInfiltration().MustLaunch())
 	{
 		// Close the map as well - go back to avenger
 		Movie.Stack.GetFirstInstanceOf(class'UIStrategyMap').CloseScreen();
 	}
+}
+
+// Skips closing the map, even if we must launch
+simulated function CloseScreenOnly ()
+{
+	super.CloseScreen();
 }
 
 simulated protected function OnViewSquad(UIButton Button)
