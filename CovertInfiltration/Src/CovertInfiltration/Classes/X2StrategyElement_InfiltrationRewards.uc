@@ -46,7 +46,7 @@ static function X2DataTemplate CreateContainerRewardTemplate()
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Container');
 
-	Template.GenerateRewardFn = GenerateContainerReward;
+	//Template.GenerateRewardFn = GenerateContainerReward;
 	Template.SetRewardFn = SetContainerReward;
 	Template.GiveRewardFn = GiveContainerReward;
 	/*
@@ -58,7 +58,7 @@ static function X2DataTemplate CreateContainerRewardTemplate()
 	*/
 	return Template;
 }
-
+/*
 static function GenerateContainerReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
 {
 	local XComGameState_ResourceContainer ResConState;
@@ -99,10 +99,11 @@ static function GenerateContainerReward(XComGameState_Reward RewardState, XComGa
 		}
 	}
 }
-
+*/
 static function SetContainerReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
-	RewardState.RewardObjectReference = RewardObjectRef;
+	if (XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID)) != none)
+		RewardState.RewardObjectReference = RewardObjectRef;
 }
 
 static function GiveContainerReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
@@ -126,9 +127,8 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 
 	if (XComHQ == none)
 	{
-		XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+		XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-		bXComHQGameStateCreated = true;
 	}
 	
 	ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));

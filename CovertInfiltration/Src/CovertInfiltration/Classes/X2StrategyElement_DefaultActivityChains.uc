@@ -381,6 +381,8 @@ static function X2DataTemplate CreateIntelInterceptionTemplate()
 	
 	Template.Stages.AddItem('Activity_IntelRescue');
 
+	Template.PostStageSetup = AttachResCon;
+
 	return Template;
 }
 
@@ -392,7 +394,45 @@ static function X2DataTemplate CreateSupplyInterceptionTemplate()
 	
 	Template.Stages.AddItem('Activity_SupplyRescue');
 
+	Template.PostStageSetup = AttachResCon;
+
 	return Template;
+}
+
+static function AttachResCon(XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_ResourceContainer ResConState;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_Reward MissionReward;
+	local XComGameStateHistory History;
+	local int x, y;
+	
+	History = `XCOMHISTORY;
+
+	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+	// Loop through all the activity's rewards
+	for (x = 0; x < MissionState.Rewards.Length; x++)
+	{
+		MissionReward = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[x].ObjectID));
+			
+		// If this activity has a container reward
+		if (MissionReward.GetMyTemplateName() == 'Reward_Container')
+		{
+			// Loop through the activity's refs
+			for (y = 0; y < ActivityState.GetActivityChain().ChainObjectRefs.Length; y++)
+			{
+				ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ActivityState.GetActivityChain().ChainObjectRefs[y].ObjectID));
+					
+				// Find the resource container in the activity's refs
+				if (ResConState != none)
+				{
+					// Attach the container to the reward state for later use
+					MissionReward.RewardObjectReference = ResConState.GetReference();
+				}
+			}
+		}
+	}
 }
 
 ///////////////

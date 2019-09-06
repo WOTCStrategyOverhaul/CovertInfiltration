@@ -32,9 +32,9 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	return Template;
 }
 
-function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityChain InterceptedChainState)
 {
-	local XComGameState_ActivityChain NewChainState;
+	local XComGameState_ActivityChain SpawnedChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 	local XComGameState_Activity ActivityState;
 	local X2ActivityTemplate_Mission ActivityTemplate;
@@ -45,7 +45,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	local ResourcePackage Package;
 	local int i;
 
-	ActivityState = ChainState.GetLastActivity();
+	ActivityState = InterceptedChainState.GetLastActivity();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
 	if (ActivityTemplate == none) return;
@@ -63,11 +63,11 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 
 	ResContainer = XComGameState_ResourceContainer(NewGameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
 	
-	for (i = 0; i < ChainState.ChainObjectRefs.Length; i++)
+	for (i = 0; i < InterceptedChainState.ChainObjectRefs.Length; i++)
 	{
-		if (ChainState.ChainObjectRefs[i].ObjectID > 0)
+		if (InterceptedChainState.ChainObjectRefs[i].ObjectID > 0)
 		{
-			ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(ChainState.ChainObjectRefs[i].ObjectID));
+			ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(InterceptedChainState.ChainObjectRefs[i].ObjectID));
 
 			if (ItemState != none)
 			{
@@ -79,11 +79,11 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 		}
 	}
 	
-	NewChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
-	NewChainState.FactionRef = ChainState.FactionRef;
-	NewChainState.PrimaryRegionRef = ChainState.PrimaryRegionRef;
-	NewChainState.ChainObjectRefs.AddItem(ResContainer.GetReference());
-	NewChainState.StartNextStage(NewGameState);
+	SpawnedChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	SpawnedChainState.FactionRef = InterceptedChainState.FactionRef;
+	SpawnedChainState.PrimaryRegionRef = InterceptedChainState.PrimaryRegionRef;
+	SpawnedChainState.ChainObjectRefs.AddItem(ResContainer.GetReference());
+	SpawnedChainState.StartNextStage(NewGameState);
 }
 
 function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
