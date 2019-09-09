@@ -215,6 +215,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	if (bEnded)
 	{
 		`CI_Trace("Chain ended, calling lifecycle callbacks");
+		`CI_Log("CHAIN ENDED");
 
 		// First call callbacks on the stages
 		foreach StageRefs(ActivityRef)

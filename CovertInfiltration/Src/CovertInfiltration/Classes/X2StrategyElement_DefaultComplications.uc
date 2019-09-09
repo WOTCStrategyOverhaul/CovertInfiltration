@@ -109,6 +109,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 			}
 		}
 
+		`CI_Log("ADDING COMPLICATION");
 		// then add this complication to the chain
 		return true;
 	}

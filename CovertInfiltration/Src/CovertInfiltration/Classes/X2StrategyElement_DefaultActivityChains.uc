@@ -401,14 +401,15 @@ static function X2DataTemplate CreateSupplyInterceptionTemplate()
 
 static function AttachResCon(XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
-	local XComGameState_ResourceContainer ResConState;
+	local XComGameState_ResourceContainer ResourceContainerState;
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_Reward MissionReward;
 	local XComGameStateHistory History;
 	local int x, y;
 	
-	History = `XCOMHISTORY;
+	// In theory, I should be checking if this is the correct stage here. But this chain only has a single stage
 
+	History = `XCOMHISTORY;
 	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
 
 	// Loop through all the activity's rewards
@@ -422,13 +423,13 @@ static function AttachResCon(XComGameState NewGameState, XComGameState_Activity 
 			// Loop through the activity's refs
 			for (y = 0; y < ActivityState.GetActivityChain().ChainObjectRefs.Length; y++)
 			{
-				ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ActivityState.GetActivityChain().ChainObjectRefs[y].ObjectID));
+				ResourceContainerState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ActivityState.GetActivityChain().ChainObjectRefs[y].ObjectID));
 					
 				// Find the resource container in the activity's refs
-				if (ResConState != none)
+				if (ResourceContainerState != none)
 				{
 					// Attach the container to the reward state for later use
-					MissionReward.RewardObjectReference = ResConState.GetReference();
+					MissionReward.SetReward(ResourceContainerState.GetReference());
 				}
 			}
 		}

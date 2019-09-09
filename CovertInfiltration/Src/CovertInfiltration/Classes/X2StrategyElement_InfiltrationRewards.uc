@@ -46,60 +46,12 @@ static function X2DataTemplate CreateContainerRewardTemplate()
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Container');
 
-	//Template.GenerateRewardFn = GenerateContainerReward;
 	Template.SetRewardFn = SetContainerReward;
 	Template.GiveRewardFn = GiveContainerReward;
-	/*
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardString;
-	Template.GetRewardImageFn = class'X2StrategyElement_DefaultRewards'.static.GetItemRewardImage;
-	Template.GetBlackMarketStringFn = class'X2StrategyElement_DefaultRewards'.static.GetItemBlackMarketString;
-	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
-	Template.RewardPopupFn = class'X2StrategyElement_DefaultRewards'.static.ItemRewardPopup;
-	*/
+
 	return Template;
 }
-/*
-static function GenerateContainerReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
-{
-	local XComGameState_ResourceContainer ResConState;
-	local XComGameState_Activity ActivityState;
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_Reward MissionReward;
-	local XComGameStateHistory History;
-	local int x, y;
-	
-	History = `XCOMHISTORY;
 
-	// Loop through all activities
-	foreach History.IterateByClassType(class'XComGameState_Activity', ActivityState)
-	{
-		MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
-
-		// Loop through all the activity's rewards
-		for (x = 0; x < MissionState.Rewards.Length; x++)
-		{
-			MissionReward = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[x].ObjectID));
-			
-			// If this activity has this reward
-			if (MissionReward == RewardState)
-			{
-				// Loop through the activity's refs
-				for (y = 0; y < ActivityState.GetActivityChain().ChainObjectRefs.Length; y++)
-				{
-					ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ActivityState.GetActivityChain().ChainObjectRefs[y].ObjectID));
-					
-					// Find the resource container in the activity's refs
-					if (ResConState != none)
-					{
-						// Attach the container to the reward state for later use
-						RewardState.RewardObjectReference = ResConState.GetReference();
-					}
-				}
-			}
-		}
-	}
-}
-*/
 static function SetContainerReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
 	if (XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID)) != none)
@@ -108,7 +60,7 @@ static function SetContainerReward(XComGameState_Reward RewardState, optional St
 
 static function GiveContainerReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
 {
-	local XComGameState_ResourceContainer ResConState;
+	local XComGameState_ResourceContainer ResourceContainerState;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_Item ItemState;
 	local XComGameStateHistory History;
@@ -120,20 +72,12 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	History = `XCOMHISTORY;
 
-	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
-	{
-		break;
-	}
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		
+	ResourceContainerState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 
-	if (XComHQ == none)
-	{
-		XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-	}
-	
-	ResConState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-
-	foreach ResConState.Packages(Package)
+	foreach ResourceContainerState.Packages(Package)
 	{
 		ItemTemplate = ItemManager.FindItemTemplate(Package.ItemType);
 
