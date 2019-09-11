@@ -6,7 +6,7 @@ var UIText Header;
 var UIText Description;
 
 var UIBGBox StatusLineBG;
-var UIScrollingText StatusLine;
+var UIText StatusLine;
 
 const CONTENT_PADDING = 10;
 var Vector2D ContentTopLeft;
@@ -51,10 +51,10 @@ simulated function InitActivity (optional name InitName)
 
 	StatusLineBG = Spawn(class'UIBGBox', self);
 	StatusLineBG.InitBG('StatusLineBG');
-	StatusLineBG.SetSize(Width, 40);
+	StatusLineBG.SetSize(Width, 30);
 
-	StatusLine = Spawn(class'UIScrollingText', self);
-	StatusLine.InitScrollingText('StatusLine');
+	StatusLine = Spawn(class'UIText', self);
+	StatusLine.InitText('StatusLine');
 	StatusLine.SetX(CONTENT_PADDING);
 	StatusLine.SetWidth(ContentWidth);
 }
@@ -95,7 +95,6 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	StatusLineBG.IsHighlighted = false;
 	StatusLineBG.SetHighlighed(true);
 
-	StatusLine.SetText(GetLabelForCompletionStatus(ActivityState.CompletionStatus)); // TODO: smaller text
 	Header.SetHTMLText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Infiltration'.static.ColourText(
@@ -110,6 +109,12 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
 			Screen.bIsIn3D
 		),, true // Disable lazy refresh, otherwise we get stuck on bSizeRealizePending
+	);
+	StatusLine.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			GetLabelForCompletionStatus(ActivityState.CompletionStatus),
+			Screen.bIsIn3D,,, 20
+		)
 	);
 
 	bSizeRealizePending = true;
