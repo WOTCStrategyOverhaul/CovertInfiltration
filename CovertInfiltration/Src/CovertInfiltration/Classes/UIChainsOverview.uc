@@ -234,6 +234,11 @@ simulated function UpdateNavHelp ()
 	NavHelp = `HQPRES.m_kAvengerHUD.NavHelp;
 	NavHelp.ClearButtonHelp();
 	NavHelp.AddBackButton(CloseScreen);
+
+	if (!bInstantInterp)
+	{
+		NavHelp.AddGeoscapeButton();
+	}
 }
 
 simulated event Removed()
