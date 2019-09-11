@@ -91,9 +91,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	}
 
 	BG.SetBGColorState(UIState);
-	StatusLineBG.SetBGColorState(UIState);
-	StatusLineBG.IsHighlighted = false;
-	StatusLineBG.SetHighlighed(true);
+	StatusLineBG.SetOutline(false, class'UIUtilities_Colors'.static.GetHexColorFromState(UIState));
 
 	Header.SetHTMLText(
 		class'UIUtilities_Text'.static.AddFontInfo(
@@ -112,7 +110,10 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	);
 	StatusLine.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
-			GetLabelForCompletionStatus(ActivityState.CompletionStatus),
+			class'UIUtilities_Infiltration'.static.ColourText(
+				GetLabelForCompletionStatus(ActivityState.CompletionStatus),
+				class'UIUtilities_Colors'.const.BLACK_HTML_COLOR
+			),
 			Screen.bIsIn3D,,, 20
 		)
 	);
