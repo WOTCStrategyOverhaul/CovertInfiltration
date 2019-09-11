@@ -19,15 +19,13 @@ event OnInit(UIScreen Screen)
     {
         ShellDifficulty = UIShellDifficulty(Screen);
         ShellDifficulty.m_TutorialMechaItem.Checkbox.SetChecked(false);
-        ShellDifficulty.m_TutorialMechaItem.Checkbox.Hide();
-        ShellDifficulty.m_TutorialMechaItem.BG.SetTooltipText(strDisabledTutorialTooltip);
+        ShellDifficulty.m_TutorialMechaItem.SetDisabled(true, strDisabledTutorialTooltip);
     }
 
     if (UIShellNarrativeContent(Screen) != none)
     {
         ShellNarrativeContent = UIShellNarrativeContent(Screen);
         ShellNarrativeContent.m_XpacknarrativeMechaItem.Checkbox.SetChecked(false);
-        ShellNarrativeContent.m_XpacknarrativeMechaItem.Checkbox.Hide();
-        ShellNarrativeContent.m_XpacknarrativeMechaItem.BG.SetTooltipText(strDisabledNarrativeContentTooltip);
+        ShellNarrativeContent.m_XpacknarrativeMechaItem.SetDisabled(true, strDisabledNarrativeContentTooltip);
     }
 }
