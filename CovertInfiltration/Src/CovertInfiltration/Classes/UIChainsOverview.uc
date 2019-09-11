@@ -33,14 +33,15 @@ simulated protected function BuildScreen ()
 {
 	ChainsList = Spawn(class'UIList', self);
 	ChainsList.OnSetSelectedIndex = OnChainSelection;
-	ChainsList.InitList('ChainsList',,,,,, true);
-	ChainsList.SetPosition(500, 220);
+	ChainsList.BGPaddingTop = 20;
+	ChainsList.InitList('ChainsList',,,,,, true, class'UIUtilities_Controls'.const.MC_X2Background);
+	ChainsList.SetPosition(500, 230);
 	ChainsList.SetSize(400, 630);
 
 	ChainPanel = Spawn(class'UIPanel', self);
 	ChainPanel.InitPanel('ChainPanel');
 	ChainPanel.SetPosition(920, 210);
-	ChainPanel.SetSize(590, 640);
+	ChainPanel.SetSize(590, 660);
 	ChainPanel.Hide();
 
 	ChainPanelBG = Spawn(class'UIBGBox', ChainPanel);
@@ -95,17 +96,16 @@ simulated protected function CacheChains ()
 simulated protected function FillChainsList ()
 {
 	local XComGameState_ActivityChain ChainState, PreviousChainState;
-	local UIX2PanelHeader SectionHeader;
+	local UIChainsOverview_ListSectionHeader SectionHeader;
 	local UIListItemString ListItem;
 	
 	foreach Chains(ChainState)
 	{
 		if (PreviousChainState == none || PreviousChainState.bEnded != ChainState.bEnded)
 		{
-			SectionHeader = Spawn(class'UIX2PanelHeader', ChainsList.ItemContainer);
-			SectionHeader.bIsNavigable = false;
-			SectionHeader.InitPanelHeader(, ChainState.bEnded ? strEnded : strOngoing);
-			SectionHeader.SetHeaderWidth(ChainsList.Width);
+			SectionHeader = Spawn(class'UIChainsOverview_ListSectionHeader', ChainsList.ItemContainer);
+			SectionHeader.InitHeader();
+			SectionHeader.SetText(ChainState.bEnded ? strEnded : strOngoing);
 		}
 
 		ListItem = Spawn(class'UIListItemString', ChainsList.ItemContainer);

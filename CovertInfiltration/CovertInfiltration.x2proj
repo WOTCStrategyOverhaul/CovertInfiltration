@@ -116,6 +116,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview_Activity.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview_ListSectionHeader.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
       <SubType>Content</SubType>
     </Content>

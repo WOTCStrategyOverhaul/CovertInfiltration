@@ -146,8 +146,8 @@ strOverviewHeader=ASSAULT
 ChainsOverview_Label=Activity chains
 
 [UIChainsOverview]
-strOngoing=Ongoing
-strEnded=Ended
+strOngoing=ONGOING
+strEnded=ENDED
 
 [UIChainsOverview_Activity]
 strCompletionStatusLabel_NotReached=Not reached
