@@ -5,8 +5,11 @@ var protectedwrite UIBGBox InnerBG;
 var protectedwrite UIText Label;
 
 var string MainColourHex;
+var StateObjectReference ChainRef;
 
 var localized string strLabel;
+
+delegate OnLayoutRealized();
 
 const INNER_BG_PADDING = 2;
 const LABEL_PADDING = 8;
@@ -32,7 +35,6 @@ simulated function InitViewChainButton (optional name InitName)
 	Label.InitText('Label');
 	Label.SetPosition(InnerBG.X + LABEL_PADDING, 4);
 
-	Hide(); // Start hidden before we realize our layout
 	RealizeContent();
 }
 
@@ -72,7 +74,18 @@ simulated protected function RealizeLayout ()
 	BG.SetWidth(Width);
 	InnerBG.SetWidth(Width - INNER_BG_PADDING);
 
-	Show();
+	if (OnLayoutRealized != none) OnLayoutRealized();
+}
+
+simulated function OnMouseEvent (int cmd, array<string> args)
+{
+	super.OnMouseEvent(cmd, args);
+
+	if (cmd == class'UIUtilities_Input'.const.FXS_L_MOUSE_UP)
+	{
+		class'UIUtilities_Infiltration'.static.UIChainsOverview(ChainRef);
+		OnLoseFocus();
+	}
 }
 
 defaultproperties

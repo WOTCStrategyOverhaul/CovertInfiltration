@@ -16,8 +16,7 @@ var UIMask CenterSectionMask; // Used to animate in
 var UIPanel RightPane;
 
 // UI - action info (top)
-var UIButton ViewChainButton;
-var UIViewChainButton ViewChainButton2;
+var UIViewChainButton ViewChainButton;
 var UIPanel ActionInfoTopContainer;
 
 // UI - action image
@@ -213,27 +212,20 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
 
-	ViewChainButton = Spawn(class'UIButton', CenterSection);
-	ViewChainButton.LibID = 'X2ConfirmButton';
-	ViewChainButton.InitButton('ViewChainButton');
-	ViewChainButton.SetResizeToText(true);
-	//ViewChainButton.OnClickedDelegate = ConfirmButtonClick != None ? ConfirmButtonClick : OnClickedConfirmButton;
-	//ViewChainButton.OnDoubleClickedDelegate = ConfirmButtonDoubleClick != None ? ConfirmButtonDoubleClick : OnClickedConfirmButton;
-	//ViewChainButton.OnMouseEventDelegate = OnChildMouseEvent;
-	//ViewChainButton.OnSizeRealized = RefreshConfirmButtonLocation;
-	ViewChainButton.SetPosition(200, 90);
-	ViewChainButton.DisableNavigation();
-	ViewChainButton.SetText("12");
-	ViewChainButton.SetHeight(34);
-
-	ViewChainButton2 = Spawn(class'UIViewChainButton', CenterSection);
-	ViewChainButton2.bAnimateOnInit = false;
-	ViewChainButton2.InitViewChainButton('ViewChainButton2');
-	ViewChainButton2.SetPosition(100, 90);
-
+	ViewChainButton = Spawn(class'UIViewChainButton', CenterSection);
+	ViewChainButton.bAnimateOnInit = false;
+	ViewChainButton.OnLayoutRealized = OnViewChainButtonRealized;
+	ViewChainButton.InitViewChainButton('ViewChainButton');
+	ViewChainButton.AnchorTopCenter();
+	ViewChainButton.SetPosition(0, 40);
 
 	BuildActionImage();
 	BuildActionBrief();
+}
+
+simulated protected function OnViewChainButtonRealized ()
+{
+	ViewChainButton.SetX(-ViewChainButton.Width / 2);
 }
 
 simulated protected function BuildActionImage()
@@ -726,6 +718,7 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	UpdateButtons();
+	UpdateViewChainButton();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 }
@@ -786,6 +779,19 @@ simulated function UpdateButtons()
 		MainActionButton.OnClickedDelegate = OnConfirmClicked;
 		MainActionButton.SetDisabled(!CanOpenLoadout());
 	}
+}
+
+simulated function UpdateViewChainButton ()
+{
+	local XComGameState_Activity ActivityState;
+
+	ViewChainButton.Hide();
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
+	if (ActivityState == none) return;
+
+	ViewChainButton.ChainRef = ActivityState.ChainRef;
+	ViewChainButton.Show();
 }
 
 simulated function UpdateCovertActionInfo()

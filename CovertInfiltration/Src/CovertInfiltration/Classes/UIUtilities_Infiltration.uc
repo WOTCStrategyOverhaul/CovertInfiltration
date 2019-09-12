@@ -61,7 +61,7 @@ static function UICovertActionsGeoscape(optional StateObjectReference ActionToFo
 	HQPres.ScreenStack.Push(TheScreen);
 }
 
-static function UIChainsOverview ()
+static function UIChainsOverview (optional StateObjectReference ChainToFocus)
 {
 	local XComHQPresentationLayer HQPres;
 	local UIChainsOverview TheScreen;
@@ -70,6 +70,7 @@ static function UIChainsOverview ()
 	if (HQPres.ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none) return;
 
 	TheScreen = HQPres.Spawn(class'UIChainsOverview', HQPres);
+	TheScreen.ChainToFocusOnInit = ChainToFocus;
 	HQPres.ScreenStack.Push(TheScreen);
 }
 

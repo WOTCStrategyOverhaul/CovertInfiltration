@@ -10,6 +10,7 @@ var UIList ActivitiesList;
 var array<XComGameState_ActivityChain> Chains;
 
 var bool bInstantInterp;
+var StateObjectReference ChainToFocusOnInit;
 
 var localized string strOngoing;
 var localized string strEnded;
@@ -22,10 +23,11 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 {
 	super.InitScreen(InitController, InitMovie, InitName);
 
+	bInstantInterp = !Movie.Stack.Screens[1].IsA(class'UIFacility_CIC'.Name);
+
 	BuildScreen();
 	UpdateNavHelp();
 
-	bInstantInterp = !Movie.Stack.Screens[1].IsA(class'UIFacility_CIC'.Name);
 	`HQPRES.CAMLookAtNamedLocation("UIDisplayCam_ResistanceScreen", bInstantInterp ? float(0) : `HQINTERPTIME);
 }
 
@@ -74,6 +76,11 @@ simulated function OnInit()
 
 	CacheChains();
 	FillChainsList();
+
+	if (ChainToFocusOnInit.ObjectID > 0)
+	{
+		SelectChain(ChainToFocusOnInit);
+	}
 }
 
 //////////////
@@ -116,6 +123,27 @@ simulated protected function FillChainsList ()
 	}
 
 	ChainsList.Navigator.SelectFirstAvailableIfNoCurrentSelection();
+}
+
+simulated function SelectChain (StateObjectReference ChainRef)
+{
+	local UIListItemString ListItem;
+	local UIPanel Panel;
+	local int i;
+
+	foreach ChainsList.ItemContainer.ChildPanels(Panel, i)
+	{
+		ListItem = UIListItemString(Panel);
+		if (ListItem == none) continue;
+
+		if (ListItem.metadataInt == ChainRef.ObjectID)
+		{
+			ChainsList.SetSelectedIndex(i);
+			return;
+		}
+	}
+
+	`Redscreen("UIChainsOverview::SelectChain: Failed to find chain with ObjectID" @ ChainRef.ObjectID);
 }
 
 //////////////////

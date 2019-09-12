@@ -360,3 +360,23 @@ static function XComGameState_Activity GetActivityFromSecondaryObjectID (int Sta
 
 	return none;
 }
+
+static function XComGameState_Activity GetActivityFromObject (XComGameState_BaseObject StateObject)
+{
+	local XComGameState GameState;
+
+	GameState = StateObject.GetParentGameState();
+	if (GameState.HistoryIndex != -1) GameState = none;
+
+	return GetActivityFromObjectID(StateObject.ObjectID, GameState);
+}
+
+static function XComGameState_Activity GetActivityFromObjectID (int StateObjectID, optional XComGameState NewGameState)
+{
+	local XComGameState_Activity Activity;
+
+	Activity = GetActivityFromPrimaryObjectID(StateObjectID);
+	if (Activity != none) return Activity;
+
+	return GetActivityFromSecondaryObjectID(StateObjectID);
+}
