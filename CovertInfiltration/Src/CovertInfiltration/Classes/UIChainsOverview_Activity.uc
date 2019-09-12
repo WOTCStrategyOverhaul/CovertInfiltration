@@ -90,7 +90,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 		break;
 	}
 
-	BG.SetBGColorState(UIState);
+	BG.SetOutline(true, class'UIUtilities_Colors'.static.GetHexColorFromState(UIState));
 	StatusLineBG.SetOutline(false, class'UIUtilities_Colors'.static.GetHexColorFromState(UIState));
 
 	Header.SetHTMLText(
