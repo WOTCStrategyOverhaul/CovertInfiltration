@@ -274,3 +274,6 @@ strDescription=Placeholder description
 [X2StrategyElement_DefaultActivityChains]
 strCounterDarkEventDescription="Resistance heard about ADVENT's '<XGParam:StrValue0/>' project. We should do our best to stop it"
 strCounterHiddenDarkEventDescription=Resistance heard about a top-secret ADVENT project. We don't know the details, but it definetely doesn't sound good for us
+
+[UIViewChainButton]
+strLabel=View chain

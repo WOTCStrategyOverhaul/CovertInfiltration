@@ -16,6 +16,8 @@ var UIMask CenterSectionMask; // Used to animate in
 var UIPanel RightPane;
 
 // UI - action info (top)
+var UIButton ViewChainButton;
+var UIViewChainButton ViewChainButton2;
 var UIPanel ActionInfoTopContainer;
 
 // UI - action image
@@ -210,6 +212,25 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.InitPanel('ActionInfoTopContainer');
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
+
+	ViewChainButton = Spawn(class'UIButton', CenterSection);
+	ViewChainButton.LibID = 'X2ConfirmButton';
+	ViewChainButton.InitButton('ViewChainButton');
+	ViewChainButton.SetResizeToText(true);
+	//ViewChainButton.OnClickedDelegate = ConfirmButtonClick != None ? ConfirmButtonClick : OnClickedConfirmButton;
+	//ViewChainButton.OnDoubleClickedDelegate = ConfirmButtonDoubleClick != None ? ConfirmButtonDoubleClick : OnClickedConfirmButton;
+	//ViewChainButton.OnMouseEventDelegate = OnChildMouseEvent;
+	//ViewChainButton.OnSizeRealized = RefreshConfirmButtonLocation;
+	ViewChainButton.SetPosition(200, 90);
+	ViewChainButton.DisableNavigation();
+	ViewChainButton.SetText("12");
+	ViewChainButton.SetHeight(34);
+
+	ViewChainButton2 = Spawn(class'UIViewChainButton', CenterSection);
+	ViewChainButton2.bAnimateOnInit = false;
+	ViewChainButton2.InitViewChainButton('ViewChainButton2');
+	ViewChainButton2.SetPosition(100, 90);
+
 
 	BuildActionImage();
 	BuildActionBrief();

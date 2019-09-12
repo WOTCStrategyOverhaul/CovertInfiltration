@@ -236,6 +236,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIViewChainButton.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
