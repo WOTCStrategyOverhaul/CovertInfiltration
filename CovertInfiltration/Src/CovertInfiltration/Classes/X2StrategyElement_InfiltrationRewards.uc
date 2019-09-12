@@ -55,7 +55,13 @@ static function X2DataTemplate CreateContainerRewardTemplate()
 static function SetContainerReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
 	if (XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID)) != none)
+	{
 		RewardState.RewardObjectReference = RewardObjectRef;
+	}
+	else
+	{
+		`RedScreen("Invalid or missing resource container passed to SetContainerReward!");
+	}
 }
 
 static function GiveContainerReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)

@@ -27,8 +27,7 @@ var array<StateObjectReference> StageRefs;
 var array<StateObjectReference> ChainObjectRefs;
 
 // Chain Complications
-var array<name> Complications;
-var array<int> CompChances;
+var array<XComGameState_Complication> Complications;
 
 // The faction associated with this chain, if any
 var StateObjectReference FactionRef;
@@ -175,7 +174,6 @@ function StartNextStage (XComGameState NewGameState)
 
 function CurrentStageHasCompleted (XComGameState NewGameState)
 {
-	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference ActivityRef;
 	local X2ComplicationTemplate ChainComp;
@@ -236,16 +234,14 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		// Fire off chain complications
 		if (m_Template.bAllowComplications)
 		{
-			TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-		
 			for (i = 0; i < Complications.Length; i++)
 			{
-				ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[i]));
-
 				CompRoll = `SYNC_RAND_STATIC(100);
 			
-				if (CompRoll < CompChances[i])
+				if (CompRoll < Complications[i].TriggerChance)
 				{
+					ChainComp = Complications[i].GetMyTemplate();
+
 					if (EndReason == eACER_Complete && ChainComp.OnChainComplete != none)
 						ChainComp.OnChainComplete(NewGameState, self);
 					if (EndReason == eACER_ProgressBlocked && ChainComp.OnChainBlocked != none)
@@ -398,6 +394,7 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 function SetupComplications (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_Complication CompState;
 	local X2ComplicationTemplate CompTemplate;
 	local X2DataTemplate DataTemplate;
 	local int CompRoll;
@@ -423,32 +420,42 @@ function SetupComplications (XComGameState NewGameState)
 
 					CompRoll = CompTemplate.MinChance;
 				}
-			
-				Complications.AddItem(CompTemplate.DataName);
-				CompChances.AddItem(CompRoll);
+
+				CompState = CompTemplate.CreateInstanceFromTemplate(NewGameState, CompRoll);
+				Complications.AddItem(CompState);
 			}
 		}
 	}
 }
 
-function TriggerComplication (XComGameState NewGameState, name Complication)
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2ComplicationTemplate ChainComp;
-
-	if (HasComplication(Complication))
-	{
-		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-		ChainComp = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(Complications[Complications.Find(Complication)]));
-
-		ChainComp.OnManualTrigger(NewGameState, self);
-	}
-}
-
 function bool HasComplication (name Complication)
 {
-	return Complications.Find(Complication) > -1;
+	local int x;
+
+	for (x = 0; x < Complications.Length; x++)
+	{
+		if (Complications[x].GetMyTemplateName() == Complication)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function XComGameState_Complication FindComplication (name Complication)
+{
+	local int x;
+
+	for (x = 0; x < Complications.Length; x++)
+	{
+		if (Complications[x].GetMyTemplateName() == Complication)
+		{
+			return Complications[x];
+		}
+	}
+
+	return none;
 }
 
 defaultproperties

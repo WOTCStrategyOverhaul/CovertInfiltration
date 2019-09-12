@@ -22,9 +22,9 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_RewardInterception');
 
-	//Template.OnChainComplete = SpawnRescueMission;
+	Template.OnChainComplete = SpawnRescueMission;
 	//Template.OnChainBlocked = DoNothing;
-	Template.OnManualTrigger = SpawnRescueMission;
+	//Template.OnManualTrigger = SpawnRescueMission;
 	Template.CanBeChosen = SupplyAndIntelChains;
 
 	// TODO: Subtract half of last chain's resource reward then give it back upon successful completion of intercept chain
@@ -37,11 +37,12 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	local XComGameState_ActivityChain SpawnedChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 	local XComGameState_Activity ActivityState;
-	local X2ActivityTemplate_Mission ActivityTemplate;
 	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityTemplate_Mission ActivityTemplate;
 	local XComGameState_Item ItemState;
 	local array<XComGameState_Item> SavedItems;
 	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_Complication CompState;
 	local ResourcePackage Package;
 	local int i;
 
@@ -49,8 +50,6 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
 	if (ActivityTemplate == none) return;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
@@ -63,19 +62,17 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 
 	ResContainer = XComGameState_ResourceContainer(NewGameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
 	
-	for (i = 0; i < InterceptedChainState.ChainObjectRefs.Length; i++)
+	CompState = InterceptedChainState.FindComplication('Complication_RewardInterception');
+	
+	for (i = 0; i < CompState.ComplicationObjectRefs.Length; i++)
 	{
-		if (InterceptedChainState.ChainObjectRefs[i].ObjectID > 0)
-		{
-			ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(InterceptedChainState.ChainObjectRefs[i].ObjectID));
+		ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(CompState.ComplicationObjectRefs[i].ObjectID));
 
-			if (ItemState != none)
-			{
-				Package.ItemType = ItemState.GetMyTemplateName();
-				Package.ItemAmount = ItemState.Quantity;
-				ResContainer.Packages.AddItem(Package);
-				// TODO: in spawned chain, make the rewards reflect the saved items
-			}
+		if (ItemState != none)
+		{
+			Package.ItemType = ItemState.GetMyTemplateName();
+			Package.ItemAmount = ItemState.Quantity;
+			ResContainer.Packages.AddItem(Package);
 		}
 	}
 	
@@ -103,7 +100,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 		// and if no other chains already have this complication
 		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
 		{
-			if (OtherChainState.bEnded == false && OtherChainState.Complications.Find('Complication_RewardInterception') > -1)
+			if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_RewardInterception'))
 			{
 				return false;
 			}

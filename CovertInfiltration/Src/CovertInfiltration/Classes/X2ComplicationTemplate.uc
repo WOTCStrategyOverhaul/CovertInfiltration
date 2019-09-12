@@ -9,6 +9,8 @@
 
 class X2ComplicationTemplate extends X2StrategyElementTemplate;
 
+var class<XComGameState_Complication> StateClass;
+
 // Info shown in UI
 var localized name FriendlyName;
 var localized name FriendlyDesc;
@@ -29,5 +31,20 @@ delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChai
 delegate OnChainComplete(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 delegate OnChainBlocked(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 
-// What happens when the attached chain has its TriggerComplication function called
-delegate OnManualTrigger(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
+function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, optional int TriggerChance = -1)
+{
+	local XComGameState_Complication ComplicationState;
+
+	ComplicationState = XComGameState_Complication(NewGameState.CreateNewStateObject(class'XComGameState_Complication', self));
+	if (TriggerChance >= 0)
+	{
+		ComplicationState.TriggerChance = TriggerChance;
+	}
+
+	return ComplicationState;
+}
+
+defaultproperties
+{
+	StateClass = class'XComGameState_Complication'
+}
