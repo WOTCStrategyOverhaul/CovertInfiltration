@@ -362,6 +362,30 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
 }
 
+///////////
+/// Loc ///
+///////////
+
+function string GetOverviewTitle ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().strTitle;
+	if (strReturn == "") strReturn = "(MISSING TITLE)";
+
+	return strReturn;
+}
+
+function string GetOverviewDescription ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().GetOverviewDescription(self);
+	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
+
+	return strReturn;
+}
+
 defaultproperties
 {
 	iCurrentStage = -1;

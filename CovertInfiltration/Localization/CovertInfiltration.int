@@ -219,6 +219,10 @@ strOverviewDescription=Investigate the possibility of a raid on AVATAR project f
 [Activity_PrepareUFO X2ActivityTemplate_CovertAction]
 strOverviewDescription=Prepare the raid on an UFO
 
+[Activity_WaitDE X2ActivityTemplate]
+strOverviewHeader=WAIT
+strOverviewDescription=Our friends in the resistance caught wind of ADVENT's project. They are working on finding a way to counter it
+
 [ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
 strTitle=Counter Dark Event
 strDescription=Placeholder description
@@ -266,3 +270,7 @@ strDescription=Placeholder description
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle=Destroy facility
 strDescription=Placeholder description
+
+[X2StrategyElement_DefaultActivityChains]
+strCounterDarkEventDescription="Resistance heard about ADVENT's '<XGParam:StrValue0/>' project. We should do our best to stop it"
+strCounterHiddenDarkEventDescription=Resistance heard about a top-secret ADVENT project. We don't know the details, but it definetely doesn't sound good for us

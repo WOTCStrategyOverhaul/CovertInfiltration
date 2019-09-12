@@ -143,7 +143,7 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	if (ChainState == none) return;
 
 	// Chain info
-	ChainHeader.SetText(ChainState.GetMyTemplate().strTitle, ChainState.GetMyTemplate().strDescription);
+	ChainHeader.SetText(ChainState.GetOverviewTitle(), ChainState.GetOverviewDescription());
 
 	// Show/Spawn entries we need
 	for (i = 0; i < ChainState.StageRefs.Length; i++)

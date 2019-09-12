@@ -20,6 +20,9 @@ var int NumInDeck; // The larger the number, the more common this chain is
 
 delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be met for the chain to be added to the deck
 
+// For overview UI
+delegate string GetOverviewDescription (XComGameState_ActivityChain ChainState);
+
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
 
@@ -76,7 +79,13 @@ static function bool AlwaysAvailable(XComGameState NewGameState)
 	return true;
 }
 
+static function string DefaultGetOverviewDescription (XComGameState_ActivityChain ChainState)
+{
+	return ChainState.GetMyTemplate().strDescription;
+}
+
 defaultproperties
 {
 	DeckReq = AlwaysAvailable
+	GetOverviewDescription = DefaultGetOverviewDescription
 }
