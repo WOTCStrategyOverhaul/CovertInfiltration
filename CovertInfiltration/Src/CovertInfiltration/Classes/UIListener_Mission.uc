@@ -22,9 +22,41 @@ event OnInit (UIScreen Screen)
 	Button.SetPosition(0, 40);
 
 	Button.AnimateIn(0);
+
+	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);
 }
 
 simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
 {
 	Button.SetX(-Button.Width / 2);
+}
+
+simulated protected function bool OnMissionScreenInput (UIScreen Screen, int iInput, int ActionMask)
+{
+	local UIViewChainButton ViewChainButton;
+
+	if (!Screen.CheckInputIsReleaseOrDirectionRepeat(iInput, ActionMask))
+	{
+		return false;
+	}
+
+	ViewChainButton = UIViewChainButton(Screen.GetChildByName('ViewChainButton'));
+	if (ViewChainButton == none)
+	{
+		`Redscreen("Handling input for UIMission but unable to find ViewChainButton");
+		return false;
+	}
+
+	switch (iInput)
+	{
+	case class'UIUtilities_Input'.const.FXS_BUTTON_RTRIGGER:
+		if (ViewChainButton.bIsVisible)
+		{
+			ViewChainButton.OpenScreen();
+			return true;
+		}
+		break;
+	}
+
+	return false;
 }
