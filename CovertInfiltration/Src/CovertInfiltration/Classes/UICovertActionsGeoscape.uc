@@ -1349,7 +1349,15 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
 		CloseScreen();
-		return true;		
+		return true;
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_RTRIGGER:
+		if (ViewChainButton.bIsVisible)
+		{
+			ViewChainButton.OpenScreen();
+			return true;
+		}
+		break;
 	}
 
 	return super.OnUnrealCommand(cmd, arg);
