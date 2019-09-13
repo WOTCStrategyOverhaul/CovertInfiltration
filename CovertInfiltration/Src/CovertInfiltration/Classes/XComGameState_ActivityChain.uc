@@ -27,7 +27,7 @@ var array<StateObjectReference> StageRefs;
 var array<StateObjectReference> ChainObjectRefs;
 
 // Chain Complications
-var array<XComGameState_Complication> Complications;
+var array<StateObjectReference> ComplicationRefs;
 
 // The faction associated with this chain, if any
 var StateObjectReference FactionRef;
@@ -84,8 +84,8 @@ function SetupChain (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
-	local int i, CompRoll;
-	local X2ComplicationTemplate CompTemplate;
+	local int i, ComplicationRoll;
+	local X2ComplicationTemplate ComplicationTemplate;
 	local X2DataTemplate DataTemplate;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
@@ -176,8 +176,12 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 {
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference ActivityRef;
-	local X2ComplicationTemplate ChainComp;
-	local int CompRoll, i;
+	local X2ComplicationTemplate ComplicationTemplate;
+	local XComGameState_Complication ComplicationState;
+	local XComGameStateHistory History;
+	local int ComplicationRoll, i;
+
+	History = `XCOMHISTORY;
 
 	`CI_Trace(m_TemplateName @ "current stage has reported completion, processing chain reaction");
 
@@ -234,18 +238,19 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		// Fire off chain complications
 		if (m_Template.bAllowComplications)
 		{
-			for (i = 0; i < Complications.Length; i++)
+			for (i = 0; i < ComplicationRefs.Length; i++)
 			{
-				CompRoll = `SYNC_RAND_STATIC(100);
+				ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRefs[i].ObjectID));
+				ComplicationRoll = `SYNC_RAND_STATIC(100);
 			
-				if (CompRoll < Complications[i].TriggerChance)
+				if (ComplicationRoll < ComplicationState.TriggerChance)
 				{
-					ChainComp = Complications[i].GetMyTemplate();
+					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
-					if (EndReason == eACER_Complete && ChainComp.OnChainComplete != none)
-						ChainComp.OnChainComplete(NewGameState, self);
-					if (EndReason == eACER_ProgressBlocked && ChainComp.OnChainBlocked != none)
-						ChainComp.OnChainBlocked(NewGameState, self);
+					if (EndReason == eACER_Complete && ComplicationTemplate.OnChainComplete != none)
+						ComplicationTemplate.OnChainComplete(NewGameState, self);
+					if (EndReason == eACER_ProgressBlocked && ComplicationTemplate.OnChainBlocked != none)
+						ComplicationTemplate.OnChainBlocked(NewGameState, self);
 				}
 			}
 		}
@@ -394,10 +399,10 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 function SetupComplications (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
-	local XComGameState_Complication CompState;
-	local X2ComplicationTemplate CompTemplate;
+	local XComGameState_Complication ComplicationState;
+	local X2ComplicationTemplate ComplicationTemplate;
 	local X2DataTemplate DataTemplate;
-	local int CompRoll;
+	local int ComplicationRoll;
 
 	if (m_Template.bAllowComplications)
 	{
@@ -405,24 +410,24 @@ function SetupComplications (XComGameState NewGameState)
 
 		foreach TemplateManager.IterateTemplates(DataTemplate)
 		{
-			CompTemplate = X2ComplicationTemplate(DataTemplate);
+			ComplicationTemplate = X2ComplicationTemplate(DataTemplate);
 
-			if (CompTemplate == none) continue;
+			if (ComplicationTemplate == none) continue;
 
-			if (CompTemplate.CanBeChosen(NewGameState, self))
+			if (ComplicationTemplate.CanBeChosen(NewGameState, self))
 			{			
-				CompRoll = `SYNC_RAND_STATIC(CompTemplate.MaxChance);
+				ComplicationRoll = `SYNC_RAND_STATIC(ComplicationTemplate.MaxChance);
 
-				if (CompRoll < CompTemplate.MinChance)
+				if (ComplicationRoll < ComplicationTemplate.MinChance)
 				{
-					if (!CompTemplate.AlwaysSelect)
+					if (!ComplicationTemplate.AlwaysSelect)
 						continue;
 
-					CompRoll = CompTemplate.MinChance;
+					ComplicationRoll = ComplicationTemplate.MinChance;
 				}
 
-				CompState = CompTemplate.CreateInstanceFromTemplate(NewGameState, CompRoll);
-				Complications.AddItem(CompState);
+				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, ComplicationRoll);
+				ComplicationRefs.AddItem(ComplicationState.GetReference());
 			}
 		}
 	}
@@ -430,11 +435,14 @@ function SetupComplications (XComGameState NewGameState)
 
 function bool HasComplication (name Complication)
 {
+	local XComGameState_Complication ComplicationState;
 	local int x;
 
-	for (x = 0; x < Complications.Length; x++)
+	for (x = 0; x < ComplicationRefs.Length; x++)
 	{
-		if (Complications[x].GetMyTemplateName() == Complication)
+		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
+
+		if (ComplicationState.GetMyTemplateName() == Complication)
 		{
 			return true;
 		}
@@ -445,13 +453,34 @@ function bool HasComplication (name Complication)
 
 function XComGameState_Complication FindComplication (name Complication)
 {
+	local XComGameState_Complication ComplicationState;
 	local int x;
 
-	for (x = 0; x < Complications.Length; x++)
+	for (x = 0; x < ComplicationRefs.Length; x++)
 	{
-		if (Complications[x].GetMyTemplateName() == Complication)
+		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
+
+		if (ComplicationState.GetMyTemplateName() == Complication)
 		{
-			return Complications[x];
+			return ComplicationState;
+		}
+	}
+
+	return none;
+}
+
+function XComGameState_Complication EditComplication (name Complication, XComGameState NewGameState)
+{
+	local XComGameState_Complication ComplicationState;
+	local int x;
+
+	for (x = 0; x < ComplicationRefs.Length; x++)
+	{
+		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
+
+		if (ComplicationState.GetMyTemplateName() == Complication)
+		{
+			return XComGameState_Complication(NewGameState.ModifyStateObject(class'XComGameState_Complication', ComplicationRefs[x].ObjectID));
 		}
 	}
 

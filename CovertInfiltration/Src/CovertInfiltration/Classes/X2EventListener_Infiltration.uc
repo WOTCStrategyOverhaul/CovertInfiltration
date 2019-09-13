@@ -525,7 +525,7 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 		return ELR_NoInterrupt;
 	}
 
-	ChainState.FindComplication('Complication_RewardInterception').ComplicationObjectRefs.AddItem(ItemState.GetReference());
+	ChainState.EditComplication('Complication_RewardInterception', GameState).ComplicationObjectRefs.AddItem(ItemState.GetReference());
 	`CI_Log("MULTIPLYING LOOT!");
 	
 	return ELR_NoInterrupt;

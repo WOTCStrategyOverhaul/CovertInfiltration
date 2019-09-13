@@ -35,7 +35,7 @@ function XComGameState_Complication CreateInstanceFromTemplate (XComGameState Ne
 {
 	local XComGameState_Complication ComplicationState;
 
-	ComplicationState = XComGameState_Complication(NewGameState.CreateNewStateObject(class'XComGameState_Complication', self));
+	ComplicationState = XComGameState_Complication(NewGameState.CreateNewStateObject(StateClass, self));
 	if (TriggerChance >= 0)
 	{
 		ComplicationState.TriggerChance = TriggerChance;
