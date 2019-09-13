@@ -12,6 +12,11 @@ var array<XComGameState_ActivityChain> Chains;
 var bool bInstantInterp;
 var StateObjectReference ChainToFocusOnInit;
 
+// Fix for UIMission
+var bool bRestoreCamEarthViewOnClose;
+var protected vector2D EarthSavedViewLoc;
+var protected float EarthSavedZoom;
+
 var localized string strOngoing;
 var localized string strEnded;
 
@@ -27,6 +32,7 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 
 	BuildScreen();
 	UpdateNavHelp();
+	SaveEarthViewIfNeeded();
 
 	`HQPRES.CAMLookAtNamedLocation("UIDisplayCam_ResistanceScreen", bInstantInterp ? float(0) : `HQINTERPTIME);
 }
@@ -274,6 +280,30 @@ simulated event Removed()
 	super.Removed();
 
 	`HQPRES.m_kAvengerHUD.NavHelp.ClearButtonHelp();
+	RestoreEarthViewIfNeeded();
+}
+
+////////////////////////////////
+/// Camera fix for UIMission ///
+////////////////////////////////
+
+simulated protected function SaveEarthViewIfNeeded ()
+{
+	local XComEarth Earth;
+
+	if (!bRestoreCamEarthViewOnClose) return;
+
+	Earth = `EARTH;
+	EarthSavedViewLoc = Earth.GetViewLocation();
+	EarthSavedZoom = Earth.fTargetZoom;
+}
+
+simulated protected function RestoreEarthViewIfNeeded ()
+{
+	if (!bRestoreCamEarthViewOnClose) return;
+
+	`HQPRES.CAMLookAtEarth(EarthSavedViewLoc, EarthSavedZoom, 0);
+	`HQPRES.GetCamera().ForceEarthViewImmediately(false);
 }
 
 ///////////////

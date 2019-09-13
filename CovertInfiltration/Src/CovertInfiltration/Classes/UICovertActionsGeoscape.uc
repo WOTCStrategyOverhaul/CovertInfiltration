@@ -223,7 +223,7 @@ simulated protected function BuildActionInfoTop()
 	BuildActionBrief();
 }
 
-simulated protected function OnViewChainButtonRealized ()
+simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
 {
 	ViewChainButton.SetX(-ViewChainButton.Width / 2);
 }

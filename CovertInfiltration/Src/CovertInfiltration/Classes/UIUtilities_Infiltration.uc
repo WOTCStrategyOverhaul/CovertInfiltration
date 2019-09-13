@@ -61,7 +61,7 @@ static function UICovertActionsGeoscape(optional StateObjectReference ActionToFo
 	HQPres.ScreenStack.Push(TheScreen);
 }
 
-static function UIChainsOverview (optional StateObjectReference ChainToFocus)
+static function UIChainsOverview (optional StateObjectReference ChainToFocus, optional bool bRestoreCamEarthViewOnClose)
 {
 	local XComHQPresentationLayer HQPres;
 	local UIChainsOverview TheScreen;
@@ -71,6 +71,7 @@ static function UIChainsOverview (optional StateObjectReference ChainToFocus)
 
 	TheScreen = HQPres.Spawn(class'UIChainsOverview', HQPres);
 	TheScreen.ChainToFocusOnInit = ChainToFocus;
+	TheScreen.bRestoreCamEarthViewOnClose = bRestoreCamEarthViewOnClose;
 	HQPres.ScreenStack.Push(TheScreen);
 }
 

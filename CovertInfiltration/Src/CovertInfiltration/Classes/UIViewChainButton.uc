@@ -6,10 +6,11 @@ var protectedwrite UIText Label;
 
 var string MainColourHex;
 var StateObjectReference ChainRef;
+var bool bRestoreCamEarthViewOnOverviewClose;
 
 var localized string strLabel;
 
-delegate OnLayoutRealized();
+delegate OnLayoutRealized (UIViewChainButton Button);
 
 const INNER_BG_PADDING = 2;
 const LABEL_PADDING = 8;
@@ -74,7 +75,7 @@ simulated protected function RealizeLayout ()
 	BG.SetWidth(Width);
 	InnerBG.SetWidth(Width - INNER_BG_PADDING);
 
-	if (OnLayoutRealized != none) OnLayoutRealized();
+	if (OnLayoutRealized != none) OnLayoutRealized(self);
 }
 
 simulated function OnMouseEvent (int cmd, array<string> args)
@@ -83,7 +84,7 @@ simulated function OnMouseEvent (int cmd, array<string> args)
 
 	if (cmd == class'UIUtilities_Input'.const.FXS_L_MOUSE_UP)
 	{
-		class'UIUtilities_Infiltration'.static.UIChainsOverview(ChainRef);
+		class'UIUtilities_Infiltration'.static.UIChainsOverview(ChainRef, bRestoreCamEarthViewOnOverviewClose);
 		OnLoseFocus();
 	}
 }
