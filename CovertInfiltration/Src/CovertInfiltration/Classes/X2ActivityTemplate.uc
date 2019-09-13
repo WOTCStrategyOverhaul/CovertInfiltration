@@ -14,6 +14,15 @@ class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
 
+///////////
+/// Loc ///
+///////////
+
+var localized string strOverviewHeader;
+var localized string strOverviewDescription;
+
+delegate string GetOverviewDescription (XComGameState_Activity ActivityState);
+
 /////////////////
 /// Lifecycle ///
 /////////////////
@@ -40,7 +49,17 @@ delegate CleanupChain(XComGameState NewGameState, XComGameState_Activity Activit
 // If not set, true is assumed
 delegate bool ShouldProgressChain(XComGameState_Activity ActivityState);
 
+////////////////
+/// Defaults ///
+////////////////
+
+static function string DefaultGetOverviewDescription (XComGameState_Activity ActivityState)
+{
+	return ActivityState.GetMyTemplate().strOverviewDescription;
+}
+
 defaultproperties
 {
 	StateClass = class'XComGameState_Activity'
+	GetOverviewDescription = DefaultGetOverviewDescription
 }

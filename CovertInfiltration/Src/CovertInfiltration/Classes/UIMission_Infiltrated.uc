@@ -77,6 +77,8 @@ simulated function BuildScreen()
 	// There is no navigation on this screen.
 	// Also, this fixes selecting "cancel" via keyboard and hitting enter which uses "confirm" button
 	Navigator.Clear();
+
+	// Note that the "View chain" button is handled in UIListener_Mission
 }
 
 simulated function string GetOverInfiltrationText()

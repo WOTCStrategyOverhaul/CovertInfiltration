@@ -61,6 +61,20 @@ static function UICovertActionsGeoscape(optional StateObjectReference ActionToFo
 	HQPres.ScreenStack.Push(TheScreen);
 }
 
+static function UIChainsOverview (optional StateObjectReference ChainToFocus, optional bool bRestoreCamEarthViewOnClose)
+{
+	local XComHQPresentationLayer HQPres;
+	local UIChainsOverview TheScreen;
+
+	HQPres = `HQPRES;
+	if (HQPres.ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none) return;
+
+	TheScreen = HQPres.Spawn(class'UIChainsOverview', HQPres);
+	TheScreen.ChainToFocusOnInit = ChainToFocus;
+	TheScreen.bRestoreCamEarthViewOnClose = bRestoreCamEarthViewOnClose;
+	HQPres.ScreenStack.Push(TheScreen);
+}
+
 static function UIPersonnel_PreSetList(array<StateObjectReference> UnitRefs, optional string Header)
 {
 	local XComHQPresentationLayer HQPres;

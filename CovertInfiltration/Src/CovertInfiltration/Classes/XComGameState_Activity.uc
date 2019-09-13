@@ -10,22 +10,6 @@
 
 class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
-enum EActivityCompletion
-{
-	// The chain hasn't progressed to this activity yet
-	eActivityCompletion_NotReached,
-
-	// The player is still able to do the activity (or is doing it now)
-	eActivityCompletion_NotCompleted,
-
-	// The player failed to handle this activity in time limit
-	eActivityCompletion_Expired,
-	
-	eActivityCompletion_Failure,
-	eActivityCompletion_PartialSuccess,
-	eActivityCompletion_Success
-};
-
 var protected name m_TemplateName;
 var protected X2ActivityTemplate m_Template;
 
@@ -252,6 +236,30 @@ protected function bool ValidateCanMarkCompletion ()
 	return true;
 }
 
+///////////
+/// Loc ///
+///////////
+
+function string GetOverviewHeader ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().strOverviewHeader;
+	if (strReturn == "") strReturn = "(MISSING HEADER)";
+
+	return strReturn;
+}
+
+function string GetOverviewDescription ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().GetOverviewDescription(self);
+	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
+
+	return strReturn;
+}
+
 /////////////////////////
 /// XCGS_GE interface ///
 /////////////////////////
@@ -351,4 +359,24 @@ static function XComGameState_Activity GetActivityFromSecondaryObjectID (int Sta
 	}
 
 	return none;
+}
+
+static function XComGameState_Activity GetActivityFromObject (XComGameState_BaseObject StateObject)
+{
+	local XComGameState GameState;
+
+	GameState = StateObject.GetParentGameState();
+	if (GameState.HistoryIndex != -1) GameState = none;
+
+	return GetActivityFromObjectID(StateObject.ObjectID, GameState);
+}
+
+static function XComGameState_Activity GetActivityFromObjectID (int StateObjectID, optional XComGameState NewGameState)
+{
+	local XComGameState_Activity Activity;
+
+	Activity = GetActivityFromPrimaryObjectID(StateObjectID);
+	if (Activity != none) return Activity;
+
+	return GetActivityFromSecondaryObjectID(StateObjectID);
 }

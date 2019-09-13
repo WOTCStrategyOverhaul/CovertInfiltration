@@ -132,3 +132,148 @@ ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
+
+[X2ActivityTemplate_CovertAction]
+strOverviewHeader=COVERT ACTION
+
+[X2ActivityTemplate_Infiltration]
+strOverviewHeader=INFILTRATION
+
+[X2ActivityTemplate_Assault]
+strOverviewHeader=ASSAULT
+
+[UIListener_AvengerHUD]
+ChainsOverview_Label=Activity chains
+
+[UIChainsOverview]
+strOngoing=ONGOING
+strEnded=ENDED
+
+[UIChainsOverview_Activity]
+strCompletionStatusLabel_NotReached=Not reached
+strCompletionStatusLabel_NotCompleted=Not completed yet
+strCompletionStatusLabel_Expired=Expired
+strCompletionStatusLabel_Failure=Failed
+strCompletionStatusLabel_PartialSuccess=Partial success
+strCompletionStatusLabel_Success=Success
+
+; The descriptions below were written pretty hastly and probably need a serious pass over
+
+[Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue soldier from ADVENT compound
+
+[Activity_JailbreakChosenSoldier X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue soldier from Chosen's compound
+
+[Activity_JailbreakFactionSoldier X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue faction soldier from ADVENT compound
+
+[Activity_RescueEngineer X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue an engineer from a City Center
+
+[Activity_RescueScientist X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue a Scientist from a City Center
+
+[Activity_RecoverInformant X2ActivityTemplate_Infiltration]
+strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+
+[Activity_RecoverPersonnel X2ActivityTemplate_Infiltration]
+strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+
+[Activity_RecoverUFO X2ActivityTemplate_Infiltration]
+strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+
+[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
+strOverviewDescription=Neutralize ADVENT General
+
+[Activity_CounterDarkEvent X2ActivityTemplate_Infiltration]
+strOverviewDescription=Destroy critical piece of infrastructure
+
+[Activity_SupplyRaid X2ActivityTemplate_Infiltration]
+strOverviewDescription=Raid ADVENT supply convoy
+
+[Activity_CaptureInformant X2ActivityTemplate_Infiltration]
+strOverviewDescription=Neutralize ADVENT VIP
+
+[Activity_FacilityInformant X2ActivityTemplate_Infiltration]
+strOverviewDescription=Neutralize ADVENT VIP
+
+[Activity_GatherIntel X2ActivityTemplate_Assault]
+strOverviewDescription=Protect a datatap
+
+[Activity_GatherSupplies X2ActivityTemplate_Assault]
+strOverviewDescription=Extract supplies
+
+[Activity_LandedUFO X2ActivityTemplate_Assault]
+strOverviewDescription=Secure the UFO
+
+[Activity_PrepareCounterDE X2ActivityTemplate_CovertAction]
+strOverviewDescription=Prepare an operation to counter the Dark Event
+
+[Activity_PrepareFactionJB X2ActivityTemplate_CovertAction]
+strOverviewDescription=Plan the jailbreak of a faction soldier
+
+[Activity_PrepareFacility X2ActivityTemplate_CovertAction]
+strOverviewDescription=Investigate the possibility of a raid on AVATAR project facility
+
+[Activity_PrepareUFO X2ActivityTemplate_CovertAction]
+strOverviewDescription=Prepare the raid on an UFO
+
+[Activity_WaitDE X2ActivityTemplate]
+strOverviewHeader=WAIT
+strOverviewDescription=Our friends in the resistance caught wind of ADVENT's project. They are working on finding a way to counter it
+
+[ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
+strTitle=Counter Dark Event
+strDescription=Placeholder description
+
+[ActivityChain_SupplyRaid X2ActivityChainTemplate]
+strTitle=Supply raid
+strDescription=Placeholder description
+
+[ActivityChain_CaptureInformant X2ActivityChainTemplate]
+strTitle=Seize ADVENT VIP
+strDescription=Placeholder description
+
+[ActivityChain_RescueScientist X2ActivityChainTemplate]
+strTitle=Rescue scientist
+strDescription=Placeholder description
+
+[ActivityChain_RescueEngineer X2ActivityChainTemplate]
+strTitle=Rescue engineer
+strDescription=Placeholder description
+
+[ActivityChain_JailbreakFactionSoldier X2ActivityChainTemplate]
+strTitle=Get faction soldier
+strDescription=Placeholder description
+
+[ActivityChain_JailbreakCapturedSoldier X2ActivityChainTemplate]
+strTitle=Rescue soldier
+strDescription=Placeholder description
+
+[ActivityChain_JailbreakChosenSoldier X2ActivityChainTemplate]
+strTitle=Rescue soldier from Chosen
+strDescription=Placeholder description
+
+[ActivityChain_GatherSupplies X2ActivityChainTemplate]
+strTitle=Extract supplies
+strDescription=Placeholder description
+
+[ActivityChain_GatherIntel X2ActivityChainTemplate]
+strTitle=Gather intel
+strDescription=Placeholder description
+
+[ActivityChain_LandedUFO X2ActivityChainTemplate]
+strTitle=Raid UFO
+strDescription=Placeholder description
+
+[ActivityChain_DestroyFacility X2ActivityChainTemplate]
+strTitle=Destroy facility
+strDescription=Placeholder description
+
+[X2StrategyElement_DefaultActivityChains]
+strCounterDarkEventDescription="Resistance heard about ADVENT's '<XGParam:StrValue0/>' project. We should do our best to stop it"
+strCounterHiddenDarkEventDescription=Resistance heard about a top-secret ADVENT project. We don't know the details, but it definetely doesn't sound good for us
+
+[UIViewChainButton]
+strLabel=View chain

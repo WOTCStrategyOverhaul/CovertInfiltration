@@ -45,3 +45,19 @@ struct ActivityMissionFamilyMapping
 	var name ActivityTemplate;
 	var string MissionFamily;
 };
+
+enum EActivityCompletion
+{
+	// The chain hasn't progressed to this activity yet
+	eActivityCompletion_NotReached,
+
+	// The player is still able to do the activity (or is doing it now)
+	eActivityCompletion_NotCompleted,
+
+	// The player failed to handle this activity in time limit
+	eActivityCompletion_Expired,
+	
+	eActivityCompletion_Failure,
+	eActivityCompletion_PartialSuccess,
+	eActivityCompletion_Success
+};

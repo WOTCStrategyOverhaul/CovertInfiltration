@@ -16,6 +16,7 @@ var UIMask CenterSectionMask; // Used to animate in
 var UIPanel RightPane;
 
 // UI - action info (top)
+var UIViewChainButton ViewChainButton;
 var UIPanel ActionInfoTopContainer;
 
 // UI - action image
@@ -211,8 +212,20 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
 
+	ViewChainButton = Spawn(class'UIViewChainButton', CenterSection);
+	ViewChainButton.bAnimateOnInit = false;
+	ViewChainButton.OnLayoutRealized = OnViewChainButtonRealized;
+	ViewChainButton.InitViewChainButton('ViewChainButton');
+	ViewChainButton.AnchorTopCenter();
+	ViewChainButton.SetPosition(0, 40);
+
 	BuildActionImage();
 	BuildActionBrief();
+}
+
+simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
+{
+	ViewChainButton.SetX(-ViewChainButton.Width / 2);
 }
 
 simulated protected function BuildActionImage()
@@ -705,6 +718,7 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	UpdateButtons();
+	UpdateViewChainButton();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 }
@@ -765,6 +779,19 @@ simulated function UpdateButtons()
 		MainActionButton.OnClickedDelegate = OnConfirmClicked;
 		MainActionButton.SetDisabled(!CanOpenLoadout());
 	}
+}
+
+simulated function UpdateViewChainButton ()
+{
+	local XComGameState_Activity ActivityState;
+
+	ViewChainButton.Hide();
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
+	if (ActivityState == none) return;
+
+	ViewChainButton.ChainRef = ActivityState.ChainRef;
+	ViewChainButton.Show();
 }
 
 simulated function UpdateCovertActionInfo()
@@ -1322,7 +1349,15 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.const.FXS_KEY_ESCAPE:
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
 		CloseScreen();
-		return true;		
+		return true;
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_RTRIGGER:
+		if (ViewChainButton.bIsVisible)
+		{
+			ViewChainButton.OpenScreen();
+			return true;
+		}
+		break;
 	}
 
 	return super.OnUnrealCommand(cmd, arg);
