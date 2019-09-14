@@ -135,6 +135,7 @@ function SetupChain (XComGameState NewGameState)
 	}
 
 	`CI_Trace("Chain setup complete");
+	`XEVENTMGR.TriggerEvent('ActivityChainSetupComplete', self, self, NewGameState);
 }
 
 ////////////////
@@ -163,6 +164,8 @@ function StartNextStage (XComGameState NewGameState)
 	{
 		m_Template.PostStageSetup(NewGameState, ActivityState);
 	}
+
+	`XEVENTMGR.TriggerEvent('ActivityStarted', ActivityState, ActivityState, NewGameState);
 }
 
 function CurrentStageHasCompleted (XComGameState NewGameState)

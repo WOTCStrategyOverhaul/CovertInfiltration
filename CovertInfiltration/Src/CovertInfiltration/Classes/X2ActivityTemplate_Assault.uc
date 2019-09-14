@@ -14,8 +14,28 @@ var config int ExpirationVariance;
 
 static function DefaultAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+
 	CreateMission(NewGameState, ActivityState);
-	QueueCouncilAlert(NewGameState, ActivityState);
+	//QueueCouncilAlert(NewGameState, ActivityState);
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.MissionsToShowAlertOnStrategyMap.AddItem(ActivityState.PrimaryObjectRef);
+}
+
+static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState)
+{
+	local XComHQPresentationLayer HQPres;
+	
+	HQPres = `HQPRES;
+	HQPres.NotifyBanner("New mission", /*MissionState.GetUIButtonIcon()*/, "text 1", "text 2", eUIState_Good);
+	HQPres.PlayUISound(eSUISound_SoldierPromotion);
+	HQPres.StrategyMap2D.UpdateMissions();
+
+	if (`GAME.GetGeoscape().IsScanning())
+	{
+		`HQPRES.StrategyMap2D.ToggleScan();
+	}
 }
 
 static function DefaultOnExpire (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -363,5 +383,7 @@ simulated function CouncilAlertCB(Name eAction, out DynamicPropertySet AlertData
 defaultproperties
 {
 	SetupStage = DefaultAssaultSetup
+	SetupStageSubmitted = DefaultSetupStageSubmitted
+
 	GetSitreps = DefaultGetSitreps
 }

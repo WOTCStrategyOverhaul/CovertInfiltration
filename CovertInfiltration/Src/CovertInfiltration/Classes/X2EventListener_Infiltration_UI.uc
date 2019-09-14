@@ -53,6 +53,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('OverrideMissionSiteTooltip', OverrideMissionSiteTooltip, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate);
+	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -348,6 +349,24 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 
 	// If we launched while the mission was still flagged as 'new' we need to unflag or it will be stuck
 	ActionState.bNewAction = false;
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn MissionIconSetMissionSite (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local UIStrategyMap_MissionIcon MissionIcon;
+
+	MissionIcon = UIStrategyMap_MissionIcon(EventSource);
+	if (MissionIcon == none) return ELR_NoInterrupt;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+
+	if (CIInfo.MissionsToShowAlertOnStrategyMap.Find('ObjectID', MissionIcon.MissionSite.ObjectID) != INDEX_NONE)
+	{
+		MissionIcon.AS_SetAlert(true);
+	}
 
 	return ELR_NoInterrupt;
 }

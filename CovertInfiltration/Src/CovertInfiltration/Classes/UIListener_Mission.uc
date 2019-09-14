@@ -2,13 +2,20 @@ class UIListener_Mission extends UIScreenListener;
 
 event OnInit (UIScreen Screen)
 {
-	local XComGameState_Activity ActivityState;
-	local UIViewChainButton Button;
 	local UIMission MissionScreen;
 
 	MissionScreen = UIMission(Screen);
 	if (MissionScreen == none) return;
 
+	SpawnViewChainButton(MissionScreen);
+	CleanUpStrategyHudAlert(MissionScreen);
+}
+
+simulated protected function SpawnViewChainButton (UIMission MissionScreen)
+{
+	local XComGameState_Activity ActivityState;
+	local UIViewChainButton Button;
+	
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID);
 	if (ActivityState == none) return;
 
@@ -59,4 +66,36 @@ simulated protected function bool OnMissionScreenInput (UIScreen Screen, int iIn
 	}
 
 	return false;
+}
+
+simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+	local int i;
+	
+	local UIStrategyMap_MissionIcon MissionIcon;
+	local UIStrategyMap StrategyMap;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	i = CIInfo.MissionsToShowAlertOnStrategyMap.Find('ObjectID', MissionScreen.MissionRef.ObjectID);
+	
+	if (i != INDEX_NONE)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing strategy map alert icon for mission");
+		CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+		CIInfo.MissionsToShowAlertOnStrategyMap.Remove(i, 1);
+
+		`SubmitGameState(NewGameState);
+
+		// Undo the alert on the map
+		StrategyMap = `HQPRES.StrategyMap2D;
+		foreach StrategyMap.MissionItemUI.MissionIcons(MissionIcon)
+		{
+			if (MissionIcon.MissionSite.ObjectID == MissionScreen.MissionRef.ObjectID)
+			{
+				MissionIcon.AS_SetAlert(false);
+			}
+		}
+	}
 }

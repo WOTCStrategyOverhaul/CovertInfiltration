@@ -36,6 +36,9 @@ delegate SetupChain(XComGameState NewGameState, XComGameState_Activity ActivityS
 // Called when this activity/stage is reached
 delegate SetupStage(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
+// Called when the state where SetupStage was executed is submitted
+delegate SetupStageSubmitted(XComGameState_Activity ActivityState);
+
 // Called when this activity/stage is finished and no longer accessible by player
 delegate CleanupStage(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
