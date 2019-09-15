@@ -38,6 +38,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	ActivityState = GetActivity();
 	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
 	
+	SetLocationFromAction();
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
 	if (ActivityTemplate.PreMissionSetup != none)
@@ -59,6 +60,18 @@ function InitializeFromActivity (XComGameState NewGameState)
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout
 
 	InitRegisterEvents();
+}
+
+protected function SetLocationFromAction ()
+{
+	local XComGameState_CovertAction Action;
+
+	Action = GetSpawningAction();
+
+	Location.x = Action.Location.x;
+	Location.y = Action.Location.y;
+	Continent  = Action.Continent;
+	Region = Action.Region;
 }
 
 protected function EventListenerReturn OnActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -94,12 +107,6 @@ protected function CopyDataFromAction ()
 	local CovertActionRisk Risk;
 
 	Action = GetSpawningAction();
-
-	// Copy over the location data
-	Location.x = Action.Location.x;
-	Location.y = Action.Location.y;
-	Continent  = Action.Continent;
-	Region = Action.Region;
 
 	// Copy over the applied risks
 	AppliedFlatRisks.Length = 0;

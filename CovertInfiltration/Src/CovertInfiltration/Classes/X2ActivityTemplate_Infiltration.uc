@@ -23,8 +23,6 @@ static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameSt
 	CreateCovertAction(NewGameState, ActivityState);
 	CreateMission(NewGameState, ActivityState);
 	AddExpiration(NewGameState, ActivityState);
-
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(ActivityState.SecondaryObjectRef, NewGameState);
 }
 
 static function CreateCovertAction (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -97,9 +95,18 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState.InitializeFromActivity(NewGameState);
 }
 
+static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState)
+{
+	class'UIUtilities_Infiltration'.static.InfiltrationAvaliable(
+		XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState))
+	);
+}
+
 defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
+	SetupStageSubmitted = DefaultSetupStageSubmitted
+
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'
 }

@@ -52,10 +52,18 @@ simulated function X2ActivityTemplate GetMyTemplate()
 
 event OnCreation (optional X2DataTemplate Template)
 {
+	local X2EventManager EventManager;
+	local Object SelfObj;
+
 	super.OnCreation(Template);
 
 	m_Template = X2ActivityTemplate(Template);
 	m_TemplateName = Template.DataName;
+
+	EventManager = `XEVENTMGR;
+	SelfObj = self;
+	
+	EventManager.RegisterForEvent(SelfObj, 'ActivitySetupComplete', OnSetupCompleteSubmitted, ELD_OnStateSubmitted,, SelfObj);
 }
 
 /////////////////
@@ -92,6 +100,18 @@ function SetupStage (XComGameState NewGameState)
 	{
 		GetMyTemplate().SetupStage(NewGameState, NewActivityState);
 	}
+
+	`XEVENTMGR.TriggerEvent('ActivitySetupComplete', NewActivityState, NewActivityState, NewGameState);
+}
+
+protected function EventListenerReturn OnSetupCompleteSubmitted (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	if (GetMyTemplate().SetupStageSubmitted != none)
+	{
+		GetMyTemplate().SetupStageSubmitted(self);
+	}
+
+	return ELR_NoInterrupt;
 }
 
 function CleanupStage (XComGameState NewGameState)
@@ -170,6 +190,8 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 
 	CleanupStage(NewGameState);
 	bChainNeedsCompletionNotification = true;
+
+	`XEVENTMGR.TriggerEvent('ActivityMarkedComplete', self, self, NewGameState);
 }
 
 function UpdateGameBoard ()
@@ -190,6 +212,7 @@ function UpdateGameBoard ()
 		NewActivityState.bChainNeedsCompletionNotification = false;
 
 		NewChainState.CurrentStageHasCompleted(NewGameState);
+		`XEVENTMGR.TriggerEvent('ActivityCompleted', self, self, NewGameState);
 
 		`SubmitGamestate(NewGameState);
 	}

@@ -22,8 +22,6 @@ static function DefaultCovertActionSetup (XComGameState NewGameState, XComGameSt
 	CreateCovertAction(NewGameState, ActivityState);
 	AddExpiration(NewGameState, ActivityState);
 
-	class'UIUtilities_Infiltration'.static.InfiltrationActionAvaliable(ActivityState.SecondaryObjectRef, NewGameState);
-
 	CAActivity = XComGameState_Activity_CovertAction(ActivityState);
 	CAActivity.RegisterForActionEvents();
 }
@@ -86,6 +84,13 @@ static function int CreateExpirationVariance (X2ActivityTemplate_CovertAction Ac
 	return Variance;
 }
 
+static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState)
+{
+	class'UIUtilities_Infiltration'.static.CovertActionAvaliable(
+		XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectId(ActivityState.PrimaryObjectRef.ObjectID))
+	);
+}
+
 static function bool DefaultShouldProgressChain (XComGameState_Activity ActivityState)
 {
 	// Do not progress if the CA expired
@@ -95,6 +100,7 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 defaultproperties
 {
 	SetupStage = DefaultCovertActionSetup
+	SetupStageSubmitted = DefaultSetupStageSubmitted
 	ShouldProgressChain = DefaultShouldProgressChain
 	StateClass = class'XComGameState_Activity_CovertAction'
 }

@@ -24,19 +24,12 @@ simulated function String GetActionLocString()
 {
 	local string PrefixStr, MainStr;
 
-	if(Action.bNewAction)
+	if (Action.bNewAction)
 	{
 		PrefixStr = class'UICovertActions'.default.CovertActions_NewAction;
 	}
 
-	if(Action.GetObjective() != "")
-	{
-		MainStr = Action.GetObjective();
-	}
-	else
-	{
-		MainStr = Action.GetDisplayName();
-	}
+	MainStr = class'UIUtilities_Infiltration'.static.GetActionObjective(Action);
 
 	return PrefixStr $ MainStr;
 }
