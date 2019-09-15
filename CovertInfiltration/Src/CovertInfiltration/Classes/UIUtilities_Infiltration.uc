@@ -18,6 +18,9 @@ var localized string strStripUpgradesConfirmDesc;
 var localized string strReinforcementsBodyWarning;
 var localized string strReinforcementsBodyImminent;
 
+var localized string strOpportunityAvaliableUnknownLocation;
+var localized string strAssaultAvaliableHeader;
+
 //////////////////
 /// Game state ///
 //////////////////
@@ -274,6 +277,42 @@ simulated protected function InfiltrationActionAvaliableCB(Name eAction, out Dyn
 		{
 			HQPres.StrategyMap2D.ToggleScan();
 		}
+	}
+}
+
+static function AssaultMissionAvaliable (XComGameState_MissionSite MissionState)
+{
+	GeoscapeOpportunityAvaliable(MissionState, default.strAssaultAvaliableHeader, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText());
+}
+
+static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity GeoscapeEntity, string Header, string IconPath, string Description, optional EUIState eState = eUIState_Normal)
+{
+	local XComGameState_Continent ContinentState;
+	local XComGameState_WorldRegion RegionState;
+	local XComHQPresentationLayer HQPres;
+	local string strLocation;
+
+	ContinentState = GeoscapeEntity.GetContinent();
+	RegionState = GeoscapeEntity.GetWorldRegion();
+
+	if (RegionState != none) strLocation = RegionState.GetDisplayName();
+	else if (ContinentState != none) strLocation = ContinentState.GetMyTemplate().DisplayName;
+	else strLocation = default.strOpportunityAvaliableUnknownLocation;
+
+	HQPres = `HQPRES;
+	HQPres.NotifyBanner(Header, IconPath, strLocation, Description, eState);
+	HQPres.PlayUISound(eSUISound_SoldierPromotion);
+	
+	// If we are currently looking at the map, refresh the list of missions in the HUD
+	// so that the new one appears there
+	if (HQPres.ScreenStack.GetCurrentScreen() == HQPres.StrategyMap2D)
+	{
+		HQPres.StrategyMap2D.UpdateMissions();
+	}
+
+	if (`GAME.GetGeoscape().IsScanning())
+	{
+		HQPres.StrategyMap2D.ToggleScan();
 	}
 }
 

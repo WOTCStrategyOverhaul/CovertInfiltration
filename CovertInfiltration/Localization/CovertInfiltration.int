@@ -81,7 +81,8 @@ strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
 strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
 strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
 strReinforcementsBodyImminent="Imminent"
-
+strOpportunityAvaliableUnknownLocation=Out in the wilds
+strAssaultAvaliableHeader=New assault mission
 
 [UISkyrangerExfiltrate]
 strBody="The Skyranger has reached the action site. Awaiting orders."
