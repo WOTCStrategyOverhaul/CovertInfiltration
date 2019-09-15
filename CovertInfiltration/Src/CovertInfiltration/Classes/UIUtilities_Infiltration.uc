@@ -20,6 +20,8 @@ var localized string strReinforcementsBodyImminent;
 
 var localized string strOpportunityAvaliableUnknownLocation;
 var localized string strAssaultAvaliableHeader;
+var localized string strInfiltrationAvaliableHeader;
+var localized string strCovertActionAvaliableHeader;
 
 //////////////////
 /// Game state ///
@@ -285,6 +287,16 @@ static function AssaultMissionAvaliable (XComGameState_MissionSite MissionState)
 	GeoscapeOpportunityAvaliable(MissionState, default.strAssaultAvaliableHeader, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText());
 }
 
+static function InfiltrationAvaliable (XComGameState_MissionSiteInfiltration InfiltrationState)
+{
+	GeoscapeOpportunityAvaliable(InfiltrationState, default.strInfiltrationAvaliableHeader, InfiltrationState.GetUIButtonIcon(), InfiltrationState.GetMissionObjectiveText());
+}
+
+static function CovertActionAvaliable (XComGameState_CovertAction ActionState)
+{
+	GeoscapeOpportunityAvaliable(ActionState, default.strCovertActionAvaliableHeader, "img:///UILibrary_XPACK_Common.MissionIcon_CovertAction", GetActionObjective(ActionState));
+}
+
 static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity GeoscapeEntity, string Header, string IconPath, string Description, optional EUIState eState = eUIState_Normal)
 {
 	local XComGameState_Continent ContinentState;
@@ -314,6 +326,16 @@ static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity Geosc
 	{
 		HQPres.StrategyMap2D.ToggleScan();
 	}
+}
+
+static function string GetActionObjective (XComGameState_CovertAction ActionState)
+{
+	if (ActionState.GetObjective() != "")
+	{
+		return ActionState.GetObjective();
+	}
+	
+	return ActionState.GetDisplayName();
 }
 
 static function bool SetCountdownTextAndColor(int Turns, XComLWTuple Tuple)
