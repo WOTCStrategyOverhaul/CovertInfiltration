@@ -267,6 +267,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_SitReps.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_Tutorial.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration_UI.uc">
       <SubType>Content</SubType>
     </Content>
@@ -283,6 +286,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationMod.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationTutorialStageTemplate.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationArmors.uc">
