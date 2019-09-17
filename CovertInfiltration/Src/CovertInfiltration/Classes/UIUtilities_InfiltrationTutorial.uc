@@ -16,11 +16,32 @@ var localized string strCovertActionFinishedBody;
 /// Tutorial popups ///
 ///////////////////////
 
+static function GeoscapeEntry ()
+{
+	if (!ShouldShowPopup('GeoscapeEntry')) return;
+
+	`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
 static function CovertActionLoadout ()
 {
 	if (!ShouldShowPopup('CovertActionLoadout')) return;
 
 	`PRESBASE.UITutorialBox(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function InfiltrationSelection ()
+{
+	if (!ShouldShowPopup('InfiltrationSelection')) return;
+
+	`PRESBASE.UITutorialBox(default.strInfiltrationSelectionHeader, default.strInfiltrationSelectionBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function CovertActionFinished ()
+{
+	if (!ShouldShowPopup('CovertActionFinished')) return;
+
+	`PRESBASE.UITutorialBox(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 ///////////////

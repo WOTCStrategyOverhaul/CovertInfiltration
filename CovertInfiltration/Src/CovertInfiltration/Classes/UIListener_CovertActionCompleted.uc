@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  statusNone
-//  PURPOSE: This class is used to show "tired" on covert action report
+//  AUTHOR:  statusNone and Xymanek
+//  PURPOSE: This class is used to show "tired" on covert action report and trigger
+//           tutorial message
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -18,6 +19,7 @@ event OnInit(UIScreen Screen)
 	CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(CovertActionReport.ActionRef.ObjectID));
 
 	CheckForTiredSoldiers(CovertAction, CovertActionReport);
+	TriggerTutorial(CovertActionReport);
 }
 
 function CheckForTiredSoldiers(XComGameState_CovertAction CovertAction, UICovertActionReport CovertActionReport)
@@ -81,4 +83,11 @@ function ShowTiredOnReport(UICovertActionReport CovertActionReport, XComGameStat
 		// and no other code touches the color transform
 		TiredTextBG.SetColorTransform(ColorTransform);
 	}
+}
+
+protected function TriggerTutorial (UICovertActionReport CovertActionReport)
+{
+	CovertActionReport.bHideOnLoseFocus = false;
+	class'UIUtilities_InfiltrationTutorial'.static.CovertActionFinished();
+	CovertActionReport.bHideOnLoseFocus = true;
 }
