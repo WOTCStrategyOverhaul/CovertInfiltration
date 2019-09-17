@@ -236,6 +236,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIUtilities_InfiltrationTutorial.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
       <SubType>Content</SubType>
     </Content>

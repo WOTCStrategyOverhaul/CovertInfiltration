@@ -280,3 +280,7 @@ strCounterHiddenDarkEventDescription=Resistance heard about a top-secret ADVENT 
 
 [UIViewChainButton]
 strLabel=View chain
+
+[UIUtilities_InfiltrationTutorial]
+strCovertActionLoadoutHeader="Changes to Covert Actions"
+strCovertActionLoadoutBody="Traditional Covert Actions still involve you sending out soldiers into the unknown, but there are a few major changes. First, the time to complete them is no longer static - soldiers that are equipped or trained to infiltrate better will also complete them more quickly.<br/>Secondly, you also have to watch out for the deterrence stat of the squad you send out. Deterrence directly influences the chance of risks to trigger, and can be increased by sending more experienced soldiers and giving them better gear.<br/>Balance out infiltration and deterrence to complete Covert Actions successfully! If you at any time feel like a squad is needed at base, you can cancel an action for a small intel cost"
