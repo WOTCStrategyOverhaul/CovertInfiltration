@@ -1,3 +1,13 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: "Manager" for the CI's tutorial messages/popups. The external code is 
+//           supposed to call the public functions that correspond to the tutorial stages
+//           and this class will handle internally checking, recording and showing
+//           the messages
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIUtilities_InfiltrationTutorial extends Object;
 
 var localized string strGeoscapeEntryHeader;
