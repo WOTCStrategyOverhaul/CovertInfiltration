@@ -33,3 +33,11 @@ simulated function X2ComplicationTemplate GetMyTemplate()
 
 	return m_Template;
 }
+
+event OnCreation(optional X2DataTemplate Template)
+{
+	super.OnCreation( Template );
+
+	m_Template = X2ComplicationTemplate(Template);
+	m_TemplateName = Template.DataName;
+}

@@ -497,16 +497,22 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_Activity ActivityState;
 	local XComGameState_ActivityChain ChainState;
+	local XComGameState_ResourceContainer ResContainer;
+	local ResourcePackage Package;
 	local XComGameState_Item ItemState;
 	local XComLWTuple Tuple;
 	
 	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'MultiplyLootCaches') return ELR_NoInterrupt;
+	if (Tuple == none || Tuple.Id != 'MultiplyLootCaches')
+	{
+		return ELR_NoInterrupt;
+	}
 
 	XComHQ = XComGameState_HeadquartersXCom(EventSource);
 	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionState);
 	ChainState = ActivityState.GetActivityChain();
+	ResContainer = XComGameState_ResourceContainer(GameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
 
 	if (ChainState.HasComplication('Complication_RewardInterception'))
 	{
@@ -514,9 +520,16 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 		if (class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
 		{
 			Tuple.Data[0].f = 0.5;
+
+			`CI_Log("Item: " $ ItemState.GetMyTemplateName @ ItemState.Quantity);
+			Package.ItemType = ItemState.GetMyTemplateName();
+			Package.ItemAmount = ItemState.Quantity * 0.5;
+			ResContainer.Packages.AddItem(Package);
+			ChainState.EditComplication('Complication_RewardInterception', GameState).ComplicationObjectRefs.AddItem(ResContainer.GetReference());
 		}
 		else
 		{
+			`CI_Log("MULTIPLY FAILED ON " $ string(ItemState.GetMyTemplateName()));
 			return ELR_NoInterrupt;
 		}
 	}
@@ -524,8 +537,7 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	{
 		return ELR_NoInterrupt;
 	}
-
-	ChainState.EditComplication('Complication_RewardInterception', GameState).ComplicationObjectRefs.AddItem(ItemState.GetReference());
+	
 	`CI_Log("MULTIPLYING LOOT!");
 	
 	return ELR_NoInterrupt;

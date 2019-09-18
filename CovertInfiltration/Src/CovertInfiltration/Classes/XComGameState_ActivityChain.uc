@@ -245,12 +245,18 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			
 				if (ComplicationRoll < ComplicationState.TriggerChance)
 				{
+					`CI_Log("COMPLICATION ROLL SUCCEEDED: " $ ComplicationRoll $ " / " $ ComplicationState.TriggerChance);
+
 					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
 					if (EndReason == eACER_Complete && ComplicationTemplate.OnChainComplete != none)
 						ComplicationTemplate.OnChainComplete(NewGameState, self);
 					if (EndReason == eACER_ProgressBlocked && ComplicationTemplate.OnChainBlocked != none)
 						ComplicationTemplate.OnChainBlocked(NewGameState, self);
+				}
+				else
+				{
+					`CI_Log("COMPLICATION ROLL FAILED: " $ ComplicationRoll $ " / " $ ComplicationState.TriggerChance);
 				}
 			}
 		}
@@ -415,8 +421,10 @@ function SetupComplications (XComGameState NewGameState)
 			if (ComplicationTemplate == none) continue;
 
 			if (ComplicationTemplate.CanBeChosen(NewGameState, self))
-			{			
-				ComplicationRoll = `SYNC_RAND_STATIC(ComplicationTemplate.MaxChance);
+			{
+				`CI_Log("ADDING COMPLICATION");
+
+				ComplicationRoll = `SYNC_RAND_STATIC(ComplicationTemplate.MaxChance) + 1;
 
 				if (ComplicationRoll < ComplicationTemplate.MinChance)
 				{
@@ -425,6 +433,8 @@ function SetupComplications (XComGameState NewGameState)
 
 					ComplicationRoll = ComplicationTemplate.MinChance;
 				}
+				
+				`CI_Log("SUBMITTED TRIGGER: " $ ComplicationRoll);
 
 				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, ComplicationRoll);
 				ComplicationRefs.AddItem(ComplicationState.GetReference());

@@ -76,7 +76,7 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	
-	Template.Stages.AddItem('Activity_CommanderSupply');
+	//Template.Stages.AddItem('Activity_CommanderSupply');
 	Template.Stages.AddItem('Activity_SupplyRaid');
 
 	return Template;
@@ -93,7 +93,7 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	Template.Stages.AddItem('Activity_RecoverInformant');
+	//Template.Stages.AddItem('Activity_RecoverInformant');
 	Template.Stages.AddItem('Activity_CaptureInformant');
 
 	return Template;

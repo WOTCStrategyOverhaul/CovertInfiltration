@@ -31,12 +31,14 @@ delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChai
 delegate OnChainComplete(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 delegate OnChainBlocked(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 
-function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, optional int TriggerChance = -1)
+function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, optional int TriggerChance = 0)
 {
 	local XComGameState_Complication ComplicationState;
 
+	`CI_Log("RECIEVED TRIGGER: " $ TriggerChance);
+
 	ComplicationState = XComGameState_Complication(NewGameState.CreateNewStateObject(StateClass, self));
-	if (TriggerChance >= 0)
+	if (TriggerChance > 0)
 	{
 		ComplicationState.TriggerChance = TriggerChance;
 	}
