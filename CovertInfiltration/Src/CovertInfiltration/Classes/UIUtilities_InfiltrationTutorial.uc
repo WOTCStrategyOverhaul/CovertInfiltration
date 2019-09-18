@@ -12,6 +12,9 @@ var localized string strInfiltrationSelectionBody;
 var localized string strCovertActionFinishedHeader;
 var localized string strCovertActionFinishedBody;
 
+var localized string strFacilityChangesHeader;
+var localized string strFacilityChangesBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -45,6 +48,13 @@ static function CovertActionFinished ()
 	if (!ShouldShowPopup('CovertActionFinished')) return;
 
 	`PRESBASE.UITutorialBox(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function FacilityChanges ()
+{
+	if (!ShouldShowPopup('FacilityChanges')) return;
+
+	`PRESBASE.UITutorialBox(default.strFacilityChangesHeader, default.strFacilityChangesBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 ///////////////

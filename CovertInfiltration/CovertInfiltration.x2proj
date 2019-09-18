@@ -140,6 +140,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_AdventOperations.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_BuildFacilities.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_CampaignStartMenu.uc">
       <SubType>Content</SubType>
     </Content>
