@@ -72,6 +72,8 @@ DaysToHoursDesc="Hours instead of days"
 DaysToHoursTooltip="Display hours instead of days in the EventQueue"
 DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
+EnableTutorialDesc="Enable tutorial"
+EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE
@@ -280,3 +282,19 @@ strCounterHiddenDarkEventDescription=Resistance heard about a top-secret ADVENT 
 
 [UIViewChainButton]
 strLabel=View chain
+
+[UIUtilities_InfiltrationTutorial]
+strGeoscapeEntryHeader="Proactive Deployment"
+strGeoscapeEntryBody="In Covert Infiltration, guerilla ops will no longer appear automatically on the geoscape. Instead you have to prepare Covert Actions to acquire resources, recruit personel, and counter the alien's operations. You can send out as many squads as you wish, but be aware that new opportunities may appear at any time and that ADVENT will still initate retaliations against your havens!"
+
+strCovertActionLoadoutHeader="Changes to Covert Actions"
+strCovertActionLoadoutBody="Traditional Covert Actions still involve you sending out soldiers into the unknown, but there are a few major changes. First, the time to complete them is no longer static - soldiers that are equipped or trained to infiltrate better will also complete them more quickly.<br/>Secondly, you also have to watch out for the deterrence stat of the squad you send out. Deterrence directly influences the chance of risks to trigger, and can be increased by sending more experienced soldiers and giving them better gear.<br/>Balance out infiltration and deterrence to complete Covert Actions successfully! If you at any time feel like a squad is needed at base, you can cancel an action for a small intel cost"
+
+strInfiltrationSelectionHeader="Infiltrations"
+strInfiltrationSelectionBody="The Covert Action you selected is an Infiltration. These actions have you equipping a full squad in preparation for tactical combat. You have to deploy a minimum amount of soldiers up to the normal squadsize, and can choose to deploy additional soldiers in overload slots, which lead to a penalty to infiltration speed and max infiltration. Squad size upgrades in the GTS will remove the penalties on these slots.<br/>Once deployed, the squad will infiltrate the mission site over time, at a speed that depends on their infiltration rating. To start tactical combat, the infiltration has to reach 100%.<br/>You are also able to overinfiltrate a mission, unlocking bonuses after each additional 33% of infiltration. The first tier of Overinfiltration will remove a negative SITREP, if possible, or grant a random positive SITREP. The second and third tiers grant more powerful SITREPs. Overinfiltration is recommended for inexperienced squads or risky missions, but isn't necessary to complete every mission"
+
+strCovertActionFinishedHeader="Fatique from Covert Actions"
+strCovertActionFinishedBody="Just like assault missions, Covert Actions will also have an effect on your soldiers. The high risk deployment is guaranteed to sap a large part of their willpower, and when they end up tired they won't be able to deploy on another Covert Action until they have recovered.<br/>While Covert Actions can be an easy way to gain benefits, you should be careful about how many you attempt at any given time. Deploying lots of soldiers will leave you exposed when other more time-critical missions appear, and not all Covert Actions are worth the risk of wounds and captures"
+
+strFacilityChangesHeader="Facility changes"
+strFacilityChangesBody="The resistance ring is no longer necessary to prepare Covert Actions, building it will unlock Resistance Orders instead. Staffing an engineer will unlock an additional wildcard order slot. When you finish building the Ring, you will be able to assign the orders instantly (without waiting for supply drop)<br/>The GTS now has 2 rookie training slots"

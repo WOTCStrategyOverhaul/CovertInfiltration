@@ -721,6 +721,8 @@ simulated function UpdateData()
 	UpdateViewChainButton();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
+
+	TriggerTutorialOnSelection();
 }
 
 simulated function bool CanOpenLoadout()
@@ -1054,6 +1056,16 @@ simulated protected function UpdateExpirationBar()
 
 	ActionProgressBar.Show();
 	ActionProgressBar.SetPercent(Percentage);
+}
+
+simulated protected function TriggerTutorialOnSelection ()
+{
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	{
+		bHideOnLoseFocus = false;
+		class'UIUtilities_InfiltrationTutorial'.static.InfiltrationSelection();
+		bHideOnLoseFocus = true;
+	}
 }
 
 //////////////////////////////////////

@@ -17,6 +17,19 @@ static event UpdateDLC()
 {
 	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
+	UpdateShowTutorial();
+}
+
+static protected function UpdateShowTutorial ()
+{
+	local XComHQPresentationLayer HQPres;
+
+	HQPres = `HQPRES;
+	
+	if (HQPres.StrategyMap2D != none && HQPres.StrategyMap2D.m_eUIState != eSMS_Flight && HQPres.ScreenStack.GetCurrentScreen() == HQPres.StrategyMap2D)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.GeoscapeEntry();
+	}
 }
 
 static event OnLoadedSavedGameToStrategy()
