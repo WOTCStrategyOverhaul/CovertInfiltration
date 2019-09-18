@@ -12,6 +12,9 @@ var localized string strInfiltrationSelectionBody;
 var localized string strCovertActionFinishedHeader;
 var localized string strCovertActionFinishedBody;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 ///////////////////////
 /// Tutorial popups ///
 ///////////////////////
@@ -53,10 +56,13 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState NewGameState;
 	local name RequiredStageName;
+	local bool EnableTutorial;
 	
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 	
-	// TODO: Check if tutorial is enabled
+	// Check if tutorial is enabled
+	EnableTutorial = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, class'UIListener_ModConfigMenu'.default.ENABLE_TUTORIAL);
+	if (!EnableTutorial) return false;
 
 	// Check if this tutorial stage has been shown already
 	if (CIInfo.TutorialStagesShown.Find(StageName) != INDEX_NONE) return false;

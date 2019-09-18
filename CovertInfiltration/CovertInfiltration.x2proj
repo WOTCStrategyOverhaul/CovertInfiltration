@@ -387,6 +387,9 @@
     <Content Include="Src\CovertInfiltration\Classes\XMBEffect_ConditionalStatChange.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\MCM_API_CfgHelpersStatic.uci">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\extra_globals.uci">
       <SubType>Content</SubType>
     </Content>

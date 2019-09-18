@@ -1,0 +1,17 @@
+// Extension to ModConfigMenuAPI/MCM_API_CfgHelpers.uci that allows `MCM_CH_GetValue to be used from static functions
+
+`define MCM_CH_VersionCheckerStatic(SrcVer,TrgVer)\
+	static function bool MCM_CH_IMPL_VersionCheckerStatic()\
+	{\
+		return (`{TrgVer} < `{SrcVer});\
+	}\
+	static function int MCM_CH_IMPL_VersionMaxStatic()\
+	{\
+		return (MCM_CH_IMPL_VersionCheckerStatic() ? (`{SrcVer}) : (`{TrgVer}));\
+	}
+
+`define MCM_CH_GetValueStatic(SrcVal, TrgVal)\
+	((MCM_CH_IMPL_VersionCheckerStatic()) ? (`{SrcVal}) : (`{TrgVal}))
+
+`define MCM_CH_GetCompositeVersionStatic()\
+	MCM_CH_IMPL_VersionMaxStatic()

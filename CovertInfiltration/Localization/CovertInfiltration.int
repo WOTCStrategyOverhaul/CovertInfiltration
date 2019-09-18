@@ -72,6 +72,8 @@ DaysToHoursDesc="Hours instead of days"
 DaysToHoursTooltip="Display hours instead of days in the EventQueue"
 DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
+EnableTutorialDesc="Enable tutorial"
+EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE
