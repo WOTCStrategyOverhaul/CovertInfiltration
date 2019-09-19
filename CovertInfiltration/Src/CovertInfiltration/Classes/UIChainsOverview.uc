@@ -87,6 +87,9 @@ simulated function OnInit()
 	{
 		SelectChain(ChainToFocusOnInit);
 	}
+
+	// Tutorial
+	class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 }
 
 //////////////

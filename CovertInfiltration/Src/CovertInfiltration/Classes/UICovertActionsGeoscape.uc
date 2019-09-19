@@ -1060,12 +1060,20 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
+	bHideOnLoseFocus = false;
+
+	// Fisrt show the chains popup (if needed) so that it's underneath the infiltration one (so the infiltration will be shown first to the player)
+	if (class'XComGameState_Activity'.static.GetActivityFromObject(GetAction()) != none)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
+	}
+	
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
 	{
-		bHideOnLoseFocus = false;
 		class'UIUtilities_InfiltrationTutorial'.static.InfiltrationSelection();
-		bHideOnLoseFocus = true;
 	}
+
+	bHideOnLoseFocus = true;
 }
 
 //////////////////////////////////////

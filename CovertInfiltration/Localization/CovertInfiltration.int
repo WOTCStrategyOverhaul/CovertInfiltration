@@ -298,3 +298,6 @@ strCovertActionFinishedBody="Just like assault missions, Covert Actions will als
 
 strFacilityChangesHeader="Facility changes"
 strFacilityChangesBody="The resistance ring is no longer necessary to prepare Covert Actions, building it will unlock Resistance Orders instead. Staffing an engineer will unlock an additional wildcard order slot. When you finish building the Ring, you will be able to assign the orders instantly (without waiting for supply drop)<br/>The GTS now has 2 rookie training slots"
+
+strActivityChainsHeader="Activity Chains"
+strActivityChainsBody="Activity chains are a set of missions and/or covert actions that yield big rewards. They will be presented to you by the resistance and as your network grows more opportunities will arise.<br/>While the main reward(s) are given at the end of the chain, it may be prudent to send your soldiers on first stage(s) as you still earn XP and loot"

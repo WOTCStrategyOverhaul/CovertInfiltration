@@ -31,6 +31,9 @@ simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 	Button.AnimateIn(0);
 
 	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);
+
+	// Tutorial
+	class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 }
 
 simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
@@ -92,7 +95,7 @@ simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)
 		StrategyMap = `HQPRES.StrategyMap2D;
 		foreach StrategyMap.MissionItemUI.MissionIcons(MissionIcon)
 		{
-			if (MissionIcon.MissionSite.ObjectID == MissionScreen.MissionRef.ObjectID)
+			if (MissionIcon.MissionSite != none && MissionIcon.MissionSite.ObjectID == MissionScreen.MissionRef.ObjectID)
 			{
 				MissionIcon.AS_SetAlert(false);
 			}
