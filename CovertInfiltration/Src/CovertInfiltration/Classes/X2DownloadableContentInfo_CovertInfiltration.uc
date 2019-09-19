@@ -220,6 +220,45 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 	return false;
 }
 
+////////////////////////////
+/// Mission start/finish ///
+////////////////////////////
+
+static event OnPostMission ()
+{
+	ResetInfiltrationChosenRoll();
+}
+
+static protected function ResetInfiltrationChosenRoll ()
+{
+	local XComGameState_MissionSiteInfiltration Infiltration;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: ResetInfiltrationChosenRoll");
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSiteInfiltration', Infiltration)
+	{
+		// Do not touch the mission on which we just went
+		if (Infiltration.ObjectID == BattleData.m_iMissionID) continue;
+		
+		Infiltration = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', Infiltration.ObjectID));
+		Infiltration.ResetChosenRollAfterAnotherMission();
+	}
+
+	if (NewGameState.GetNumGameStateObjects() > 0)
+	{
+		`SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
+}
+
 /// ////////////// ///
 /// DLC (HL) HOOKS ///
 /// ////////////// ///

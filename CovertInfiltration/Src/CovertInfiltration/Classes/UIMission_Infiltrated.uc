@@ -345,6 +345,51 @@ simulated function XComGameState_MissionSiteInfiltration GetInfiltration()
 }
 //==============================================================================
 
+///////////////////////////////////
+/// Chosen on screen open/close ///
+///////////////////////////////////
+
+simulated function UpdateMissionTacticalTags()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState NewGameState;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("UIMission: UpdateMissionTacticalTags");
+	MissionState = GetMission();
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
+	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	//AlienHQ.AddChosenTacticalTagsToMission(MissionState, true);
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+
+	// TODO
+}
+
+simulated function bool ShouldUpdateMissionSpawningInfo()
+{
+	// TODO
+
+	local XComOnlineEventMgr EventManager;
+	local array<X2DownloadableContentInfo> DLCInfos;
+	local int i;
+
+	// Check to see if any DLC requires schedule updates
+	EventManager = `ONLINEEVENTMGR;
+	DLCInfos = EventManager.GetDLCInfos(false);
+	for (i = 0; i < DLCInfos.Length; ++i)
+	{
+		if (DLCInfos[i].ShouldUpdateMissionSpawningInfo(MissionRef))
+		{
+			return true;
+		}
+	}
+
+	// Otherwise only update if the shadow chamber is built
+	return IsShadowChamberConstructed();
+}
+
 defaultproperties
 {
 	Package = "/ package/gfxXPACK_Alerts/XPACK_Alerts";

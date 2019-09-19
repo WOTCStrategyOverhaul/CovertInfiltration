@@ -20,9 +20,13 @@ var array<name> AppliedSitRepTags;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
 
+var int ChosenRollLastDoneAt;
+var bool bChosenPresent;
+
 var config array<int> OverInfiltartionThresholds;
 var config float ChosenAppearenceModAt100;
 var config float ChosenAppearenceModAt200;
+var config float ChosenCheckInfilInterval;
 
 var localized string strBannerBonusGained;
 
@@ -573,6 +577,27 @@ function ApplyChosenBeforeLaunch()
 	}
 }
 
+function bool ShouldUpdateScheduleForChosen ()
+{
+	// TODO
+}
+
+function bool CacheSelectedMissionData(int ForceLevel, int AlertLevel)
+{
+	// TODO
+
+	if (ShouldUpdateScheduleForChosen())
+	{
+	}
+
+	// super.
+}
+
+function ResetChosenRollAfterAnotherMission ()
+{
+	ChosenRollLastDoneAt = default.ChosenRollLastDoneAt;
+}
+
 //////////////
 /// Launch ///
 //////////////
@@ -854,4 +879,6 @@ defaultproperties
 {
 	Available = false;
 	Expiring = false;
+
+	ChosenRollLastDoneAt = -1
 }
