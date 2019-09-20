@@ -22,6 +22,7 @@ var int OverInfiltartionBonusesGranted;
 
 var int ChosenRollLastDoneAt;
 var bool bChosenPresent;
+var int ChosenLevel;
 
 var config array<int> OverInfiltartionThresholds;
 var config float ChosenAppearenceModAt100;
@@ -577,20 +578,62 @@ function ApplyChosenBeforeLaunch()
 	}
 }
 
-function bool ShouldUpdateScheduleForChosen ()
+function bool ShouldPreformChosenRoll ()
 {
-	// TODO
+	local XComGameState_AdventChosen CurrentChosen;
+
+	CurrentChosen = GetCurrentChosen();
+
+	return ChosenRollLastDoneAt < 0
+		|| Abs(ChosenRollLastDoneAt - GetCurrentInfilInt()) >= ChosenCheckInfilInterval
+		|| (CurrentChosen != none && CurrentChosen.Level != ChosenLevel);
 }
 
-function bool CacheSelectedMissionData(int ForceLevel, int AlertLevel)
+function PreformChosenRoll ()
 {
-	// TODO
+	local XComGameState_AdventChosen CurrentChosen;
+	local bool bNewShouldSpawn;
+	local int AppearenceChance;
 
-	if (ShouldUpdateScheduleForChosen())
+	CurrentChosen = GetCurrentChosen();
+
+	if (CurrentChosen == none)
 	{
+		bNewShouldSpawn = false;
+	}
+	else
+	{
+		AppearenceChance = GetChosenAppereanceChange();
+		bNewShouldSpawn = CurrentChosen.CurrentAppearanceRoll < AppearenceChance;
 	}
 
-	// super.
+	if (bNewShouldSpawn != bChosenPresent || ChosenLevel != CurrentChosen.Level)
+	{
+		bChosenPresent = bNewShouldSpawn;
+		ChosenLevel = CurrentChosen.Level;
+
+		// Reset the schedule so that we regenerate the preplaced encounters to account for the chosen presence/lack
+		SelectedMissionData.SelectedMissionScheduleName = '';
+
+		// Remove all chosen tags as the chosen might have leveled up
+		RemoveChosenTags();
+
+		// Add the tag for the current level, if present
+		if (bChosenPresent)
+		{
+			TacticalGameplayTags.AddItem(CurrentChosen.GetMyTemplate().GetSpawningTag(CurrentChosen.Level));
+		}
+	}
+}
+
+protected function RemoveChosenTags ()
+{
+	local XComGameState_AdventChosen CurrentChosen;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AdventChosen', ChosenState)
+	{
+		ChosenState.PurgeMissionOfTags(self);
+	}
 }
 
 function ResetChosenRollAfterAnotherMission ()
@@ -881,4 +924,5 @@ defaultproperties
 	Expiring = false;
 
 	ChosenRollLastDoneAt = -1
+	ChosenLevel = -1
 }
