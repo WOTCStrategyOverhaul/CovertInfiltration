@@ -100,6 +100,12 @@ strMissionReady="MISSION READY"
 strInfiltration="INFILTRATION - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
 strWait="WAIT"
 strReturnToAvenger="RETURN TO AVENGER"
+strChosenAppearenceChance="Appearance chance"
+strChosenAppearenceChanceLabels[0]="Trivial"
+strChosenAppearenceChanceLabels[1]="Minor"
+strChosenAppearenceChanceLabels[2]="Moderate"
+strChosenAppearenceChanceLabels[3]="Severe"
+strChosenAppearenceChanceLabels[4]="Extreme" 
 
 [OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
 BonusName="Remove risk"
