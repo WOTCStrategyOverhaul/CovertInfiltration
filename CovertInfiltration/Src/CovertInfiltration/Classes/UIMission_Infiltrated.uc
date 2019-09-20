@@ -173,8 +173,8 @@ simulated function UpdateChosen ()
 		ChosenPanel.MC.QueueString(ChosenState.GetChosenClassName());
 		ChosenPanel.MC.QueueString(ChosenState.GetChosenName());
 		ChosenPanel.MC.QueueString(ChosenState.GetChosenNickname());
-		ChosenPanel.MC.QueueString(GetChosenChanceLabel());
 		ChosenPanel.MC.QueueString(strChosenAppearenceChance);
+		ChosenPanel.MC.QueueString(GetChosenChanceLabel());
 		ChosenPanel.MC.EndOp();
 	}
 }
