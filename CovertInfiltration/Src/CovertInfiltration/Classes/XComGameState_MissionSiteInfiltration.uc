@@ -43,7 +43,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	ActivityState = GetActivity();
 	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
 	
-	SetLocationFromAction();
+	SetRegionFromAction();
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
 	if (ActivityTemplate.PreMissionSetup != none)
@@ -67,16 +67,17 @@ function InitializeFromActivity (XComGameState NewGameState)
 	InitRegisterEvents();
 }
 
-protected function SetLocationFromAction ()
+protected function SetRegionFromAction ()
 {
 	local XComGameState_CovertAction Action;
 
 	Action = GetSpawningAction();
 
-	Location.x = Action.Location.x;
-	Location.y = Action.Location.y;
 	Continent  = Action.Continent;
 	Region = Action.Region;
+
+	// We cannot copy over the exact location here as it is (0, 0, 0) at this moment and will be updated next tick
+	// However, we can copy the region and continent to show on the event queue popup
 }
 
 protected function EventListenerReturn OnActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -112,6 +113,10 @@ protected function CopyDataFromAction ()
 	local CovertActionRisk Risk;
 
 	Action = GetSpawningAction();
+
+	// Copy over the exact location
+	Location.x = Action.Location.x;
+	Location.y = Action.Location.y;
 
 	// Copy over the applied risks
 	AppliedFlatRisks.Length = 0;
