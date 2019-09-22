@@ -539,7 +539,7 @@ function int GetChosenAppereanceChance()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	OverInfilProgress = GetCurrentOverInfil() / 100;
+	OverInfilProgress = GetCurrentOverInfil();
 	OverInfilScalar = Lerp(ChosenAppearenceModAt100, ChosenAppearenceModAt200, OverInfilProgress);
 
 	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
