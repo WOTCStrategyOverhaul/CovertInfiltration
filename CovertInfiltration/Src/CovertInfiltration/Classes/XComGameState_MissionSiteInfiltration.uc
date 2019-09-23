@@ -98,10 +98,17 @@ function OnActionCompleted (XComGameState NewGameState)
 {
 	CopyDataFromAction();
 	
+	// Invoke the CHL sitrep hook here, before we do any of our own sitrep messing
+	// This should ensure compatibility with mods like LSC
+	// It also makes sense to invoke it here as this is the point the mission becomes avaliable to the player
+	PostSitRepCreationHook();
+
 	ApplyFlatRisks();
 	UpdateSitrepTags();
 	SelectOverInfiltrationBonuses();
 	Available = true;
+
+	`XEVENTMGR.TriggerEvent('InfiltrationMissionSiteAvaliable', self, self, NewGameState);
 
 	// The event and geoscape scan stop are in X2EventListener_Infiltration_UI::CovertActionCompleted
 }
@@ -171,14 +178,26 @@ protected function SelectPlotAndBiome()
 		}
 	}
 
-	// At this point normally the CHL calls DLCInfo::PostSitRepCreation hook
-	// TODO: decide what to do with that hook since we change sitreps later
-
 	// the plot we find should either have no defined biomes, or the requested biome type
 	if (GeneratedMission.Plot.ValidBiomes.Length > 0)
 	{
 		GeneratedMission.Biome = ParcelMgr.GetBiomeDefinition(Biome);
 	}
+}
+
+protected function PostSitRepCreationHook ()
+{
+	local array<X2DownloadableContentInfo> DLCInfos; 
+	local int i; 
+
+	DLCInfos = `ONLINEEVENTMGR.GetDLCInfos(false);
+
+	for(i = 0; i < DLCInfos.Length; ++i)
+	{
+		DLCInfos[i].PostSitRepCreation(GeneratedMission, self);
+	}
+
+	// CHL issue #157. See OnActionCompleted for explanation
 }
 
 protected function ApplyFlatRisks()
@@ -496,6 +515,8 @@ function PostSitRepsChanged(XComGameState NewGameState)
 		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
 		XComHQ.arrGeneratedMissionData.Remove(MissionDataIndex, 1);
 	}
+
+	`XEVENTMGR.TriggerEvent('InfiltrationSitRepsChanged', self, self, NewGameState);
 }
 
 //////////////
