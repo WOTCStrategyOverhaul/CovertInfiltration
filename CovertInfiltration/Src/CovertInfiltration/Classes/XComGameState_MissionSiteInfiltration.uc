@@ -516,6 +516,9 @@ function PostSitRepsChanged(XComGameState NewGameState)
 		XComHQ.arrGeneratedMissionData.Remove(MissionDataIndex, 1);
 	}
 
+	// Reset the schedule so that the change in tactial tags is applied
+	SelectedMissionData.SelectedMissionScheduleName = '';
+
 	`XEVENTMGR.TriggerEvent('InfiltrationSitRepsChanged', self, self, NewGameState);
 }
 
