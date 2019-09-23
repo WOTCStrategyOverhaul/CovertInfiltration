@@ -138,6 +138,12 @@ function SetupChain (XComGameState NewGameState)
 	`XEVENTMGR.TriggerEvent('ActivityChainSetupComplete', self, self, NewGameState);
 }
 
+// Used by SpawnActivityChain command to force the chain to start at a particular stage
+function HACK_SetCurrentStage (int CurrentStage)
+{
+	iCurrentStage = CurrentStage;
+}
+
 ////////////////
 /// Progress ///
 ////////////////

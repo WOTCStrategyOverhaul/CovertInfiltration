@@ -48,8 +48,8 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	// Assaults
 	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');
-	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None');
-	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None');
+	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None', class'UIMission_SupplyRaid');
+	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None', class'UIMission_LandedUFO');
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
 
@@ -278,7 +278,7 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 }
 
-static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName)
+static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional class<UIMission> ScreenClass)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
@@ -291,6 +291,11 @@ static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templat
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
+	if (ScreenClass != none)
+	{
+		Activity.ScreenClass = ScreenClass;
+	}
+
 	Templates.AddItem(Activity);
 }
 

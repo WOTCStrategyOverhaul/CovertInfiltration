@@ -459,7 +459,7 @@ exec function ClearOverInfiltrationBonusesDeck()
 	}
 }
 
-exec function SpawnActivityChain (name ChainTemplateName)
+exec function SpawnActivityChain (name ChainTemplateName, int StartAtStage = 0)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local XComGameState_ActivityChain ChainState;
@@ -473,6 +473,7 @@ exec function SpawnActivityChain (name ChainTemplateName)
 	`CI_Trace("Starting cheat: SpawnActivityChain" @ ChainTemplateName);
 
 	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
+	ChainState.HACK_SetCurrentStage(StartAtStage - 1);
 	ChainState.StartNextStage(NewGameState);
 
 	`SubmitGameState(NewGameState);
