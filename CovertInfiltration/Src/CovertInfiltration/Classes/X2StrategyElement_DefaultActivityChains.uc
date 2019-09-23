@@ -7,6 +7,9 @@
 
 class X2StrategyElement_DefaultActivityChains extends X2StrategyElement;
 
+var localized string strCounterDarkEventDescription;
+var localized string strCounterHiddenDarkEventDescription;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Activites;
@@ -39,10 +42,12 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
-	Template.Stages.AddItem('Activity_Wait');
+	Template.Stages.AddItem('Activity_WaitDE');
 	Template.Stages.AddItem('Activity_PrepareCounterDE');
 	Template.Stages.AddItem('Activity_CounterDarkEvent');
 	
+	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
+
 	return Template;
 }
 
@@ -61,6 +66,24 @@ static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_
 	{
 		ChainState.RestoreChainDarkEventCompleting(NewGameState);
 	}
+}
+
+static function string CounterDarkEventGetOverviewDescription (XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+	local XGParamTag kTag;
+
+	DarkEventState = ChainState.GetChainDarkEvent();
+
+	if (DarkEventState.bSecretEvent)
+	{
+		return default.strCounterHiddenDarkEventDescription;
+	}
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = DarkEventState.GetDisplayName();
+
+	return `XEXPAND.ExpandString(default.strCounterDarkEventDescription);
 }
 
 static function X2DataTemplate CreateSupplyRaidTemplate()

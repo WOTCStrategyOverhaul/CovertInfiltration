@@ -58,6 +58,11 @@ simulated protected function PostScreenInit()
 
 	bCreatedUIElements = true;
 	UpdateUIElements();
+
+	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.CovertActionLoadout();
+	}
 }
 
 simulated protected function BuildConfiguration()

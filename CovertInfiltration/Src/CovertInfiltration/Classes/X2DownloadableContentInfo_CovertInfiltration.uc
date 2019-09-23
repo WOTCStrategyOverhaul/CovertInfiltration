@@ -17,6 +17,19 @@ static event UpdateDLC()
 {
 	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
+	UpdateShowTutorial();
+}
+
+static protected function UpdateShowTutorial ()
+{
+	local XComHQPresentationLayer HQPres;
+
+	HQPres = `HQPRES;
+	
+	if (HQPres.StrategyMap2D != none && HQPres.StrategyMap2D.m_eUIState != eSMS_Flight && HQPres.ScreenStack.GetCurrentScreen() == HQPres.StrategyMap2D)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.GeoscapeEntry();
+	}
 }
 
 static event OnLoadedSavedGameToStrategy()
@@ -205,6 +218,45 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 	}
 
 	return false;
+}
+
+////////////////////////////
+/// Mission start/finish ///
+////////////////////////////
+
+static event OnPostMission ()
+{
+	ResetInfiltrationChosenRoll();
+}
+
+static protected function ResetInfiltrationChosenRoll ()
+{
+	local XComGameState_MissionSiteInfiltration Infiltration;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	History = `XCOMHISTORY;
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: ResetInfiltrationChosenRoll");
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSiteInfiltration', Infiltration)
+	{
+		// Do not touch the mission on which we just went
+		if (Infiltration.ObjectID == BattleData.m_iMissionID) continue;
+		
+		Infiltration = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', Infiltration.ObjectID));
+		Infiltration.ResetChosenRollAfterAnotherMission();
+	}
+
+	if (NewGameState.GetNumGameStateObjects() > 0)
+	{
+		`SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
 }
 
 /// ////////////// ///

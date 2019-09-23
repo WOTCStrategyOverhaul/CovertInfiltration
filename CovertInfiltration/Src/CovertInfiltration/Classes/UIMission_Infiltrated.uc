@@ -5,7 +5,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class UIMission_Infiltrated extends UIMission;
+class UIMission_Infiltrated extends UIMission config(UI); 
 
 var UIButton ViewSquadButton;
 
@@ -19,6 +19,11 @@ var localized string strMissionReady;
 var localized string strInfiltration;
 var localized string strWait;
 var localized string strReturnToAvenger;
+
+var localized string strChosenAppearenceChance;
+var localized array<string> strChosenAppearenceChanceLabels;
+
+var config array<int> ChosenAppearenceChanceLabelsThresholds;
 
 const BUTTON_X = -175;
 const BUTTON_WIDTH = 350;
@@ -77,6 +82,8 @@ simulated function BuildScreen()
 	// There is no navigation on this screen.
 	// Also, this fixes selecting "cancel" via keyboard and hitting enter which uses "confirm" button
 	Navigator.Clear();
+
+	// Note that the "View chain" button is handled in UIListener_Mission
 }
 
 simulated function string GetOverInfiltrationText()
@@ -150,6 +157,43 @@ function UpdateMissionReward(int numIndex, string strLabel, string strRank, opti
 	LibraryPanel.MC.QueueString(strRank); //optional
 	LibraryPanel.MC.QueueString(strClass); //optional
 	LibraryPanel.MC.EndOp();
+}
+
+simulated function UpdateChosen ()
+{
+	local XComGameState_AdventChosen ChosenState;
+
+	super.UpdateChosen();
+
+	if (ChosenPanel.bIsVisible)
+	{
+		ChosenState = GetInfiltration().GetCurrentChosen();
+
+		ChosenPanel.MC.BeginFunctionOp("SetChosenName");
+		ChosenPanel.MC.QueueString(ChosenState.GetChosenClassName());
+		ChosenPanel.MC.QueueString(ChosenState.GetChosenName());
+		ChosenPanel.MC.QueueString(ChosenState.GetChosenNickname());
+		ChosenPanel.MC.QueueString(strChosenAppearenceChance);
+		ChosenPanel.MC.QueueString(GetChosenChanceLabel());
+		ChosenPanel.MC.EndOp();
+	}
+}
+
+simulated protected function string GetChosenChanceLabel ()
+{
+	local int Threshold, i, ChanceToOccur;
+	
+	ChanceToOccur = GetInfiltration().GetChosenAppereanceChance();
+
+	foreach ChosenAppearenceChanceLabelsThresholds(Threshold, i)
+	{
+		if (ChanceToOccur <= Threshold)
+		{
+			return strChosenAppearenceChanceLabels[i];
+		}
+	}
+
+	return "[NO LABEL FOUND]";
 }
 
 simulated function BuildOptionsPanel()
@@ -342,6 +386,35 @@ simulated function XComGameState_MissionSiteInfiltration GetInfiltration()
 	return XComGameState_MissionSiteInfiltration(GetMission());
 }
 //==============================================================================
+
+///////////////////////////////////
+/// Chosen on screen open/close ///
+///////////////////////////////////
+
+simulated function UpdateMissionTacticalTags()
+{
+	local XComGameState_MissionSiteInfiltration Infiltration;
+	local XComGameState NewGameState;
+
+	Infiltration = GetInfiltration();
+
+	if (Infiltration.ShouldPreformChosenRoll())
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating infiltration chosen on screen open");
+		Infiltration = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', Infiltration.ObjectID));
+		Infiltration.PreformChosenRoll();
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+}
+
+simulated function bool ShouldUpdateMissionSpawningInfo()
+{
+	// We potentially reset the schedule in UpdateMissionTacticalTags.
+	// Run the preplaced encounters logic again in such case,
+	// even if there is no shadow chamber
+
+	return super.ShouldUpdateMissionSpawningInfo() || GetMission().SelectedMissionData.SelectedMissionScheduleName == '';
+}
 
 defaultproperties
 {

@@ -110,6 +110,15 @@
     <Content Include="Src\CovertInfiltration\Classes\UIBetterSitRepDetails_Row.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview_Activity.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview_ListSectionHeader.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
       <SubType>Content</SubType>
     </Content>
@@ -131,10 +140,19 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_AdventOperations.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_BuildFacilities.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_CampaignStartMenu.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_AvengerHUD.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_CovertActionCompleted.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_Mission.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_ModConfigMenu.uc">
@@ -221,7 +239,13 @@
     <Content Include="Src\CovertInfiltration\Classes\UISSManager_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIUtilities_InfiltrationTutorial.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIViewChainButton.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_InfiltrationAbilitySet.uc">
@@ -364,6 +388,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XMBEffect_ConditionalStatChange.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\MCM_API_CfgHelpersStatic.uci">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\extra_globals.uci">

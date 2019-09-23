@@ -10,22 +10,6 @@
 
 class XComGameState_Activity extends XComGameState_GeoscapeEntity;
 
-enum EActivityCompletion
-{
-	// The chain hasn't progressed to this activity yet
-	eActivityCompletion_NotReached,
-
-	// The player is still able to do the activity (or is doing it now)
-	eActivityCompletion_NotCompleted,
-
-	// The player failed to handle this activity in time limit
-	eActivityCompletion_Expired,
-	
-	eActivityCompletion_Failure,
-	eActivityCompletion_PartialSuccess,
-	eActivityCompletion_Success
-};
-
 var protected name m_TemplateName;
 var protected X2ActivityTemplate m_Template;
 
@@ -68,10 +52,18 @@ simulated function X2ActivityTemplate GetMyTemplate()
 
 event OnCreation (optional X2DataTemplate Template)
 {
+	local X2EventManager EventManager;
+	local Object SelfObj;
+
 	super.OnCreation(Template);
 
 	m_Template = X2ActivityTemplate(Template);
 	m_TemplateName = Template.DataName;
+
+	EventManager = `XEVENTMGR;
+	SelfObj = self;
+	
+	EventManager.RegisterForEvent(SelfObj, 'ActivitySetupComplete', OnSetupCompleteSubmitted, ELD_OnStateSubmitted,, SelfObj);
 }
 
 /////////////////
@@ -108,6 +100,18 @@ function SetupStage (XComGameState NewGameState)
 	{
 		GetMyTemplate().SetupStage(NewGameState, NewActivityState);
 	}
+
+	`XEVENTMGR.TriggerEvent('ActivitySetupComplete', NewActivityState, NewActivityState, NewGameState);
+}
+
+protected function EventListenerReturn OnSetupCompleteSubmitted (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	if (GetMyTemplate().SetupStageSubmitted != none)
+	{
+		GetMyTemplate().SetupStageSubmitted(self);
+	}
+
+	return ELR_NoInterrupt;
 }
 
 function CleanupStage (XComGameState NewGameState)
@@ -186,6 +190,8 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 
 	CleanupStage(NewGameState);
 	bChainNeedsCompletionNotification = true;
+
+	`XEVENTMGR.TriggerEvent('ActivityMarkedComplete', self, self, NewGameState);
 }
 
 function UpdateGameBoard ()
@@ -206,6 +212,7 @@ function UpdateGameBoard ()
 		NewActivityState.bChainNeedsCompletionNotification = false;
 
 		NewChainState.CurrentStageHasCompleted(NewGameState);
+		`XEVENTMGR.TriggerEvent('ActivityCompleted', self, self, NewGameState);
 
 		`SubmitGamestate(NewGameState);
 	}
@@ -250,6 +257,30 @@ protected function bool ValidateCanMarkCompletion ()
 	}
 
 	return true;
+}
+
+///////////
+/// Loc ///
+///////////
+
+function string GetOverviewHeader ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().strOverviewHeader;
+	if (strReturn == "") strReturn = "(MISSING HEADER)";
+
+	return strReturn;
+}
+
+function string GetOverviewDescription ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().GetOverviewDescription(self);
+	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
+
+	return strReturn;
 }
 
 /////////////////////////
@@ -351,4 +382,24 @@ static function XComGameState_Activity GetActivityFromSecondaryObjectID (int Sta
 	}
 
 	return none;
+}
+
+static function XComGameState_Activity GetActivityFromObject (XComGameState_BaseObject StateObject)
+{
+	local XComGameState GameState;
+
+	GameState = StateObject.GetParentGameState();
+	if (GameState.HistoryIndex != -1) GameState = none;
+
+	return GetActivityFromObjectID(StateObject.ObjectID, GameState);
+}
+
+static function XComGameState_Activity GetActivityFromObjectID (int StateObjectID, optional XComGameState NewGameState)
+{
+	local XComGameState_Activity Activity;
+
+	Activity = GetActivityFromPrimaryObjectID(StateObjectID);
+	if (Activity != none) return Activity;
+
+	return GetActivityFromSecondaryObjectID(StateObjectID);
 }

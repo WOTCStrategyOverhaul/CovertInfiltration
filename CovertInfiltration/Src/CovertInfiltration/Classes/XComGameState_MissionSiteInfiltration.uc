@@ -20,9 +20,14 @@ var array<name> AppliedSitRepTags;
 var array<name> SelectedOverInfiltartionBonuses;
 var int OverInfiltartionBonusesGranted;
 
+var int ChosenRollLastDoneAt;
+var bool bChosenPresent;
+var int ChosenLevel;
+
 var config array<int> OverInfiltartionThresholds;
 var config float ChosenAppearenceModAt100;
 var config float ChosenAppearenceModAt200;
+var config float ChosenRollInfilInterval;
 
 var localized string strBannerBonusGained;
 
@@ -38,6 +43,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	ActivityState = GetActivity();
 	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
 	
+	SetRegionFromAction();
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
 
 	if (ActivityTemplate.PreMissionSetup != none)
@@ -59,6 +65,19 @@ function InitializeFromActivity (XComGameState NewGameState)
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout
 
 	InitRegisterEvents();
+}
+
+protected function SetRegionFromAction ()
+{
+	local XComGameState_CovertAction Action;
+
+	Action = GetSpawningAction();
+
+	Continent  = Action.Continent;
+	Region = Action.Region;
+
+	// We cannot copy over the exact location here as it is (0, 0, 0) at this moment and will be updated next tick
+	// However, we can copy the region and continent to show on the event queue popup
 }
 
 protected function EventListenerReturn OnActionStarted (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -95,11 +114,9 @@ protected function CopyDataFromAction ()
 
 	Action = GetSpawningAction();
 
-	// Copy over the location data
+	// Copy over the exact location
 	Location.x = Action.Location.x;
 	Location.y = Action.Location.y;
-	Continent  = Action.Continent;
-	Region = Action.Region;
 
 	// Copy over the applied risks
 	AppliedFlatRisks.Length = 0;
@@ -505,7 +522,7 @@ function XComGameState_AdventChosen GetCurrentChosen()
 	return none;
 }
 
-function int GetChosenAppereanceChange()
+function int GetChosenAppereanceChance()
 {
 	local float OverInfilProgress, OverInfilScalar, AlienHQScalar;
 	local XComGameState_AdventChosen CurrentChosen;
@@ -522,7 +539,7 @@ function int GetChosenAppereanceChange()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	OverInfilProgress = GetCurrentOverInfil() / 100;
+	OverInfilProgress = GetCurrentOverInfil();
 	OverInfilScalar = Lerp(ChosenAppearenceModAt100, ChosenAppearenceModAt200, OverInfilProgress);
 
 	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
@@ -531,39 +548,95 @@ function int GetChosenAppereanceChange()
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
 }
 
-function ApplyChosenBeforeLaunch()
+function bool ShouldPreformChosenRoll ()
 {
-	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local XComGameState_AdventChosen CurrentChosen;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState NewGameState;
-	local int AppearenceChance;
 
-	AppearenceChance = GetChosenAppereanceChange();
 	CurrentChosen = GetCurrentChosen();
 
-	`CI_Log("Infiltration launch - chosen chance" @ AppearenceChance);
-
-	if (CurrentChosen.CurrentAppearanceRoll < AppearenceChance)
+	if (ChosenRollLastDoneAt < 0)
 	{
-		`CI_Log("Infiltration launch - chosen roll success, adding");
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Infiltration - adding chosen to mission");
+		`CI_Log("Chosen roll not performed yet or reset after another mission was done");
+		return true;
+	}
 
-		// Add chosen to the mission
-		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
-		NewMissionState.TacticalGameplayTags.AddItem(CurrentChosen.GetMyTemplate().GetSpawningTag(CurrentChosen.Level));
+	if (Abs(ChosenRollLastDoneAt - GetCurrentInfilInt()) >= ChosenRollInfilInterval)
+	{
+		`CI_Log("Infiltration progressed further than chosen roll interval");
+		return true;
+	}
 
-		// Update the tactical tags cache
-		XComHQ = `XCOMHQ;
-		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-		XComHQ.AddMissionTacticalTags(NewMissionState);
+	if (CurrentChosen != none && CurrentChosen.Level != ChosenLevel)
+	{
+		`CI_Log("Chosen level has changed");
+		return true;
+	}
 
-		`SubmitGamestate(NewGameState);
+	`CI_Log("No reason found to reroll the chosen");
+	return false;
+}
+
+function PreformChosenRoll ()
+{
+	local XComGameState_AdventChosen CurrentChosen;
+	local bool bNewShouldSpawn;
+	local int AppearenceChance;
+
+	CurrentChosen = GetCurrentChosen();
+
+	if (CurrentChosen == none)
+	{
+		`CI_Log("No chosen active for this infiltration");
+		bNewShouldSpawn = false;
 	}
 	else
 	{
-		`CI_Log("Infiltration launch - chosen roll failed, skipping");
+		AppearenceChance = GetChosenAppereanceChance();
+		bNewShouldSpawn = CurrentChosen.CurrentAppearanceRoll < AppearenceChance;
+	
+		`CI_Log("Chosen roll chance" @ AppearenceChance @ (bNewShouldSpawn ? "- success" : "- failed"));
 	}
+
+	if (bNewShouldSpawn != bChosenPresent || ChosenLevel != CurrentChosen.Level)
+	{
+		bChosenPresent = bNewShouldSpawn;
+		ChosenLevel = CurrentChosen.Level;
+
+		// Reset the schedule so that we regenerate the preplaced encounters to account for the chosen presence/lack
+		SelectedMissionData.SelectedMissionScheduleName = '';
+
+		// Remove all chosen tags even if the chosen is present as the chosen might have leveled up
+		RemoveChosenTags();
+
+		// Add the tag for the current level, if present
+		if (bChosenPresent)
+		{
+			TacticalGameplayTags.AddItem(CurrentChosen.GetMyTemplate().GetSpawningTag(CurrentChosen.Level));
+		}
+	}
+
+	// Save the infil percentage in any case, even if nothing was changed
+	// As we don't want to reroll if the screen is opened and closed again
+	ChosenRollLastDoneAt = GetCurrentInfilInt();
+}
+
+protected function RemoveChosenTags ()
+{
+	local XComGameState_AdventChosen ChosenState;
+	local XComGameState_MissionSite MissionState;
+
+	// Because PurgeMissionOfTags's argument is marked as "out" ¯\_(?)_/¯
+	MissionState = self;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AdventChosen', ChosenState)
+	{
+		ChosenState.PurgeMissionOfTags(MissionState);
+	}
+}
+
+function ResetChosenRollAfterAnotherMission ()
+{
+	ChosenRollLastDoneAt = default.ChosenRollLastDoneAt;
 }
 
 //////////////
@@ -614,7 +687,6 @@ function StartMission()
 {
 	local XGStrategy StrategyGame;
 	
-	ApplyChosenBeforeLaunch();
 	BeginInteraction();
 	
 	StrategyGame = `GAME;
@@ -847,4 +919,7 @@ defaultproperties
 {
 	Available = false;
 	Expiring = false;
+
+	ChosenRollLastDoneAt = -1
+	ChosenLevel = -1
 }

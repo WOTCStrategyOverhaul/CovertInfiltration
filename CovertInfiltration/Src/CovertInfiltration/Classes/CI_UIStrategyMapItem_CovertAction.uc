@@ -198,14 +198,14 @@ simulated function OnScanButtonMouseEvent(UIPanel Panel, int Cmd)
 	{
 		case class'UIUtilities_Input'.const.FXS_L_MOUSE_IN:
 			ColorState = -1;
+			OnReceiveFocus();
 			break;
 
 		case class'UIUtilities_Input'.const.FXS_L_MOUSE_OUT:
 			ColorState = eUIState_Normal;
+			OnLoseFocus();
 			break;
 	}
-
-	OnReceiveFocus();
 }
 
 // Scan button controller
