@@ -14,14 +14,27 @@ event OnInit (UIScreen Screen)
 simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 {
 	local XComGameState_Activity ActivityState;
-	local UIViewChainButton Button;
 	
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID);
 	if (ActivityState == none) return;
 
+	MissionScreen.SetTimer(1, false, nameof(DoSpawnViewChainButton), self);
+
+	// Tutorial
+	class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
+}
+
+simulated protected function DoSpawnViewChainButton ()
+{
+	local UIViewChainButton Button;
+	local UIMission MissionScreen;
+
+	MissionScreen = UIMission(`SCREENSTACK.GetFirstInstanceOf(class'UIMission'));
+	if (MissionScreen == none) return;
+
 	Button = MissionScreen.Spawn(class'UIViewChainButton', MissionScreen);
 	Button.bAnimateOnInit = false;
-	Button.ChainRef = ActivityState.ChainRef;
+	Button.ChainRef = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID).ChainRef;
 	Button.bRestoreCamEarthViewOnOverviewClose = true;
 	Button.OnLayoutRealized = OnViewChainButtonRealized;
 	Button.InitViewChainButton('ViewChainButton');
@@ -31,9 +44,6 @@ simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 	Button.AnimateIn(0);
 
 	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);
-
-	// Tutorial
-	class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 }
 
 simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
