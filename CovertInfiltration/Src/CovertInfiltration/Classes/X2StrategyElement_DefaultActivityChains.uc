@@ -429,11 +429,16 @@ static function AttachResCon(XComGameState NewGameState, XComGameState_Activity 
 				if (ResourceContainerState != none)
 				{
 					// Attach the container to the reward state for later use
+					`CI_Log("Set container to reward properly!");
 					MissionReward.SetReward(ResourceContainerState.GetReference());
+					return;
 				}
 			}
+			`CI_Log("No containers in the chain" @ ActivityState.GetActivityChain().GetMyTemplateName());
+			return;
 		}
 	}
+	`CI_Log("No valid rewards in this mission!");
 }
 
 ///////////////

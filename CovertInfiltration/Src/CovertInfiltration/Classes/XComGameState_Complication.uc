@@ -21,6 +21,11 @@ static function X2StrategyElementTemplateManager GetMyTemplateManager()
 
 simulated function name GetMyTemplateName()
 {
+	if (m_TemplateName == '')
+	{
+		`RedScreen("ComplicationState has missing TemplateName!");
+	}
+
 	return m_TemplateName;
 }
 

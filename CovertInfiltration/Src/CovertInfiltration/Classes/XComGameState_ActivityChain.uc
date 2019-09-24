@@ -479,24 +479,6 @@ function XComGameState_Complication FindComplication (name Complication)
 	return none;
 }
 
-function XComGameState_Complication EditComplication (name Complication, XComGameState NewGameState)
-{
-	local XComGameState_Complication ComplicationState;
-	local int x;
-
-	for (x = 0; x < ComplicationRefs.Length; x++)
-	{
-		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
-
-		if (ComplicationState.GetMyTemplateName() == Complication)
-		{
-			return XComGameState_Complication(NewGameState.ModifyStateObject(class'XComGameState_Complication', ComplicationRefs[x].ObjectID));
-		}
-	}
-
-	return none;
-}
-
 defaultproperties
 {
 	iCurrentStage = -1;

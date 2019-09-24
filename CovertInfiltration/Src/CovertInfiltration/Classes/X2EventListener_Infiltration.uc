@@ -61,7 +61,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
-	Template.AddCHEvent('MultiplyLootCrates', MultiplyLootCaches, ELD_Immediate);
+	Template.AddCHEvent('MultiplyLootCaches', MultiplyLootCaches, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -498,13 +498,16 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	local XComGameState_Activity ActivityState;
 	local XComGameState_ActivityChain ChainState;
 	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_Complication ComplicationState;
 	local ResourcePackage Package;
 	local XComGameState_Item ItemState;
 	local XComLWTuple Tuple;
+	local int x;
 	
 	Tuple = XComLWTuple(EventData);
 	if (Tuple == none || Tuple.Id != 'MultiplyLootCaches')
 	{
+		`CI_Log("Tuple not MultiplyLoot!");
 		return ELR_NoInterrupt;
 	}
 
@@ -521,11 +524,33 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 		{
 			Tuple.Data[0].f = 0.5;
 
-			`CI_Log("Item: " $ ItemState.GetMyTemplateName @ ItemState.Quantity);
+			`CI_Log("OutItem: " $ ItemState.GetMyTemplateName @ ItemState.Quantity);
 			Package.ItemType = ItemState.GetMyTemplateName();
 			Package.ItemAmount = ItemState.Quantity * 0.5;
 			ResContainer.Packages.AddItem(Package);
-			ChainState.EditComplication('Complication_RewardInterception', GameState).ComplicationObjectRefs.AddItem(ResContainer.GetReference());
+
+			for (x = 0; x < ChainState.ComplicationRefs.Length; x++)
+			{
+				ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ChainState.ComplicationRefs[x].ObjectID));
+
+				if(ComplicationState.GetMyTemplateName() == 'Complication_RewardInterception')
+				{
+					ComplicationState = XComGameState_Complication(GameState.ModifyStateObject(class'XComGameState_Complication', ChainState.ComplicationRefs[x].ObjectID));
+				}
+				else
+				{
+					ComplicationState = none;
+				}
+			}
+
+			if(ComplicationState != none)
+			{
+				ComplicationState.ComplicationObjectRefs.AddItem(ResContainer.GetReference());
+			}
+			else
+			{
+				`RedScreen("Failed to attach container to ComplicationState!");
+			}
 		}
 		else
 		{
@@ -535,13 +560,14 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 	}
 	else
 	{
+		`CI_Log("Chain not Complicated!");
 		return ELR_NoInterrupt;
 	}
 	
 	`CI_Log("MULTIPLYING LOOT!");
-	
 	return ELR_NoInterrupt;
 }
+
 ////////////////
 /// Tactical ///
 ////////////////

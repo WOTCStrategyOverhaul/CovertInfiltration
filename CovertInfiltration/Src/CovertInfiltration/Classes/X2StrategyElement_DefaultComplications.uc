@@ -12,6 +12,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Complications;
 	
 	Complications.AddItem(CreateRewardInterceptionTemplate());
+	Complications.AddItem(CreateChosenSurveillanceTemplate());
 
 	return Complications;
 }
@@ -44,16 +45,21 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	local X2ActivityTemplate_Mission ActivityTemplate;
 	local array<XComGameState_Item> SavedItems;
 	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_ResourceContainer TotalResContainer;
 	local XComGameState_Complication ComplicationState;
-	local int i;
+	local int i, j;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	ActivityState = InterceptedChainState.GetLastActivity();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
-	if (ActivityTemplate == none) return;
-	
+	if (ActivityTemplate == none)
+	{
+		`RedScreen("Failed to find source activity!");
+		return;
+	}
+
 	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_IntelIntercept'));
@@ -68,17 +74,38 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	SpawnedChainState.PrimaryRegionRef = InterceptedChainState.PrimaryRegionRef;
 
 	ComplicationState = InterceptedChainState.FindComplication('Complication_RewardInterception');
-	
-	for (i = 0; i < ComplicationState.ComplicationObjectRefs.Length; i++)
-	{
-		ResContainer = XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(ComplicationState.ComplicationObjectRefs[i].ObjectID));
+	TotalResContainer = NewGameState.CreateStateObject(class'XComGameState_ResourceContainer');
 
-		if (ResContainer != none)
+	if (ComplicationState != none)
+	{
+		for (i = 0; i < ComplicationState.ComplicationObjectRefs.Length; i++)
 		{
-			SpawnedChainState.ChainObjectRefs.AddItem(ResContainer.GetReference());
+			ResContainer = XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(ComplicationState.ComplicationObjectRefs[i].ObjectID));
+
+			if (ResContainer != none)
+			{
+				for (j = 0; j < ResContainer.Packages.Length; j++)
+				{
+					TotalResContainer.Packages.AddItem(ResContainer.Packages[j]);
+				}
+			}
+			else
+			{
+				`RedScreen("Failed to get container from ComplicationState!");
+			}
+		}
+		if (i == 0)
+		{
+			// CURRENT PROBLEM LIES HERE
+			`RedScreen("ComplicationState has no stored objects!");
 		}
 	}
+	else
+	{
+		`RedScreen("Failed to get ComplicationState!");
+	}
 
+	SpawnedChainState.ChainObjectRefs.AddItem(TotalResContainer.GetReference());
 	SpawnedChainState.StartNextStage(NewGameState);
 }
 
@@ -92,8 +119,15 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
 	if (ActivityTemplate == none) return false;
+	
+	// if this chain doesn't have any other complications
 
-	// If there is a supply or intel rewarding chain
+	if(ChainState.ComplicationRefs.Length != 0)
+	{
+		return false;
+	}
+	
+	// and if there is a supply or intel rewarding chain
 	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
 		// and if no other chains already have this complication
@@ -121,4 +155,48 @@ static function bool IsLootcrateActivity(X2ActivityTemplate Template)
 static function bool IsInterceptableItem(X2ItemTemplate Template)
 {
 	return default.InterceptableItems.Find(Template.DataName) > -1;
+}
+
+static function X2DataTemplate CreateChosenSurveillanceTemplate()
+{
+	local X2ComplicationTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_ChosenSurveillance');
+
+	// Guaranteed to happen
+	Template.MinChance = 100;
+	Template.MaxChance = 100;
+	Template.AlwaysSelect = true;
+
+	//Template.OnChainComplete = SpawnRescueMission;
+	//Template.OnChainBlocked = DoNothing;
+	//Template.OnManualTrigger = SpawnRescueMission;
+	Template.CanBeChosen = AnyUncomplicatedChain;
+
+	return Template;
+}
+
+function bool AnyUncomplicatedChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_ActivityChain OtherChainState;
+
+	// if no other chains already have this complication
+	
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+	{
+		if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_ChosenSurveillance'))
+		{
+			return false;
+		}
+	}
+
+	// and if this chain doesn't have any other complications
+
+	if(ChainState.ComplicationRefs.Length != 0)
+	{
+		return false;
+	}
+	
+	// then add this complication to the chain
+	return true;
 }

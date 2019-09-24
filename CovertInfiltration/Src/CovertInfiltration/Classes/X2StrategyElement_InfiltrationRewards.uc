@@ -48,6 +48,7 @@ static function X2DataTemplate CreateContainerRewardTemplate()
 
 	Template.SetRewardFn = SetContainerReward;
 	Template.GiveRewardFn = GiveContainerReward;
+	Template.GetRewardStringFn = GetContainerString;
 
 	return Template;
 }
@@ -70,7 +71,6 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_Item ItemState;
 	local XComGameStateHistory History;
-	local bool bXComHQGameStateCreated;
 	local X2ItemTemplateManager ItemManager;
 	local X2ItemTemplate ItemTemplate;
 	local ResourcePackage Package;
@@ -82,6 +82,9 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
 		
 	ResourceContainerState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	
+	if(ResourceContainerState.Packages.Length == 0)
+		`CI_Log("No packages to grab from!");
 
 	foreach ResourceContainerState.Packages(Package)
 	{
@@ -90,8 +93,50 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 		ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
 		ItemState.Quantity = Package.ItemAmount;
 
+		`RedScreen("Deposited Item: " $ ItemState.GetMyTemplateName() @ ItemState.Quantity);
+
 		XComHQ.PutItemInInventory(NewGameState, ItemState);
 	}
+}
+
+static function string GetContainerString(XComGameState_Reward RewardState)
+{
+	local XComGameState_ResourceContainer ResourceContainerState;
+	local X2ItemTemplateManager ItemManager;
+	local XComGameStateHistory History;
+	local X2ItemTemplate ItemTemplate;
+	local ResourcePackage Package;
+	local string Result;
+	
+	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	History = `XCOMHISTORY;
+
+	ResourceContainerState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	
+	if(ResourceContainerState.Packages.Length == 0)
+		`CI_Log("No packages to read from!");
+
+	foreach ResourceContainerState.Packages(Package)
+	{
+		ItemTemplate = ItemManager.FindItemTemplate(Package.ItemType);
+		if(ItemTemplate != none)
+		{
+			`CI_Log("Reading package:" @ Package.ItemType);
+			if(Result == "")
+			{
+				Result = string(Package.ItemAmount) @ (Package.ItemAmount == 1 ? ItemTemplate.GetItemFriendlyName() : ItemTemplate.GetItemFriendlyNamePlural());
+			}
+			else
+			{
+				Result = Result $ "," @ string(Package.ItemAmount) @ (Package.ItemAmount == 1 ? ItemTemplate.GetItemFriendlyName() : ItemTemplate.GetItemFriendlyNamePlural());
+			}
+		}
+	}
+
+	if(Result == "")
+		`CI_Log("Something went wrong in reward string!");
+
+	return Result;
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
