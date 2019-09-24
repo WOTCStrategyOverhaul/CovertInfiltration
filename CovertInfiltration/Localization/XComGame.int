@@ -241,3 +241,9 @@ CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
 CovertActionRiskLabels[3]="Severe"
 CovertActionRiskLabels[4]="Extreme" 
+
+[XComGameState_HeadquartersXCom]
+;CovertActionsSelectOp="SELECT OPERATION" **Vanilla option for reference**
+; We don't care if the ring is built or not, always show the same message
+CovertActionsGoToRing="SELECT OPERATION"
+CovertActionsBuildRing="SELECT OPERATION"
