@@ -536,6 +536,7 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 				if(ComplicationState.GetMyTemplateName() == 'Complication_RewardInterception')
 				{
 					ComplicationState = XComGameState_Complication(GameState.ModifyStateObject(class'XComGameState_Complication', ChainState.ComplicationRefs[x].ObjectID));
+					break;
 				}
 				else
 				{
@@ -545,7 +546,9 @@ static protected function EventListenerReturn MultiplyLootCaches(Object EventDat
 
 			if(ComplicationState != none)
 			{
+				// This is triggered, so the state should be full of containers
 				ComplicationState.ComplicationObjectRefs.AddItem(ResContainer.GetReference());
+				`CI_Log("Input CompState:" @ ComplicationState.ComplicationObjectRefs.Length);
 			}
 			else
 			{

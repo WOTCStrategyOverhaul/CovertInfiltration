@@ -429,7 +429,7 @@ static function AttachResCon(XComGameState NewGameState, XComGameState_Activity 
 				if (ResourceContainerState != none)
 				{
 					// Attach the container to the reward state for later use
-					`CI_Log("Set container to reward properly!");
+					`CI_Log("ULTIMATE VICTORY!!!");
 					MissionReward.SetReward(ResourceContainerState.GetReference());
 					return;
 				}

@@ -74,10 +74,11 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	SpawnedChainState.PrimaryRegionRef = InterceptedChainState.PrimaryRegionRef;
 
 	ComplicationState = InterceptedChainState.FindComplication('Complication_RewardInterception');
-	TotalResContainer = NewGameState.CreateStateObject(class'XComGameState_ResourceContainer');
+	TotalResContainer = XComGameState_ResourceContainer(NewGameState.CreateStateObject(class'XComGameState_ResourceContainer'));
 
 	if (ComplicationState != none)
 	{
+		`CI_Log("Output CompState:" @ ComplicationState.ComplicationObjectRefs.Length);
 		for (i = 0; i < ComplicationState.ComplicationObjectRefs.Length; i++)
 		{
 			ResContainer = XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(ComplicationState.ComplicationObjectRefs[i].ObjectID));
@@ -86,6 +87,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 			{
 				for (j = 0; j < ResContainer.Packages.Length; j++)
 				{
+					`CI_Log("Adding package:" @ ResContainer.Packages[j].ItemType @ ResContainer.Packages[j].ItemAmount);
 					TotalResContainer.Packages.AddItem(ResContainer.Packages[j]);
 				}
 			}
@@ -94,9 +96,9 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 				`RedScreen("Failed to get container from ComplicationState!");
 			}
 		}
-		if (i == 0)
+		if (ComplicationState.ComplicationObjectRefs.Length == 0)
 		{
-			// CURRENT PROBLEM LIES HERE
+			// This is triggered, complicationobjectrefs is empty
 			`RedScreen("ComplicationState has no stored objects!");
 		}
 	}
@@ -105,6 +107,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 		`RedScreen("Failed to get ComplicationState!");
 	}
 
+	TotalResContainer.CombineLoot();
 	SpawnedChainState.ChainObjectRefs.AddItem(TotalResContainer.GetReference());
 	SpawnedChainState.StartNextStage(NewGameState);
 }
