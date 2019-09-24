@@ -128,18 +128,6 @@ strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration bonus gained"
 
-[OverInfiltrationBonus_TacticalAnalysis X2OverInfiltrationBonusTemplate]
-BonusName="TacticalAnalysis"
-BonusDescription="TacticalAnalysis TacticalAnalysis TacticalAnalysis"
-
-[Activity_CaptureInformant X2ActivityTemplate_Infiltration]
-ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="Datapad (on Kill or Capture) and Intel Cache (on Capture)"
-
-[Activity_FacilityInformant X2ActivityTemplate_Infiltration]
-ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)"
-
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
@@ -172,42 +160,76 @@ strCompletionStatusLabel_Success=Success
 
 [Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from ADVENT compound
+;ActionRewardDisplayName=[Soldier name]
+;ActionRewardDetails
+; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
+; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
 
 [Activity_JailbreakChosenSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from Chosen's compound
+;ActionRewardDisplayName=[Soldier name]
+;ActionRewardDetails
+; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
+; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
 
 [Activity_JailbreakFactionSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue faction soldier from ADVENT compound
+;ActionRewardDisplayName=[Soldier class]
+;ActionRewardDetails
+; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
+; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
 
 [Activity_RescueEngineer X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue an engineer from a City Center
+ActionRewardDisplayName=Engineer
+;ActionRewardDetails
+; TODO - make a delegate that will allow to dynamically fill in the unit name
+; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
 
 [Activity_RescueScientist X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue a Scientist from a City Center
+ActionRewardDisplayName=Scientist
+;ActionRewardDetails
+; TODO - make a delegate that will allow to dynamically fill in the unit name
+; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
 
 [Activity_RecoverInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+ActionRewardDisplayName=Information about ADEVNT VIP
+ActionRewardDetails=Using this, we will be able to deploy and capture the VIP
 
 [Activity_RecoverPersonnel X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+ActionRewardDisplayName=Information about resistance VIP
+ActionRewardDetails=Using this, we will be able to deploy and rescue the VIP
 
 [Activity_RecoverUFO X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+ActionRewardDisplayName=Information about UFO
+ActionRewardDetails=Using this, we will be able to intercept the UFO and leave it exposed
 
 [Activity_CommanderSupply X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT General
+ActionRewardDisplayName=Supply raid
+ActionRewardDetails=Unlock a mission
 
 [Activity_CounterDarkEvent X2ActivityTemplate_Infiltration]
 strOverviewDescription=Destroy critical piece of infrastructure
+ActionRewardDisplayName=Counter Dark Event
 
 [Activity_SupplyRaid X2ActivityTemplate_Infiltration]
 strOverviewDescription=Raid ADVENT supply convoy
+ActionRewardDisplayName=Enemy materiel
 
 [Activity_CaptureInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT VIP
+ActionRewardDisplayName="Enemy Intelligence"
+ActionRewardDetails="Datapad (on Kill or Capture) and Intel Cache (on Capture)"
 
 [Activity_FacilityInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT VIP
+ActionRewardDisplayName="Enemy Intelligence"
+ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)"
 
 [Activity_GatherIntel X2ActivityTemplate_Assault]
 strOverviewDescription=Protect a datatap
