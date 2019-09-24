@@ -54,6 +54,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate);
 	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate);
+	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -368,6 +369,29 @@ static protected function EventListenerReturn MissionIconSetMissionSite (Object 
 		MissionIcon.AS_SetAlert(true);
 	}
 
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideMissionImage (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionSite;
+	local XComGameState_Activity ActivityState;
+	local XComLWTuple Tuple;
+
+	MissionSite = XComGameState_MissionSite(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (MissionSite == none || Tuple == none || Tuple.Id != 'OverrideMissionImage') return ELR_NoInterrupt;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionSite);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (ActivityTemplate == none) return ELR_NoInterrupt;
+	
+	Tuple.Data[0].s = ActivityTemplate.GetMissionImage(ActivityState);
+	
 	return ELR_NoInterrupt;
 }
 

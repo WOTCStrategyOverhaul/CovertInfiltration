@@ -102,10 +102,20 @@ static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState
 	);
 }
 
+static function string DefaultGetMissionImageInfiltration (XComGameState_Activity ActivityState)
+{
+	local XComGameState_CovertAction ActionState;
+
+	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectId(ActivityState.SecondaryObjectRef.ObjectID));
+
+	return ActionState.GetImage();
+}
+
 defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted
+	GetMissionImage = DefaultGetMissionImageInfiltration
 
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'

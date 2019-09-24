@@ -47,9 +47,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardDVIPActivity(Templates, "FacilityInformant", "EscapeAmbush", Ambush, 'Reward_Datapad', 'Reward_FacilityLead');
 
 	// Assaults
-	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel');
-	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None', class'UIMission_SupplyRaid');
-	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None', class'UIMission_LandedUFO');
+	CreateStandardAssaultActivity(Templates, "GatherIntel", "RadioTower", Radio, 'Reward_Intel',, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel");
+	CreateStandardAssaultActivity(Templates, "GatherSupplies", "SupplyExtraction", SupplyLift, 'Reward_None', class'UIMission_SupplyRaid', "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies");
+	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None', class'UIMission_LandedUFO', "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed");
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
 
@@ -278,7 +278,7 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 }
 
-static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional class<UIMission> ScreenClass)
+static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional class<UIMission> ScreenClass, optional string MissionImage)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
@@ -286,6 +286,7 @@ static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templat
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
 	Activity.UIButtonIcon = MissionIcon;
+	Activity.MissionImage = MissionImage;
 	
 	Activity.MissionRewards.AddItem(RewardName);
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;

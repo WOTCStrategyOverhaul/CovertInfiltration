@@ -17,11 +17,13 @@ var class<UIMission> ScreenClass;
 var array<name> MissionRewards;
 var string OverworldMeshPath;
 var string UIButtonIcon;
+var string MissionImage;
 
 delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
 delegate PreMissionSetup (XComGameState NewGameState, XComGameState_Activity ActivityState);
 delegate OnStrategyMapSelected (XComGameState_Activity ActivityState);
 delegate OverrideStrategyMapIconTooltip (XComGameState_Activity ActivityState, out string Title, out string Body);
+delegate string GetMissionImage (XComGameState_Activity ActivityState);
 
 ////////////////////////////////////////////
 /// Proxied from X2MissionSourceTemplate ///
@@ -128,6 +130,15 @@ static function DefaultOverrideStrategyMapIconTooltip (XComGameState_Activity Ac
 	Title = MissionSite.GetMissionObjectiveText();
 }
 
+static function string DefaultGetMissionImage (XComGameState_Activity ActivityState)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+
+	return ActivityTemplate.MissionImage;
+}
+
 static function bool DefaultShouldProgressChain (XComGameState_Activity ActivityState)
 {
 	return ActivityState.CompletionStatus == eActivityCompletion_Success || ActivityState.CompletionStatus == eActivityCompletion_PartialSuccess;
@@ -139,6 +150,7 @@ defaultproperties
 	GetOverworldMeshPath = GenericGetOverworldMeshPath
 	OnStrategyMapSelected = DefaultOnStrategyMapSelected
 	OverrideStrategyMapIconTooltip = DefaultOverrideStrategyMapIconTooltip
+	GetMissionImage = DefaultGetMissionImage
 
 	OnSuccess = GenericOnSuccess
 	OnFailure = GenericOnFailure
