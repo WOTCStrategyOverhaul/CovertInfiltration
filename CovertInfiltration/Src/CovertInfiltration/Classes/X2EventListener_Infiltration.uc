@@ -61,7 +61,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
-	Template.AddCHEvent('MultiplyLootCaches', MultiplyLootCaches, ELD_Immediate);
+	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -491,83 +491,101 @@ static protected function EventListenerReturn AllowActionToSpawnRandomly (Object
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn MultiplyLootCaches(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_Activity ActivityState;
+	local UIInventory_LootRecovered LootRecoveredUI;
+	
 	local XComGameState_ActivityChain ChainState;
-	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_Activity ActivityState;
+	
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local bool bDirty;
+
 	local XComGameState_Complication ComplicationState;
-	local ResourcePackage Package;
+	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local StateObjectReference ItemRef, ObjectRef;
 	local XComGameState_Item ItemState;
-	local XComLWTuple Tuple;
-	local int x;
+	local ResourcePackage Package;
+	local int InterceptedQuantity;
 	
-	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'MultiplyLootCaches')
-	{
-		`CI_Log("Tuple not MultiplyLoot!");
-		return ELR_NoInterrupt;
-	}
+	LootRecoveredUI = UIInventory_LootRecovered(EventSource);
+	if (LootRecoveredUI == none) return ELR_NoInterrupt;
 
-	XComHQ = XComGameState_HeadquartersXCom(EventSource);
-	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
-	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(MissionState);
+	XComHQ = `XCOMHQ;
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(XComHQ.MissionRef.ObjectID);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
 	ChainState = ActivityState.GetActivityChain();
-	ResContainer = XComGameState_ResourceContainer(GameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
+	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return ELR_NoInterrupt;
+	
+	ComplicationState = ChainState.FindComplication('Complication_RewardInterception');
+	if (ComplicationState == none) return ELR_NoInterrupt;
 
-	if (ChainState.HasComplication('Complication_RewardInterception'))
+	// All checks have passed, we are good to do our magic
+	`CI_Log("Proccessing reward interception");
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply reward interception");
+	History = `XCOMHISTORY;
+
+	// Find the resource container
+	foreach ComplicationState.ComplicationObjectRefs(ObjectRef)
 	{
-		ItemState = XComGameState_Item(Tuple.Data[1].o);
-		if (class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
+		ResContainer = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ObjectRef.ObjectID));
+		
+		if (ResContainer != none) 
 		{
-			Tuple.Data[0].f = 0.5;
-
-			`CI_Log("OutItem: " $ ItemState.GetMyTemplateName @ ItemState.Quantity);
-			Package.ItemType = ItemState.GetMyTemplateName();
-			Package.ItemAmount = ItemState.Quantity * 0.5;
-			ResContainer.Packages.AddItem(Package);
-
-			for (x = 0; x < ChainState.ComplicationRefs.Length; x++)
-			{
-				ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ChainState.ComplicationRefs[x].ObjectID));
-
-				if(ComplicationState.GetMyTemplateName() == 'Complication_RewardInterception')
-				{
-					ComplicationState = XComGameState_Complication(GameState.ModifyStateObject(class'XComGameState_Complication', ChainState.ComplicationRefs[x].ObjectID));
-					break;
-				}
-				else
-				{
-					ComplicationState = none;
-				}
-			}
-
-			if(ComplicationState != none)
-			{
-				// This is triggered, so the state should be full of containers
-				ComplicationState.ComplicationObjectRefs.AddItem(ResContainer.GetReference());
-				`CI_Log("Input CompState:" @ ComplicationState.ComplicationObjectRefs.Length);
-			}
-			else
-			{
-				`RedScreen("Failed to attach container to ComplicationState!");
-			}
-		}
-		else
-		{
-			`CI_Log("MULTIPLY FAILED ON " $ string(ItemState.GetMyTemplateName()));
-			return ELR_NoInterrupt;
+			ResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ResContainer.ObjectID));
+			break;
 		}
 	}
-	else
+
+	// If we don't have one, create it
+	if (ResContainer == none)
 	{
-		`CI_Log("Chain not Complicated!");
-		return ELR_NoInterrupt;
+		ComplicationState = XComGameState_Complication(NewGameState.ModifyStateObject(class'XComGameState_Complication', ComplicationState.ObjectID));
+		ResContainer = XComGameState_ResourceContainer(NewGameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
+		ComplicationState.ComplicationObjectRefs.AddItem(ResContainer.GetReference());
+	}
+
+	// Loop through all of the recovered loot and see if we can't screw with it
+	foreach XComHQ.LootRecovered(ItemRef)
+	{
+		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+		if (ItemState == none) continue;
+
+		if (!class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
+		{
+			`CI_Trace(ItemState.GetMyTemplateName() @ "is not interceptable - skipping");
+			continue;
+		}
+		
+		`CI_Trace(ItemState.GetMyTemplateName() @ "is intercepted");
+		bDirty = true;
+		
+		// Reduce the quantity
+		ItemState = XComGameState_Item(NewGameState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
+		InterceptedQuantity = ItemState.Quantity * 0.5; // TODO: config
+		ItemState.Quantity -= InterceptedQuantity;
+
+		// Store the quntity to give later
+		Package.ItemType = ItemState.GetMyTemplateName();
+		Package.ItemAmount = InterceptedQuantity;
+		ResContainer.Packages.AddItem(Package);
 	}
 	
-	`CI_Log("MULTIPLYING LOOT!");
+	// Save the changes, if there was any intercepted items
+	if (bDirty)	
+	{
+		`SubmitGameState(NewGameState);
+	}
+	else 
+	{
+		`Redscreen("No interceptable items for the complication - rescue mission will spawn empty!!!");
+		History.CleanupPendingGameState(NewGameState);
+	}
+
 	return ELR_NoInterrupt;
 }
 
