@@ -13,6 +13,8 @@ var UISS_InfiltrationItem TotalDurationLabel, TotalDurationValue;
 var UISS_InfiltrationItem BaseDurationLabel, BaseDurationValue;
 var UISS_InfiltrationItem SquadDurationLabel, SquadDurationValue;
 var UISS_InfiltrationItem OverloadPenaltyLabel, OverloadPenaltyValue, MaxInfilValue;
+var UISS_InfiltrationItem BondModifierLabel, BondModifierValue;
+
 
 var UISS_InfiltrationItem RisksLabel;
 var UIList RiskEntries;
@@ -21,10 +23,12 @@ var localized string strTotalDurationTitle;
 var localized string strBaseDurationTitle;
 var localized string strSquadDurationTitle;
 var localized string strOverloadPenaltyTitle;
+var localized string strBondModifierTitle;
 var localized string strRisksTitle;
 
 var localized string strDaysAndHours;
 var localized string strPlusDaysAndHours;
+var localized string strMinusDaysAndHours;
 var localized string strMaxAllowedInfil;
 
 simulated function InitReadout(XComGameState_CovertAction Action)
@@ -78,6 +82,16 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 		MaxInfilValue.InitObjectiveListItem('MaxInfilValue');
 	}
 
+	if (true) // if there are bonded soldiers
+	{
+		BondModifierLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+		BondModifierLabel.InitObjectiveListItem('BondModifierLabel');
+		BondModifierLabel.SetSubTitle(strBondModifierTitle);
+
+		BondModifierValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+		BondModifierValue.InitObjectiveListItem('BondModifierValue');
+	}
+
 	// For reasons unknown this doesn't happen automatically
 	DurationBreadownItems.RealizeItems();
 	DurationBreadownItems.RealizeList();
@@ -121,6 +135,11 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 		OverloadPenaltyValue.SetInfoValue(GetDaysAndHoursString(OverloadPenalty, default.strPlusDaysAndHours), OverloadColour);
 		MaxInfilValue.SetInfoValue(GetMaxAllowedInfilString(MaxInfil), OverloadColour);
+	}
+
+	if (true) // if there are bonded soldiers
+	{
+		BondModifierValue.SetInfoValue(GetDaysAndHoursString(30, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
 	}
 	
 	UpdateRiskLabels(CurrentAction);
