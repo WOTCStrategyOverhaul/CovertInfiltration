@@ -433,6 +433,13 @@ function SetupComplications (XComGameState NewGameState)
 
 					ComplicationRoll = ComplicationTemplate.MinChance;
 				}
+				else if (ComplicationRoll > ComplicationTemplate.MaxChance)
+				{
+					if (!ComplicationTemplate.AlwaysSelect)
+						continue;
+
+					ComplicationRoll = ComplicationTemplate.MaxChance;
+				}
 				
 				`CI_Log("SUBMITTED TRIGGER: " $ ComplicationRoll);
 
