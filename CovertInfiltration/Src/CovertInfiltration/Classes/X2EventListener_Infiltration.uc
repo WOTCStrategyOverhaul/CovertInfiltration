@@ -502,10 +502,10 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	local XComGameState NewGameState;
 	local bool bDirty;
 
-	local XComGameState_Complication ComplicationState;
+	local XComGameState_Complication_RewardInterception ComplicationState;
 	local XComGameState_ResourceContainer ResContainer;
 	local XComGameState_HeadquartersXCom XComHQ;
-	local StateObjectReference ItemRef, ObjectRef;
+	local StateObjectReference ItemRef;
 	local XComGameState_Item ItemState;
 	local ResourcePackage Package;
 	local int InterceptedQuantity;
@@ -520,34 +520,15 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	ChainState = ActivityState.GetActivityChain();
 	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return ELR_NoInterrupt;
 	
-	ComplicationState = ChainState.FindComplication('Complication_RewardInterception');
+	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
 	if (ComplicationState == none) return ELR_NoInterrupt;
 
 	// All checks have passed, we are good to do our magic
 	`CI_Log("Proccessing reward interception");
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply reward interception");
+	ResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ComplicationState.ResourceContainerRef.ObjectID));
 	History = `XCOMHISTORY;
-
-	// Find the resource container
-	foreach ComplicationState.ComplicationObjectRefs(ObjectRef)
-	{
-		ResContainer = XComGameState_ResourceContainer(History.GetGameStateForObjectID(ObjectRef.ObjectID));
-		
-		if (ResContainer != none) 
-		{
-			ResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ResContainer.ObjectID));
-			break;
-		}
-	}
-
-	// If we don't have one, create it
-	if (ResContainer == none)
-	{
-		ComplicationState = XComGameState_Complication(NewGameState.ModifyStateObject(class'XComGameState_Complication', ComplicationState.ObjectID));
-		ResContainer = XComGameState_ResourceContainer(NewGameState.CreateNewStateObject(class'XComGameState_ResourceContainer'));
-		ComplicationState.ComplicationObjectRefs.AddItem(ResContainer.GetReference());
-	}
 
 	// Loop through all of the recovered loot and see if we can't screw with it
 	foreach XComHQ.LootRecovered(ItemRef)

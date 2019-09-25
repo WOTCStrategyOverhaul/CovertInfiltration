@@ -24,6 +24,8 @@ var config int MinChance;
 var config int MaxChance;
 // This activation chance will be compared against a 0 to 100 roll at the end of the chain
 
+delegate OnComplicationSetup (XComGameState NewGameState, XComGameState_Complication ComplicationState);
+
 // On which chains can this complication be selected
 delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 
@@ -42,6 +44,8 @@ function XComGameState_Complication CreateInstanceFromTemplate (XComGameState Ne
 	{
 		ComplicationState.TriggerChance = TriggerChance;
 	}
+
+	ComplicationState.SetupComplication(NewGameState);
 
 	return ComplicationState;
 }

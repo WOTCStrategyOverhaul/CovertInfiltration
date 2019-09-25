@@ -10,8 +10,6 @@ class XComGameState_Complication extends XComGameState_BaseObject;
 var protected name m_TemplateName;
 var protected X2ComplicationTemplate m_Template;
 
-var array<StateObjectReference> ComplicationObjectRefs;
-
 var int TriggerChance;
 
 static function X2StrategyElementTemplateManager GetMyTemplateManager()
@@ -45,4 +43,12 @@ event OnCreation(optional X2DataTemplate Template)
 
 	m_Template = X2ComplicationTemplate(Template);
 	m_TemplateName = Template.DataName;
+}
+
+function SetupComplication (XComGameState NewGameState)
+{
+	if (GetMyTemplate().OnComplicationSetup != none)
+	{
+		GetMyTemplate().OnComplicationSetup(NewGameState, self);
+	}
 }
