@@ -56,15 +56,15 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	return Template;
 }
 
-function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityChain InterceptedChainState)
+function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complication ComplicationState)
 {
-	local XComGameState_ActivityChain SpawnedChainState;
+	local XComGameState_Complication_RewardInterception ActualComplicationState;
+	local XComGameState_ActivityChain InterceptedChainState, SpawnedChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 	local XComGameState_Activity ActivityState;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate_Mission ActivityTemplate;
 	local XComGameState_ResourceContainer TotalResContainer;
-	local XComGameState_Complication_RewardInterception ComplicationState;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
@@ -90,8 +90,8 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_ActivityCh
 	SpawnedChainState.FactionRef = InterceptedChainState.FactionRef;
 	SpawnedChainState.PrimaryRegionRef = InterceptedChainState.PrimaryRegionRef;
 
-	ComplicationState = XComGameState_Complication_RewardInterception(InterceptedChainState.FindComplication('Complication_RewardInterception'));
-	TotalResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ComplicationState.ResourceContainerRef.ObjectID));
+	ActualComplicationState = XComGameState_Complication_RewardInterception(ComplicationState);
+	TotalResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ActualComplicationState.ResourceContainerRef.ObjectID));
 
 	TotalResContainer.CombineLoot();
 	SpawnedChainState.ChainObjectRefs.AddItem(TotalResContainer.GetReference());
@@ -191,7 +191,7 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 	return AlienHQ.bChosenActive;
 }
 
-function IncreaseRandomChosenKnowledge(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function IncreaseRandomChosenKnowledge(XComGameState NewGameState, XComGameState_Complication ComplicationState)
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState_AdventChosen Chosen;
@@ -245,7 +245,7 @@ static function X2DataTemplate CreateOpenProvocationTemplate()
 	return Template;
 }
 
-function bool IfChosenActivated(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function bool AnyImportantChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	local XComGameState_ActivityChain OtherChainState;
 
@@ -266,11 +266,17 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 		return false;
 	}
 	
+	// and if this chain is super important to the ayys
+	if(default.ImportantChains.Find(ChainState.GetMyTemplateName()) == INDEX_NONE)
+	{
+		return false;
+	}
+
 	// then add this complication to the chain
 	return true;
 }
 
-static function ReduceRetaliationTimer(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+static function ReduceRetaliationTimer(XComGameState NewGameState, XComGameState_Complication ComplicationState)
 {
 	local XComGameStateHistory History;
 	local XComGameState_MissionCalendar CalendarState;
@@ -281,7 +287,7 @@ static function ReduceRetaliationTimer(XComGameState NewGameState, XComGameState
 	History = `XCOMHISTORY;
 	CalendarState = XComGameState_MissionCalendar(History.GetSingleGameStateObjectForClass(class'XComGameState_MissionCalendar'));
 	CalendarState = XComGameState_MissionCalendar(NewGameState.ModifyStateObject(class'XComGameState_MissionCalendar', CalendarState.ObjectID));
-	TimeToRemove = float(default.OPENPROVOCATION_REDUCTION * 24 * 60 * 60);
+	TimeToRemove = float(default.OPENPROVOCATION_DAYSREDUCED * 24 * 60 * 60);
 
 	Index = CalendarState.CurrentMissionMonth.Find('MissionSource', 'MissionSource_Retaliation');
 

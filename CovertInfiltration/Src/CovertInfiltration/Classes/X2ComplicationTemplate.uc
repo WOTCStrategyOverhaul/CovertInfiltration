@@ -30,10 +30,10 @@ delegate OnComplicationSetup (XComGameState NewGameState, XComGameState_Complica
 delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
 
 // What does this complication do when the chain ends in various states
-delegate OnChainComplete(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
-delegate OnChainBlocked(XComGameState NewGameState, XComGameState_ActivityChain ChainState);
+delegate OnChainComplete(XComGameState NewGameState, XComGameState_Complication ComplicationState);
+delegate OnChainBlocked(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 
-function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, optional int TriggerChance = 0)
+function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, XComGameState_ActivityChain ChainState, optional int TriggerChance = 0)
 {
 	local XComGameState_Complication ComplicationState;
 
@@ -43,6 +43,11 @@ function XComGameState_Complication CreateInstanceFromTemplate (XComGameState Ne
 	if (TriggerChance > 0)
 	{
 		ComplicationState.TriggerChance = TriggerChance;
+	}
+	
+	if (ChainState != none)
+	{
+		ComplicationState.ChainRef = ChainState.GetReference();
 	}
 
 	ComplicationState.SetupComplication(NewGameState);

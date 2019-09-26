@@ -250,9 +250,9 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
 					if (EndReason == eACER_Complete && ComplicationTemplate.OnChainComplete != none)
-						ComplicationTemplate.OnChainComplete(NewGameState, self);
+						ComplicationTemplate.OnChainComplete(NewGameState, ComplicationState);
 					if (EndReason == eACER_ProgressBlocked && ComplicationTemplate.OnChainBlocked != none)
-						ComplicationTemplate.OnChainBlocked(NewGameState, self);
+						ComplicationTemplate.OnChainBlocked(NewGameState, ComplicationState);
 				}
 				else
 				{
@@ -443,7 +443,7 @@ function SetupComplications (XComGameState NewGameState)
 				
 				`CI_Log("SUBMITTED TRIGGER: " $ ComplicationRoll);
 
-				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, ComplicationRoll);
+				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
 				ComplicationRefs.AddItem(ComplicationState.GetReference());
 			}
 		}
