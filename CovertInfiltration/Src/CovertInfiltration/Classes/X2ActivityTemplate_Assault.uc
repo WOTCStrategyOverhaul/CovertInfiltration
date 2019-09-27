@@ -337,44 +337,6 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 	return false;
 }
 
-/////////////
-/// Popup ///
-/////////////
-
-static function QueueCouncilAlert (XComGameState NewGameState, XComGameState_Activity ActivityState)
-{
-	local XComHQPresentationLayer HQPres;
-	local DynamicPropertySet PropertySet;
-
-	HQPres = `HQPRES;
-
-	HQPres.BuildUIAlert(PropertySet, 'eAlert_CouncilMission', CouncilAlertCB, 'OnCouncilPopup', "Geoscape_NewResistOpsMissions", false);
-	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicBoolProperty(PropertySet, 'bInstantInterp', false);
-	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicIntProperty(PropertySet, 'ActivityObjectID', ActivityState.ObjectID);
-	HQPres.QueueDynamicPopup(PropertySet, NewGameState);
-}
-
-simulated function CouncilAlertCB(Name eAction, out DynamicPropertySet AlertData, optional bool bInstant = false)
-{
-	local X2ActivityTemplate_Assault ActivityTemplate;
-	local XComGameState_Activity ActivityState;
-	local int ActivityObjectID;
-
-	ActivityObjectID = class'X2StrategyGameRulesetDataStructures'.static.GetDynamicIntProperty(AlertData, 'ActivityObjectID');
-	ActivityState = XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(ActivityObjectID));
-	ActivityTemplate = X2ActivityTemplate_Assault(ActivityState.GetMyTemplate());
-
-	if (eAction == 'eUIAction_Accept')
-	{
-		ActivityTemplate.OnStrategyMapSelected(ActivityState);
-
-		if (`GAME.GetGeoscape().IsScanning())
-		{
-			`HQPRES.StrategyMap2D.ToggleScan();
-		}
-	}
-}
-
 defaultproperties
 {
 	SetupStage = DefaultAssaultSetup
