@@ -46,12 +46,14 @@ static function array<name> DefaultGetSitreps (XComGameState_MissionSite Mission
 
 static function CreateMission (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
+	local XComGameState_Activity_Assault AssaultActivityState;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate_Assault ActivityTemplate;
 	local XComGameState_MissionSite MissionState;
 	local X2MissionSourceTemplate MissionSource;
 	local XComGameState_WorldRegion Region;
 
+	AssaultActivityState = XComGameState_Activity_Assault(ActivityState);
 	ActivityTemplate = X2ActivityTemplate_Assault(ActivityState.GetMyTemplate());
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	MissionSource = X2MissionSourceTemplate(TemplateManager.FindStrategyElementTemplate(MISSION_SOURCE_NAME));
@@ -67,9 +69,13 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 
 	MissionState.BuildMission(
 		MissionSource, Region.GetRandom2DLocationInRegion(), Region.GetReference(), InitRewardsStates(NewGameState, ActivityState), true /*bAvailable*/, 
-		ActivityTemplate.bExpires /* bExpiring */, ActivityTemplate.RollExpiry() /* iHours */, -1 /* iSeconds */,
+		false /* bExpiring */, -1 /* iHours */, -1 /* iSeconds */,
 		/* bUseSpecifiedLevelSeed */, /* LevelSeedOverride */, false /* bSetMissionData */
 	);
+
+	// Do not expire the mission site, as that causes a bunch of behaviour we don't want
+	// Instead, the expiry is handled by the activiy itself
+	AssaultActivityState.SetupExpiry();
 
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(ActivityState);
 	class'UIUtilities_Strategy'.static.GetAlienHQ().AddChosenTacticalTagsToMission(MissionState);
@@ -339,6 +345,8 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 
 defaultproperties
 {
+	StateClass = class'XComGameState_Activity_Assault'
+
 	SetupStage = DefaultAssaultSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted
 

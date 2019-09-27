@@ -15,19 +15,21 @@ simulated function OnInitFromGeoscapeEntity (const out XComGameState_GeoscapeEnt
 	OpportunityPanel.OnScanButtonClicked = OnMissionLaunch;
 	OpportunityPanel.InitOpportunityPanel(); 
 
-	ProccessZoomOut(GetInfiltration() != none);
-	SetVisible(GetInfiltration() == none);
+	SetVisible(GetActivity() == none);
+	ProccessZoomOut(GetActivity() != none);
 }
 
 function UpdateFromGeoscapeEntity (const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameState_Activity_Assault AssaultActivityState;
 
 	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 
+	AssaultActivityState = XComGameState_Activity_Assault(GetActivity());
 	InfiltrationState = GetInfiltration();
 
-	if (InfiltrationState == none)
+	if (InfiltrationState == none && AssaultActivityState == none)
 	{
 		// Restore the vanilla behaviour
 
@@ -40,14 +42,22 @@ function UpdateFromGeoscapeEntity (const out XComGameState_GeoscapeEntity Geosca
 
 	Show();
 	ProccessZoomOut(true);
-
 	OpportunityPanel.Show();
-	OpportunityPanel.UpdateLaunchedActionBox(InfiltrationState.GetCurrentInfilInt(), InfiltrationState.GetMissionObjectiveText(), true);
+
+	if (InfiltrationState != none)
+	{
+		OpportunityPanel.UpdateLaunchedActionBox(InfiltrationState.GetCurrentInfilInt(), InfiltrationState.GetMissionObjectiveText(), true);
+	}
+	else
+	{
+		OpportunityPanel.UpdateExpiringActionProgressBar(AssaultActivityState.ExpiryTimerStart, AssaultActivityState.ExpiryTimerEnd);
+		// TODO: Empty black box for controller button and "LABEL" text remain
+	}
 }
 
 function UpdateFlyoverText ()
 {
-	if (GetInfiltration() != none)
+	if (GetActivity() != none)
 	{
 		SetHTMLText("");
 	}
@@ -74,7 +84,7 @@ protected function ProccessZoomOut (bool bValue)
 
 simulated function Show()
 {
-	if (GetInfiltration() != none || bIsFocused)
+	if (GetActivity() != none || bIsFocused)
 	{
 		super(UIStrategyMapItem).Show();
 	}
@@ -84,7 +94,7 @@ simulated function OnLoseFocus()
 {
 	super(UIStrategyMapItem).OnLoseFocus();
 	
-	if (GetInfiltration() == none)
+	if (GetActivity() == none)
 	{
 		Hide();
 	}
@@ -93,6 +103,11 @@ simulated function OnLoseFocus()
 ///////////////
 /// Helpers ///
 ///////////////
+
+simulated protected function XComGameState_Activity GetActivity ()
+{
+	return class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(GeoscapeEntityRef.ObjectID);
+}
 
 simulated protected function XComGameState_MissionSite GetMission ()
 {

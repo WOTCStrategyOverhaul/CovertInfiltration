@@ -216,7 +216,11 @@ function UpdateGameBoard ()
 
 		`SubmitGamestate(NewGameState);
 	}
+
+	if (IsOngoing()) UpdateActivity();
 }
+
+protected function UpdateActivity ();
 
 ///////////////
 /// Helpers ///

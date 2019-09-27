@@ -363,6 +363,9 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_ActivityChainSpawner.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_Assault.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_Activity_CovertAction.uc">
       <SubType>Content</SubType>
     </Content>
