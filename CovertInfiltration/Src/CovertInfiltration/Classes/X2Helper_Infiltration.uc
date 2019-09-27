@@ -166,7 +166,7 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 	return UnitDeterrence;
 }
 
-static function int GetSquadBondingPercentReduction(array<StateObjectReference> Soldiers)
+static function float GetSquadBondingPercentReduction(array<StateObjectReference> Soldiers)
 {
 	local XComGameStateHistory History;
 	local int TotalBonus;
@@ -198,7 +198,7 @@ static function int GetSquadBondingPercentReduction(array<StateObjectReference> 
 
 	TotalBonus /= 2; // divide by two, as each reduction has been added once for each bondmate
 
-	return TotalBonus;
+	return TotalBonus / float(100);
 }
 
 static function DestroyWillRecoveryProject(XComGameState NewGameState, StateObjectReference UnitRef)
@@ -307,6 +307,7 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, X
 	
 	Result = GetSquadInfilWithoutPenalty(Soldiers);
 	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, Result);
+	Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
 
 	return Result;
 }

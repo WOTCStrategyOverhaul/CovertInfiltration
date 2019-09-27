@@ -108,7 +108,8 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {	
-	local int BaseDuration, SquadDuration, OverloadPenalty, ExtraSoldiers, MaxInfil, BondingReduction;
+	local int BaseDuration, SquadDuration, OverloadPenalty, ExtraSoldiers, MaxInfil;
+	local float BondingReduction;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local string OverloadColour;
 
@@ -140,7 +141,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	if (true) // if there are bonded soldiers
 	{
 		BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
-		BondModifierValue.SetInfoValue(GetDaysAndHoursString(BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+		BondModifierValue.SetInfoValue(GetDaysAndHoursString((SquadDuration + OverloadPenalty) * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
 	}
 	
 	UpdateRiskLabels(CurrentAction);
