@@ -186,12 +186,10 @@ static function int GetSquadBondingPercentReduction(array<StateObjectReference> 
 		{
 			foreach Soldiers(SecondUnitRef)
 			{
-				//FirstUnitState.GetBondData(SecondUnitRef, BondData);
-				//(BondData.BondLevel > -1)
-
 				if (SecondUnitRef == BondedUnitRef)
 				{
-					TotalBonus += 5;
+					FirstUnitState.GetBondData(SecondUnitRef, BondData);
+					TotalBonus += default.RANKS_BONDMATE_BONUS[BondData.BondLevel - 1];
 					break;
 				}
 			}
