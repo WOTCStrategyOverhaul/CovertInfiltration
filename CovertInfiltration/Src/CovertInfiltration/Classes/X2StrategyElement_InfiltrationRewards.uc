@@ -93,7 +93,7 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 		ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
 		ItemState.Quantity = Package.ItemAmount;
 
-		`RedScreen("Deposited Item: " $ ItemState.GetMyTemplateName() @ ItemState.Quantity);
+		`CI_Log("Deposited Item: " $ ItemState.GetMyTemplateName() @ ItemState.Quantity);
 
 		XComHQ.PutItemInInventory(NewGameState, ItemState);
 	}

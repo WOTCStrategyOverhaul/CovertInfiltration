@@ -132,3 +132,15 @@ ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
+
+[Complication_RewardInterception X2ComplicationTemplate]
+FriendlyName="Reward Interception"
+FriendlyDesc="This operation is far from any Resistance havens. ADVENT may try to intercept our spoils of war on their way back home. We should have a squad on standby."
+
+[Complication_ChosenSurveillance X2ComplicationTemplate]
+FriendlyName="Chosen Surveillance"
+FriendlyDesc="The Elders' champions are always watching. Lurking in the shadows, they study our operations and gather the clues that will lead them to the Avenger."
+
+[Complication_OpenProvocation X2ComplicationTemplate]
+FriendlyName="Open Provocation"
+FriendlyDesc="The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens."

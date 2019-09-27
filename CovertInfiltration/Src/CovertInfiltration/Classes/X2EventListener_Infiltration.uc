@@ -524,7 +524,7 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	if (ComplicationState == none) return ELR_NoInterrupt;
 
 	// All checks have passed, we are good to do our magic
-	`CI_Log("Proccessing reward interception");
+	`CI_Log("Processing Reward Interception");
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply reward interception");
 	ResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ComplicationState.ResourceContainerRef.ObjectID));
@@ -550,7 +550,7 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 		InterceptedQuantity = ItemState.Quantity * 0.5; // TODO: config
 		ItemState.Quantity -= InterceptedQuantity;
 
-		// Store the quntity to give later
+		// Store the quantity to give later
 		Package.ItemType = ItemState.GetMyTemplateName();
 		Package.ItemAmount = InterceptedQuantity;
 		ResContainer.Packages.AddItem(Package);

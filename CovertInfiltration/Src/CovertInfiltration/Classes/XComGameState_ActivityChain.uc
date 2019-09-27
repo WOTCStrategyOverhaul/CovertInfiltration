@@ -217,7 +217,6 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	if (bEnded)
 	{
 		`CI_Trace("Chain ended, calling lifecycle callbacks");
-		`CI_Log("CHAIN ENDED");
 
 		// First call callbacks on the stages
 		foreach StageRefs(ActivityRef)
@@ -242,21 +241,17 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			{
 				ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRefs[i].ObjectID));
 				ComplicationRoll = `SYNC_RAND_STATIC(100);
-			
+				
+				`CI_Log("Complication Roll: " $ ComplicationRoll $ " to " $ ComplicationState.TriggerChance);
+
 				if (ComplicationRoll < ComplicationState.TriggerChance)
 				{
-					`CI_Log("COMPLICATION ROLL SUCCEEDED: " $ ComplicationRoll $ " / " $ ComplicationState.TriggerChance);
-
 					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
 					if (EndReason == eACER_Complete && ComplicationTemplate.OnChainComplete != none)
 						ComplicationTemplate.OnChainComplete(NewGameState, ComplicationState);
 					if (EndReason == eACER_ProgressBlocked && ComplicationTemplate.OnChainBlocked != none)
 						ComplicationTemplate.OnChainBlocked(NewGameState, ComplicationState);
-				}
-				else
-				{
-					`CI_Log("COMPLICATION ROLL FAILED: " $ ComplicationRoll $ " / " $ ComplicationState.TriggerChance);
 				}
 			}
 		}
@@ -422,27 +417,38 @@ function SetupComplications (XComGameState NewGameState)
 
 			if (ComplicationTemplate.CanBeChosen(NewGameState, self))
 			{
-				`CI_Log("ADDING COMPLICATION");
+				if (ComplicationTemplate.MinChance > ComplicationTemplate.MaxChance)
+				{
+					`RedScreen("Invalid complication template! Min is larger than Max!");
+				}
 
-				ComplicationRoll = `SYNC_RAND_STATIC(ComplicationTemplate.MaxChance) + 1;
+				ComplicationRoll = `SYNC_RAND_STATIC(100) + 1;
 
 				if (ComplicationRoll < ComplicationTemplate.MinChance)
 				{
-					if (!ComplicationTemplate.AlwaysSelect)
-						continue;
-
-					ComplicationRoll = ComplicationTemplate.MinChance;
+					if (ComplicationTemplate.AlwaysSelect)
+					{
+						ComplicationRoll = ComplicationTemplate.MinChance;
+					}
+					else
+					{
+						ComplicationRoll = 0;
+					}
 				}
 				else if (ComplicationRoll > ComplicationTemplate.MaxChance)
 				{
-					if (!ComplicationTemplate.AlwaysSelect)
-						continue;
-
-					ComplicationRoll = ComplicationTemplate.MaxChance;
+					if (ComplicationTemplate.AlwaysSelect)
+					{
+						ComplicationRoll = ComplicationTemplate.MaxChance;
+					}
+					else
+					{
+						ComplicationRoll = 0;
+					}
 				}
-				
-				`CI_Log("SUBMITTED TRIGGER: " $ ComplicationRoll);
 
+				`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ ComplicationRoll $ "%");
+				
 				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
 				ComplicationRefs.AddItem(ComplicationState.GetReference());
 			}

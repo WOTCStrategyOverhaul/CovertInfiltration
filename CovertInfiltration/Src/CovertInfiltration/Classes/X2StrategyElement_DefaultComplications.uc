@@ -11,20 +11,9 @@ var config array<name> InterceptableItems;
 var config array<name> ImportantChains;
 
 // Various values for the complications
-var config int REWARDINTERCEPTION_MIN;
-var config int REWARDINTERCEPTION_MAX;
-var config bool REWARDINTERCEPTION_GUARANTEED;
-var config float REWARDINTERCEPTION_TAKENLOOT;
-
-var config int CHOSENSURVEILLANCE_MIN;
-var config int CHOSENSURVEILLANCE_MAX;
-var config bool CHOSENSURVEILLANCE_GUARANTEED;
-var config int CHOSENSURVEILLANCE_KNOWLEDGE;
-
-var config int OPENPROVOCATION_MIN;
-var config int OPENPROVOCATION_MAX;
-var config bool OPENPROVOCATION_GUARANTEED;
-var config int OPENPROVOCATION_DAYSREDUCED;
+var config float REWARD_INTERCEPTION_TAKENLOOT;
+var config int CHOSEN_SURVEILLANCE_KNOWLEDGE;
+var config int OPEN_PROVOCATION_DAYSREDUCED;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -43,14 +32,9 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_RewardInterception');
 
-	Template.MinChance = default.REWARDINTERCEPTION_MIN;
-	Template.MaxChance = default.REWARDINTERCEPTION_MAX;
-	Template.AlwaysSelect = default.REWARDINTERCEPTION_GUARANTEED;
 	Template.StateClass = class'XComGameState_Complication_RewardInterception';
 
-	//Template.OnChainComplete = SpawnRescueMission;
-	//Template.OnChainBlocked = DoNothing;
-	//Template.OnManualTrigger = SpawnRescueMission;
+	Template.OnChainComplete = SpawnRescueMission;
 	Template.CanBeChosen = SupplyAndIntelChains;
 
 	return Template;
@@ -120,7 +104,6 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
 		// and if no other chains already have this complication
-		/*
 		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
 		{
 			if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_RewardInterception'))
@@ -128,7 +111,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 				return false;
 			}
 		}
-		*/
+		
 		// then add this complication to the chain
 		return true;
 	}
@@ -152,11 +135,6 @@ static function X2DataTemplate CreateChosenSurveillanceTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_ChosenSurveillance');
 
-	// Guaranteed to happen
-	Template.MinChance = default.CHOSENSURVEILLANCE_MIN;
-	Template.MaxChance = default.CHOSENSURVEILLANCE_MAX;
-	Template.AlwaysSelect = default.CHOSENSURVEILLANCE_GUARANTEED;
-
 	Template.OnChainComplete = IncreaseRandomChosenKnowledge;
 	Template.CanBeChosen = IfChosenActivated;
 
@@ -167,7 +145,7 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState_ActivityChain OtherChainState;
-
+	
 	// if no other chains already have this complication
 	
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
@@ -177,7 +155,7 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 			return false;
 		}
 	}
-
+	
 	// and if this chain doesn't have any other complications
 
 	if(ChainState.ComplicationRefs.Length != 0)
@@ -186,7 +164,7 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 	}
 	
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-
+	
 	// then add this complication to the chain
 	return AlienHQ.bChosenActive;
 }
@@ -200,6 +178,7 @@ function IncreaseRandomChosenKnowledge(XComGameState NewGameState, XComGameState
 	local int ActiveChosen, Roll;
 
 	History = `XCOMHISTORY;
+	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 	ActiveChosen = 0;
 
 	foreach AlienHQ.AdventChosen(ChosenRef)
@@ -215,29 +194,24 @@ function IncreaseRandomChosenKnowledge(XComGameState NewGameState, XComGameState
 
 	do
 	{
-		Chosen = XComGameState_AdventChosen(History.GetGameStateForObjectID(AlienHQ.AdventChosen[Roll].ObjectID));
-		Roll++;
 		if(Roll >= AlienHQ.AdventChosen.Length)
 		{
 			`RedScreen("NO CHOSEN TO SELECT");
 			return;
 		}
+		Chosen = XComGameState_AdventChosen(History.GetGameStateForObjectID(AlienHQ.AdventChosen[Roll].ObjectID));
+		Roll++;
 	}
 	until(Chosen.bMetXCom);
 
-	Chosen.ModifyKnowledgeScore(NewGameState, default.CHOSENSURVEILLANCE_KNOWLEDGE);
+	Chosen.ModifyKnowledgeScore(NewGameState, default.CHOSEN_SURVEILLANCE_KNOWLEDGE);
 }
 
 static function X2DataTemplate CreateOpenProvocationTemplate()
 {
 	local X2ComplicationTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_ChosenSurveillance');
-
-	// Guaranteed to happen
-	Template.MinChance = default.OPENPROVOCATION_MIN;
-	Template.MaxChance = default.OPENPROVOCATION_MAX;
-	Template.AlwaysSelect = default.OPENPROVOCATION_GUARANTEED;
+	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_OpenProvocation');
 
 	Template.OnChainComplete = ReduceRetaliationTimer;
 	Template.CanBeChosen = AnyImportantChain;
@@ -253,12 +227,12 @@ function bool AnyImportantChain(XComGameState NewGameState, XComGameState_Activi
 	
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
 	{
-		if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_ChosenSurveillance'))
+		if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_OpenProvocation'))
 		{
 			return false;
 		}
 	}
-
+	
 	// and if this chain doesn't have any other complications
 
 	if(ChainState.ComplicationRefs.Length != 0)
@@ -271,7 +245,7 @@ function bool AnyImportantChain(XComGameState NewGameState, XComGameState_Activi
 	{
 		return false;
 	}
-
+	
 	// then add this complication to the chain
 	return true;
 }
@@ -287,7 +261,7 @@ static function ReduceRetaliationTimer(XComGameState NewGameState, XComGameState
 	History = `XCOMHISTORY;
 	CalendarState = XComGameState_MissionCalendar(History.GetSingleGameStateObjectForClass(class'XComGameState_MissionCalendar'));
 	CalendarState = XComGameState_MissionCalendar(NewGameState.ModifyStateObject(class'XComGameState_MissionCalendar', CalendarState.ObjectID));
-	TimeToRemove = float(default.OPENPROVOCATION_DAYSREDUCED * 24 * 60 * 60);
+	TimeToRemove = float(default.OPEN_PROVOCATION_DAYSREDUCED * 24 * 60 * 60);
 
 	Index = CalendarState.CurrentMissionMonth.Find('MissionSource', 'MissionSource_Retaliation');
 

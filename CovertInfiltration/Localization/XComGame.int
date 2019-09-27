@@ -241,7 +241,3 @@ CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
 CovertActionRiskLabels[3]="Severe"
 CovertActionRiskLabels[4]="Extreme" 
-
-[Complication_RewardInterception X2ComplicationTemplate]
-FriendlyName="Reward Interception"
-FriendlyDesc="There is a chance that ADVENT will try to intercept our spoils of war on their way back to a resistance haven. We should have a squad on standby."
