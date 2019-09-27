@@ -136,7 +136,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	}
 
 	BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
-	BondModifierValue.SetInfoValue(GetDaysAndHoursString((SquadDuration + OverloadPenalty) * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+	BondModifierValue.SetInfoValue(GetDaysAndHoursString(SquadDuration * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
 		
 	UpdateRiskLabels(CurrentAction);
 }
