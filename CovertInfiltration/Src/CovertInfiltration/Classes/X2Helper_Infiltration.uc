@@ -18,6 +18,8 @@ var config array<int> MAX_INFIL_PER_EXTRA_SOLDIER;
 
 var config array<int> RANKS_DETER;
 
+var config array<int> RANKS_BONDMATE_BONUS;
+
 var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
 var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
@@ -164,6 +166,41 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 	return UnitDeterrence;
 }
 
+static function float GetSquadBondingPercentReduction(array<StateObjectReference> Soldiers)
+{
+	local XComGameStateHistory History;
+	local int TotalBonus;
+	local StateObjectReference FirstUnitRef, SecondUnitRef, BondedUnitRef;
+	local XComGameState_Unit FirstUnitState;
+	local SoldierBond BondData;
+
+	History = `XCOMHISTORY;
+	
+	TotalBonus = 0;
+
+	foreach Soldiers(FirstUnitRef)
+	{
+		FirstUnitState = XComGameState_Unit(History.GetGameStateForObjectID(FirstUnitRef.ObjectID));
+
+		if (FirstUnitState != none && FirstUnitState.HasSoldierBond(BondedUnitRef))
+		{
+			foreach Soldiers(SecondUnitRef)
+			{
+				if (SecondUnitRef == BondedUnitRef)
+				{
+					FirstUnitState.GetBondData(SecondUnitRef, BondData);
+					TotalBonus += default.RANKS_BONDMATE_BONUS[BondData.BondLevel - 1];
+					break;
+				}
+			}
+		}		
+	}
+
+	TotalBonus /= 2; // divide by two, as each reduction has been added once for each bondmate
+
+	return TotalBonus / float(100);
+}
+
 static function DestroyWillRecoveryProject(XComGameState NewGameState, StateObjectReference UnitRef)
 {
 	local XComGameStateHistory History;
@@ -269,6 +306,7 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, X
 	local int Result;
 	
 	Result = GetSquadInfilWithoutPenalty(Soldiers);
+	Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
 	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, Result);
 
 	return Result;

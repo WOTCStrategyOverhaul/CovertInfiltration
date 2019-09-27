@@ -29,8 +29,10 @@ strTotalDurationTitle="TOTAL DURATION:"
 strBaseDurationTitle="BASE DURATION:"
 strSquadDurationTitle="INFILTRATION MODIFIER:"
 strOverloadPenaltyTitle="OVERLOAD PENALTY:"
+strBondModifierTitle="BOND MODIFIER:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+strMinusDaysAndHours="-<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strMaxAllowedInfil="Max allowed infil: <XGParam:IntValue0>"
 
 [UISS_TerrainDisplay]
