@@ -9,23 +9,17 @@ class UIStrategyMapItem_CovertAction_CI extends UIStrategyMapItem_CovertAction;
 
 var UIStrategyMapItem_OpportunityCI OpportunityPanel;
 
-simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntity Entity)
+simulated function OnInitFromGeoscapeEntity (const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
-	super.InitMapItem(Entity);
-
 	OpportunityPanel = Spawn(class'UIStrategyMapItem_OpportunityCI', self);
 	OpportunityPanel.OnScanButtonClicked = OnScanButtonClick;
 	OpportunityPanel.InitOpportunityPanel(); 
-
-	return self;
 }
 
 function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
 	local XComGameState_CovertAction CovertAction;
 	local ActionExpirationInfo ActionExpiration;
-
-	if (!bIsInited) return;
 
 	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 	OpportunityPanel.Show();

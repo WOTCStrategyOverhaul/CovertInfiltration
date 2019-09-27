@@ -2,24 +2,28 @@ class UIStrategyMapItem_Mission_CI extends UIStrategyMapItem_Mission;
 
 var UIStrategyMapItem_OpportunityCI OpportunityPanel;
 
-simulated function UIStrategyMapItem InitMapItem (out XComGameState_GeoscapeEntity Entity)
+simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntity Entity)
 {
-	super.InitMapItem(Entity);
+	if (XComGameState_MissionSiteInfiltration(Entity) != none) bProcessesMouseEvents = false;
 
+	return super.InitMapItem(Entity);
+}
+
+simulated function OnInitFromGeoscapeEntity (const out XComGameState_GeoscapeEntity GeoscapeEntity)
+{
 	OpportunityPanel = Spawn(class'UIStrategyMapItem_OpportunityCI', self);
 	OpportunityPanel.OnScanButtonClicked = OnMissionLaunch;
 	OpportunityPanel.InitOpportunityPanel(); 
 
 	ProccessZoomOut(GetInfiltration() != none);
-
-	return self;
+	SetVisible(GetInfiltration() == none);
 }
 
-function OnGeoscapeEntityUpdated ()
+function UpdateFromGeoscapeEntity (const out XComGameState_GeoscapeEntity GeoscapeEntity)
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
 
-	if (!bIsInited) return;
+	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
 
 	InfiltrationState = GetInfiltration();
 
@@ -29,14 +33,12 @@ function OnGeoscapeEntityUpdated ()
 
 		OpportunityPanel.Hide();
 		SetVisible(bIsFocused);
-		ProcessMouseEvents();
 		ProccessZoomOut(false);
 		
 		return;
 	}
 
 	Show();
-	IgnoreMouseEvents();
 	ProccessZoomOut(true);
 
 	OpportunityPanel.Show();
@@ -74,7 +76,17 @@ simulated function Show()
 {
 	if (GetInfiltration() != none || bIsFocused)
 	{
-		super.Show();
+		super(UIStrategyMapItem).Show();
+	}
+}
+
+simulated function OnLoseFocus()
+{
+	super(UIStrategyMapItem).OnLoseFocus();
+	
+	if (GetInfiltration() == none)
+	{
+		Hide();
 	}
 }
 

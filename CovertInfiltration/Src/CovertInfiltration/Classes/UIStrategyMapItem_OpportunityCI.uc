@@ -15,9 +15,6 @@ var UIProgressBar ProgressBar;
 
 var int ColorState;
 
-var transient bool bScanButtonResized;
-var transient float CachedScanButtonWidth;
-
 var localized string strProgress;
 var localized string strCovertAction;
 var localized string strCovertInfiltration;
@@ -33,6 +30,7 @@ simulated function InitOpportunityPanel (optional name InitName)
 	ScanButton.SetDefaultDelegate(OnScanButtonClick);
 	ScanButton.SetButtonType(eUIScanButtonType_Default);
 	ScanButton.OnMouseEventDelegate = OnScanButtonMouseEvent;
+	ScanButton.OnSizeRealized = OnScanButtonSizeRealized;
 	
 	PercentLabel = Spawn(class'UIText', ScanButton).InitText('PercentLabel', "");
 	PercentLabel.SetWidth(60); 
@@ -45,36 +43,29 @@ simulated function InitOpportunityPanel (optional name InitName)
 	ProgressBar = Spawn(class'UIProgressBar', self).InitProgressBar('MissionInfiltrationProgress', -32, 5, 64, 8, 0.5, eUIState_Normal);
 }
 
+simulated protected function OnScanButtonSizeRealized ()
+{
+	local float ScanWidth;
+
+	ScanWidth = ScanButton.MC.GetNum("bg._width"); 
+
+	PercentLabel.SetX(ScanWidth - 60);
+	ProgressLabel.SetX(ScanWidth - 60);
+	ScanButton.SetX(-(ScanWidth / 2));
+}
+
 // Data
 
 simulated function UpdateLaunchedActionBox (int InfilPercent, string MissionName, bool IsInfiltration)
 {
-	local float ScanWidth;
-
 	PercentLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(string(InfilPercent) $ "%", false, true,, 20), ColorState,, "CENTER"));
 	ProgressLabel.SetHTMLText(class'UIUtilities_Text'.static.GetColoredText(strProgress, ColorState, 12));
-	
-	if (!bScanButtonResized)
-	{
-		ScanButton.SetText(Caps(MissionName), (IsInfiltration ? strCovertInfiltration : strCovertAction), " ", " ");
-		bScanButtonResized = true;
-	}
+	ScanButton.SetText(Caps(MissionName), (IsInfiltration ? strCovertInfiltration : strCovertAction), " ", " ");
 	
 	ScanButton.DefaultState();
 	ScanButton.PulseScanner(false);
 	ScanButton.ShowScanIcon(false);
 	ScanButton.Realize();
-	
-	ScanWidth = ScanButton.MC.GetNum("bg._width"); 
-
-	if (ScanWidth != CachedScanButtonWidth)
-	{
-		PercentLabel.SetX(ScanWidth - 60);
-		ProgressLabel.SetX(ScanWidth - 60);
-		ScanButton.SetX(-(ScanWidth / 2));
-			
-		CachedScanButtonWidth = ScanWidth;
-	}	
 
 	ProgressBar.Hide();
 	ScanButton.Show();
