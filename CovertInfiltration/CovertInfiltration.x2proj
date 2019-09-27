@@ -131,7 +131,7 @@
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\CI_UIStrategyMapItem_CovertAction.uc">
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_SlotInfo.uc">
@@ -201,6 +201,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_StrategyMap_CAButton.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_Mission_CI.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_OpportunityCI.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMap_CAButton.uc">

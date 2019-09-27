@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  ArcaneData
-//  PURPOSE: MCO for covert action items on strategy map
+//  AUTHOR:  ArcaneData original, refactor by Xymanek
+//  PURPOSE: 
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
-class CI_UIStrategyMapItem_CovertAction extends UIStrategyMapItem_CovertAction;
+
+class UIStrategyMapItem_OpportunityCI extends UIPanel;
 
 var UIScanButton ScanButton;
 var UIText PercentLabel;
@@ -21,9 +22,11 @@ var localized string strProgress;
 var localized string strCovertAction;
 var localized string strCovertInfiltration;
 
-simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntity Entity)
+delegate OnScanButtonClicked ();
+
+simulated function InitOpportunityPanel (optional name InitName)
 {
-	super.InitMapItem(Entity);
+	InitPanel(InitName);
 
 	ScanButton = Spawn(class'UIScanButton', self).InitScanButton();
 	ScanButton.SetButtonIcon("");
@@ -40,62 +43,11 @@ simulated function UIStrategyMapItem InitMapItem(out XComGameState_GeoscapeEntit
 	ProgressLabel.SetPosition(154, 23);
 
 	ProgressBar = Spawn(class'UIProgressBar', self).InitProgressBar('MissionInfiltrationProgress', -32, 5, 64, 8, 0.5, eUIState_Normal);
-		
-	bScanButtonResized = false;
-
-	ColorState = eUIState_Normal;
-
-	return self;
 }
 
-function UpdateFromGeoscapeEntity(const out XComGameState_GeoscapeEntity GeoscapeEntity)
-{
-	local XComGameState_CovertAction CovertAction;
-	local XComGameState_MissionSiteInfiltration MissionSite;
+// Data
 
-	if (!bIsInited) return;
-
-	super.UpdateFromGeoscapeEntity(GeoscapeEntity);
-
-	MissionSite = XComGameState_MissionSiteInfiltration(GeoscapeEntity);
-	CovertAction = GetAction();
-
-	if (MissionSite != None)
-	{
-		UpdateOverinfiltratingBox(MissionSite);
-		ProgressBar.Hide();
-	}
-	else if (CovertAction.bStarted)
-	{
-		UpdateInfiltratingBox(CovertAction);
-		ProgressBar.Hide();
-	}
-	else
-	{
-		UpdateExpiringActionProgressBar(CovertAction);
-		ScanButton.Hide();
-	}	
-}
-
-simulated function UpdateOverinfiltratingBox(XComGameState_MissionSiteInfiltration MissionSite)
-{
-	UpdateLaunchedActionBox(MissionSite.GetCurrentInfilInt(), MissionSite.GetMissionObjectiveText(), true);
-}
-
-simulated function UpdateInfiltratingBox(XComGameState_CovertAction CovertAction)
-{
-	local float TotalDuration, RemainingDuration;
-	local int InfilPercent;
-	
-	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.StartDateTime);
-	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(CovertAction.EndDateTime, CovertAction.GetCurrentTime());
-
-	InfilPercent = (1 - (RemainingDuration / TotalDuration)) * 100;
-
-	UpdateLaunchedActionBox(InfilPercent, CovertAction.GetDisplayName(), class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction));
-}
-
-simulated function UpdateLaunchedActionBox(int InfilPercent, string MissionName, bool IsInfiltration)
+simulated function UpdateLaunchedActionBox (int InfilPercent, string MissionName, bool IsInfiltration)
 {
 	local float ScanWidth;
 
@@ -123,31 +75,25 @@ simulated function UpdateLaunchedActionBox(int InfilPercent, string MissionName,
 			
 		CachedScanButtonWidth = ScanWidth;
 	}	
+
+	ProgressBar.Hide();
+	ScanButton.Show();
 }
 
-simulated function UpdateExpiringActionProgressBar(XComGameState_CovertAction CovertAction)
+simulated function UpdateExpiringActionProgressBar (TDateTime TimerStart, TDateTime TimerEnd)
 {
-	local bool FoundAction;
-	local ActionExpirationInfo ActionInfo;
 	local float TotalDuration, RemainingDuration;
 	local float Percent;
 	
-	FoundAction = class'XComGameState_CovertActionExpirationManager'.static.GetActionExpirationInfo(CovertAction.GetReference(), ActionInfo);
-
-	if (!FoundAction || ActionInfo.Expiration.m_iYear > 2100)
-	{
-		ProgressBar.Hide();
-		return;
-	}	
-	
-	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, ActionInfo.OriginTime);
-	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ActionInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
+	TotalDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(TimerEnd, TimerStart);
+	RemainingDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(TimerEnd, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
 
 	Percent = RemainingDuration / TotalDuration;
 	ProgressBar.SetPercent(Percent);
 	SetProgressBarColor(Percent);
 
 	ProgressBar.Show();
+	ScanButton.Hide();
 }
 
 simulated function SetProgressBarColor(float percent)
@@ -170,27 +116,17 @@ simulated function SetProgressBarColor(float percent)
 	}
 }
 
-function OnScanButtonClick()
-{
-	local XComGameState_GeoscapeEntity GeoscapeEntity;
+// Scan button mouse
 
+function protected OnScanButtonClick ()
+{
 	ColorState = eUIState_Normal;
 
-	GeoscapeEntity = XComGameState_GeoscapeEntity(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
-	GeoscapeEntity.AttemptSelectionCheckInterruption();
+	if (OnScanButtonClicked != none)
+	{
+		OnScanButtonClicked();
+	}
 }
-
-simulated function XComGameState_CovertAction GetAction()
-{
-	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GeoscapeEntityRef.ObjectID));
-}
-
-simulated function bool IsSelectable()
-{
-	return true;
-}
-
-// Scan button mouse
 
 simulated function OnScanButtonMouseEvent(UIPanel Panel, int Cmd)
 {
@@ -232,6 +168,9 @@ simulated function OnLoseFocus()
 
 defaultproperties
 {
+	MCName = "OpportunityPanel"
+	ColorState = eUIState_Normal;
+
 	bProcessesMouseEvents = false;
 	bAnimateOnInit = false;
 }

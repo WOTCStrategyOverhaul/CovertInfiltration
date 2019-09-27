@@ -724,11 +724,6 @@ function StartMission()
 /// Misc ///
 ////////////
 
-function class<UIStrategyMapItem> GetUIClass()
-{
-	return class'CI_UIStrategyMapItem_CovertAction';
-}
-
 function RemoveEntity(XComGameState NewGameState)
 {
 	super.RemoveEntity(NewGameState);
