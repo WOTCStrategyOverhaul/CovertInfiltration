@@ -82,15 +82,12 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 		MaxInfilValue.InitObjectiveListItem('MaxInfilValue');
 	}
 
-	if (true) // if there are bonded soldiers
-	{
-		BondModifierLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
-		BondModifierLabel.InitObjectiveListItem('BondModifierLabel');
-		BondModifierLabel.SetSubTitle(strBondModifierTitle);
+	BondModifierLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+	BondModifierLabel.InitObjectiveListItem('BondModifierLabel');
+	BondModifierLabel.SetSubTitle(strBondModifierTitle);
 
-		BondModifierValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
-		BondModifierValue.InitObjectiveListItem('BondModifierValue');
-	}
+	BondModifierValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+	BondModifierValue.InitObjectiveListItem('BondModifierValue');
 
 	// For reasons unknown this doesn't happen automatically
 	DurationBreadownItems.RealizeItems();
@@ -138,12 +135,9 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 		MaxInfilValue.SetInfoValue(GetMaxAllowedInfilString(MaxInfil), OverloadColour);
 	}
 
-	if (true) // if there are bonded soldiers
-	{
-		BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
-		BondModifierValue.SetInfoValue(GetDaysAndHoursString((SquadDuration + OverloadPenalty) * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
-	}
-	
+	BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
+	BondModifierValue.SetInfoValue(GetDaysAndHoursString((SquadDuration + OverloadPenalty) * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+		
 	UpdateRiskLabels(CurrentAction);
 }
 
