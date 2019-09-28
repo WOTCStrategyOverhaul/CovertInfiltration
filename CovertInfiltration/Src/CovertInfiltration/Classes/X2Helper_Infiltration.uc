@@ -303,11 +303,13 @@ static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertActio
 
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
-	local int Result;
+	local int BaseDuartion, Result;
 	
-	Result = GetSquadInfilWithoutPenalty(Soldiers);
+	BaseDuartion = GetSquadInfilWithoutPenalty(Soldiers);
+
+	Result = BaseDuartion;
 	Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
-	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, Result);
+	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, BaseDuartion);
 
 	return Result;
 }
