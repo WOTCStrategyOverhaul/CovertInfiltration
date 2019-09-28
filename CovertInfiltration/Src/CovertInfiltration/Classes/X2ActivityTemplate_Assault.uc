@@ -12,6 +12,8 @@ var config bool bExpires;
 var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 
+var localized string MissionPinLabel;
+
 static function DefaultAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	CreateMission(NewGameState, ActivityState);

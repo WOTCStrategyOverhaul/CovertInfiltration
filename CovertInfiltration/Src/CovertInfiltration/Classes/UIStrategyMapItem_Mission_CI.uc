@@ -51,19 +51,32 @@ function UpdateFromGeoscapeEntity (const out XComGameState_GeoscapeEntity Geosca
 	else
 	{
 		OpportunityPanel.UpdateExpiringActionProgressBar(AssaultActivityState.ExpiryTimerStart, AssaultActivityState.ExpiryTimerEnd);
-		// TODO: Empty black box for controller button and "LABEL" text remain
+		// TODO: the MissionPinLabel stays on screen all the time
 	}
 }
 
 function UpdateFlyoverText ()
 {
-	if (GetActivity() != none)
+	local X2ActivityTemplate_Assault AssaultTemplate;
+	local XComGameState_Activity ActivityState;
+	
+	if (GetInfiltration() != none)
 	{
 		SetHTMLText("");
 	}
 	else
 	{
-		SetHTMLText(GetMission().GetMissionSource().MissionPinLabel);// set label to the mission type, e.g. ADVENT Blacksite
+		ActivityState = GetActivity();
+		if (ActivityState != none) AssaultTemplate = X2ActivityTemplate_Assault(ActivityState.GetMyTemplate());
+
+		if (AssaultTemplate != none)
+		{
+			SetHTMLText(AssaultTemplate.MissionPinLabel);
+		}
+		else
+		{
+			SetHTMLText(GetMission().GetMissionSource().MissionPinLabel); // set label to the mission type, e.g. ADVENT Blacksite
+		}
 	}
 }
 

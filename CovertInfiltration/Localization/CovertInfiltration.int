@@ -229,12 +229,15 @@ ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)
 
 [Activity_GatherIntel X2ActivityTemplate_Assault]
 strOverviewDescription=Protect a datatap
+MissionPinLabel=Protect a datatap
 
 [Activity_GatherSupplies X2ActivityTemplate_Assault]
 strOverviewDescription=Extract supplies
+MissionPinLabel=Extract supplies
 
 [Activity_LandedUFO X2ActivityTemplate_Assault]
 strOverviewDescription=Secure the UFO
+MissionPinLabel="Landed UFO"
 
 [Activity_PrepareCounterDE X2ActivityTemplate_CovertAction]
 strOverviewDescription=Prepare an operation to counter the Dark Event
