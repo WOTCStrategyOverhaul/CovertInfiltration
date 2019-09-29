@@ -53,3 +53,12 @@ function SetupComplication (XComGameState NewGameState)
 		GetMyTemplate().OnComplicationSetup(NewGameState, self);
 	}
 }
+
+///////////////
+/// Helpers ///
+///////////////
+
+function XComGameState_ActivityChain GetActivityChain ()
+{
+	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainRef.ObjectID));
+}

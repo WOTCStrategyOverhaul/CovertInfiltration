@@ -84,9 +84,7 @@ function SetupChain (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
-	local int i, ComplicationRoll;
-	local X2ComplicationTemplate ComplicationTemplate;
-	local X2DataTemplate DataTemplate;
+	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
 
@@ -417,11 +415,6 @@ function SetupComplications (XComGameState NewGameState)
 
 			if (ComplicationTemplate.CanBeChosen(NewGameState, self))
 			{
-				if (ComplicationTemplate.MinChance > ComplicationTemplate.MaxChance)
-				{
-					`RedScreen("Invalid complication template! Min is larger than Max!");
-				}
-
 				ComplicationRoll = `SYNC_RAND_STATIC(100) + 1;
 
 				if (ComplicationRoll < ComplicationTemplate.MinChance)
@@ -458,20 +451,7 @@ function SetupComplications (XComGameState NewGameState)
 
 function bool HasComplication (name Complication)
 {
-	local XComGameState_Complication ComplicationState;
-	local int x;
-
-	for (x = 0; x < ComplicationRefs.Length; x++)
-	{
-		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
-
-		if (ComplicationState.GetMyTemplateName() == Complication)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return FindComplication(Complication) != none;
 }
 
 function XComGameState_Complication FindComplication (name Complication)

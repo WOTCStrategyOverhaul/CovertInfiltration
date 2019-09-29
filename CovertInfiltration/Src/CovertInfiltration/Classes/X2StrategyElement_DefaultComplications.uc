@@ -52,6 +52,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
+	InterceptedChainState = ComplicationState.GetActivityChain();
 	ActivityState = InterceptedChainState.GetLastActivity();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 

@@ -547,7 +547,7 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 		
 		// Reduce the quantity
 		ItemState = XComGameState_Item(NewGameState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
-		InterceptedQuantity = ItemState.Quantity * 0.5; // TODO: config
+		InterceptedQuantity = ItemState.Quantity * class'X2StrategyElement_DefaultComplications'.default.REWARD_INTERCEPTION_TAKENLOOT;
 		ItemState.Quantity -= InterceptedQuantity;
 
 		// Store the quantity to give later

@@ -32,6 +32,17 @@ delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChai
 delegate OnChainComplete(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 delegate OnChainBlocked(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 
+function bool ValidateTemplate (out string strError)
+{
+	if (MinChance > MaxChance)
+	{
+		strError = "MinChance is larger than MaxChance";
+		return false;
+	}
+
+	return true;
+}
+
 function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, XComGameState_ActivityChain ChainState, optional int TriggerChance = 0)
 {
 	local XComGameState_Complication ComplicationState;
