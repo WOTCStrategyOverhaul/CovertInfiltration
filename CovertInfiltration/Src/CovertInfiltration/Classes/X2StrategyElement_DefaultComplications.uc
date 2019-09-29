@@ -33,6 +33,8 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_RewardInterception');
 
 	Template.StateClass = class'XComGameState_Complication_RewardInterception';
+	Template.bExclusiveOnChain = true;
+	Template.bNoSimultaneous = true;
 
 	Template.OnChainComplete = SpawnRescueMission;
 	Template.CanBeChosen = SupplyAndIntelChains;
@@ -85,7 +87,6 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 
 function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	local XComGameState_ActivityChain OtherChainState;
 	local XComGameState_Activity ActivityState;
 	local X2ActivityTemplate_Mission ActivityTemplate;
 
@@ -94,26 +95,9 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 
 	if (ActivityTemplate == none) return false;
 	
-	// if this chain doesn't have any other complications
-
-	if(ChainState.ComplicationRefs.Length != 0)
-	{
-		return false;
-	}
-	
 	// and if there is a supply or intel rewarding chain
 	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
 	{
-		// and if no other chains already have this complication
-		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
-		{
-			if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_RewardInterception'))
-			{
-				return false;
-			}
-		}
-		
-		// then add this complication to the chain
 		return true;
 	}
 
@@ -136,6 +120,9 @@ static function X2DataTemplate CreateChosenSurveillanceTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_ChosenSurveillance');
 
+	Template.bExclusiveOnChain = true;
+	Template.bNoSimultaneous = true;
+	
 	Template.OnChainComplete = IncreaseRandomChosenKnowledge;
 	Template.CanBeChosen = IfChosenActivated;
 
@@ -145,24 +132,6 @@ static function X2DataTemplate CreateChosenSurveillanceTemplate()
 function bool IfChosenActivated(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
-	local XComGameState_ActivityChain OtherChainState;
-	
-	// if no other chains already have this complication
-	
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
-	{
-		if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_ChosenSurveillance'))
-		{
-			return false;
-		}
-	}
-	
-	// and if this chain doesn't have any other complications
-
-	if(ChainState.ComplicationRefs.Length != 0)
-	{
-		return false;
-	}
 	
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 	
@@ -214,6 +183,9 @@ static function X2DataTemplate CreateOpenProvocationTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ComplicationTemplate', Template, 'Complication_OpenProvocation');
 
+	Template.bExclusiveOnChain = true;
+	Template.bNoSimultaneous = true;
+
 	Template.OnChainComplete = ReduceRetaliationTimer;
 	Template.CanBeChosen = AnyImportantChain;
 
@@ -222,25 +194,6 @@ static function X2DataTemplate CreateOpenProvocationTemplate()
 
 function bool AnyImportantChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	local XComGameState_ActivityChain OtherChainState;
-
-	// if no other chains already have this complication
-	
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
-	{
-		if (OtherChainState.bEnded == false && OtherChainState.HasComplication('Complication_OpenProvocation'))
-		{
-			return false;
-		}
-	}
-	
-	// and if this chain doesn't have any other complications
-
-	if(ChainState.ComplicationRefs.Length != 0)
-	{
-		return false;
-	}
-	
 	// and if this chain is super important to the ayys
 	if(default.ImportantChains.Find(ChainState.GetMyTemplateName()) == INDEX_NONE)
 	{

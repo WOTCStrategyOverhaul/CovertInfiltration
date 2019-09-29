@@ -23,6 +23,9 @@ var config bool AlwaysSelect;
 var config int MinChance;
 var config int MaxChance;
 
+var bool bExclusiveOnChain; // Can be the only complication on any particular chain
+var bool bNoSimultaneous; // Cannot be selected if it already exists on another ongoing chain
+
 delegate OnComplicationSetup (XComGameState NewGameState, XComGameState_Complication ComplicationState);
 
 // On which chains can this complication be selected

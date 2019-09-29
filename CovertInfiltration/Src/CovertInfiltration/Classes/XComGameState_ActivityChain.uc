@@ -413,7 +413,7 @@ function SetupComplications (XComGameState NewGameState)
 
 			if (ComplicationTemplate == none) continue;
 
-			if (ComplicationTemplate.CanBeChosen(NewGameState, self))
+			if (CanComplicationBeSelected(NewGameState, ComplicationTemplate))
 			{
 				ComplicationRoll = `SYNC_RAND_STATIC(100) + 1;
 
@@ -447,6 +447,67 @@ function SetupComplications (XComGameState NewGameState)
 			}
 		}
 	}
+}
+
+protected function bool CanComplicationBeSelected (XComGameState NewGameState, X2ComplicationTemplate ComplicationTemplate)
+{
+	local XComGameState_ActivityChain OtherChainState;
+	local XComGameStateHistory History;
+	local array<int> ChainsIds;
+	local int OtherObjectID;
+
+	// Cannot select same complication multiple times
+	if (HasComplication(ComplicationTemplate.DataName))
+	{
+		return false;
+	}
+
+	if (ComplicationTemplate.bExclusiveOnChain && ComplicationRefs.Length > 0)
+	{
+		return false;
+	}
+
+	if (ComplicationTemplate.bNoSimultaneous)
+	{
+		History = `XCOMHISTORY;
+
+		// Get a list of chains from history
+		foreach History.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+		{
+			ChainsIds.AddItem(OtherChainState.ObjectID);
+		}
+
+		// Get a list of chains from NewGameState since History.IterateByClassType doesn't include things from pending states
+		foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+		{
+			if (ChainsIds.Find(OtherChainState.ObjectID) == INDEX_NONE)
+			{
+				ChainsIds.AddItem(OtherChainState.ObjectID);
+			}
+		}
+
+		// Now check all other chains if it has this complication
+		// Here we use History.GetGameStateForObjectID as it does return things from pending gamestates
+		foreach ChainsIds(OtherObjectID)
+		{
+			// ignore self
+			if (OtherObjectID == ObjectID) continue;
+
+			OtherChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(OtherObjectID));
+
+			if (OtherChainState.HasComplication(ComplicationTemplate.DataName))
+			{
+				return false;
+			}
+		}
+	}
+
+	if (ComplicationTemplate.CanBeChosen != none && !ComplicationTemplate.CanBeChosen(NewGameState, self))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 function bool HasComplication (name Complication)
