@@ -70,10 +70,11 @@ simulated function OnLoseFocus()
 	RealizeContent();
 }
 
-simulated protected function RealizeContent ()
+simulated function RealizeContent ()
 {
+	MainColourHex = GetActivityChain().ComplicationRefs.Length > 0 ? "bf1e2e" /* Red */ : "27aae1" /* Blue science */ ;
+
 	InnerBG.SetOutline(!bIsFocused, MainColourHex);
-	
 	Label.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Infiltration'.static.ColourText(
@@ -114,12 +115,16 @@ simulated function OpenScreen ()
 	class'UIUtilities_Infiltration'.static.UIChainsOverview(ChainRef, bRestoreCamEarthViewOnOverviewClose);
 }
 
+function XComGameState_ActivityChain GetActivityChain ()
+{
+	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainRef.ObjectID));
+}
+
 defaultproperties
 {
 	bIsNavigable = false
 	bProcessesMouseEvents = true
 	Height = 60
 
-	MainColourHex = "27aae1" // Blue science 
 	strControllerIcon = "Icon_RT_R2" // Right trigger
 }

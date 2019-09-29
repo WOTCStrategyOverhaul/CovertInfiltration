@@ -793,6 +793,7 @@ simulated function UpdateViewChainButton ()
 	if (ActivityState == none) return;
 
 	ViewChainButton.ChainRef = ActivityState.ChainRef;
+	ViewChainButton.RealizeContent();
 	ViewChainButton.Show();
 }
 
