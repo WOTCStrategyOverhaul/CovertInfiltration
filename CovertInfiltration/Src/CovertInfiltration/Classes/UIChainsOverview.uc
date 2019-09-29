@@ -6,6 +6,7 @@ var UIPanel ChainPanel;
 var UIBGBox ChainPanelBG;
 var UIX2PanelHeader ChainHeader;
 var UIList ActivitiesList;
+var UITextContainer ComplicationsText;
 
 var array<XComGameState_ActivityChain> Chains;
 
@@ -67,11 +68,19 @@ simulated protected function BuildScreen ()
 	ActivitiesList.ItemPadding = 10;
 	ActivitiesList.InitList('ActivitiesList',,,,,, true);
 	ActivitiesList.SetPosition(ChainHeader.X, ChainHeader.Y + ChainHeader.Height);
-	ActivitiesList.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ActivitiesList.Y - 10);
+	ActivitiesList.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ActivitiesList.Y - 20 - 150 /* Complications */);
 
 	// The BG is required so that mousewheel scrolling doesn't jerk when the cursor is between the items
 	// But we also don't want to have the "fake" BG be visible to the player - we already have our BG
 	ActivitiesList.BG.Hide();
+
+	ComplicationsText = Spawn(class'UITextContainer', ChainPanel);
+	ComplicationsText.bAnimateOnInit = false;
+	ComplicationsText.InitTextContainer('ComplicationsText',,,,,, true,, true);
+	ComplicationsText.bg.SetOutline(true, class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
+	ComplicationsText.SetPosition(ChainHeader.X, ActivitiesList.Y + ActivitiesList.Height + 10);
+	ComplicationsText.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ComplicationsText.Y - 10);
+	ComplicationsText.bg.SetSize(ComplicationsText.Width, ComplicationsText.Height); // UITextContainer doesn't proxy the size calls to the BG, so set it manually
 
 	Navigator.HorizontalNavigation = true;
 }
@@ -182,6 +191,10 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	// Chain info
 	ChainHeader.SetText(ChainState.GetOverviewTitle(), ChainState.GetOverviewDescription());
 
+	// Complications
+	ComplicationsText.SetVisible(ChainState.ComplicationRefs.Length > 0);
+	ComplicationsText.SetText(GetComplicationsText(ChainState));
+
 	// Show/Spawn entries we need
 	for (i = 0; i < ChainState.StageRefs.Length; i++)
 	{
@@ -211,6 +224,40 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 
 	// This is required so that we don't wait a frame for the descriptions size to realize
 	Movie.ProcessQueuedCommands();
+}
+
+static protected function string GetComplicationsText (XComGameState_ActivityChain ChainState)
+{
+	local XComGameState_Complication ComplicationState;
+	local X2ComplicationTemplate ComplicationTemplate;
+	local UITextStyleObject HeaderStyle, DescStyle;
+	local StateObjectReference ComplicationRef;
+	local XComGameStateHistory History;
+	local string Result;
+	local int i;
+	
+	History = `XCOMHISTORY;
+
+	HeaderStyle.bUseCaps = true;
+	HeaderStyle.bUseTitleFont = true;
+	HeaderStyle.iState = eUIState_Bad;
+	DescStyle.iState = eUIState_Bad;
+
+	foreach ChainState.ComplicationRefs(ComplicationRef, i)
+	{
+		ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRef.ObjectID));
+		ComplicationTemplate = ComplicationState.GetMyTemplate();
+
+		Result $= class'UIUtilities_Text'.static.StyleTextCustom(ComplicationTemplate.FriendlyName, HeaderStyle) $ "<br/>";
+		Result $= class'UIUtilities_Text'.static.StyleTextCustom(ComplicationTemplate.FriendlyDesc, DescStyle);
+
+		if (i != ChainState.ComplicationRefs.Length - 1)
+		{
+			Result $= "<br/><br/>";
+		}
+	}
+
+	return Result;
 }
 
 simulated function OnActivitySizeRealized (UIChainsOverview_Activity Activity)

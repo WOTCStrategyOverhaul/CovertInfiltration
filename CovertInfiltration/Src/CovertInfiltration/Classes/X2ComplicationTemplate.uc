@@ -12,8 +12,8 @@ class X2ComplicationTemplate extends X2StrategyElementTemplate config(Infiltrati
 var class<XComGameState_Complication> StateClass;
 
 // Info shown in UI
-var localized name FriendlyName;
-var localized name FriendlyDesc;
+var localized string FriendlyName;
+var localized string FriendlyDesc;
 
 // If conditions in CanBeChosen are met, selection will depend if a roll from 1 to 100 lands between MinChance and MaxChance
 // If AlwaysSelect is true, a roll that lands outside Min and Max will be clamped to the closest valid number
