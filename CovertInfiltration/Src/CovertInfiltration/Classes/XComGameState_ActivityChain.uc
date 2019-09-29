@@ -26,12 +26,15 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+// Chain Complications
+var array<StateObjectReference> ComplicationRefs;
+
 // The faction associated with this chain, if any
-var protectedwrite StateObjectReference FactionRef;
+var StateObjectReference FactionRef;
 
 // Region(s) where this chain is taking place
-var protectedwrite StateObjectReference PrimaryRegionRef;
-var protectedwrite StateObjectReference SecondaryRegionRef;
+var StateObjectReference PrimaryRegionRef;
+var StateObjectReference SecondaryRegionRef;
 
 // Progress tracking
 var protectedwrite int iCurrentStage;
@@ -134,6 +137,8 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 
+	SetupComplications(NewGameState);
+
 	`CI_Trace("Chain setup complete");
 	`XEVENTMGR.TriggerEvent('ActivityChainSetupComplete', self, self, NewGameState);
 }
@@ -178,6 +183,12 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 {
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference ActivityRef;
+	local X2ComplicationTemplate ComplicationTemplate;
+	local XComGameState_Complication ComplicationState;
+	local XComGameStateHistory History;
+	local int ComplicationRoll, i;
+
+	History = `XCOMHISTORY;
 
 	`CI_Trace(m_TemplateName @ "current stage has reported completion, processing chain reaction");
 
@@ -229,9 +240,169 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 		}
 
 		`XEVENTMGR.TriggerEvent('ActivityChainEnded', self, self, NewGameState);
+		
+		// Fire off chain complications
+		if (m_Template.bAllowComplications)
+		{
+			for (i = 0; i < ComplicationRefs.Length; i++)
+			{
+				ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRefs[i].ObjectID));
+				ComplicationRoll = `SYNC_RAND_STATIC(100);
+				
+				`CI_Log("Complication Roll: " $ ComplicationRoll $ " to " $ ComplicationState.TriggerChance);
+
+				if (ComplicationRoll < ComplicationState.TriggerChance)
+				{
+					ComplicationTemplate = ComplicationState.GetMyTemplate();
+
+					if (EndReason == eACER_Complete && ComplicationTemplate.OnChainComplete != none)
+						ComplicationTemplate.OnChainComplete(NewGameState, ComplicationState);
+					if (EndReason == eACER_ProgressBlocked && ComplicationTemplate.OnChainBlocked != none)
+						ComplicationTemplate.OnChainBlocked(NewGameState, ComplicationState);
+				}
+			}
+		}
 	}
 
 	`CI_Trace("Finished handling stage completion");
+}
+
+function SetupComplications (XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_Complication ComplicationState;
+	local X2ComplicationTemplate ComplicationTemplate;
+	local X2DataTemplate DataTemplate;
+	local int ComplicationRoll;
+
+	if (m_Template.bAllowComplications)
+	{
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+		foreach TemplateManager.IterateTemplates(DataTemplate)
+		{
+			ComplicationTemplate = X2ComplicationTemplate(DataTemplate);
+
+			if (ComplicationTemplate == none) continue;
+
+			if (CanComplicationBeSelected(NewGameState, ComplicationTemplate))
+			{
+				ComplicationRoll = `SYNC_RAND_STATIC(100) + 1;
+
+				if (ComplicationRoll < ComplicationTemplate.MinChance)
+				{
+					if (ComplicationTemplate.AlwaysSelect)
+					{
+						ComplicationRoll = ComplicationTemplate.MinChance;
+					}
+					else
+					{
+						ComplicationRoll = 0;
+					}
+				}
+				else if (ComplicationRoll > ComplicationTemplate.MaxChance)
+				{
+					if (ComplicationTemplate.AlwaysSelect)
+					{
+						ComplicationRoll = ComplicationTemplate.MaxChance;
+					}
+					else
+					{
+						ComplicationRoll = 0;
+					}
+				}
+
+				`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ ComplicationRoll $ "%");
+				
+				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
+				ComplicationRefs.AddItem(ComplicationState.GetReference());
+			}
+		}
+	}
+}
+
+protected function bool CanComplicationBeSelected (XComGameState NewGameState, X2ComplicationTemplate ComplicationTemplate)
+{
+	local XComGameState_ActivityChain OtherChainState;
+	local XComGameStateHistory History;
+	local array<int> ChainsIds;
+	local int OtherObjectID;
+
+	// Cannot select same complication multiple times
+	if (HasComplication(ComplicationTemplate.DataName))
+	{
+		return false;
+	}
+
+	if (ComplicationTemplate.bExclusiveOnChain && ComplicationRefs.Length > 0)
+	{
+		return false;
+	}
+
+	if (ComplicationTemplate.bNoSimultaneous)
+	{
+		History = `XCOMHISTORY;
+
+		// Get a list of chains from history
+		foreach History.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+		{
+			ChainsIds.AddItem(OtherChainState.ObjectID);
+		}
+
+		// Get a list of chains from NewGameState since History.IterateByClassType doesn't include things from pending states
+		foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+		{
+			if (ChainsIds.Find(OtherChainState.ObjectID) == INDEX_NONE)
+			{
+				ChainsIds.AddItem(OtherChainState.ObjectID);
+			}
+		}
+
+		// Now check all other chains if it has this complication
+		// Here we use History.GetGameStateForObjectID as it does return things from pending gamestates
+		foreach ChainsIds(OtherObjectID)
+		{
+			// ignore self
+			if (OtherObjectID == ObjectID) continue;
+
+			OtherChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(OtherObjectID));
+
+			if (OtherChainState.HasComplication(ComplicationTemplate.DataName))
+			{
+				return false;
+			}
+		}
+	}
+
+	if (ComplicationTemplate.CanBeChosen != none && !ComplicationTemplate.CanBeChosen(NewGameState, self))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+function bool HasComplication (name Complication)
+{
+	return FindComplication(Complication) != none;
+}
+
+function XComGameState_Complication FindComplication (name Complication)
+{
+	local XComGameState_Complication ComplicationState;
+	local int x;
+
+	for (x = 0; x < ComplicationRefs.Length; x++)
+	{
+		ComplicationState = XComGameState_Complication(`XCOMHISTORY.GetGameStateForObjectID(ComplicationRefs[x].ObjectID));
+
+		if (ComplicationState.GetMyTemplateName() == Complication)
+		{
+			return ComplicationState;
+		}
+	}
+
+	return none;
 }
 
 /////////////////

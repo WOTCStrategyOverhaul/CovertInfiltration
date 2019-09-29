@@ -61,3 +61,8 @@ enum EActivityCompletion
 	eActivityCompletion_PartialSuccess,
 	eActivityCompletion_Success
 };
+
+struct ResourcePackage {
+	var name ItemType;
+	var int ItemAmount;
+};

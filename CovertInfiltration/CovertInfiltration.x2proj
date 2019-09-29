@@ -263,6 +263,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ComplicationTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2CovertInfiltrationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
@@ -336,6 +339,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivityChains.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultComplications.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultOverInfiltrationBonuses.uc">
       <SubType>Content</SubType>
     </Content>
@@ -378,6 +384,12 @@
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CIReinforcementsManager.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Complication.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_Complication_RewardInterception.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_CovertActionExpirationManager.uc">
       <SubType>Content</SubType>
     </Content>
@@ -388,6 +400,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_MissionSiteInfiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_ResourceContainer.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_SquadPickupPoint.uc">

@@ -52,6 +52,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateStandardAssaultActivity(Templates, "LandedUFO", "Landed_UFO", Advent, 'Reward_None', class'UIMission_LandedUFO', "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed");
 	//CreateStandardAssaultActivity(Templates, "AvatarFacility", "AlienFacility", Facility, 'Reward_None');
 	//CreateStandardAssaultActivity(Templates, "ChosenBase", "Chosen_Sarcophagus", Chosen, 'Reward_None');
+	
+	CreateStandardAssaultActivity(Templates, "SupplyRescue", "ResOps", Resistance, 'Reward_Container');
+	CreateStandardAssaultActivity(Templates, "IntelRescue", "ResOps", Resistance, 'Reward_Container');
 
 	// Covert Actions
 	CreatePrepareCounterDE(Templates, "PrepareCounterDE", "CovertAction");
@@ -59,7 +62,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	//CreatePrepareChosen(Templates, "PrepareChosen", "CovertAction");
 	CreatePrepareFacility(Templates, "PrepareFacility", "CovertAction");
 	CreatePrepareUFO(Templates, "PrepareUFO", "CovertAction");
-	
+
 	// Misc
 	CreateDEWaitActivity(Templates);
 

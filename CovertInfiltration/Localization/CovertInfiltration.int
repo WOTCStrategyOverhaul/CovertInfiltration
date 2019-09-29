@@ -330,3 +330,19 @@ strFacilityChangesBody="The resistance ring is no longer necessary to prepare Co
 
 strActivityChainsHeader="Activity Chains"
 strActivityChainsBody="Activity chains are a set of missions and/or covert actions that yield big rewards. They will be presented to you by the resistance and as your network grows more opportunities will arise.<br/>While the main reward(s) are given at the end of the chain, it may be prudent to send your soldiers on first stage(s) as you still earn XP and loot"
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
+strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
+
+[Complication_RewardInterception X2ComplicationTemplate]
+FriendlyName="Reward Interception"
+FriendlyDesc="This operation is far from any Resistance havens. ADVENT may try to intercept our spoils of war on their way back home. We should have a squad on standby."
+
+[Complication_ChosenSurveillance X2ComplicationTemplate]
+FriendlyName="Chosen Surveillance"
+FriendlyDesc="The Elders' champions are always watching. Lurking in the shadows, they study our operations and gather the clues that will lead them to the Avenger."
+
+[Complication_OpenProvocation X2ComplicationTemplate]
+FriendlyName="Open Provocation"
+FriendlyDesc="The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens."
