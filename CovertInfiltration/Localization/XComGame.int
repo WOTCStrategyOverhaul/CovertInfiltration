@@ -146,11 +146,11 @@ ActionPostNarrative=""
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size I"
-Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time."
+Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time and can reach 200% infiltration."
 
 [InfiltrationSize2 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size II"
-Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time."
+Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time and can reach 200% infiltration."
 
 [UpdatedFirewalls X2SitRepTemplate]
 FriendlyName="Updated Firewalls"
@@ -158,39 +158,39 @@ Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description="+<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
+Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and will"
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
-Description="Units gain a mobility boost for the first few turns of battle while the squad remains concealed."
+Description="XCOM units gain a mobility boost for the first few turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Show Of Force"
-Description="Enemy podsizes increased by 1"
+Description="ADVENT pods contain an extra enemy unit"
 
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"
-Description="ADVENT has increased static defenses in this location."
+Description="ADVENT has placed addtional turrets in this location"
 
 [Phalanx_CI X2SitRepTemplate]
 FriendlyName="Phalanx"
-Description="All enemy pods have a Shieldbearer."
+Description="All enemy pods include a Shieldbearer"
 
 [Congregation X2SitRepTemplate]
 FriendlyName="Congregation"
-Description="All enemy pods have a Priest."
+Description="All enemy pods include a Priest."
 
 [ShoddyIntel X2SitRepTemplate]
 FriendlyName="Shoddy Intel"
-Description="Mission timer is decreased by 1."
+Description="Mission timer is decreased by 1"
 
 [WellRehearsed X2SitRepTemplate]
 FriendlyName="Well Rehearsed"
-Description="Mission timer is increased by 1."
+Description="Mission timer is increased by 1"
 
 [VolunteerArmy X2SitRepTemplate]
 FriendlyName="Volunteer Army"
-Description="A Resistance soldier joins the squad for this operation."
+Description="A Resistance soldier joins the squad for this operation"
 
 [IntelligenceLeak X2SitRepTemplate]
 FriendlyName="Full Sensor Coverage"
@@ -202,15 +202,15 @@ Description="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFEN
 
 [TacticalAnalysis X2SitRepTemplate]
 FriendlyName="Tactical Analysis"
-Description="Enemies activated on the XCOM turn will receive only one action on their turn."
+Description="Enemies activated on the XCOM turn will lose one action on their next turn"
 
 [AdventAirPatrols X2SitRepTemplate]
 FriendlyName="ADVENT Air Patrols"
-Description="Extra ADVENT reinforcements will be dropped into the mission site once first enemy group is activated"
+Description="Extra ADVENT reinforcements will be dropped into the AO once the enemy is alerted"
 
 [CommsJamming X2SitRepTemplate]
 FriendlyName="Comms Jamming"
-Description="The first Reinforcements dropship is guaranteed to be delayed."
+Description="The first ADVENT reinforcements dropship will be delayed"
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
 RiskName="Show Of Force"
@@ -229,18 +229,18 @@ RiskName="Shoddy Intel"
 
 [NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
 FriendlyName="No Starting Concealment"
-Description="Due to an intelligence leak we won't start with concealment here"
+Description="ADVENT has a massive array of perimeter detectors - we won't start with concealment here"
 
 [IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Increased Detection Range"
-Description="Due to an intelligence leak ADVENT is aware we're coming and our concealed units will be more easily spotted"
+Description="ADVENT's perimeter sensors have put the garrison on high alert - our concealed units will be more easily spotted"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Trivial"
 CovertActionRiskLabels[1]="Minor"
 CovertActionRiskLabels[2]="Moderate"
-CovertActionRiskLabels[3]="Severe"
-CovertActionRiskLabels[4]="Extreme" 
+CovertActionRiskLabels[3]="Major"
+CovertActionRiskLabels[4]="Extreme"
 
 [XComGameState_HeadquartersXCom]
 ;CovertActionsSelectOp="SELECT OPERATION" **Vanilla option for reference**
