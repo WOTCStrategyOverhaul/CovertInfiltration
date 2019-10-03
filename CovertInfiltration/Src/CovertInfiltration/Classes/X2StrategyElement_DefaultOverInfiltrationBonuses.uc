@@ -91,7 +91,7 @@ static function string GetSitRepDescription(X2OverInfiltrationBonusTemplate Bonu
 {
 	return class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager()
 		.FindSitRepTemplate(BonusTemplate.MetatdataName)
-		.Description;
+		.GetDescriptionExpanded();
 }
 
 ///////////////////
