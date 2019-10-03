@@ -306,10 +306,13 @@ static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, X
 	local int BaseDuartion, Result;
 	
 	BaseDuartion = GetSquadInfilWithoutPenalty(Soldiers);
-
 	Result = BaseDuartion;
-	Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
-	Result += GetSquadOverloadPenalty(Soldiers, CovertAction, BaseDuartion);
+	
+	if (IsInfiltrationAction(CovertAction))
+	{
+		Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
+		Result += GetSquadOverloadPenalty(Soldiers, CovertAction, BaseDuartion);
+	}
 
 	return Result;
 }

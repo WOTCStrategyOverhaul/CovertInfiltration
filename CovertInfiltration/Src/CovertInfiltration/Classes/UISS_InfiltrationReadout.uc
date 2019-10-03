@@ -69,6 +69,13 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 	SquadDurationValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
 	SquadDurationValue.InitObjectiveListItem('SquadDurationValue');
 
+	BondModifierLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+	BondModifierLabel.InitObjectiveListItem('BondModifierLabel');
+	BondModifierLabel.SetSubTitle(strBondModifierTitle);
+
+	BondModifierValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
+	BondModifierValue.InitObjectiveListItem('BondModifierValue');
+
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
 	{
 		OverloadPenaltyLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
@@ -81,13 +88,6 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 		MaxInfilValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
 		MaxInfilValue.InitObjectiveListItem('MaxInfilValue');
 	}
-
-	BondModifierLabel = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
-	BondModifierLabel.InitObjectiveListItem('BondModifierLabel');
-	BondModifierLabel.SetSubTitle(strBondModifierTitle);
-
-	BondModifierValue = Spawn(class'UISS_InfiltrationItem', DurationBreadownItems.ItemContainer);
-	BondModifierValue.InitObjectiveListItem('BondModifierValue');
 
 	// For reasons unknown this doesn't happen automatically
 	DurationBreadownItems.RealizeItems();
@@ -105,7 +105,7 @@ simulated function InitReadout(XComGameState_CovertAction Action)
 
 simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 {	
-	local int BaseDuration, SquadDuration, OverloadPenalty, ExtraSoldiers, MaxInfil;
+	local int BaseDuration, SquadDuration, TotalDuration, OverloadPenalty, ExtraSoldiers, MaxInfil;
 	local float BondingReduction;
 	local XComGameState_HeadquartersXCom XComHQ;
 	local string OverloadColour;
@@ -114,8 +114,16 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 	BaseDuration = CurrentAction.HoursToComplete;
 	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfilWithoutPenalty(XComHQ.Squad);
+	TotalDuration = CurrentAction.HoursToComplete + class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CurrentAction);
 
-	TotalDurationValue.SetInfoValue(GetDaysAndHoursString(BaseDuration + SquadDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction) && CurrentAction.bBondmateDurationBonusApplied)
+	{
+		// Vanilla bondmates logic subracts time from CurrentAction.HoursToComplete,
+		// so fix the displayed value to stay consistent
+		BaseDuration += CurrentAction.BondmateBonusHours;
+	}
+
+	TotalDurationValue.SetInfoValue(GetDaysAndHoursString(TotalDuration), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	SquadDurationValue.SetInfoValue(GetDaysAndHoursString(SquadDuration, strPlusDaysAndHours), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 
 	if (BaseDurationValue != none)
@@ -135,8 +143,26 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 		MaxInfilValue.SetInfoValue(GetMaxAllowedInfilString(MaxInfil), OverloadColour);
 	}
 
-	BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
-	BondModifierValue.SetInfoValue(GetDaysAndHoursString(SquadDuration * BondingReduction, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction))
+	{
+		BondingReduction = class'X2Helper_Infiltration'.static.GetSquadBondingPercentReduction(XComHQ.Squad);
+		BondModifierValue.SetInfoValue(
+			GetDaysAndHoursString(SquadDuration * BondingReduction, default.strMinusDaysAndHours) @ "(" $ int(BondingReduction * 100) $ "%)",
+			BondingReduction > 0 ? class'UIUtilities_Colors'.const.GOOD_HTML_COLOR : class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR
+		);
+	}
+	else
+	{
+		// Vanilla bondmates logic
+		if (CurrentAction.bBondmateDurationBonusApplied)
+		{
+			BondModifierValue.SetInfoValue(GetDaysAndHoursString(CurrentAction.BondmateBonusHours, default.strMinusDaysAndHours), class'UIUtilities_Colors'.const.GOOD_HTML_COLOR);
+		}
+		else
+		{
+			BondModifierValue.SetInfoValue(GetDaysAndHoursString(0), class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
+		}
+	}
 		
 	UpdateRiskLabels(CurrentAction);
 }

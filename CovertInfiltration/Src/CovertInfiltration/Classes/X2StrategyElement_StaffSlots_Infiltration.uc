@@ -147,15 +147,39 @@ static function X2DataTemplate CreateInfiltrationActionSlotTemplate()
 	// Same as default slot
 	Template.bPreventFilledPopup = true;
 	Template.bSoldierSlot = true;
-	Template.FillFn = class'X2StrategyElement_XpackStaffSlots'.static.FillCovertActionSlot;
 	Template.CanStaffBeMovedFn = class'X2StrategyElement_XpackStaffSlots'.static.CanStaffBeMovedCovertActions;
 	Template.GetNameDisplayStringFn = class'X2StrategyElement_XpackStaffSlots'.static.GetCovertActionSoldierNameDisplayString;
 	
 	// Custom
+	Template.FillFn = FillInfiltrationSlot;
 	Template.EmptyFn = EmptyInfiltrationSlot;
 	Template.IsUnitValidForSlotFn = IsUnitValidForInfiltration;
 
 	return Template;
+}
+
+static function FillInfiltrationSlot (XComGameState NewGameState, StateObjectReference SlotRef, StaffUnitInfo UnitInfo, optional bool bTemporary = false)
+{
+	local XComGameState_Unit NewUnitState;
+	local XComGameState_StaffSlot NewSlotState;
+	local XComGameState_CovertAction NewActionState;
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	FillSlot(NewGameState, SlotRef, UnitInfo, NewSlotState, NewUnitState);
+	NewUnitState.SetStatus(eStatus_CovertAction);
+
+	NewActionState = GetNewCovertActionState(NewGameState, NewSlotState);
+	NewActionState.UpdateNegatedRisks(NewGameState);
+	//NewActionState.UpdateDurationForBondmates(NewGameState); // We have custom bondmates logic for infiltration
+
+	if (NewUnitState.IsSoldier())
+	{
+		XComHQ = GetNewXComHQState(NewGameState);
+		if ((XComHQ.GetNumberOfDeployableSoldiers() - 1) < class'X2StrategyGameRulesetDataStructures'.static.GetMaxSoldiersAllowedOnMission())
+		{
+			`XEVENTMGR.TriggerEvent('LowSoldiersCovertAction', , , NewGameState);
+		}
+	}
 }
 
 static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectReference SlotRef)
@@ -208,7 +232,7 @@ static function EmptyInfiltrationSlot(XComGameState NewGameState, StateObjectRef
 
 	ActionState = GetNewCovertActionState(NewGameState, NewSlotState);
 	ActionState.UpdateNegatedRisks(NewGameState);
-	ActionState.UpdateDurationForBondmates(NewGameState);
+	//NewActionState.UpdateDurationForBondmates(NewGameState); // We have custom bondmates logic for infiltration
 }
 
 static function bool IsUnitValidForInfiltration(XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)

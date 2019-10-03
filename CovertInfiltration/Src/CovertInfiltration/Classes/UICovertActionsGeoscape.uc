@@ -1237,9 +1237,9 @@ simulated protected function UndoInfiltrationModifier(XComGameState_Headquarters
 
 	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfiltration(XComHQ.Squad, CovertAction);
 	
-	`log("Removing SquadInfiltration:" @ SquadDuration @ "from duration:" @ CovertAction.HoursToComplete);
+	`CI_Log("Removing SquadInfiltration:" @ SquadDuration @ "from duration:" @ CovertAction.HoursToComplete);
 	CovertAction.HoursToComplete -= SquadDuration;
-	`log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours");
+	`CI_Log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours");
 }
 
 simulated function ClearUnaffordableCostSlots()
