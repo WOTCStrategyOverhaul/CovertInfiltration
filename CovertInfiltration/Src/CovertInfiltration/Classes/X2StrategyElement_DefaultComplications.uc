@@ -56,8 +56,13 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 
 	InterceptedChainState = ComplicationState.GetActivityChain();
 	ActivityState = InterceptedChainState.GetLastActivity();
-	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (!ActivityState.IsSuccessfullAtLeastPartially())
+	{
+		// Failed or expired. No rewards in any case
+		return;
+	}
 
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 	if (ActivityTemplate == none)
 	{
 		`RedScreen("Failed to find source activity!");

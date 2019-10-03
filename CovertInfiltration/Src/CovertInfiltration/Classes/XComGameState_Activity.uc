@@ -246,6 +246,11 @@ function bool IsOngoing ()
 	return CompletionStatus == eActivityCompletion_NotCompleted;
 }
 
+function bool IsSuccessfullAtLeastPartially ()
+{
+	return CompletionStatus == eActivityCompletion_Success || CompletionStatus == eActivityCompletion_PartialSuccess;
+}
+
 protected function bool ValidateCanMarkCompletion ()
 {
 	if (!IsOngoing())
