@@ -1087,41 +1087,45 @@ simulated function OnReceiveFocus()
 
 	super.OnReceiveFocus();
 	
-	// Came back from UISquadSelect or the confirmation alert
-	CleanupSSManager();
 	MakeMapProperlyShow();
 	FocusCameraOnCurrentAction(true);
-	
-	if (bConfirmScreenWasOpened)
-	{
-		// The covert op was launched
-		if (GetAction().bStarted)
-		{
-			`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
 
-			// Need to save ActionRef before updating list as it will reset the selected action
-			LaunchedActionRef = ActionRef;
-			UpdateList();
-			AttemptSelectAction(LaunchedActionRef);
-		} 
+	if (SSManager != none)
+	{
+		// Came back from UISquadSelect or the confirmation alert
+		CleanupSSManager();
+	
+		if (bConfirmScreenWasOpened)
+		{
+			// The covert op was launched
+			if (GetAction().bStarted)
+			{
+				`XSTRATEGYSOUNDMGR.PlayGeoscapeMusic(); // Otherwise SS music doesn't stop after confirmation
+
+				// Need to save ActionRef before updating list as it will reset the selected action
+				LaunchedActionRef = ActionRef;
+				UpdateList();
+				AttemptSelectAction(LaunchedActionRef);
+			} 
+			else
+			{
+				// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
+				// Note that we need to kick units from action, otherwise they will be considered busy and kicked from squad (which will actually kick them from the action)
+				// This way they will get re-added as soon as the UISS screen initializes
+				ClearUnitsFromAction();
+				UndoCovertActionModifiers();
+				OpenLoadoutForCurrentAction(true);
+			}
+
+			bConfirmScreenWasOpened = false;
+		}
 		else
 		{
-			// Go back to loadout. If the player wants to back out of loadout, then he just press back twice
-			// Note that we need to kick units from action, otherwise they will be considered busy and kicked from squad (which will actually kick them from the action)
-			// This way they will get re-added as soon as the UISS screen initializes
 			ClearUnitsFromAction();
-			UndoCovertActionModifiers();
-			OpenLoadoutForCurrentAction(true);
+
+			// Need to do this after kicking units as otherwise player will see reduced risks next time he opens this screen
+			class'X2Helper_Infiltration'.static.RecalculateActionRisks(ActionRef);
 		}
-
-		bConfirmScreenWasOpened = false;
-	}
-	else
-	{
-		ClearUnitsFromAction();
-
-		// Need to do this after kicking units as otherwise player will see reduced risks next time he opens this screen
-		class'X2Helper_Infiltration'.static.RecalculateActionRisks(ActionRef);
 	}
 }
 
