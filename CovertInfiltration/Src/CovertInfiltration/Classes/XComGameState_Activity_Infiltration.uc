@@ -39,7 +39,7 @@ function RegisterForActionEvents ()
 	ActionState = GetAction();
 	SelfObject = self;
 
-	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate,, ActionState);
+	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate,, ActionState, true);
 }
 
 function UnRegisterFromAllEvents ()

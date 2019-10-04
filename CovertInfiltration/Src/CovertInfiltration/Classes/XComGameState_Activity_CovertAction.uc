@@ -68,7 +68,7 @@ function RegisterForActionEvents ()
 	SelfObject = self;
 
 	//EventManger.RegisterForEvent(SelfObject, 'CovertActionCompleted', OnActionCompleted, ELD_Immediate,, ActionState);
-	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate,, ActionState);
+	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate,, ActionState, true);
 
 	// Cannot use the CovertActionCompleted event as the popup of next stage will spawn before the UICovertActionReport does
 	// due to the weird way the latter is wired up. Instead we check in UpdateGameBoard if the action was removed

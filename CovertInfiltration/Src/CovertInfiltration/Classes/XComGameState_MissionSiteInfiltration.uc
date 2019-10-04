@@ -757,7 +757,7 @@ protected function InitRegisterEvents ()
 	EventManager = `XEVENTMGR;
 	ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,,, GetSpawningAction());
+	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,,, GetSpawningAction(), true);
 }
 
 protected function EnablePreventTick()
