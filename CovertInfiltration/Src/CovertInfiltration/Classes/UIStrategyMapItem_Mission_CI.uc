@@ -46,7 +46,14 @@ function UpdateFromGeoscapeEntity (const out XComGameState_GeoscapeEntity Geosca
 
 	if (InfiltrationState != none)
 	{
-		OpportunityPanel.UpdateLaunchedActionBox(InfiltrationState.GetCurrentInfilInt(), InfiltrationState.GetMissionObjectiveText(), true);
+		if (InfiltrationState.Available)
+		{
+			OpportunityPanel.UpdateLaunchedActionBox(InfiltrationState.GetCurrentInfilInt(), InfiltrationState.GetMissionObjectiveText(), true);
+		}
+		else
+		{
+			Hide();
+		}
 	}
 	else
 	{

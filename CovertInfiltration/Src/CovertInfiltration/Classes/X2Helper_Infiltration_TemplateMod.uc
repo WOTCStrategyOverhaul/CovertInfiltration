@@ -508,6 +508,44 @@ static function PatchGatecrasher()
 	MissionManager.arrMissions[i].MissionSchedules.AddItem('SabotageCC_D4_Standard');
 }
 
+static function PatchQuestItems ()
+{
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2ItemTemplateManager TemplateManager;
+	local X2QuestItemTemplate QuestItemTemplate;
+	local X2DataTemplate DataTemplate;
+	local array<name> TemplateNames;
+	local name TemplateName;
+
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	TemplateManager.GetTemplateNames(TemplateNames);
+
+	foreach TemplateNames(TemplateName)
+	{
+		DifficulityVariants.Length = 0;
+		TemplateManager.FindDataTemplateAllDifficulties(TemplateName, DifficulityVariants);
+
+		foreach DifficulityVariants(DataTemplate)
+		{
+			QuestItemTemplate = X2QuestItemTemplate(DataTemplate);
+			if (QuestItemTemplate == none) break; // All variants will be of same type, so just skip to next entry in TemplateNames
+
+			if (QuestItemTemplate.DataName == 'FlightDevice')
+			{
+				 // This will prevent FlightDevice from being selected for missions other than the tutorial one
+				QuestItemTemplate.MissionSource.AddItem('MissionSource_RecoverFlightDevice');
+			}
+
+			// This will allow non-DE (the DE ones don't use reward filtering) quest items to be picked for our missions
+			// Note that implementation of #254 will likely break this "fix", so we will need to revist it then
+			if (QuestItemTemplate.RewardType.Length > 0)
+			{
+				QuestItemTemplate.RewardType.AddItem('Reward_None');
+			}
+		}
+	}
+}
+
 //////////////////
 /// Objectives ///
 //////////////////

@@ -41,6 +41,7 @@ simulated protected function DoSpawnViewChainButton ()
 	Button.AnchorTopCenter();
 	Button.SetPosition(0, 40);
 
+	Button.RealizeContent();
 	Button.AnimateIn(0);
 
 	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);

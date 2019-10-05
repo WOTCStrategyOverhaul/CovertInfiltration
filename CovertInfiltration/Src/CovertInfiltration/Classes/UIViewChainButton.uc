@@ -52,8 +52,6 @@ simulated function InitViewChainButton (optional name InitName)
 		// Position it centered vertically
 		ControllerIcon.SetY(InnerBG.Y + ICON_PADDING + (ControllerIcon.Width / 2 - ControllerIcon.Height / 2));
 	}
-
-	RealizeContent();
 }
 
 simulated function OnReceiveFocus()
