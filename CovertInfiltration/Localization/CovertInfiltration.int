@@ -154,42 +154,30 @@ strCompletionStatusLabel_Failure=Failed
 strCompletionStatusLabel_PartialSuccess=Partial Success
 strCompletionStatusLabel_Success=Success
 
-; The descriptions below were written pretty hastly and probably need a serious pass over
-
 [Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from ADVENT compound
-;ActionRewardDisplayName=[Soldier name]
-;ActionRewardDetails
-; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
-; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
+ActionRewardDisplayName=Captured Soldier
+ActionRewardDetails=<XGParam:StrValue0/>
 
 [Activity_JailbreakChosenSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from Chosen's compound
-;ActionRewardDisplayName=[Soldier name]
-;ActionRewardDetails
-; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
-; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
+ActionRewardDisplayName=Captured Soldier
+ActionRewardDetails=<XGParam:StrValue0/>
 
 [Activity_JailbreakFactionSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue faction soldier from ADVENT compound
-;ActionRewardDisplayName=[Soldier class]
-;ActionRewardDetails
-; TODO - make a delegate that will allow to dynamically fill in the unit class, rank and name
-; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
+ActionRewardDisplayName=Faction Hero
+ActionRewardDetails=<XGParam:StrValue0/>
 
 [Activity_RescueEngineer X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue an Engineer from a City Center
 ActionRewardDisplayName=Engineer
-;ActionRewardDetails
-; TODO - make a delegate that will allow to dynamically fill in the unit name
-; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
+ActionRewardDetails=<XGParam:StrValue0/>
 
 [Activity_RescueScientist X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue a Scientist from a City Center
 ActionRewardDisplayName=Scientist
-;ActionRewardDetails
-; TODO - make a delegate that will allow to dynamically fill in the unit name
-; Requies #257 (X2StrategyElement_DefaultActivities de-mess)
+ActionRewardDetails=<XGParam:StrValue0/>
 
 [Activity_RecoverInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches

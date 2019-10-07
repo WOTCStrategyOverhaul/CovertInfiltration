@@ -91,6 +91,7 @@ static function CreateRescueEngineer (out array<X2DataTemplate> Templates, strin
 	Activity.MissionRewards.AddItem('Reward_Engineer');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.GetRewardDetailStringFn = GetUnitDetails;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -107,6 +108,7 @@ static function CreateRescueScientist (out array<X2DataTemplate> Templates, stri
 	Activity.MissionRewards.AddItem('Reward_Scientist');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.GetRewardDetailStringFn = GetUnitDetails;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -230,6 +232,7 @@ static function CreateJailbreakSoldier (out array<X2DataTemplate> Templates, str
 	Activity.MissionRewards.AddItem('Reward_SoldierCaptured');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.GetRewardDetailStringFn = GetUnitDetails;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -246,6 +249,7 @@ static function CreateJailbreakChosenSoldier (out array<X2DataTemplate> Template
 	Activity.MissionRewards.AddItem('Reward_ChosenSoldierCaptured');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.GetRewardDetailStringFn = GetUnitDetails;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -262,6 +266,7 @@ static function CreateJailbreakFactionSoldier (out array<X2DataTemplate> Templat
 	Activity.MissionRewards.AddItem('Reward_ExtraFactionSoldier');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.GetRewardDetailStringFn = GetUnitDetails;
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -646,6 +651,43 @@ static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Ac
 	{
 		MissionState.DarkEvent = DarkEventState.GetReference();
 	}
+}
+
+static function string GetUnitDetails (XComGameState_Reward RewardState)
+{
+	local XComGameState_Unit UnitState;
+	local XGParamTag kTag;
+	local string UnitString;
+	
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	
+	if(UnitState != none)
+	{
+		if(UnitState.IsSoldier())
+		{
+			if(UnitState.GetRank() > 0)
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull) @ "-" @ UnitState.GetSoldierClassTemplate().DisplayName;
+			}
+			else
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull);
+			}
+		}
+		else
+		{
+			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ RewardState.GetMyTemplate().DisplayName;
+		}
+	}
+	else
+	{
+		UnitString = "UNITNOTFOUND";
+	}
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = UnitString;
+
+	return `XEXPAND.ExpandString(class'X2StrategyElement_InfiltrationRewards'.static.GetInfiltrationTemplateFromReward(RewardState).ActionRewardDetails);
 }
 
 //////////////////////////////////////////////////////////
