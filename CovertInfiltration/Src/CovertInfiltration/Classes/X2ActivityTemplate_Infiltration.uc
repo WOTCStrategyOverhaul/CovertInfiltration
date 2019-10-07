@@ -126,7 +126,7 @@ static function string DefaultGetMissionImageInfiltration (XComGameState_Activit
 
 static function string DefaultGetRewardDetails (XComGameState_Reward RewardState)
 {
-	return default.ActionRewardDetails;
+	return class'X2StrategyElement_InfiltrationRewards'.static.GetInfiltrationTemplateFromReward(RewardState).ActionRewardDetails;
 }
 
 defaultproperties
