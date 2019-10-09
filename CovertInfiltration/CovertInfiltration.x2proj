@@ -269,6 +269,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2BarracksSizeUnlockTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ComplicationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
@@ -334,6 +337,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2SitRep_InfiltrationSitRepEffects.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_BarracksUnlocks.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivities.uc">
