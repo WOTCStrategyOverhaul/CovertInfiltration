@@ -12,8 +12,6 @@ const CONTENT_PADDING = 10;
 var Vector2D ContentTopLeft;
 var float ContentWidth;
 
-var protectedwrite bool bSizeRealizePending;
-
 // Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
 var localized string strCompletionStatusLabel_NotReached;
 var localized string strCompletionStatusLabel_NotCompleted;
@@ -106,7 +104,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Text'.static.GetColoredText(ActivityState.GetOverviewDescription(), UIState),
 			Screen.bIsIn3D
-		),, true // Disable lazy refresh, otherwise we get stuck on bSizeRealizePending
+		),, true // Disable lazy refresh, otherwise we get stuck on waiting for descrption to realize
 	);
 	StatusLine.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
@@ -117,8 +115,6 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 			Screen.bIsIn3D,,, 20
 		)
 	);
-
-	bSizeRealizePending = true;
 }
 
 simulated protected function OnDesciptionSizeRealized ()
@@ -129,7 +125,6 @@ simulated protected function OnDesciptionSizeRealized ()
 	SetHeight(StatusLineBG.Y + StatusLineBG.Height);
 	BG.SetHeight(Height);
 
-	bSizeRealizePending = false;
 	UIChainsOverview(GetParent(class'UIChainsOverview', true)).OnActivitySizeRealized(self);
 }
 

@@ -5,6 +5,7 @@ var UIList ChainsList;
 var UIPanel ChainPanel;
 var UIBGBox ChainPanelBG;
 var UIX2PanelHeader ChainHeader;
+var UIText ChainDescription;
 var UIList ActivitiesList;
 var UITextContainer ComplicationsText;
 
@@ -12,6 +13,8 @@ var array<XComGameState_ActivityChain> Chains;
 
 var bool bInstantInterp;
 var StateObjectReference ChainToFocusOnInit;
+
+var protected array<UIPanel> PanelsToRealize;
 
 // Fix for UIMission
 var bool bRestoreCamEarthViewOnClose;
@@ -64,6 +67,13 @@ simulated protected function BuildScreen ()
 	ChainHeader.SetHeaderWidth(ChainPanelBG.Width - 20);
 	ChainHeader.SetPosition(ChainPanelBG.X + 10, ChainPanelBG.Y + 10);
 
+	ChainDescription = Spawn(class'UIText', ChainPanel);
+	ChainDescription.bAnimateOnInit = false;
+	ChainDescription.OnTextSizeRealized = ChainDescriptionRealzied;
+	ChainDescription.InitText('ChainDescription');
+	ChainDescription.SetWidth(ChainHeader.headerWidth);
+	// TODO: position
+
 	ActivitiesList = Spawn(class'UIList', ChainPanel);
 	ActivitiesList.ItemPadding = 10;
 	ActivitiesList.InitList('ActivitiesList',,,,,, true);
@@ -72,11 +82,12 @@ simulated protected function BuildScreen ()
 
 	// The BG is required so that mousewheel scrolling doesn't jerk when the cursor is between the items
 	// But we also don't want to have the "fake" BG be visible to the player - we already have our BG
+	// TODO: Hide() disables hittest, so this does nothing
 	ActivitiesList.BG.Hide();
 
 	ComplicationsText = Spawn(class'UITextContainer', ChainPanel);
 	ComplicationsText.bAnimateOnInit = false;
-	ComplicationsText.InitTextContainer('ComplicationsText',,,,,, true,, true);
+	ComplicationsText.InitTextContainer('ComplicationsText',,,,,, true/*,, true*/); // Autoscroll is broken
 	ComplicationsText.bg.SetOutline(true, class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
 	ComplicationsText.SetPosition(ChainHeader.X, ActivitiesList.Y + ActivitiesList.Height + 10);
 	ComplicationsText.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ComplicationsText.Y - 10);
@@ -178,6 +189,9 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	local UIListItemString ChainListItem;
 	local int i;
 
+	// Reset the list that we are waiting to realize
+	PanelsToRealize.Length = 0;
+
 	History = `XCOMHISTORY;
 	ChainPanel.Hide();
 	ChainPanel.DisableNavigation();
@@ -189,7 +203,10 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 	if (ChainState == none) return;
 
 	// Chain info
-	ChainHeader.SetText(ChainState.GetOverviewTitle(), ChainState.GetOverviewDescription());
+	ChainHeader.SetText(ChainState.GetOverviewTitle());
+	ChainDescription.SetText(ChainState.GetOverviewDescription());
+	
+	PanelsToRealize.AddItem(ChainDescription);
 
 	// Complications
 	ComplicationsText.SetVisible(ChainState.ComplicationRefs.Length > 0);
@@ -213,6 +230,8 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 
 		ActivityElement.Show();
 		ActivityElement.EnableNavigation();
+
+		PanelsToRealize.AddItem(ActivityElement);
 	}
 
 	// Hide extra rows
@@ -262,32 +281,40 @@ static protected function string GetComplicationsText (XComGameState_ActivityCha
 
 simulated function OnActivitySizeRealized (UIChainsOverview_Activity Activity)
 {
-	local UIChainsOverview_Activity ActivityElement;
-	local UIPanel Panel;
+	PanelRealized(Activity);
+}
 
+simulated protected function ChainDescriptionRealzied ()
+{
+	PanelRealized(ChainDescription);
+}
+
+simulated protected function PanelRealized (UIPanel Panel)
+{
+	local int i;
+
+	i = PanelsToRealize.Find(Panel);
+	if (i == INDEX_NONE) return; // Realize from previous chain?
+
+	// Mark panel as realized
+	PanelsToRealize.RemoveItem(Panel);
+	
 	// Check if all activities are realized
-	foreach ActivitiesList.ItemContainer.ChildPanels(Panel)
+	if (PanelsToRealize.Length == 0)
 	{
-		if (!Panel.bIsVisible) continue;
+		// All activities are realized, now realize the list
+		ActivitiesList.RealizeItems();
+		ActivitiesList.RealizeList();
 
-		ActivityElement = UIChainsOverview_Activity(Panel);
-		if (ActivityElement == none) continue;
+		// Animate in the elements
+		foreach ActivitiesList.ItemContainer.ChildPanels(Panel)
+		{
+			Panel.AnimateIn();
+		}
 
-		if (ActivityElement.bSizeRealizePending) return;
+		ChainPanel.Show();
+		ChainPanel.EnableNavigation();
 	}
-
-	// All activities are realized, now realize the list
-	ActivitiesList.RealizeItems();
-	ActivitiesList.RealizeList();
-
-	// Animate in the elements
-	foreach ActivitiesList.ItemContainer.ChildPanels(Panel)
-	{
-		Panel.AnimateIn();
-	}
-
-	ChainPanel.Show();
-	ChainPanel.EnableNavigation();
 }
 
 /////////////
