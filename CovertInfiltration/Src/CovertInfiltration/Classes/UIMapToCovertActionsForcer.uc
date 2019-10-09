@@ -52,7 +52,8 @@ simulated function UIPanel InitPanel(optional name InitName, optional name InitL
 	EventManager = `XEVENTMGR;
 	ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick);
+	// XComGameState_MissionSiteInfiltration MutsLaunch is priority 500, this should be after it
+	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick, ELD_Immediate, 400);
 
 	return self;
 }

@@ -768,7 +768,8 @@ protected function EnablePreventTick()
 	EventManager = `XEVENTMGR;
 	ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick);
+	// Give this a very high priority to make sure it trumps any other "on-before-tick" behaviour
+	EventManager.RegisterForEvent(ThisObj, 'PreventGeoscapeTick', OnPreventGeoscapeTick, ELD_Immediate, 500);
 }
 
 protected function UnRegisterFromEvents()
