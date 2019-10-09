@@ -128,7 +128,13 @@
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_ListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIFacility_LivingQuarters_CI.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UILivingQuarters.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
