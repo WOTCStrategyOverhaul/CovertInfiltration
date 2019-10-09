@@ -104,11 +104,22 @@ static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState
 
 static function string DefaultGetMissionImageInfiltration (XComGameState_Activity ActivityState)
 {
-	local XComGameState_CovertAction ActionState;
+	local X2StrategyElementTemplateManager TemplateManager;
+	
+	local X2CovertActionNarrativeTemplate NarrativeTemplate;
+	local X2ActivityTemplate_Infiltration ActivityTemplate;
+	local X2CovertActionTemplate ActionTemplate;
 
-	ActionState = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectId(ActivityState.SecondaryObjectRef.ObjectID));
+	// The easiest way would be to call XComGameState_CovertAction::GetImage() but that breaks
+	// if we went on a mission since the XCGS_Infiltration became avaliable
 
-	return ActionState.GetImage();
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActivityTemplate = X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate());
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplate.CovertActionName));
+	NarrativeTemplate = X2CovertActionNarrativeTemplate(TemplateManager.FindStrategyElementTemplate(ActionTemplate.Narratives[0]));
+
+	return NarrativeTemplate.ActionImage;
 }
 
 defaultproperties
