@@ -8,10 +8,17 @@
 
 class X2DownloadableContentInfo_CovertInfiltration extends X2DownloadableContentInfo;
 
+struct ArmorUtilitySlotsModifier
+{
+	var name ArmorTemplate;
+	var int Mod;
+};
+
 var config(Engine) bool SuppressTraceLogs;
 
 var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
+var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
 static event UpdateDLC()
 {
@@ -345,9 +352,24 @@ static function bool UseAlternateMissionIntroDefinition(MissionDefinition Active
 	return false;
 }
 
-/// /////// ///
-/// HELPERS ///
-/// /////// ///
+static function GetNumUtilitySlotsOverride (out int NumUtilitySlots, XComGameState_Item EquippedArmor, XComGameState_Unit UnitState, XComGameState CheckGameState)
+{
+	local int i;
+
+	if (EquippedArmor != none)
+	{
+		i = default.ArmorUtilitySlotsMods.Find('ArmorTemplate', EquippedArmor.GetMyTemplateName());
+
+		if (i != INDEX_NONE)
+		{
+			NumUtilitySlots += default.ArmorUtilitySlotsMods[i].Mod;
+		}
+	}
+}
+
+/// //////// ///
+/// COMMANDS ///
+/// //////// ///
 
 exec function GetRingModifier()
 {
