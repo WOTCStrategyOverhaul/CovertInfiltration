@@ -46,6 +46,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
+	class'XComGameState_BarracksSizeLimit'.static.CreateSizeLimit(StartState);
 	CreateGoldenPathActions(StartState);
 	CompleteTutorial(StartState);
 	ForceLockAndLoad(StartState);
@@ -56,6 +57,7 @@ static event OnLoadedSavedGame()
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner();
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
+	class'XComGameState_BarracksSizeLimit'.static.CreateSizeLimit();
 	CreateGoldenPathActions(none);
 	CompleteTutorial(none);
 	ForceLockAndLoad(none);
