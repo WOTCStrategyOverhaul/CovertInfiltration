@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
+class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject config(Infiltration);
 
 /////////////////////
 /// Strategy vars ///
@@ -17,6 +17,12 @@ var bool bRingStaffReplacement; // True if we are replacing the staff assigned t
 var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
 var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to highlight new missions after spawning one to avoid full screen popups
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
+
+var int CurrentBarracksLimit;
+
+var config int StartingBarracksLimit;
+var config int BarracksLimitIncreaseI;
+var config int BarracksLimitIncreaseII;
 
 /////////////////////
 /// Tactical vars ///
@@ -84,6 +90,7 @@ static function CreateInfo(optional XComGameState StartState)
 	if (StartState != none)
 	{
 		Info = XComGameState_CovertInfiltrationInfo(StartState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
+		Info.CurrentBarracksLimit = default.StartingBarracksLimit;
 		return;
 	}
 
@@ -104,4 +111,28 @@ protected function InitExistingCampaign()
 	{
 		bCompletedFirstOrdersAssignment = true;
 	}
+
+	CurrentBarracksLimit = default.StartingBarracksLimit;
+}
+
+/////////////////////
+/// Barracks Size ///
+/////////////////////
+
+function IncreaseBarracksSizeI(XComGameState UpdateState)
+{
+	local XComGameState_CovertInfiltrationInfo UpdatedInfo;
+
+	UpdatedInfo = ChangeForGamestate(UpdateState);
+
+	UpdatedInfo.CurrentBarracksLimit += default.BarracksLimitIncreaseI;
+}
+
+function IncreaseBarracksSizeII(XComGameState UpdateState)
+{	
+	local XComGameState_CovertInfiltrationInfo UpdatedInfo;
+
+	UpdatedInfo = ChangeForGamestate(UpdateState);
+
+	UpdatedInfo.CurrentBarracksLimit += default.BarracksLimitIncreaseII;
 }

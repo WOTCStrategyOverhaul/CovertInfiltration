@@ -64,10 +64,10 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 
 static function OnUpgradeAdded_IncreaseBarracksSizeI(XComGameState NewGameState, XComGameState_FacilityUpgrade Upgrade, XComGameState_FacilityXCom Facility)
 {
-	//Facility.UnlockStaffSlot(NewGameState);
+	class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().IncreaseBarracksSizeI(NewGameState);
 }
 
 static function OnUpgradeAdded_IncreaseBarracksSizeII(XComGameState NewGameState, XComGameState_FacilityUpgrade Upgrade, XComGameState_FacilityXCom Facility)
 {
-	//Facility.UnlockStaffSlot(NewGameState);
+	class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().IncreaseBarracksSizeII(NewGameState);
 }
