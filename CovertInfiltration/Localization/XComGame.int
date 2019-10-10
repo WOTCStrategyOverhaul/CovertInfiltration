@@ -162,7 +162,7 @@ Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack an
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
-Description="XCOM units gain a mobility boost for the first <Ability:LIGHTNINGSTRIKEDURATION/> turns of battle while the squad remains concealed."
+Description="XCOM units gain +<Ability:LIGHTNINGSTRIKEMOVEBONUS/> mobility for the first <Ability:LIGHTNINGSTRIKEDURATIONACTUAL/> turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Show Of Force"

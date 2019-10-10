@@ -224,6 +224,12 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.FOXHOLES_DEFENSE);
 		return true;
 	}
+	
+	if (InString == "LIGHTNINGSTRIKEDURATIONACTUAL")
+	{
+		OutString = string(class'X2Ability_OfficerTrainingSchool'.default.LIGHTNING_STRIKE_NUM_TURNS);
+		return true;
+	}
 
 	return false;
 }
