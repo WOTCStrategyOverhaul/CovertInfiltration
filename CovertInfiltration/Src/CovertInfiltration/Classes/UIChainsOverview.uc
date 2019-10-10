@@ -66,32 +66,32 @@ simulated protected function BuildScreen ()
 	ChainHeader.InitPanelHeader('Header');
 	ChainHeader.SetHeaderWidth(ChainPanelBG.Width - 20);
 	ChainHeader.SetPosition(ChainPanelBG.X + 10, ChainPanelBG.Y + 10);
+	ChainHeader.Height -= 40; // The description is a seperate text box
 
 	ChainDescription = Spawn(class'UIText', ChainPanel);
 	ChainDescription.bAnimateOnInit = false;
 	ChainDescription.OnTextSizeRealized = ChainDescriptionRealzied;
 	ChainDescription.InitText('ChainDescription');
 	ChainDescription.SetWidth(ChainHeader.headerWidth);
-	// TODO: position
+	ChainDescription.SetPosition(ChainHeader.X, ChainHeader.Y + ChainHeader.Height);
 
 	ActivitiesList = Spawn(class'UIList', ChainPanel);
 	ActivitiesList.ItemPadding = 10;
 	ActivitiesList.InitList('ActivitiesList',,,,,, true);
-	ActivitiesList.SetPosition(ChainHeader.X, ChainHeader.Y + ChainHeader.Height);
-	ActivitiesList.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ActivitiesList.Y - 20 - 150 /* Complications */);
+	ActivitiesList.SetX(ChainHeader.X);
+	ActivitiesList.SetWidth(ChainHeader.headerWidth);
 
 	// The BG is required so that mousewheel scrolling doesn't jerk when the cursor is between the items
 	// But we also don't want to have the "fake" BG be visible to the player - we already have our BG
-	// TODO: Hide() disables hittest, so this does nothing
-	ActivitiesList.BG.Hide();
+	ActivitiesList.BG.SetAlpha(0);
 
 	ComplicationsText = Spawn(class'UITextContainer', ChainPanel);
 	ComplicationsText.bAnimateOnInit = false;
 	ComplicationsText.InitTextContainer('ComplicationsText',,,,,, true/*,, true*/); // Autoscroll is broken
 	ComplicationsText.bg.SetOutline(true, class'UIUtilities_Colors'.const.BAD_HTML_COLOR);
-	ComplicationsText.SetPosition(ChainHeader.X, ActivitiesList.Y + ActivitiesList.Height + 10);
-	ComplicationsText.SetSize(ChainHeader.headerWidth, ChainPanel.Height - ComplicationsText.Y - 10);
+	ComplicationsText.SetSize(ChainHeader.headerWidth, 150);
 	ComplicationsText.bg.SetSize(ComplicationsText.Width, ComplicationsText.Height); // UITextContainer doesn't proxy the size calls to the BG, so set it manually
+	ComplicationsText.SetPosition(ChainHeader.X, ChainPanel.Height - ComplicationsText.Height - 10);
 
 	Navigator.HorizontalNavigation = true;
 }
@@ -204,7 +204,10 @@ simulated protected function OnChainSelection (UIList ContainerList, int ItemInd
 
 	// Chain info
 	ChainHeader.SetText(ChainState.GetOverviewTitle());
-	ChainDescription.SetText(ChainState.GetOverviewDescription());
+	ChainDescription.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(ChainState.GetOverviewDescription(), bIsIn3D),,
+		true // Disable lazy refresh, otherwise we get stuck on waiting for descrption to realize
+	);
 	
 	PanelsToRealize.AddItem(ChainDescription);
 
@@ -303,6 +306,9 @@ simulated protected function PanelRealized (UIPanel Panel)
 	if (PanelsToRealize.Length == 0)
 	{
 		// All activities are realized, now realize the list
+		ActivitiesList.SetY(ChainDescription.Y + ChainDescription.Height + 10);
+		ActivitiesList.SetHeight(ComplicationsText.Y - ActivitiesList.Y - 20);
+
 		ActivitiesList.RealizeItems();
 		ActivitiesList.RealizeList();
 
