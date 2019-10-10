@@ -232,6 +232,11 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 /// Mission start/finish ///
 ////////////////////////////
 
+static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSite MissionState)
+{
+	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
+}
+
 static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();

@@ -28,21 +28,14 @@ var bool bAirPatrolsTriggered;
 /// Tactical helpers ///
 ////////////////////////
 
-static function ResetForBeginTacticalPlay ()
+static function ResetPreMission (XComGameState StartGameState)
 {
 	local XComGameState_CovertInfiltrationInfo NewInfo;
-	local XComGameState NewGameState;
 	
-	// Make sure info already exists - required for tql/skirmish
-	CreateInfo();
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Resetting XCGS_CovertInfiltrationInfo for begin play");
 	NewInfo = GetInfo();
-	NewInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
+	NewInfo = XComGameState_CovertInfiltrationInfo(StartGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
 
 	NewInfo.bAirPatrolsTriggered = false;
-
-	`SubmitGameState(NewGameState);
 }
 
 /////////////////

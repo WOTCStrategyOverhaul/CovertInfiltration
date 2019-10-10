@@ -113,15 +113,12 @@ static function int GetNextReinforcements (optional XComGameState AssociatedGame
 	local DelayedReinforcementOrder NextDRO;
 
 	ManagerState = GetReinforcementsManager(true);
-
-	if (ManagerState == none)
-	{
-		return -1;
-	}
+	if (ManagerState == none) return -1;
 
 	if (AssociatedGameState != none)
 	{
 		ManagerState = XComGameState_CIReinforcementsManager(`XCOMHISTORY.GetGameStateForObjectID(ManagerState.ObjectID,, AssociatedGameState.HistoryIndex));
+		if (ManagerState == none) return -1; // Not created yet
 	}
 
 	if (ManagerState.GetNextOrder(NextDRO))

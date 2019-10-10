@@ -700,7 +700,8 @@ static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object 
 
 static function EventListenerReturn OnTacticalPlayBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	class'XComGameState_CovertInfiltrationInfo'.static.ResetForBeginTacticalPlay();
+	// Ensure that our singletons exist
+	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_CIReinforcementsManager'.static.CreateReinforcementsManager();
 
 	return ELR_NoInterrupt;
