@@ -148,7 +148,7 @@ strEnded=ENDED
 
 [UIChainsOverview_Activity]
 strCompletionStatusLabel_NotReached=Not Reached
-strCompletionStatusLabel_NotCompleted=Not Completed
+strCompletionStatusLabel_NotCompleted=Not Completed Yet
 strCompletionStatusLabel_Expired=Expired
 strCompletionStatusLabel_Failure=Failed
 strCompletionStatusLabel_PartialSuccess=Partial Success
@@ -182,40 +182,40 @@ ActionRewardDetails=<XGParam:StrValue0/>
 [Activity_RecoverInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
 ActionRewardDisplayName=ADVENT Schedule
-ActionRewardDetails=Using this, we will be able to deploy and capture an enemy VIP
+ActionRewardDetails=Using this, we will be able to find and capture a <font color='#27AAE1'>knowedgable enemy VIP</font>
 
 [Activity_RecoverPersonnel X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
 ActionRewardDisplayName=Prisoner Manifest
-ActionRewardDetails=Using this, we will be able to deploy and rescue a resistance VIP
+ActionRewardDetails=Using this, we will be able to find and rescue a <font color='#33AB13'>highly-skilled resistance VIP</font>
 
 [Activity_RecoverUFO X2ActivityTemplate_Infiltration]
 strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
 ActionRewardDisplayName=UFO Flightpath
-ActionRewardDetails=Using this, we will be able to intercept the UFO and leave it grounded
+ActionRewardDetails=Using this, we will be able to intercept the UFO and leave it <font color='#CBB11F'>grounded and vulnerable</font>
 
 [Activity_CommanderSupply X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT General
 ActionRewardDisplayName=Logistics Report
-ActionRewardDetails=Using this, we can pinpoint the most vulnerable ADVENT supply convoy for a smash and grab
+ActionRewardDetails=Using this, we can pinpoint the most vulnerable ADVENT <font color='#CBB11F'>supply convoy</font> for a smash and grab
 
 [Activity_CounterDarkEvent X2ActivityTemplate_Infiltration]
 strOverviewDescription=Destroy ADVENT Infrastructure
-ActionRewardDisplayName=Counter Dark Event
+ActionRewardDisplayName=<font color='#E52E11'>Counter Dark Event</font>
 
 [Activity_SupplyRaid X2ActivityTemplate_Infiltration]
 strOverviewDescription=Raid ADVENT Supply Convoy
-ActionRewardDisplayName=Enemy Materiel
+ActionRewardDisplayName=<font color='#CBB11F'>Enemy Materiel</font>
 
 [Activity_CaptureInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT VIP
 ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="Datapad (on Kill or Capture) and Intel Cache (on Capture)"
+ActionRewardDetails="<font color='#27AAE1'>Datapad</font> (on Kill or Capture) and <font color='#27AAE1'>Intel Cache</font> (on Capture)"
 
 [Activity_FacilityInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize AVATAR VIP
 ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="Datapad (on Kill or Capture) and Facility Lead (On Capture)"
+ActionRewardDetails="<font color='#27AAE1'>Datapad</font> (on Kill or Capture) and <font color='#842015'>Facility Lead</font> (on Capture)"
 
 [Activity_GatherIntel X2ActivityTemplate_Assault]
 strOverviewDescription=Protect Resistance Datatap
@@ -230,16 +230,16 @@ strOverviewDescription=Secure the UFO
 MissionPinLabel="Landed UFO"
 
 [Activity_PrepareCounterDE X2ActivityTemplate_CovertAction]
-strOverviewDescription=Identify infrastructure supporting the Dark Event
+strOverviewDescription=Investigate Dark Event
 
 [Activity_PrepareFactionJB X2ActivityTemplate_CovertAction]
-strOverviewDescription=Consult the faction about a jailbreak of their solder
+strOverviewDescription=Consult the Faction
 
 [Activity_PrepareFacility X2ActivityTemplate_CovertAction]
-strOverviewDescription=Pinpoint collaborator assisting AVATAR facility construction
+strOverviewDescription=Pinpoint AVATAR Collaborator
 
 [Activity_PrepareUFO X2ActivityTemplate_CovertAction]
-strOverviewDescription=Sabotage the landed UFO's takeoff systems
+strOverviewDescription=Sabotage Landed UFO
 
 [Activity_WaitDE X2ActivityTemplate]
 strOverviewHeader="WAIT"
@@ -247,15 +247,15 @@ strOverviewDescription="Our friends in the resistance have caught wind of an ADV
 
 [ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
 strTitle="Counter Dark Event"
-strDescription="Smash infrastructure critical to ADVENT's counteroperations against XCOM."
+strDescription="Smash infrastructure critical to ADVENT's operations against XCOM."
 
 [ActivityChain_SupplyRaid X2ActivityChainTemplate]
 strTitle="Supply Raid"
-strDescription="Seize enemy material from a vulnerable supply convoy."
+strDescription="Seize enemy materiel from a vulnerable supply convoy."
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Capture ADVENT VIP"
-strDescription="Bring a human collaborator in for 'questioning'."
+strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
 strTitle="Rescue Scientist"
@@ -275,19 +275,19 @@ strDescription="Rescue one of our captured soldiers from an ADVENT compound."
 
 [ActivityChain_JailbreakChosenSoldier X2ActivityChainTemplate]
 strTitle="Rescue Soldier from Chosen"
-strDescription="Rescue one of our stolen soldiers from the Chosen."
+strDescription="Rescue one of our abducted soldiers from the Chosen."
 
 [ActivityChain_GatherSupplies X2ActivityChainTemplate]
 strTitle="Extract Supplies"
-strDescription="Interrupt an ADVENT supply transfer before reinforcements arrive."
+strDescription="Interrupt an ADVENT supply transfer before reinforcements arrive to secure the site."
 
 [ActivityChain_GatherIntel X2ActivityChainTemplate]
 strTitle="Gather Intel"
-strDescription="Protect a resistance listening post from ADVENT counterintelligence teams."
+strDescription="Protect a resistance listening post that recently captured important data from ADVENT counterintelligence teams."
 
 [ActivityChain_LandedUFO X2ActivityChainTemplate]
 strTitle="Raid Alien UFO"
-strDescription="The alien craft need to land occasionally for maintenance. When that happens, we strike."
+strDescription="Force a UFO to ground, eliminate the crew, and strip the site before they know what hit them."
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Find Avatar Facility"
@@ -325,16 +325,17 @@ strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while run
 
 [Complication_RewardInterception X2ComplicationTemplate]
 FriendlyName="Reward Interception"
-FriendlyDesc="This operation is far from any Resistance havens. ADVENT may try to intercept our spoils of war on their way back home. We should have a squad on standby."
+FriendlyDesc="The rewards from this chain have a chance to be halved, and made recoverable in a rescue mission.<br/><i>This operation is far from any Resistance havens. ADVENT may try to intercept our spoils of war on their way back home. We should have a squad on standby.</i>"
 
 [Complication_ChosenSurveillance X2ComplicationTemplate]
 FriendlyName="Chosen Surveillance"
-FriendlyDesc="The Elders' champions are always watching. Lurking in the shadows, they study our operations and gather the clues that will lead them to the Avenger."
+FriendlyDesc="Completing this chain has a chance to increase the Knowledge of a random Chosen.<br/><i>The Elders' champions are always watching. Lurking in the shadows, they study our operations and gather the clues that will lead them to the Avenger.</i>"
 
 [Complication_OpenProvocation X2ComplicationTemplate]
 FriendlyName="Open Provocation"
-FriendlyDesc="The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens."
+FriendlyDesc="Completing this chain has a chance to decrease the Retaliation timer by one week.<br/><i>The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens.</i>"
 
 [X2Ability_InfiltrationAbilitySet]
 strTowerDetectionImmunityName="Disguise"
 strTowerDetectionImmunityDesc="The transponders of this disguise render the user invisible to ADVENT security towers"
+

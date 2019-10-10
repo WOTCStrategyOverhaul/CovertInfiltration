@@ -61,47 +61,47 @@ BonusText="INFILTRATING"
 
 [CovertActionNarrative_CommanderSupplyInfil X2CovertActionNarrativeTemplate]
 ActionName="Neutralize Logistics Officer"
-ActionPreNarrative="Resistance operatives have identified a high-level target. This commander is in charge of logistics for the entire region, and we know where he is."
+ActionPreNarrative="Resistance operatives have identified a high-level target. This commander is in charge of <font color='#CBB11F'>logistics</font> for the entire region, and we know where he is."
 ActionPostNarrative="Tygan has cracked the officer's neural implant and recovered fragmentary details of a vulnerable supply line. We have work to do."
 
 [CovertActionNarrative_SupplyRaidInfil X2CovertActionNarrativeTemplate]
 ActionName="Secure ADVENT Materials"
-ActionPreNarrative="This location is host to an ADVENT supply convoy. Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
+ActionPreNarrative="This location is host to an ADVENT <font color='#CBB11F'>supply convoy</font> Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
 ActionPostNarrative="A job well done, Commander. I trust you will put your spoils of war to good use."
 
 [CovertActionNarrative_RecoverInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Recover VIP Schedule"
-ActionPreNarrative="The Resistance has learned of a civilian ADVENT collaborator operating in this region. We should bring them in for questioning, but first they need to be found."
+ActionPreNarrative="The Resistance has learned of a civilian ADVENT collaborator operating in this region. They should have a <font color='#27AAE1'>wealth of intel</font> on ADVENT's operations. We can bring them in for questioning, but first they need to be found."
 ActionPostNarrative="The collaborator's whereabouts have been safely recovered. Let's go pay them a visit."
 
 [CovertActionNarrative_CaptureInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Capture ADVENT Collaborator"
-ActionPreNarrative="Unlike ADVENT officers, civilian traitors will talk. We know where the target will be in a few days - it's time for a kidnap job."
+ActionPreNarrative="Unlike ADVENT officers, civilian traitors will <font color='#27AAE1'>reveal what they know</font> under 'questioning'. We know where the target will be in a few days - it's time for a kidnap job."
 ActionPostNarrative="I'm glad to see the operation was a success, Commander. Our mutual friend is being questioned as we speak."
 
 [CovertActionNarrative_PrepareCounterDE X2CovertActionNarrativeTemplate]
 ActionName="Identify Critical Project Data"
-ActionPreNarrative="We know the aliens are working on their <XGParam:StrValue4/> project, and there must be a vulnerability somewhere. All we need to do is find it."
-ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <XGParam:StrValue4/>."
+ActionPreNarrative="We know the aliens are working on their <font color='#E52E11'><XGParam:StrValue4/></font> project, and there must be a vulnerability somewhere. All we need to do is find it."
+ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <font color='#E52E11'><XGParam:StrValue4/></font>."
 
 [CovertActionNarrative_CounterDarkEventInfil X2CovertActionNarrativeTemplate]
 ActionName="Eliminate Critical Datalink"
-ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <XGParam:StrValue4/> project. If we collapse this data relay, we have a chance to stop their progress."
+ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <font color='#E52E11'><XGParam:StrValue4/></font> project. If we collapse this data relay, we can stop their progress."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RecoverPersonnelInfil X2CovertActionNarrativeTemplate]
 ActionName="Breach ADVENT Arrest Database"
-ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the academic community in this region. If we hit this data vault, we can find out where they went."
+ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the <font color='#33AB13'>academic community</font> in this region. If we hit this data vault, we can find out where they went."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RescueScientistInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Scientist"
-ActionPreNarrative="The breach of the data vault has revealed that one of ADVENT's recent arrests posesses high scientific knowledge and is currently underdefended. It would be foolish to refuse this invitation."
+ActionPreNarrative="The breach of the data vault has revealed that one of ADVENT's recent arrests posesses <font color='#33AB13'>high scientific knowledge</font> and is currently underdefended. It would be foolish to refuse this invitation."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RescueEngineerInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Engineer"
-ActionPreNarrative="Our newfound access to the ADVENT database shows that a recent detainee has extensive experience in the technical arts. Not to mention they're sitting in a blindspot of ADVENT's security grid. Let's go get 'em."
+ActionPreNarrative="Our newfound access to the ADVENT database shows that a recent detainee has extensive <font color='#33AB13'>experience in the technical arts</font>. Not to mention they're sitting in a blindspot of ADVENT's security grid. Let's go get 'em."
 ActionPostNarrative=""
 
 [CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
@@ -126,22 +126,22 @@ ActionPostNarrative=""
 
 [CovertActionNarrative_RecoverUFOInfil X2CovertActionNarrativeTemplate]
 ActionName="Recover UFO Command Codes"
-ActionPreNarrative="That damned UFO has been a thorn in our sides for too long. Resistance operatives have identified an opportunity to steal a copy of their command codes, and force it to the ground."
+ActionPreNarrative="That damned UFO has been a thorn in our sides for too long. Resistance operatives have identified an opportunity to steal a copy of their command codes, and <font color='#CBB11F'>force it to ground</font>."
 ActionPostNarrative=""
 
 [CovertActionNarrative_PrepareUFO X2CovertActionNarrativeTemplate]
 ActionName="Force the UFO to Ground"
-ActionPreNarrative="With the command codes in hand, we can trick the UFO into setting down. Then we must set up a jamming net to delay its calls for help once the main assault squad goes in. We won't get another chance at this."
+ActionPreNarrative="With the command codes in hand, we can trick the UFO into <font color='#CBB11F'>setting down</font>. Then we must set up a jamming net to delay its calls for help once the main assault squad goes in. We won't get another chance at this."
 ActionPostNarrative="Commander, we've achieved stunning success! The alien ship has touched down, and the jamming net is in place. I think they're starting to get wise, though, so we should strike immediately."
 
 [CovertActionNarrative_PrepareFacility X2CovertActionNarrativeTemplate]
 ActionName="Identify Avatar Project Collaborators"
-ActionPreNarrative="The aliens have buried the construction of Avatar facilities fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
-ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of that facility. Even better, we know where they are."
+ActionPreNarrative="The aliens have buried the construction of <font color='#842015'>Avatar facilities</font> fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
+ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of an <font color='#842015'>Avatar facility</font>. Even better, we know where they are."
 
 [CovertActionNarrative_FacilityInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Capture Avatar Collaborator"
-ActionPreNarrative="Our friends in the Resistance have found someone who may know where the hidden facility is. All that's left is the hard part - bringing them in for questioning."
+ActionPreNarrative="Our friends in the Resistance have found someone who may know where the <font color='#842015'>hidden facility</font> is. All that's left is the hard part - bringing them in for questioning."
 ActionPostNarrative=""
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
@@ -158,11 +158,11 @@ Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and will"
+Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and psi defense"
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
-Description="XCOM units gain a mobility boost for the first few turns of battle while the squad remains concealed."
+Description="XCOM units gain a mobility boost for the first <Ability:LIGHTNINGSTRIKEDURATION/> turns of battle while the squad remains concealed."
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Show Of Force"

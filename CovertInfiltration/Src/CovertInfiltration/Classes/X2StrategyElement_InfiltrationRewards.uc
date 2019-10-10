@@ -159,7 +159,7 @@ static function string GetInfiltrationActionPreview (XComGameState_Reward Reward
 
 static function string GetInfiltrationActionDetails (XComGameState_Reward RewardState)
 {
-	return GetInfiltrationTemplateFromReward(RewardState).GetRewardDetailStringFn(RewardState);
+	return GetInfiltrationTemplateFromReward(RewardState).GetRewardDetailStringFn(class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID), RewardState);
 }
 
 static function GenerateRewardDelegate (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)

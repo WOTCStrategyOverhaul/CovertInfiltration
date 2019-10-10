@@ -18,7 +18,7 @@ var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "block cleanup"
 
-delegate string GetRewardDetailStringFn(XComGameState_Reward RewardState);
+delegate string GetRewardDetailStringFn(XComGameState_Activity ActivityState, XComGameState_Reward RewardState);
 
 static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
@@ -124,9 +124,9 @@ static function string DefaultGetMissionImageInfiltration (XComGameState_Activit
 	return NarrativeTemplate.ActionImage;
 }
 
-static function string DefaultGetRewardDetails (XComGameState_Reward RewardState)
+static function string DefaultGetRewardDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
 {
-	return class'X2StrategyElement_InfiltrationRewards'.static.GetInfiltrationTemplateFromReward(RewardState).ActionRewardDetails;
+	return X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails;
 }
 
 defaultproperties

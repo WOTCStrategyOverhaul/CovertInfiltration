@@ -653,8 +653,8 @@ static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Ac
 	}
 }
 
-static function string GetUnitDetails (XComGameState_Reward RewardState)
-{
+static function string GetUnitDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+{;
 	local XComGameState_Unit UnitState;
 	local XGParamTag kTag;
 	local string UnitString;
@@ -686,8 +686,8 @@ static function string GetUnitDetails (XComGameState_Reward RewardState)
 
 	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 	kTag.StrValue0 = UnitString;
-
-	return `XEXPAND.ExpandString(class'X2StrategyElement_InfiltrationRewards'.static.GetInfiltrationTemplateFromReward(RewardState).ActionRewardDetails);
+	
+	return `XEXPAND.ExpandString(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails);
 }
 
 //////////////////////////////////////////////////////////
