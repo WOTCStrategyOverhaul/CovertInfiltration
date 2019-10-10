@@ -10,10 +10,11 @@ class UICovertActionsGeoscape_FactionHeader extends UIPanel;
 var protectedwrite XComGameState_ResistanceFaction Faction;
 var protectedwrite bool bIsOngoing;
 
-var protectedwrite UIStackingIcon Icon;
+var protectedwrite UIImage PlainIcon;
+var protectedwrite UIStackingIcon StackingIcon;
 var protectedwrite UIScrollingText Text;
 
-simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction, bool IsOngoing)
+simulated function InitFactionHeader()
 {
 	local UIList List;
 
@@ -30,30 +31,49 @@ simulated function InitFactionHeader(XComGameState_ResistanceFaction InitFaction
 		SetWidth(List.Width);
 	}
 
-	Faction = InitFaction;
-	bIsOngoing = IsOngoing;
+	PlainIcon = Spawn(class'UIImage', self);
+	PlainIcon.Hide();
+	PlainIcon.InitImage('PlainIcon', "img:///UILibrary_XPACK_Common.MissionIcon_CovertAction");
+	PlainIcon.SetSize(42, 42);
 
-	CreateElements();
-	UpdateText();
-	UpdateIcon();
-}
-
-simulated protected function CreateElements()
-{
-	Icon = Spawn(class'UIStackingIcon', self);
-	Icon.InitStackingIcon('Icon');
-	Icon.SetIconSize(42);
+	StackingIcon = Spawn(class'UIStackingIcon', self);
+	StackingIcon.Hide();
+	StackingIcon.InitStackingIcon('StackingIcon');
+	StackingIcon.SetIconSize(42);
 
 	Text = Spawn(class'UIScrollingText', self);
 	Text.bAnimateOnInit = false;
 	Text.InitScrollingText('Text');
-	Text.SetX(Icon.Width);
+	Text.SetX(StackingIcon.Width);
 	Text.SetWidth(Width - Text.X);
 }
 
-simulated function UpdateText()
+simulated function SetFaction (XComGameState_ResistanceFaction NewFaction)
 {
-	local string strText;
+	Faction = NewFaction;
+	bIsOngoing = false;
+
+	StackingIcon.Show();
+	PlainIcon.Hide();
+
+	UpdateText();
+	UpdateStackingIcon();
+}
+
+simulated function SetOngoing ()
+{
+	Faction = none;
+	bIsOngoing = true;
+
+	StackingIcon.Hide();
+	PlainIcon.Show();
+
+	UpdateText();
+}
+
+simulated protected function UpdateText()
+{
+	local string strText, strColour;
 
 	if (bIsOngoing)
 	{
@@ -64,13 +84,14 @@ simulated function UpdateText()
 		strText = Faction.GetFactionTitle();
 	}
 
+	strColour = bIsOngoing ? class'UIUtilities_Colors'.const.COVERT_OPS_HTML_COLOR : GetFactionColour();
 	strText = class'UIUtilities_Text'.static.AddFontInfo(strText, Screen.bIsIn3D, true);
-	strText = class'UIUtilities_Infiltration'.static.ColourText(strText, GetFactionColour());
-
+	strText = class'UIUtilities_Infiltration'.static.ColourText(strText, strColour);
+	 
 	Text.SetHTMLText(strText);
 }
 
-simulated function UpdateIcon()
+simulated protected function UpdateStackingIcon()
 {
 	local StackedUIIconData IconData;
 	local int i;
@@ -83,7 +104,7 @@ simulated function UpdateIcon()
 		IconData.Images[i] = Repl(IconData.Images[i], ".tga", "_sm.tga");
 	}
 
-	Icon.SetImageStack(IconData);
+	StackingIcon.SetImageStack(IconData);
 }
 
 /// HELPERS

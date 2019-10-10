@@ -676,11 +676,20 @@ simulated function PopulateList()
 	{
 		if (
 			LastHeader == none ||
-			LastHeader.Faction.GetMyTemplateName() != arrActions[idx].GetFaction().GetMyTemplateName() || 
-			LastHeader.bIsOngoing != arrActions[idx].bStarted
+			LastHeader.bIsOngoing != arrActions[idx].bStarted ||
+			(!LastHeader.bIsOngoing && LastHeader.Faction.GetMyTemplateName() != arrActions[idx].GetFaction().GetMyTemplateName())
 		) {
 			FactionHeader = Spawn(class'UICovertActionsGeoscape_FactionHeader', ActionsList.itemContainer);
-			FactionHeader.InitFactionHeader(arrActions[idx].GetFaction(), arrActions[idx].bStarted);
+			FactionHeader.InitFactionHeader();
+
+			if (arrActions[idx].bStarted)
+			{
+				FactionHeader.SetOngoing();
+			}
+			else
+			{
+				FactionHeader.SetFaction(arrActions[idx].GetFaction());
+			}
 
 			LastHeader = FactionHeader;
 		}
