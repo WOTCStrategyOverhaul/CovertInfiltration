@@ -346,3 +346,7 @@ FriendlyDesc="The Elders' champions are always watching. Lurking in the shadows,
 [Complication_OpenProvocation X2ComplicationTemplate]
 FriendlyName="Open Provocation"
 FriendlyDesc="The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens."
+
+[X2Ability_InfiltrationAbilitySet]
+strTowerDetectionImmunityName="Disguise"
+strTowerDetectionImmunityDesc="The transponders of this disguise render the user invisible to ADVENT security towers"

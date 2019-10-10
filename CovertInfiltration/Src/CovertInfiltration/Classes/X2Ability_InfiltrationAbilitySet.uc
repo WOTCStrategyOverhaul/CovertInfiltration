@@ -18,6 +18,9 @@ var config int HOLOGRAPHIC_DISGUISE_HEALTH_BONUS;
 var config int HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS;
 var config float HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER;
 
+var localized string strTowerDetectionImmunityName;
+var localized string strTowerDetectionImmunityDesc;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -91,6 +94,7 @@ static function X2AbilityTemplate AdventDisguiseStats()
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.ADVENT_DISGUISE_MOBILITY_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.ADVENT_DISGUISE_DETECTION_MODIFIER);
 	Template.AddTargetEffect(PersistentStatChangeEffect);
+	Template.AddTargetEffect(CreateTowerDetectionImmunityDisplayEffect());
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 
@@ -125,8 +129,22 @@ static function X2AbilityTemplate HolographicDisguiseStats()
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.HOLOGRAPHIC_DISGUISE_MOBILITY_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.HOLOGRAPHIC_DISGUISE_DETECTION_MODIFIER);
 	Template.AddTargetEffect(PersistentStatChangeEffect);
+	Template.AddTargetEffect(CreateTowerDetectionImmunityDisplayEffect());
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 
 	return Template;
+}
+
+// A display-only effect/passive to show in the passives view
+// The real change is done in X2AbilityTemplateManager::AbilityRetainsConcealmentVsInteractives
+static function X2Effect_Persistent CreateTowerDetectionImmunityDisplayEffect ()
+{
+	local X2Effect_Persistent TowerDetectionImmunityEffect;
+
+	TowerDetectionImmunityEffect = new class'X2Effect_Persistent';
+	TowerDetectionImmunityEffect.BuildPersistentEffect(1, true, false, false);
+	TowerDetectionImmunityEffect.SetDisplayInfo(ePerkBuff_Passive, default.strTowerDetectionImmunityName, default.strTowerDetectionImmunityDesc, "img:///UILibrary_XPACK_Common.PerkIcons.UIPerk_Infiltration");
+
+	return TowerDetectionImmunityEffect;
 }
