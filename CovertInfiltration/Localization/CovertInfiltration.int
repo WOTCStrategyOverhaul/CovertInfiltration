@@ -122,6 +122,7 @@ FoxholesFriendlyDesc="+<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHO
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission ready"
 strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
+strBarracksSizeTitle="BARRACKS"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration bonus gained"

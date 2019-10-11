@@ -15,6 +15,7 @@ var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic
 
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
+var localized string strBarracksSizeTitle;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -426,18 +427,36 @@ static protected function EventListenerReturn ShortcutsResistanceButtonVisible(O
 
 static function EventListenerReturn UpdateResources(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
+	local XComGameState_HeadquartersXcom XComHQ;
 	local UIAvengerHUD AvengerHUD;
 	local UIScreenStack ScreenStack;
-
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
-
+	local int CurrentBarracksSize, CurrentBarracksLimit;
+	
+	XComHQ = `XCOMHQ;
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
-
 	CurrentScreen = ScreenStack.GetCurrentScreen();
-	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	
+	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
+		UIStrategyMap(CurrentScreen) != none ||
+		UIFacilityGrid(CurrentScreen) != none ||
+		UIRecruitSoldiers(CurrentScreen) != none ||
+		(UIChooseUpgrade(CurrentScreen) != none && UIFacility_LivingQuarters(ScreenStack.GetFirstInstanceOf(class'UIFacility_LivingQuarters')) != none))
+	{
+		CurrentBarracksSize = XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
+		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
 
+		AvengerHUD.AddResource(default.strBarracksSizeTitle, string(CurrentBarracksSize) $ " / " $ string(CurrentBarracksLimit));
+
+		AvengerHUD.ShowResources();
+
+		return ELR_NoInterrupt;
+	}
+
+	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	
 	if (CovertActions == none) return ELR_NoInterrupt;
 
 	if (
