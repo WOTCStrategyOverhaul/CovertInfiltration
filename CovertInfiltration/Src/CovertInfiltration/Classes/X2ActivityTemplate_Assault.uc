@@ -204,6 +204,16 @@ static function SelectSitrepsAndPlot (XComGameState_MissionSite MissionState)
 	}
 }
 
+static function string DefaultGetOverviewStatusAssault (XComGameState_Activity ActivityState)
+{
+	if (ActivityState.IsOngoing())
+	{
+		return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Available;
+	}
+
+	return DefaultGetOverviewStatus(ActivityState);
+}
+
 ////////////////////////////
 /// Private from XCGS_MS ///
 ////////////////////////////
@@ -348,6 +358,7 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 defaultproperties
 {
 	StateClass = class'XComGameState_Activity_Assault'
+	GetOverviewStatus = DefaultGetOverviewStatusAssault
 
 	SetupStage = DefaultAssaultSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted

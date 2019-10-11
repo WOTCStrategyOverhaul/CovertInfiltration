@@ -22,6 +22,7 @@ var localized string strOverviewHeader;
 var localized string strOverviewDescription;
 
 delegate string GetOverviewDescription (XComGameState_Activity ActivityState);
+delegate string GetOverviewStatus (XComGameState_Activity ActivityState);
 
 /////////////////
 /// Lifecycle ///
@@ -61,8 +62,14 @@ static function string DefaultGetOverviewDescription (XComGameState_Activity Act
 	return ActivityState.GetMyTemplate().strOverviewDescription;
 }
 
+static function string DefaultGetOverviewStatus (XComGameState_Activity ActivityState)
+{
+	return class'UIUtilities_Infiltration'.static.GetLabelForActivityCompletionStatus(ActivityState.CompletionStatus);
+}
+
 defaultproperties
 {
 	StateClass = class'XComGameState_Activity'
 	GetOverviewDescription = DefaultGetOverviewDescription
+	GetOverviewStatus = DefaultGetOverviewStatus
 }

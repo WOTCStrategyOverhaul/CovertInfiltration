@@ -144,8 +144,19 @@ static function CreateDEWaitActivity (out array<X2DataTemplate> Templates)
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitDE');
 	Activity.StateClass = class'XComGameState_Activity_Wait';
+	Activity.GetOverviewStatus = DEWaitGetOverviewStatus;
 
 	Templates.AddItem(Activity);
+}
+
+static function string DEWaitGetOverviewStatus (XComGameState_Activity ActivityState)
+{
+	if (ActivityState.IsOngoing())
+	{
+		return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Ongoing;
+	}
+
+	return class'X2ActivityTemplate'.static.DefaultGetOverviewStatus(ActivityState);
 }
 
 static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)

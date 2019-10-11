@@ -23,6 +23,19 @@ var localized string strAssaultAvaliableHeader;
 var localized string strInfiltrationAvaliableHeader;
 var localized string strCovertActionAvaliableHeader;
 
+// Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
+var localized string strCompletionStatusLabel_NotReached;
+var localized string strCompletionStatusLabel_NotCompleted;
+var localized string strCompletionStatusLabel_Expired;
+var localized string strCompletionStatusLabel_Failure;
+var localized string strCompletionStatusLabel_PartialSuccess;
+var localized string strCompletionStatusLabel_Success;
+
+// Custom statuses for more specific display of strCompletionStatusLabel_NotCompleted
+var localized string strCompletionStatusLabel_Available;
+var localized string strCompletionStatusLabel_Ongoing;
+var localized string strCompletionStatusLabel_Infiltrating;
+
 //////////////////
 /// Game state ///
 //////////////////
@@ -516,4 +529,30 @@ static function OnStripUpgradesDialogCallback(Name eAction)
 
 		`GAMERULES.SubmitGameState(UpdateState);
 	}
+}
+
+static function string GetLabelForActivityCompletionStatus (EActivityCompletion eCompletion)
+{
+	switch (eCompletion)
+	{
+		case eActivityCompletion_NotReached:
+			return default.strCompletionStatusLabel_NotReached;
+
+		case eActivityCompletion_NotCompleted:
+			return default.strCompletionStatusLabel_NotCompleted;
+
+		case eActivityCompletion_Expired:
+			return default.strCompletionStatusLabel_Expired;
+
+		case eActivityCompletion_Failure:
+			return default.strCompletionStatusLabel_Failure;
+
+		case eActivityCompletion_PartialSuccess:
+			return default.strCompletionStatusLabel_PartialSuccess;
+
+		case eActivityCompletion_Success:
+			return default.strCompletionStatusLabel_Success;
+	}
+
+	return "WRONG EActivityCompletion";
 }

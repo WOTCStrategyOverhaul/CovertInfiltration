@@ -129,12 +129,35 @@ static function string DefaultGetRewardDetails (XComGameState_Activity ActivityS
 	return X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails;
 }
 
+static function string DefaultGetOverviewStatusInfiltration (XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+
+	if (ActivityState.IsOngoing())
+	{
+		InfiltrationState = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState));
+		
+		// SoldiersOnMission is set when the CA is launched, so we don't need to make a distiction here
+		if (InfiltrationState.SoldiersOnMission.Length > 0)
+		{
+			return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Infiltrating;
+		}
+		else
+		{
+			return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Available;
+		}
+	}
+
+	return DefaultGetOverviewStatus(ActivityState);
+}
+
 defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted
 	GetMissionImage = DefaultGetMissionImageInfiltration
 	GetRewardDetailStringFn = DefaultGetRewardDetails
+	GetOverviewStatus = DefaultGetOverviewStatusInfiltration
 
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'

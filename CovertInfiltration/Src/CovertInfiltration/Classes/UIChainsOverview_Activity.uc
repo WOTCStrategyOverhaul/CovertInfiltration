@@ -12,14 +12,6 @@ const CONTENT_PADDING = 10;
 var Vector2D ContentTopLeft;
 var float ContentWidth;
 
-// Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
-var localized string strCompletionStatusLabel_NotReached;
-var localized string strCompletionStatusLabel_NotCompleted;
-var localized string strCompletionStatusLabel_Expired;
-var localized string strCompletionStatusLabel_Failure;
-var localized string strCompletionStatusLabel_PartialSuccess;
-var localized string strCompletionStatusLabel_Success;
-
 simulated function InitActivity (optional name InitName)
 {
 	InitPanel(InitName);
@@ -109,7 +101,7 @@ simulated function UpdateFromState (XComGameState_Activity ActivityState)
 	StatusLine.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Infiltration'.static.ColourText(
-				GetLabelForCompletionStatus(ActivityState.CompletionStatus),
+				ActivityState.GetMyTemplate().GetOverviewStatus(ActivityState),
 				class'UIUtilities_Colors'.const.BLACK_HTML_COLOR
 			),
 			Screen.bIsIn3D,,, 20
@@ -126,32 +118,6 @@ simulated protected function OnDesciptionSizeRealized ()
 	BG.SetHeight(Height);
 
 	UIChainsOverview(GetParent(class'UIChainsOverview', true)).OnActivitySizeRealized(self);
-}
-
-static function string GetLabelForCompletionStatus (EActivityCompletion eCompletion)
-{
-	switch (eCompletion)
-	{
-		case eActivityCompletion_NotReached:
-			return default.strCompletionStatusLabel_NotReached;
-
-		case eActivityCompletion_NotCompleted:
-			return default.strCompletionStatusLabel_NotCompleted;
-
-		case eActivityCompletion_Expired:
-			return default.strCompletionStatusLabel_Expired;
-
-		case eActivityCompletion_Failure:
-			return default.strCompletionStatusLabel_Failure;
-
-		case eActivityCompletion_PartialSuccess:
-			return default.strCompletionStatusLabel_PartialSuccess;
-
-		case eActivityCompletion_Success:
-			return default.strCompletionStatusLabel_Success;
-	}
-
-	return "WRONG EActivityCompletion";
 }
 
 defaultproperties

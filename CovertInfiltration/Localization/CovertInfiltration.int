@@ -86,6 +86,17 @@ strAssaultAvaliableHeader=New Assault Mission
 strInfiltrationAvaliableHeader=New Infiltration Mission
 strCovertActionAvaliableHeader=New Covert Action
 
+strCompletionStatusLabel_NotReached=Not Reached
+strCompletionStatusLabel_NotCompleted=Not Completed Yet
+strCompletionStatusLabel_Expired=Expired
+strCompletionStatusLabel_Failure=Failed
+strCompletionStatusLabel_PartialSuccess=Partial Success
+strCompletionStatusLabel_Success=Success
+
+strCompletionStatusLabel_Available=Available
+strCompletionStatusLabel_Ongoing=Ongoing
+strCompletionStatusLabel_Infiltrating=Infiltrating
+
 [UISkyrangerExfiltrate]
 strBody="The Skyranger has reached the action site. Awaiting orders."
 strSkyrangerExfiltrateSubtitle="READY FOR EXFILTRATION"
@@ -145,14 +156,6 @@ ChainsOverview_Label=Activity Chains
 [UIChainsOverview]
 strOngoing=ONGOING
 strEnded=ENDED
-
-[UIChainsOverview_Activity]
-strCompletionStatusLabel_NotReached=Not Reached
-strCompletionStatusLabel_NotCompleted=Not Completed Yet
-strCompletionStatusLabel_Expired=Expired
-strCompletionStatusLabel_Failure=Failed
-strCompletionStatusLabel_PartialSuccess=Partial Success
-strCompletionStatusLabel_Success=Success
 
 [Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from ADVENT compound

@@ -97,10 +97,29 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 	return ActivityState.CompletionStatus == eActivityCompletion_Success;
 }
 
+static function string DefaultGetOverviewStatusCovertAction (XComGameState_Activity ActivityState)
+{
+	if (ActivityState.IsOngoing())
+	{
+		if (XComGameState_Activity_CovertAction(ActivityState).GetAction().bStarted)
+		{
+			return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Ongoing;
+		}
+		else
+		{
+			return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Available;
+		}
+	}
+
+	return DefaultGetOverviewStatus(ActivityState);
+}
+
 defaultproperties
 {
 	SetupStage = DefaultCovertActionSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted
 	ShouldProgressChain = DefaultShouldProgressChain
 	StateClass = class'XComGameState_Activity_CovertAction'
+
+	GetOverviewStatus = DefaultGetOverviewStatusCovertAction
 }
