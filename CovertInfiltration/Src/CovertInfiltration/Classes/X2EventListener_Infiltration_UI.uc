@@ -432,7 +432,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local UIScreenStack ScreenStack;
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
-	local int CurrentBarracksSize, CurrentBarracksLimit;
+	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
 	
 	XComHQ = `XCOMHQ;
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
@@ -448,8 +448,21 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		CurrentBarracksSize = XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
 		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
 
-		AvengerHUD.AddResource(default.strBarracksSizeTitle, string(CurrentBarracksSize) $ " / " $ string(CurrentBarracksLimit));
-
+		if (CurrentBarracksSize > CurrentBarracksLimit)
+		{
+			MessageColor = eUIState_Bad;
+		}
+		else if (CurrentBarracksSize == CurrentBarracksLimit)
+		{
+			MessageColor = eUIState_Warning;
+		}
+		else
+		{
+			MessageColor = eUIState_Cash;
+		}
+		
+		AvengerHUD.AddResource(default.strBarracksSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentBarracksSize $ "/" $ CurrentBarracksLimit, MessageColor));
+		
 		AvengerHUD.ShowResources();
 
 		return ELR_NoInterrupt;
