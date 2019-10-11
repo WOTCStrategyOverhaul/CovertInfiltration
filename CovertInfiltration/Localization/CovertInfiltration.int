@@ -294,8 +294,8 @@ strTitle="Find Avatar Facility"
 strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them where their facilities are."
 
 [X2StrategyElement_DefaultActivityChains]
-strCounterDarkEventDescription="Resistance heard about ADVENT's '<XGParam:StrValue0/>' project. If you think it necessary, Commander, we can send a team to disrupt it."
-strCounterHiddenDarkEventDescription="Resistance heard about a top-secret ADVENT project. We don't know the details, but if ADVENT wants it hidden, it can't be anything good."
+strCounterDarkEventDescription="Resistance heard about ADVENT's <font color='#E52E11'>'<XGParam:StrValue0/>'</font> project. If you think it necessary, Commander, we can send a team to disrupt it."
+strCounterHiddenDarkEventDescription="Resistance heard about a <font color='#E52E11'>top-secret ADVENT project</font>. We don't know the details, but if ADVENT wants it hidden, it can't be anything good."
 
 [UIViewChainButton]
 strLabel=View Chain
