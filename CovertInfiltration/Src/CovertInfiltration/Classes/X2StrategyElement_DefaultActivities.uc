@@ -154,7 +154,7 @@ static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareCounterDE"));
-	CovertAction = CreateStandardActivityCA("Activity_PrepareCounterDE", "CovertAction");
+	CovertAction = CreateStandardActivityCA("PrepareCounterDE", "CovertAction");
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
@@ -192,7 +192,7 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareFactionJB"));
-	CovertAction = CreateStandardActivityCA("Activity_PrepareFactionJB", "CovertAction");
+	CovertAction = CreateStandardActivityCA("PrepareFactionJB", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
@@ -281,7 +281,7 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareUFO"));
-	CovertAction = CreateStandardActivityCA("Activity_PrepareUFO", "CovertAction");
+	CovertAction = CreateStandardActivityCA("PrepareUFO", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
@@ -355,7 +355,7 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareFacility"));
-	CovertAction = CreateStandardActivityCA("Activity_PrepareFacility", "CovertAction");
+	CovertAction = CreateStandardActivityCA("PrepareFacility", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
