@@ -513,6 +513,7 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
 	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate);
+	Template.AddCHEvent('SoldierListItem_ShouldDisplayMetalStatus', SoldierListItem_ShouldDisplayMetalStatus, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -609,46 +610,83 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	UnitState = XComGameState_Unit(EventSource);
 	OccupiedSlot = UnitState.GetStaffSlot();
 
-	if (OccupiedSlot != none && OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
+	if (OccupiedSlot != none)
 	{
-		Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();	
-
 		Action = OccupiedSlot.GetCovertAction();
 
-		if (Action != none && !Action.bRemoved)
+		if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
-			if (Action.bStarted)
-			{
-				class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();	
 
-				Tuple.Data[1].s = TimeLabel $ "->100%";
-				Tuple.Data[3].i = int(TimeValue);
-				Tuple.Data[4].i = eUIState_Warning;
-				Tuple.Data[6].b = false;
+			if (Action != none && !Action.bRemoved)
+			{
+				if (Action.bStarted)
+				{
+					class'UIUtilities_Text'.static.GetTimeValueAndLabel(Action.GetNumHoursRemaining(), TimeValue, TimeLabel);
+
+					Tuple.Data[1].s = TimeLabel $ "->100%";
+					Tuple.Data[3].i = int(TimeValue);
+					Tuple.Data[4].i = eUIState_Warning;
+					Tuple.Data[6].b = false;
+				}
+				else
+				{
+					// Squad select
+					Tuple.Data[0].s = class'UIUtilities_Strategy'.default.m_strOnMissionStatus;
+					Tuple.Data[1].s = "";
+					Tuple.Data[4].i = eUIState_Normal;
+					Tuple.Data[5].b = true;
+				}
 			}
 			else
 			{
-				// Squad select
-				Tuple.Data[0].s = class'UIUtilities_Strategy'.default.m_strOnMissionStatus;
-				Tuple.Data[1].s = "";
-				Tuple.Data[5].b = true;
-			}
-		}
-		else
-		{
-			foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionSite)
-			{
-				foreach MissionSite.SoldiersOnMission(UnitRef)
+				foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', MissionSite)
 				{
-					if (UnitState == XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)))
+					foreach MissionSite.SoldiersOnMission(UnitRef)
 					{
-						Tuple.Data[1].s = "";
-						Tuple.Data[2].s = MissionSite.GetCurrentInfilInt() $ "%";
-						Tuple.Data[4].i = eUIState_Warning;
+						if (UnitState == XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID)))
+						{
+							Tuple.Data[1].s = "";
+							Tuple.Data[2].s = MissionSite.GetCurrentInfilInt() $ "%";
+							Tuple.Data[4].i = eUIState_Warning;
+						}
 					}
 				}
 			}
 		}
+		else if (Action != none && !Action.bStarted)
+		{
+			// Squad select (change color to differ from ongoing CAs)
+			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
+			Tuple.Data[4].i = eUIState_Normal;
+			Tuple.Data[5].b = true;
+		}
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn SoldierListItem_ShouldDisplayMetalStatus (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+	local XComGameState_Unit UnitState;
+	local XComGameState_StaffSlot OccupiedSlot;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none) return ELR_NoInterrupt;
+
+	UnitState = XComGameState_Unit(Tuple.Data[1].o);
+	OccupiedSlot = UnitState.GetStaffSlot();
+
+	if (
+		OccupiedSlot != none &&
+		`SCREENSTACK.IsInStack(class'UISquadSelect') &&
+		OccupiedSlot.GetCovertAction() != none &&
+		!OccupiedSlot.GetCovertAction().bStarted &&
+		class'UIUtilities_Strategy'.static.GetXComHQ().Squad.Find('ObjectID', UnitState.ObjectID) != INDEX_NONE
+	)
+	{
+		Tuple.Data[0].b = true;
 	}
 
 	return ELR_NoInterrupt;
