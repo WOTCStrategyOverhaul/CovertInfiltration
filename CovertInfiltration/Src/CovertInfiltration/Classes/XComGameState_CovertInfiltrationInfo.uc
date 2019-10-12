@@ -23,6 +23,7 @@ var int CurrentBarracksLimit;
 var config int StartingBarracksLimit;
 var config int BarracksLimitIncreaseI;
 var config int BarracksLimitIncreaseII;
+var config float RecoveryPenaltyPerSoldier;
 
 /////////////////////
 /// Tactical vars ///
@@ -135,4 +136,20 @@ function IncreaseBarracksSizeII(XComGameState UpdateState)
 	UpdatedInfo = ChangeForGamestate(UpdateState);
 
 	UpdatedInfo.CurrentBarracksLimit += default.BarracksLimitIncreaseII;
+}
+
+function float GetRecoveryTimeModifier()
+{
+	local XComGameState_HeadquartersXcom XComHQ;
+	local float CurrentBarracksSize;
+
+	XComHQ = `XCOMHQ;
+	CurrentBarracksSize = XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
+
+	if (CurrentBarracksSize <= CurrentBarracksLimit)
+	{
+		return 0.0;
+	}
+
+	return (CurrentBarracksSize - CurrentBarracksLimit) * RecoveryPenaltyPerSoldier;
 }
