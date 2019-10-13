@@ -251,9 +251,9 @@ CovertActionsBuildRing="SELECT OPERATION"
 [LivingQuarters_BarracksSizeI X2FacilityUpgradeTemplate]
 DisplayName="Barracks Size I"
 FacilityName="Living Quarters"
-Summary="Barracks size increased by 10."
+Summary="Increases Barracks capacity by 10, allowing more soldiers to be maintained without an increase to recovery times."
 
 [LivingQuarters_BarracksSizeII X2FacilityUpgradeTemplate]
 DisplayName="Barracks Size II"
 FacilityName="Living Quarters"
-Summary="Barracks size increased by a further 10."
+Summary="Increases Barracks capacity by a further 15 without increasing recovery times."

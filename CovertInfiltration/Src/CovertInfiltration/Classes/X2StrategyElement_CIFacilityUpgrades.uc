@@ -28,12 +28,16 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeI()
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeI;
 
 	// Stats
-	Template.iPower = 2;
+	Template.iPower = 3;
 	Template.UpkeepCost = 10;
 
 	// Cost
 	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = 80;
+	Resources.Quantity = 100;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+
+	Resources.ItemTemplateName = 'EleriumDust';
+	Resources.Quantity = 10;
 	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	return Template;
@@ -51,12 +55,20 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeII;
 
 	// Stats
-	Template.iPower = 6;
+	Template.iPower = 7;
 	Template.UpkeepCost = 20;
 
 	// Cost
 	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = 150;
+	Resources.Quantity = 200;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+
+	Resources.ItemTemplateName = 'EleriumDust';
+	Resources.Quantity = 25;
+	Template.Cost.ResourceCosts.AddItem(Resources);
+	
+	Resources.ItemTemplateName = 'EleriumCore';
+	Resources.Quantity = 1;
 	Template.Cost.ResourceCosts.AddItem(Resources);
 
 	return Template;
