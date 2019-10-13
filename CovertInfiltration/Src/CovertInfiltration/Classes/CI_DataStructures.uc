@@ -66,3 +66,22 @@ struct ResourcePackage {
 	var name ItemType;
 	var int ItemAmount;
 };
+
+struct InfilBonusMilestoneDef
+{
+	var name Tier;
+	var int Progress;
+};
+
+struct InfilBonusMilestoneSelection
+{
+	var name Tier;
+	var name Bonus;
+	var bool bGranted;
+};
+
+struct InfilChosenModifer
+{
+	var int Progress;
+	var float Multiplier;
+};

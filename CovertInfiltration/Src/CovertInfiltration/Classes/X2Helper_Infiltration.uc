@@ -24,7 +24,7 @@ var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
 var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
 var config int ASSAULT_MISSION_SITREPS_CHANCE;
-var config int ASSAULT_MISSION_POSITIVE_SITREP_TIER;
+var config name ASSAULT_MISSION_POSITIVE_SITREP_TIER;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)

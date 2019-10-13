@@ -9,25 +9,6 @@
 
 class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite config(Infiltration);
 
-struct InfilBonusMilestoneDef
-{
-	var name Tier;
-	var int Progress;
-};
-
-struct InfilBonusMilestoneSelection
-{
-	var name Tier;
-	var name Bonus;
-	var bool bGranted;
-};
-
-struct InfilChosenModifer
-{
-	var int Progress;
-	var float Multiplier;
-};
-
 // Since spawner action will get erased from history when player launches a mission
 // we need to duplicate any info that is used after the mission site is initialized
 var array<name> AppliedFlatRisks;
@@ -478,7 +459,7 @@ function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
 	NextBonusTier = GetNextValidBonusTier();
 
 	// None left
-	if (NextBonusIndex == '') return none;
+	if (NextBonusTier == '') return none;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	GetBonusMilestoneSelectionByTier(NextBonusTier, Selection);
@@ -495,7 +476,7 @@ function int GetNextThreshold()
 
 	// Return something absurdly highly
 	// Do not return -1 as (GetCurrentInfilInt() > GetNextThreshold()) checks will pass
-	if (NextBonusIndex == '') return 99999;
+	if (NextBonusTier == '') return 99999;
 
 	GetBonusMilestoneDefByTier(NextBonusTier, BonusDef);
 	return BonusDef.Progress;
@@ -614,14 +595,14 @@ protected static function int CompareBonusMilestones (InfilBonusMilestoneDef A, 
 	return A.Progress < B.Progress ? 1 : -1;
 }
 
-function array<InfilBonusMilestoneDef> GetSortedBonusSelection ()
+function array<InfilBonusMilestoneSelection> GetSortedBonusSelection ()
 {
 	local array<InfilBonusMilestoneSelection> SortedSelections;
 
 	SortedSelections = SelectedInfiltartionBonuses;
 	SortedSelections.Sort(CompareBonusMilestones);
 
-	return SortedMilestones;
+	return SortedSelections;
 }
 
 protected static function int CompareBonusSelections (InfilBonusMilestoneSelection A, InfilBonusMilestoneSelection B)
