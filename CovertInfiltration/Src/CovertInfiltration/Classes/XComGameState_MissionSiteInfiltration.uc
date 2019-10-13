@@ -44,7 +44,7 @@ var bool bChosenPresent;
 var int ChosenLevel;
 
 var config array<InfilBonusMilestoneDef> InfiltartionBonusMilestones; // TODO: Validate this array in OPreTC. Also validate the tier in templates
-var config array<InfilChosenModifer> ChosenAppearenceMods;
+var config array<InfilChosenModifer> ChosenAppearenceMods; // TODO: also validate to be at least 2
 var config float ChosenRollInfilInterval;
 
 var localized string strBannerBonusGained;
@@ -666,10 +666,11 @@ function XComGameState_AdventChosen GetCurrentChosen()
 
 function int GetChosenAppereanceChance()
 {
-	local float OverInfilProgress, OverInfilScalar, AlienHQScalar;
+	local array<InfilChosenModifer> SortedChosenAppearenceMods;
+	local float InfilProgress, OverInfilScalar, AlienHQScalar;
 	local XComGameState_AdventChosen CurrentChosen;
 	local XComGameState_HeadquartersAlien AlienHQ;
-	local int BaseChance;
+	local int BaseChance, i;
 
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
@@ -681,13 +682,47 @@ function int GetChosenAppereanceChance()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	OverInfilProgress = GetCurrentOverInfil();
-	OverInfilScalar = Lerp(ChosenAppearenceModAt100, ChosenAppearenceModAt200, OverInfilProgress);
+	InfilProgress = GetCurrentInfilInt();
+	SortedChosenAppearenceMods = ChosenAppearenceMods;
+	SortedChosenAppearenceMods.Sort(SortChosenAppearenceMods);
+
+	for (i = 0; i < SortedChosenAppearenceMods.Length; i++)
+	{
+		if (InfilProgress == SortedChosenAppearenceMods[i].Progress)
+		{
+			OverInfilScalar = SortedChosenAppearenceMods[i].Multiplier;
+			break;
+		}
+		else if (i != 0)
+		{
+			if (InfilProgress > SortedChosenAppearenceMods[i - 1].Progress && InfilProgress < SortedChosenAppearenceMods[i].Progress)
+			{
+				OverInfilScalar = Lerp(
+					SortedChosenAppearenceMods[i - 1].Multiplier, SortedChosenAppearenceMods[i].Multiplier,
+					(InfilProgress - SortedChosenAppearenceMods[i - 1].Progress) / (SortedChosenAppearenceMods[i].Progress - SortedChosenAppearenceMods[i - 1].Progress)
+				);
+				break;
+			}
+		}
+	}
+
+	if (OverInfilScalar <= 0)
+	{
+		`RedScreen("CI: GetChosenAppereanceChance: OverInfilScalar was calculated to be 0 or less. This is invalid and overinfil will be ignored for chosen appearence chance calculation");
+		OverInfilScalar = 1;
+	}
 
 	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
 	if (AlienHQScalar <= 0) AlienHQScalar = 1;
 
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
+}
+
+static protected function int SortChosenAppearenceMods (InfilChosenModifer A, InfilChosenModifer B)
+{
+	if (A.Progress == B.Progress) return 0;
+
+	return A.Progress < B.Progress ? 1 : -1;
 }
 
 function bool ShouldPreformChosenRoll ()
