@@ -6,7 +6,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject config(Infiltration);
+class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
 
 /////////////////////
 /// Strategy vars ///
@@ -19,11 +19,6 @@ var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to hig
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
 
 var int CurrentBarracksLimit;
-
-var config int StartingBarracksLimit;
-var config int BarracksLimitIncreaseI;
-var config int BarracksLimitIncreaseII;
-var config float RecoveryPenaltyPerSoldier;
 
 /////////////////////
 /// Tactical vars ///
@@ -91,7 +86,7 @@ static function CreateInfo(optional XComGameState StartState)
 	if (StartState != none)
 	{
 		Info = XComGameState_CovertInfiltrationInfo(StartState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
-		Info.CurrentBarracksLimit = default.StartingBarracksLimit;
+		Info.CurrentBarracksLimit = class'X2Helper_Infiltration'.default.STARTING_BARRACKS_LIMIT;
 		return;
 	}
 
@@ -113,43 +108,5 @@ protected function InitExistingCampaign()
 		bCompletedFirstOrdersAssignment = true;
 	}
 
-	CurrentBarracksLimit = default.StartingBarracksLimit;
-}
-
-/////////////////////
-/// Barracks Size ///
-/////////////////////
-
-function IncreaseBarracksSizeI(XComGameState UpdateState)
-{
-	local XComGameState_CovertInfiltrationInfo UpdatedInfo;
-
-	UpdatedInfo = ChangeForGamestate(UpdateState);
-
-	UpdatedInfo.CurrentBarracksLimit += default.BarracksLimitIncreaseI;
-}
-
-function IncreaseBarracksSizeII(XComGameState UpdateState)
-{	
-	local XComGameState_CovertInfiltrationInfo UpdatedInfo;
-
-	UpdatedInfo = ChangeForGamestate(UpdateState);
-
-	UpdatedInfo.CurrentBarracksLimit += default.BarracksLimitIncreaseII;
-}
-
-function float GetRecoveryTimeModifier()
-{
-	local XComGameState_HeadquartersXcom XComHQ;
-	local float CurrentBarracksSize;
-
-	XComHQ = `XCOMHQ;
-	CurrentBarracksSize = XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
-
-	if (CurrentBarracksSize <= CurrentBarracksLimit)
-	{
-		return 0.0;
-	}
-
-	return (CurrentBarracksSize - CurrentBarracksLimit) * RecoveryPenaltyPerSoldier;
+	CurrentBarracksLimit = class'X2Helper_Infiltration'.default.STARTING_BARRACKS_LIMIT;
 }

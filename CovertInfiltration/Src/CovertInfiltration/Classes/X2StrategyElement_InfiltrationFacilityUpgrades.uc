@@ -4,7 +4,7 @@
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
-class X2StrategyElement_CIFacilityUpgrades extends X2StrategyElement_DefaultFacilityUpgrades;
+class X2StrategyElement_InfiltrationFacilityUpgrades extends X2StrategyElement_DefaultFacilityUpgrades;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -76,10 +76,19 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 
 static function OnUpgradeAdded_IncreaseBarracksSizeI(XComGameState NewGameState, XComGameState_FacilityUpgrade Upgrade, XComGameState_FacilityXCom Facility)
 {
-	class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().IncreaseBarracksSizeI(NewGameState);
+	IncreaseBarracksSize(NewGameState, class'X2Helper_Infiltration'.default.BARRACKS_LIMIT_INCREASE_I);
 }
 
 static function OnUpgradeAdded_IncreaseBarracksSizeII(XComGameState NewGameState, XComGameState_FacilityUpgrade Upgrade, XComGameState_FacilityXCom Facility)
 {
-	class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().IncreaseBarracksSizeII(NewGameState);
+	IncreaseBarracksSize(NewGameState, class'X2Helper_Infiltration'.default.BARRACKS_LIMIT_INCREASE_II);
+}
+
+static function IncreaseBarracksSize(XComGameState UpdateState, int amount)
+{
+	local XComGameState_CovertInfiltrationInfo UpdatedInfo;
+
+	UpdatedInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().ChangeForGamestate(UpdateState);
+
+	UpdatedInfo.CurrentBarracksLimit += amount;
 }

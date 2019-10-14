@@ -427,14 +427,12 @@ static protected function EventListenerReturn ShortcutsResistanceButtonVisible(O
 
 static function EventListenerReturn UpdateResources(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	local XComGameState_HeadquartersXcom XComHQ;
 	local UIAvengerHUD AvengerHUD;
 	local UIScreenStack ScreenStack;
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
 	
-	XComHQ = `XCOMHQ;
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
@@ -445,7 +443,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		UIRecruitSoldiers(CurrentScreen) != none ||
 		(UIChooseUpgrade(CurrentScreen) != none && UIFacility_LivingQuarters(ScreenStack.GetFirstInstanceOf(class'UIFacility_LivingQuarters')) != none))
 	{
-		CurrentBarracksSize = XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
+		CurrentBarracksSize = class'X2Helper_Infiltration'.static.GetCurrentBarracksSize();
 		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
 
 		if (CurrentBarracksSize > CurrentBarracksLimit)
@@ -464,13 +462,9 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.AddResource(default.strBarracksSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentBarracksSize $ "/" $ CurrentBarracksLimit, MessageColor));
 		
 		AvengerHUD.ShowResources();
-
-		return ELR_NoInterrupt;
 	}
 
 	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
-	
-	if (CovertActions == none) return ELR_NoInterrupt;
 
 	if (
 		CurrentScreen == CovertActions ||
