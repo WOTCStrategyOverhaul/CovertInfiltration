@@ -233,6 +233,30 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 		return true;
 	}
 
+	if (InString == "OPPORTUNE_MOMENT_1_CRIT_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_CRIT_BONUS);
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_1_DETECTION_MODIFIER")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_DETECTION_MODIFIER * 100) $ "%");
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_2_CRIT_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_CRIT_BONUS);
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_2_DETECTION_MODIFIER")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER * 100) $ "%");
+		return true;
+	}
+
 	return false;
 }
 

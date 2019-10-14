@@ -13,12 +13,22 @@ var config int INTELLIGENCE_LEAK_DEBUFF;
 var config int FOXHOLES_MOBILITY;
 var config int FOXHOLES_DEFENSE;
 
+var config int OPPORTUNE_MOMENT_1_CRIT_BONUS;
+var config float OPPORTUNE_MOMENT_1_DETECTION_MODIFIER;
+var config int OPPORTUNE_MOMENT_2_CRIT_BONUS;
+var config float OPPORTUNE_MOMENT_2_DETECTION_MODIFIER;
+
 var localized string MentalReadinessFriendlyName;
 var localized string MentalReadinessFriendlyDesc;
 var localized string IntelligenceLeakFriendlyName;
 var localized string IntelligenceLeakFriendlyDesc;
 var localized string FoxholesFriendlyName;
 var localized string FoxholesFriendlyDesc;
+
+var localized string OpportuneMoment1FriendlyName;
+var localized string OpportuneMoment1FriendlyDesc;
+var localized string OpportuneMoment2FriendlyName;
+var localized string OpportuneMoment2FriendlyDesc;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -28,6 +38,8 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(MentalReadinessBuff());
     Templates.AddItem(IntelligenceLeakDebuff());
     Templates.AddItem(FoxholesBuff());
+    Templates.AddItem(OpportuneMoment1());
+    Templates.AddItem(OpportuneMoment2());
 
     return Templates;
 }
@@ -150,6 +162,60 @@ static function X2AbilityTemplate FoxholesBuff()
     MobilityEffect.SetDisplayInfo(ePerkBuff_Bonus, default.FoxholesFriendlyName, default.FoxholesFriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
 	MobilityEffect.Conditions.AddItem(CoverCondition);
     Template.AddTargetEffect(MobilityEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate OpportuneMoment1 ()
+{
+    local X2AbilityTemplate Template;
+    local X2Effect_PersistentStatChange StatEffect;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment1');
+    //Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
+    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+    Template.bIsPassive = true;
+
+    StatEffect = new class'X2Effect_PersistentStatChange';
+    StatEffect.BuildPersistentEffect(1, true, false, true);
+    StatEffect.AddPersistentStatChange(eStat_CritChance, default.OPPORTUNE_MOMENT_1_CRIT_BONUS);
+    StatEffect.AddPersistentStatChange(eStat_DetectionModifier, default.OPPORTUNE_MOMENT_1_DETECTION_MODIFIER);
+    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.OpportuneMoment1FriendlyName, default.OpportuneMoment1FriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
+    Template.AddTargetEffect(StatEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate OpportuneMoment2 ()
+{
+    local X2AbilityTemplate Template;
+    local X2Effect_PersistentStatChange StatEffect;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment2');
+    //Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
+    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+    Template.bIsPassive = true;
+
+    StatEffect = new class'X2Effect_PersistentStatChange';
+    StatEffect.BuildPersistentEffect(1, true, false, true);
+    StatEffect.AddPersistentStatChange(eStat_CritChance, default.OPPORTUNE_MOMENT_2_CRIT_BONUS);
+    StatEffect.AddPersistentStatChange(eStat_DetectionModifier, default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER);
+    StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.OpportuneMoment2FriendlyName, default.OpportuneMoment2FriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
+    Template.AddTargetEffect(StatEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 

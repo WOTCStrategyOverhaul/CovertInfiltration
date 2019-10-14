@@ -18,6 +18,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateIntelligenceLeakDebuffEffect());
 	Templates.AddItem(CreateTacticalAnalysisAbilityTemplate());
 	Templates.AddItem(CreateFoxholesBuffEffect());
+	Templates.AddItem(CreateOpportuneMoment1Effect());
+	Templates.AddItem(CreateOpportuneMoment2Effect());
 
 	// podsize & encounters
 	Templates.AddItem(CreateGunneryEmplacementsEffectTemplate());
@@ -112,6 +114,30 @@ static function X2SitRepEffectTemplate CreateFoxholesBuffEffect()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'FoxholesBuffEffect');
 
 	Template.AbilityTemplateNames.AddItem('FoxholesBuff');
+	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateOpportuneMoment1Effect()
+{
+	local X2SitRepEffect_GrantAbilities Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'OpportuneMoment1Effect');
+
+	Template.AbilityTemplateNames.AddItem('OpportuneMoment1');
+	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateOpportuneMoment2Effect()
+{
+	local X2SitRepEffect_GrantAbilities Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'OpportuneMoment2Effect');
+
+	Template.AbilityTemplateNames.AddItem('OpportuneMoment2');
 	Template.GrantToSoldiers = true;
 
 	return Template;

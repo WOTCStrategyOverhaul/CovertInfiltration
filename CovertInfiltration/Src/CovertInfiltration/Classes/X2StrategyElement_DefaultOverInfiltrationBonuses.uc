@@ -5,6 +5,7 @@ struct SitRepBonusMapping
 	var name BonusName;
 	var name SitRepName;
 	var name MilestoneName;
+	var array<name> SitRepsToRemove;
 };
 
 var config array<SitRepBonusMapping> SitRepBonuses;
@@ -38,6 +39,7 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 	
 	Template.bSitRep = true;
 	Template.MetatdataName = Mapping.SitRepName;
+	Template.SitRepsToRemove = Mapping.SitRepsToRemove;
 	Template.Milestone = Mapping.MilestoneName;
 	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
 	Template.ApplyFn = ApplySitRepBonus;
