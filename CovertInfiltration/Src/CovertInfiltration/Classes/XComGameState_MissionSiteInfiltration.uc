@@ -932,6 +932,18 @@ protected function UnRegisterFromEvents()
 	EventManager.UnRegisterFromAllEvents(ThisObj);
 }
 
+//////////////////
+/// Validation ///
+//////////////////
+
+static function ValidateConfig ()
+{
+	if (default.ChosenAppearenceMods.Length < 2)
+	{
+		`RedScreen("XCGS_MissionSiteInfiltration::ChosenAppearenceMods needs at least 2 elements");
+	}
+}
+
 ///////////////////////////////
 /// Disabled base functions ///
 ///////////////////////////////

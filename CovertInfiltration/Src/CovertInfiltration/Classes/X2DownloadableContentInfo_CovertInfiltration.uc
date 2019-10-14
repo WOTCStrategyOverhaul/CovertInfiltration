@@ -165,6 +165,8 @@ static event OnPostTemplatesCreated()
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
 	PatchUIWeaponUpgradeItem();
+	
+	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 }
 
 static protected function PatchUIWeaponUpgradeItem()
