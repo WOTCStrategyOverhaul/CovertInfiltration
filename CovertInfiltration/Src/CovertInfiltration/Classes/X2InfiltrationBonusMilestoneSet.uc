@@ -1,4 +1,4 @@
-class X2StrategyElement_DefaultInfiltrationBonusMilestones extends X2StrategyElement config(Infiltration);
+class X2InfiltrationBonusMilestoneSet extends X2DataSet config(Infiltration);
 
 struct InfilBonusMilestoneDef
 {

@@ -28,7 +28,11 @@ function bool ValidateTemplate (out string strError)
 		return false;
 	}
 
-	// TODO: validate Milestone
+	if (class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager().GetMilestoneTemplate(Milestone, false) == none)
+	{
+		strError = "milestone doesn't exist";
+		return false;
+	}
 
 	if (bSitRep)
 	{
