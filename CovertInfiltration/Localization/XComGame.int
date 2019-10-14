@@ -218,7 +218,7 @@ Description="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/> Detection Radius R
 
 [OpportuneMoment2 X2SitRepTemplate]
 FriendlyName="Opportune Moment II"
-Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/> Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
+Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
 RiskName="Show Of Force"

@@ -241,7 +241,7 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 
 	if (InString == "OPPORTUNE_MOMENT_1_DETECTION_MODIFIER")
 	{
-		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_DETECTION_MODIFIER * 100) $ "%");
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_DETECTION_MODIFIER * 100));
 		return true;
 	}
 
@@ -253,7 +253,7 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 
 	if (InString == "OPPORTUNE_MOMENT_2_DETECTION_MODIFIER")
 	{
-		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER * 100) $ "%");
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER * 100));
 		return true;
 	}
 
