@@ -2,10 +2,11 @@ class X2OverInfiltrationBonusTemplate extends X2StrategyElementTemplate config(I
 
 var name MetatdataName;
 var bool bSitRep; // If true, then this bonus adds a sitrep to the mission. MetatdataName must be the template name of the sitrep
+var array<name> SitRepsToRemove; // Only takes effect if bSitRep is true
 
-var config name Milestone; // TODO: Validate
-var config int Weight;
-var config bool DoNotMarkUsed;
+var name Milestone; // TODO: Validate
+var int Weight;
+var bool DoNotMarkUsed;
 
 var protected localized string BonusName;
 var protected localized string BonusDescription;
