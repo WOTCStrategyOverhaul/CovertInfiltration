@@ -24,8 +24,7 @@ var int ChosenRollLastDoneAt;
 var bool bChosenPresent;
 var int ChosenLevel;
 
-var config array<InfilBonusMilestoneDef> InfiltartionBonusMilestones; // TODO: Validate this array in OPreTC. Also validate the tier in templates
-var config array<InfilChosenModifer> ChosenAppearenceMods; // TODO: also validate to be at least 2
+var config array<InfilChosenModifer> ChosenAppearenceMods; // TODO: validate to be at least 2
 var config float ChosenRollInfilInterval;
 
 var localized string strBannerBonusGained;
@@ -220,6 +219,7 @@ protected function ApplyFlatRisks()
 
 protected function SelectOverInfiltrationBonuses()
 {
+	local array<X2InfiltrationBonusMilestoneTemplate> Milestones;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2CardManager CardManager;
@@ -229,17 +229,18 @@ protected function SelectOverInfiltrationBonuses()
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	CardManager = class'X2CardManager'.static.GetCardManager();
+	Milestones = GetSortedBonusMilestones();
 
 	// Build the decks
 	BuildBonusesDeck();
 
 	// Reset the bonuses just in case
 	SelectedInfiltartionBonuses.Length = 0;
-	SelectedInfiltartionBonuses.Length = InfiltartionBonusMilestones.Length;
+	SelectedInfiltartionBonuses.Length = Milestones.Length;
 
-	for (i = 0; i < InfiltartionBonusMilestones.Length; i++)
+	for (i = 0; i < Milestones.Length; i++)
 	{
-		SelectedInfiltartionBonuses[i].Tier = InfiltartionBonusMilestones[i].Tier;
+		SelectedInfiltartionBonuses[i].MilestoneName = Milestones[i].DataName;
 
 		// Need to do this every time to get freshly sorted array
 		CardLabels.Length = 0;
@@ -249,7 +250,7 @@ protected function SelectOverInfiltrationBonuses()
 		{
 			BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(Card)));
 
-			if (BonusTemplate == none || BonusTemplate.Tier != InfiltartionBonusMilestones[i].Tier)
+			if (BonusTemplate == none || BonusTemplate.Milestone != Milestones[i].DataName)
 			{
 				// Something changed or a different tier
 				continue;
@@ -262,7 +263,7 @@ protected function SelectOverInfiltrationBonuses()
 			}
 
 			// All good, use the bonus
-			SelectedInfiltartionBonuses[i].Bonus = BonusTemplate.DataName;
+			SelectedInfiltartionBonuses[i].BonusName = BonusTemplate.DataName;
 
 			if (!BonusTemplate.DoNotMarkUsed)
 			{
@@ -375,7 +376,7 @@ function UpdateGameBoard()
 		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
 
 		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, NewMissionState);
-		NewMissionState.SelectedInfiltartionBonuses[NewMissionState.GetBonusMilestoneSelectionIndexByTier(BonusTemplate.Tier)].bGranted = true;
+		NewMissionState.SelectedInfiltartionBonuses[NewMissionState.GetBonusMilestoneSelectionIndexByMilestone(BonusTemplate.Milestone)].bGranted = true;
 
 		`SubmitGamestate(NewGameState);
 
@@ -452,37 +453,35 @@ protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, O
 
 function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
 {
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local InfilBonusMilestoneSelection Selection;
-	local name NextBonusTier;
 
-	NextBonusTier = GetNextValidBonusTier();
+	MilestoneTemplate = GetNextValidBonusMilestoneTemplate();
 
 	// None left
-	if (NextBonusTier == '') return none;
+	if (MilestoneTemplate == none) return none;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	GetBonusMilestoneSelectionByTier(NextBonusTier, Selection);
+	GetBonusMilestoneSelectionByMilestone(MilestoneTemplate.DataName, Selection);
 
-	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(Selection.Bonus));
+	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(Selection.BonusName));
 }
 
 function int GetNextThreshold()
 {
-	local InfilBonusMilestoneDef BonusDef;
-	local name NextBonusTier;
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
 
-	NextBonusTier = GetNextValidBonusTier();
+	MilestoneTemplate = GetNextValidBonusMilestoneTemplate();
 
 	// Return something absurdly highly
 	// Do not return -1 as (GetCurrentInfilInt() > GetNextThreshold()) checks will pass
-	if (NextBonusTier == '') return 99999;
+	if (MilestoneTemplate == none) return 99999;
 
-	GetBonusMilestoneDefByTier(NextBonusTier, BonusDef);
-	return BonusDef.Progress;
+	return MilestoneTemplate.ActivateAtProgress;
 }
 
-function name GetNextValidBonusTier ()
+function name GetNextValidBonusMilestoneName ()
 {
 	local array<InfilBonusMilestoneSelection> SortedSelectedBonuses;
 	local InfilBonusMilestoneSelection Selection;
@@ -491,13 +490,25 @@ function name GetNextValidBonusTier ()
 
 	foreach SortedSelectedBonuses(Selection)
 	{
-		if (Selection.Bonus != '' && !Selection.bGranted)
+		if (Selection.BonusName != '' && !Selection.bGranted)
 		{
-			return Selection.Tier;
+			return Selection.MilestoneName;
 		}
 	}
 
 	return '';
+}
+
+function X2InfiltrationBonusMilestoneTemplate GetNextValidBonusMilestoneTemplate ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local name MilestoneName;
+
+	MilestoneName = GetNextValidBonusMilestoneName();
+	if (MilestoneName == '') return none;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	return X2InfiltrationBonusMilestoneTemplate(TemplateManager.FindStrategyElementTemplate(MilestoneName));
 }
 
 function PostSitRepsChanged (XComGameState NewGameState)
@@ -527,47 +538,26 @@ function PostSitRepsChanged (XComGameState NewGameState)
 /// Infil bonuses helpers ///
 /////////////////////////////
 
-static function bool GetBonusMilestoneDefByTier (name Tier, out InfilBonusMilestoneDef OutMilestoneDef, optional bool ErrorOtherwise = true)
+function int GetBonusMilestoneSelectionIndexByMilestone (name Milestone, optional bool ErrorOtherwise = true)
 {
 	local int i;
 
-	i = default.InfiltartionBonusMilestones.Find('Tier', Tier);
-
-	if (i != INDEX_NONE)
-	{
-		OutMilestoneDef = default.InfiltartionBonusMilestones[i];
-		return true;
-	}
-
-	if (ErrorOtherwise)
-	{
-		`RedScreen("CI: GetBonusMilestoneDefByTier failed to find tier" @ string(Tier));
-		ScriptTrace();
-	}
-
-	return false;
-}
-
-function int GetBonusMilestoneSelectionIndexByTier (name Tier, optional bool ErrorOtherwise = true)
-{
-	local int i;
-
-	i = SelectedInfiltartionBonuses.Find('Tier', Tier);
+	i = SelectedInfiltartionBonuses.Find('MilestoneName', Milestone);
 
 	if (i == INDEX_NONE && ErrorOtherwise)
 	{
-		`RedScreen("CI: GetBonusMilestoneSelectionIndexByTier failed to find tier" @ string(Tier));
+		`RedScreen("CI: GetBonusMilestoneSelectionIndexByMilestone failed to find milestone" @ string(Milestone));
 		ScriptTrace();
 	}
 
 	return i;
 }
 
-function bool GetBonusMilestoneSelectionByTier (name Tier, out InfilBonusMilestoneSelection OutMilestoneSelection, optional bool ErrorOtherwise = true)
+function bool GetBonusMilestoneSelectionByMilestone (name Milestone, out InfilBonusMilestoneSelection OutMilestoneSelection, optional bool ErrorOtherwise = true)
 {
 	local int i;
 
-	i = GetBonusMilestoneSelectionIndexByTier(Tier, ErrorOtherwise);
+	i = GetBonusMilestoneSelectionIndexByMilestone(Milestone, ErrorOtherwise);
 
 	if (i != INDEX_NONE)
 	{
@@ -578,21 +568,33 @@ function bool GetBonusMilestoneSelectionByTier (name Tier, out InfilBonusMilesto
 	return false;
 }
 
-static function array<InfilBonusMilestoneDef> GetSortedBonusMilestones ()
+static function array<X2InfiltrationBonusMilestoneTemplate> GetSortedBonusMilestones ()
 {
-	local array<InfilBonusMilestoneDef> SortedMilestones;
+	local array<X2InfiltrationBonusMilestoneTemplate> SortedMilestones;
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2DataTemplate DataTemplate;
 
-	SortedMilestones = default.InfiltartionBonusMilestones;
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		MilestoneTemplate = X2InfiltrationBonusMilestoneTemplate(DataTemplate);
+		if (MilestoneTemplate == none) continue;
+
+		SortedMilestones.AddItem(MilestoneTemplate);
+	}
+
 	SortedMilestones.Sort(CompareBonusMilestones);
 
 	return SortedMilestones;
 }
 
-protected static function int CompareBonusMilestones (InfilBonusMilestoneDef A, InfilBonusMilestoneDef B)
+protected static function int CompareBonusMilestones (X2InfiltrationBonusMilestoneTemplate A, X2InfiltrationBonusMilestoneTemplate B)
 {
-	if (A.Progress == B.Progress) return 0;
+	if (A.ActivateAtProgress == B.ActivateAtProgress) return 0;
 
-	return A.Progress < B.Progress ? 1 : -1;
+	return A.ActivateAtProgress < B.ActivateAtProgress ? 1 : -1;
 }
 
 function array<InfilBonusMilestoneSelection> GetSortedBonusSelection ()
@@ -600,21 +602,34 @@ function array<InfilBonusMilestoneSelection> GetSortedBonusSelection ()
 	local array<InfilBonusMilestoneSelection> SortedSelections;
 
 	SortedSelections = SelectedInfiltartionBonuses;
-	SortedSelections.Sort(CompareBonusMilestones);
+	SortedSelections.Sort(CompareBonusSelections);
 
 	return SortedSelections;
 }
 
 protected static function int CompareBonusSelections (InfilBonusMilestoneSelection A, InfilBonusMilestoneSelection B)
 {
-	local InfilBonusMilestoneDef MilestoneDef;
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
 	local int ProgressA, ProgressB;
 
-	if (GetBonusMilestoneDefByTier(A.Tier, MilestoneDef)) ProgressA = MilestoneDef.Progress;
-	else return 0; // GetBonusMilestoneDefByTier will redscreen
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	MilestoneTemplate = X2InfiltrationBonusMilestoneTemplate(TemplateManager.FindStrategyElementTemplate(A.MilestoneName));
+	if (MilestoneTemplate != none) ProgressA = MilestoneTemplate.ActivateAtProgress;
+	else
+	{
+		`RedScreen("CI: CompareBonusSelections: Failed to find X2InfiltrationBonusMilestoneTemplate for" @ A.MilestoneName);
+		return 0;
+	}
 
-	if (GetBonusMilestoneDefByTier(B.Tier, MilestoneDef)) ProgressB = MilestoneDef.Progress;
-	else return 0; // GetBonusMilestoneDefByTier will redscreen
+	MilestoneTemplate = X2InfiltrationBonusMilestoneTemplate(TemplateManager.FindStrategyElementTemplate(B.MilestoneName));
+	if (MilestoneTemplate != none) ProgressB = MilestoneTemplate.ActivateAtProgress;
+	else
+	{
+		`RedScreen("CI: CompareBonusSelections: Failed to find X2InfiltrationBonusMilestoneTemplate for" @ B.MilestoneName);
+		return 0;
+	}
 
 	if (ProgressA == ProgressB) return 0;
 

@@ -358,9 +358,9 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 
 		foreach InfiltrationState.SelectedInfiltartionBonuses(InfilBonusSelection)
 		{
-			if (InfilBonusSelection.Bonus == '') continue;
+			if (InfilBonusSelection.BonusName == '') continue;
 
-			BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(InfilBonusSelection.Bonus));
+			BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(InfilBonusSelection.BonusName));
 
 			if (BonusTemplate.bSitRep)
 			{

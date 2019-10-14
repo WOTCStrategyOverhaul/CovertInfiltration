@@ -67,16 +67,10 @@ struct ResourcePackage {
 	var int ItemAmount;
 };
 
-struct InfilBonusMilestoneDef
-{
-	var name Tier;
-	var int Progress;
-};
-
 struct InfilBonusMilestoneSelection
 {
-	var name Tier;
-	var name Bonus;
+	var name MilestoneName;
+	var name BonusName;
 	var bool bGranted;
 };
 
