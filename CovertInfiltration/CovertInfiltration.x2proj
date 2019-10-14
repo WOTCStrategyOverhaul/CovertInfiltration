@@ -128,13 +128,7 @@
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_ListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIFacility_LivingQuarters_CI.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UILivingQuarters.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
@@ -269,9 +263,6 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2BarracksSizeUnlockTemplate.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ComplicationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
@@ -337,9 +328,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2SitRep_InfiltrationSitRepEffects.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_BarracksUnlocks.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationFacilityUpgrades.uc">
