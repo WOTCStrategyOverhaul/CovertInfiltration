@@ -92,7 +92,6 @@ static function X2AbilityTemplate MentalReadinessBuff()
     ReadinessEffect = new class'X2Effect_MentalReadiness';
     ReadinessEffect.BuildPersistentEffect(1, true, false, true);
     ReadinessEffect.Hitmod = -default.MENTAL_READINESS_VALUE;
-	ReadinessEffect.AddPersistentStatChange(eStat_CritChance, default.MENTAL_READINESS_VALUE);
 	ReadinessEffect.AddPersistentStatChange(eStat_Dodge, default.MENTAL_READINESS_VALUE);
 	ReadinessEffect.AddPersistentStatChange(eStat_Hacking, default.MENTAL_READINESS_VALUE);
     ReadinessEffect.SetDisplayInfo(ePerkBuff_Passive, default.MentalReadinessFriendlyName, default.MentalReadinessFriendlyDesc, Template.IconImage, true, ,Template.AbilitySourceName);

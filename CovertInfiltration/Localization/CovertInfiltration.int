@@ -122,7 +122,7 @@ BonusDescription="Subvert the risk-added sitrep, removing its effects on the mis
 
 [X2Ability_SitRepAbilitySet_CI]
 MentalReadinessFriendlyName="Mental Readiness"
-MentalReadinessFriendlyDesc="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
+MentalReadinessFriendlyDesc="Squad gains +<Ability:MENTAL_READINESS_VALUE/> dodge, hack and defense against psi"
 
 IntelligenceLeakFriendlyName="Full Sensor Coverage"
 IntelligenceLeakFriendlyDesc="Start mission without concealment and compromised detection radius on concealed soldiers."
