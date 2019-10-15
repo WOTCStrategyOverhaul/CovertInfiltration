@@ -292,6 +292,7 @@ static protected function EventListenerReturn TriggerPrototypeAlert(Object Event
 static protected function EventListenerReturn SitRepCheckAdditionalRequirements (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local InfilBonusMilestoneSelection InfilBonusSelection;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2StrategyElementTemplateManager StratMgr;
 	local SitRepMissionPair SitRepMissionExclusion;
@@ -299,9 +300,9 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 	local X2SitRepTemplate TestedSitRepTemplate;
 	local SitRepsArray ExclusivityBucket;
 	local array<name> CurrentSitReps;
-	local name BonusName, SitRepName;
 	local bool bMissionMatched;
 	local XComLWTuple Tuple;
+	local name SitRepName;
 
 	TestedSitRepTemplate = X2SitRepTemplate(EventSource);
 	Tuple = XComLWTuple(EventData);
@@ -355,11 +356,11 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 	{
 		StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-		foreach InfiltrationState.SelectedOverInfiltartionBonuses(BonusName)
+		foreach InfiltrationState.SelectedInfiltartionBonuses(InfilBonusSelection)
 		{
-			if (BonusName == '') continue;
+			if (InfilBonusSelection.BonusName == '') continue;
 
-			BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(BonusName));
+			BonusTemplate = X2OverInfiltrationBonusTemplate(StratMgr.FindStrategyElementTemplate(InfilBonusSelection.BonusName));
 
 			if (BonusTemplate.bSitRep)
 			{

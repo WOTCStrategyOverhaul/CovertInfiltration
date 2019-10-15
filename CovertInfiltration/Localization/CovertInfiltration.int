@@ -122,13 +122,18 @@ BonusDescription="Subvert the risk-added sitrep, removing its effects on the mis
 
 [X2Ability_SitRepAbilitySet_CI]
 MentalReadinessFriendlyName="Mental Readiness"
-MentalReadinessFriendlyDesc="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and defense against psi"
+MentalReadinessFriendlyDesc="Squad gains +<Ability:MENTAL_READINESS_VALUE/> dodge, hack and defense against psi"
 
 IntelligenceLeakFriendlyName="Full Sensor Coverage"
 IntelligenceLeakFriendlyDesc="Start mission without concealment and compromised detection radius on concealed soldiers."
 
 FoxholesFriendlyName="Foxholes"
 FoxholesFriendlyDesc="Squad gains +<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
+
+OpportuneMoment1FriendlyName="Opportune Moment"
+OpportuneMoment1FriendlyDesc="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% crit"
+OpportuneMoment2FriendlyName="Opportune Moment II"
+OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"

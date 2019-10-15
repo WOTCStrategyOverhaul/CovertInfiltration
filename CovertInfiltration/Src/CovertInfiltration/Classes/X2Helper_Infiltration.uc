@@ -24,7 +24,7 @@ var config array<ActionFlatRiskSitRep> FlatRiskSitReps;
 var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFamily;
 
 var config int ASSAULT_MISSION_SITREPS_CHANCE;
-var config int ASSAULT_MISSION_POSITIVE_SITREP_TIER;
+var config name ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -587,7 +587,7 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 
 		if (
 			BonusTemplate == none || // Something changed
-			BonusTemplate.Tier != default.ASSAULT_MISSION_POSITIVE_SITREP_TIER || // Different tier
+			BonusTemplate.Milestone != default.ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE || // Different tier
 			!BonusTemplate.bSitRep // We only consider sitrep bonuses here
 		)
 		{

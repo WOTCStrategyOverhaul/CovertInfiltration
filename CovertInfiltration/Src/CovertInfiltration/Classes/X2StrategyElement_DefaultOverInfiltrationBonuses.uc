@@ -4,6 +4,8 @@ struct SitRepBonusMapping
 {
 	var name BonusName;
 	var name SitRepName;
+	var name MilestoneName;
+	var array<name> SitRepsToRemove;
 };
 
 var config array<SitRepBonusMapping> SitRepBonuses;
@@ -37,6 +39,8 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 	
 	Template.bSitRep = true;
 	Template.MetatdataName = Mapping.SitRepName;
+	Template.SitRepsToRemove = Mapping.SitRepsToRemove;
+	Template.Milestone = Mapping.MilestoneName;
 	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
 	Template.ApplyFn = ApplySitRepBonus;
 	Template.GetBonusNameFn = GetSitRepName;
@@ -72,12 +76,20 @@ static function bool IsSitRepBonusAvaliable(X2OverInfiltrationBonusTemplate Bonu
 
 static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
+	local name SitRepName;
+
+	foreach BonusTemplate.SitRepsToRemove(SitRepName)
+	{
+		Infiltration.GeneratedMission.SitReps.RemoveItem(SitRepName);
+	}
+
 	// While this should not be possible, prevent duplicating sitreps in any case
 	if (Infiltration.GeneratedMission.SitReps.Find(BonusTemplate.MetatdataName) == INDEX_NONE)
 	{
 		Infiltration.GeneratedMission.SitReps.AddItem(BonusTemplate.MetatdataName);
-		Infiltration.PostSitRepsChanged(NewGameState);
 	}
+
+	Infiltration.PostSitRepsChanged(NewGameState);
 }
 
 static function string GetSitRepName(X2OverInfiltrationBonusTemplate BonusTemplate)
@@ -104,6 +116,7 @@ static function X2OverInfiltrationBonusTemplate CreateNegateRiskBonus()
 
 	`CREATE_X2TEMPLATE(class'X2OverInfiltrationBonusTemplate', Template, 'OverInfiltrationBonus_NegateRisk');
 	
+	Template.Milestone = 'RiskRemoval';
 	Template.IsAvaliableFn = IsNegateRiskBonusAvaliable;
 	Template.ApplyFn = ApplyNegateRiskBonus;
 

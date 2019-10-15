@@ -146,11 +146,11 @@ ActionPostNarrative=""
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size I"
-Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time and can reach 200% infiltration."
+Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time and can reach 250% infiltration."
 
 [InfiltrationSize2 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size II"
-Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time and can reach 200% infiltration."
+Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time and can reach 250% infiltration."
 
 [UpdatedFirewalls X2SitRepTemplate]
 FriendlyName="Updated Firewalls"
@@ -158,7 +158,7 @@ Description="Enemy tech defense is increased by <Ability:UPDATED_FIREWALLS_HACK_
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Mental Readiness"
-Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> crit, dodge, hack and psi defense"
+Description="Squad gains +<Ability:MENTAL_READINESS_VALUE/> dodge, hack and psi defense"
 
 [LightningStrike X2SitRepTemplate]
 FriendlyName="Lightning Strike"
@@ -211,6 +211,14 @@ Description="Extra ADVENT reinforcements will be dropped into the AO once the en
 [CommsJamming X2SitRepTemplate]
 FriendlyName="Comms Jamming"
 Description="The first ADVENT reinforcements dropship will be delayed"
+
+[OpportuneMoment1 X2SitRepTemplate]
+FriendlyName="Opportune Moment"
+Description="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% crit"
+
+[OpportuneMoment2 X2SitRepTemplate]
+FriendlyName="Opportune Moment II"
+Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
 [CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
 RiskName="Show Of Force"

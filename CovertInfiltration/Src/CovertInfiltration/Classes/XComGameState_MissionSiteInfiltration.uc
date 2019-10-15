@@ -12,21 +12,19 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 // Since spawner action will get erased from history when player launches a mission
 // we need to duplicate any info that is used after the mission site is initialized
 var array<name> AppliedFlatRisks;
+var float SecondsForOnePercent;
 var int MaxAllowedInfil;
 
-var array<StateObjectReference> SoldiersOnMission;
-
 var array<name> AppliedSitRepTags;
-var array<name> SelectedOverInfiltartionBonuses;
-var int OverInfiltartionBonusesGranted;
+var array<StateObjectReference> SoldiersOnMission;
+var array<InfilBonusMilestoneSelection> SelectedInfiltartionBonuses;
 
+// Chosen tracking
 var int ChosenRollLastDoneAt;
 var bool bChosenPresent;
 var int ChosenLevel;
 
-var config array<int> OverInfiltartionThresholds;
-var config float ChosenAppearenceModAt100;
-var config float ChosenAppearenceModAt200;
+var config array<InfilChosenModifer> ChosenAppearenceMods;
 var config float ChosenRollInfilInterval;
 
 var localized string strBannerBonusGained;
@@ -118,6 +116,7 @@ protected function CopyDataFromAction ()
 	local ActionFlatRiskSitRep FlatRiskSitRep;
 	local XComGameState_CovertAction Action;
 	local CovertActionRisk Risk;
+	local int ActionDuration;
 
 	Action = GetSpawningAction();
 
@@ -144,10 +143,10 @@ protected function CopyDataFromAction ()
 
 	// The mission phase starts once the action finishes (100%)
 	TimerStartDateTime = Action.EndDateTime;
-	ExpirationDateTime = Action.EndDateTime;
 
-	// And ends at 200%
-	class'X2StrategyGameRulesetDataStructures'.static.AddHours(ExpirationDateTime, Action.HoursToComplete);
+	// Calculate the infiltration speed (this allows for arbitrary max infil %)
+	ActionDuration = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(Action.EndDateTime, Action.StartDateTime);
+	SecondsForOnePercent = ActionDuration / 100;
 }
 
 protected function SelectPlotAndBiome()
@@ -220,6 +219,7 @@ protected function ApplyFlatRisks()
 
 protected function SelectOverInfiltrationBonuses()
 {
+	local array<X2InfiltrationBonusMilestoneTemplate> Milestones;
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2CardManager CardManager;
@@ -227,6 +227,7 @@ protected function SelectOverInfiltrationBonuses()
 	local string Card;
 	local int i;
 
+	Milestones = class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager().GetSortedBonusMilestones();
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	CardManager = class'X2CardManager'.static.GetCardManager();
 
@@ -234,11 +235,13 @@ protected function SelectOverInfiltrationBonuses()
 	BuildBonusesDeck();
 
 	// Reset the bonuses just in case
-	SelectedOverInfiltartionBonuses.Length = 0;
-	SelectedOverInfiltartionBonuses.Length = OverInfiltartionThresholds.Length;
+	SelectedInfiltartionBonuses.Length = 0;
+	SelectedInfiltartionBonuses.Length = Milestones.Length;
 
-	for (i = 0; i < OverInfiltartionThresholds.Length; i++)
+	for (i = 0; i < Milestones.Length; i++)
 	{
+		SelectedInfiltartionBonuses[i].MilestoneName = Milestones[i].DataName;
+
 		// Need to do this every time to get freshly sorted array
 		CardLabels.Length = 0;
 		CardManager.GetAllCardsInDeck('OverInfiltrationBonuses', CardLabels);
@@ -247,7 +250,7 @@ protected function SelectOverInfiltrationBonuses()
 		{
 			BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(name(Card)));
 
-			if (BonusTemplate == none || BonusTemplate.Tier != i)
+			if (BonusTemplate == none || BonusTemplate.Milestone != Milestones[i].DataName)
 			{
 				// Something changed or a different tier
 				continue;
@@ -260,14 +263,14 @@ protected function SelectOverInfiltrationBonuses()
 			}
 
 			// All good, use the bonus
-			SelectedOverInfiltartionBonuses[i] = name(Card);
+			SelectedInfiltartionBonuses[i].BonusName = BonusTemplate.DataName;
 
 			if (!BonusTemplate.DoNotMarkUsed)
 			{
 				CardManager.MarkCardUsed('OverInfiltrationBonuses', Card);
 			}
 
-			// We are done for this tier
+			// We are done for this milestone
 			break;
 		}
 
@@ -348,9 +351,9 @@ function UpdateSitrepTags()
 	AppliedSitRepTags = RequiredTags;
 }
 
-/////////////////
-/// Overinfil ///
-/////////////////
+/////////////////////////
+/// Progress tracking ///
+/////////////////////////
 
 function UpdateGameBoard()
 {
@@ -363,7 +366,7 @@ function UpdateGameBoard()
 	if (!Available) return;
 
 	// Check if we should give an overinfil bonus
-	// Do this before showing the screen to support 200% rewards
+	// Do this before showing the screen to support max infil rewards
 
 	BonusTemplate = GetNextOverInfiltrationBonus();
 
@@ -373,7 +376,7 @@ function UpdateGameBoard()
 		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
 
 		BonusTemplate.ApplyFn(NewGameState, BonusTemplate, NewMissionState);
-		NewMissionState.OverInfiltartionBonusesGranted++;
+		NewMissionState.SelectedInfiltartionBonuses[NewMissionState.GetBonusMilestoneSelectionIndexByMilestone(BonusTemplate.Milestone)].bGranted = true;
 
 		`SubmitGamestate(NewGameState);
 
@@ -396,13 +399,11 @@ function UpdateGameBoard()
 
 function float GetCurrentOverInfil()
 {
-	local float FullDurationDiff, CurrentDiff;
+	local int SecondsSinceMission;
 
-	// Use seconds so that we support 200% tiers
-	FullDurationDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationDateTime, TimerStartDateTime);
-	CurrentDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(ExpirationDateTime, GetCurrentTime());
+	SecondsSinceMission = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(GetCurrentTime(), TimerStartDateTime);
 
-	return 1 - CurrentDiff / FullDurationDiff;
+	return SecondsSinceMission / SecondsForOnePercent / 100;
 }
 
 function float GetCurrentInfil()
@@ -415,59 +416,6 @@ function int GetCurrentInfilInt()
 	// Truncate, not round on purpose 
 	// We want the percentage to go up only when a percent is fully accumulated
 	return int(GetCurrentInfil() * 100);
-}
-
-protected function int CompareThresholds (int A, int B)
-{
-	if (A == B) return 0;
-
-	return A < B ? 1 : -1;
-}
-
-function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
-{
-	local X2StrategyElementTemplateManager TemplateManager;
-	local int NextBonusIndex;
-
-	NextBonusIndex = GetNextValidBonusIndex();
-
-	// None left
-	if (NextBonusIndex < 0) return none;
-
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(SelectedOverInfiltartionBonuses[OverInfiltartionBonusesGranted]));
-}
-
-function int GetNextThreshold()
-{
-	local array<int> SortedThresholds;
-	local int NextBonusIndex;
-
-	NextBonusIndex = GetNextValidBonusIndex();
-
-	// Return something absurdly highly
-	// Do not return -1 as (GetCurrentInfilInt() > GetNextThreshold()) checks will pass
-	if (NextBonusIndex < 0) return 99999;
-
-	SortedThresholds = OverInfiltartionThresholds;
-	SortedThresholds.Sort(CompareThresholds);
-
-	return SortedThresholds[OverInfiltartionBonusesGranted];
-}
-
-function int GetNextValidBonusIndex()
-{
-	local int i;
-
-	for (i = OverInfiltartionBonusesGranted; i < OverInfiltartionThresholds.Length; i++)
-	{
-		if (SelectedOverInfiltartionBonuses[i] != '')
-		{
-			return i;
-		}
-	}
-
-	return -1;
 }
 
 function bool MustLaunch()
@@ -499,7 +447,70 @@ protected function EventListenerReturn OnPreventGeoscapeTick(Object EventData, O
 	return ELR_NoInterrupt;
 }
 
-function PostSitRepsChanged(XComGameState NewGameState)
+/////////////////////
+/// Infil bonuses ///
+/////////////////////
+
+function X2OverInfiltrationBonusTemplate GetNextOverInfiltrationBonus()
+{
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local InfilBonusMilestoneSelection Selection;
+
+	MilestoneTemplate = GetNextValidBonusMilestoneTemplate();
+
+	// None left
+	if (MilestoneTemplate == none) return none;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	GetBonusMilestoneSelectionByMilestone(MilestoneTemplate.DataName, Selection);
+
+	return X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(Selection.BonusName));
+}
+
+function int GetNextThreshold()
+{
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+
+	MilestoneTemplate = GetNextValidBonusMilestoneTemplate();
+
+	// Return something absurdly highly
+	// Do not return -1 as (GetCurrentInfilInt() > GetNextThreshold()) checks will pass
+	if (MilestoneTemplate == none) return 99999;
+
+	return MilestoneTemplate.ActivateAtProgress;
+}
+
+function name GetNextValidBonusMilestoneName ()
+{
+	local array<InfilBonusMilestoneSelection> SortedSelectedBonuses;
+	local InfilBonusMilestoneSelection Selection;
+
+	SortedSelectedBonuses = GetSortedBonusSelection();
+
+	foreach SortedSelectedBonuses(Selection)
+	{
+		if (Selection.BonusName != '' && !Selection.bGranted)
+		{
+			return Selection.MilestoneName;
+		}
+	}
+
+	return '';
+}
+
+function X2InfiltrationBonusMilestoneTemplate GetNextValidBonusMilestoneTemplate ()
+{
+	local name MilestoneName;
+
+	MilestoneName = GetNextValidBonusMilestoneName();
+	if (MilestoneName == '') return none;
+
+	return class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager()
+		.GetMilestoneTemplate(MilestoneName);
+}
+
+function PostSitRepsChanged (XComGameState NewGameState)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
 	local int MissionDataIndex;
@@ -520,6 +531,71 @@ function PostSitRepsChanged(XComGameState NewGameState)
 	SelectedMissionData.SelectedMissionScheduleName = '';
 
 	`XEVENTMGR.TriggerEvent('InfiltrationSitRepsChanged', self, self, NewGameState);
+}
+
+/////////////////////////////
+/// Infil bonuses helpers ///
+/////////////////////////////
+
+function int GetBonusMilestoneSelectionIndexByMilestone (name Milestone, optional bool ErrorOtherwise = true)
+{
+	local int i;
+
+	i = SelectedInfiltartionBonuses.Find('MilestoneName', Milestone);
+
+	if (i == INDEX_NONE && ErrorOtherwise)
+	{
+		`RedScreen("CI: GetBonusMilestoneSelectionIndexByMilestone failed to find milestone" @ string(Milestone));
+		ScriptTrace();
+	}
+
+	return i;
+}
+
+function bool GetBonusMilestoneSelectionByMilestone (name Milestone, out InfilBonusMilestoneSelection OutMilestoneSelection, optional bool ErrorOtherwise = true)
+{
+	local int i;
+
+	i = GetBonusMilestoneSelectionIndexByMilestone(Milestone, ErrorOtherwise);
+
+	if (i != INDEX_NONE)
+	{
+		OutMilestoneSelection = SelectedInfiltartionBonuses[i];
+		return true;
+	}
+
+	return false;
+}
+
+function array<InfilBonusMilestoneSelection> GetSortedBonusSelection ()
+{
+	local array<InfilBonusMilestoneSelection> SortedSelections;
+
+	SortedSelections = SelectedInfiltartionBonuses;
+	SortedSelections.Sort(CompareBonusSelections);
+
+	return SortedSelections;
+}
+
+protected static function int CompareBonusSelections (InfilBonusMilestoneSelection A, InfilBonusMilestoneSelection B)
+{
+	local X2InfiltrationBonusMilestoneTemplateManager TemplateManager;
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+	local int ProgressA, ProgressB;
+
+	TemplateManager = class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager();
+	
+	MilestoneTemplate = TemplateManager.GetMilestoneTemplate(A.MilestoneName);
+	if (MilestoneTemplate != none) ProgressA = MilestoneTemplate.ActivateAtProgress;
+	else return 0; // GetMilestoneTemplate will redscreen
+
+	MilestoneTemplate = TemplateManager.GetMilestoneTemplate(B.MilestoneName);
+	if (MilestoneTemplate != none) ProgressB = MilestoneTemplate.ActivateAtProgress;
+	else return 0; // GetMilestoneTemplate will redscreen
+
+	if (ProgressA == ProgressB) return 0;
+
+	return ProgressA < ProgressB ? 1 : -1;
 }
 
 //////////////
@@ -548,10 +624,11 @@ function XComGameState_AdventChosen GetCurrentChosen()
 
 function int GetChosenAppereanceChance()
 {
-	local float OverInfilProgress, OverInfilScalar, AlienHQScalar;
+	local array<InfilChosenModifer> SortedChosenAppearenceMods;
+	local float InfilProgress, OverInfilScalar, AlienHQScalar;
 	local XComGameState_AdventChosen CurrentChosen;
 	local XComGameState_HeadquartersAlien AlienHQ;
-	local int BaseChance;
+	local int BaseChance, i;
 
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
@@ -563,13 +640,47 @@ function int GetChosenAppereanceChance()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	OverInfilProgress = GetCurrentOverInfil();
-	OverInfilScalar = Lerp(ChosenAppearenceModAt100, ChosenAppearenceModAt200, OverInfilProgress);
+	InfilProgress = GetCurrentInfilInt();
+	SortedChosenAppearenceMods = ChosenAppearenceMods;
+	SortedChosenAppearenceMods.Sort(SortChosenAppearenceMods);
+
+	for (i = 0; i < SortedChosenAppearenceMods.Length; i++)
+	{
+		if (InfilProgress == SortedChosenAppearenceMods[i].Progress)
+		{
+			OverInfilScalar = SortedChosenAppearenceMods[i].Multiplier;
+			break;
+		}
+		else if (i != 0)
+		{
+			if (InfilProgress > SortedChosenAppearenceMods[i - 1].Progress && InfilProgress < SortedChosenAppearenceMods[i].Progress)
+			{
+				OverInfilScalar = Lerp(
+					SortedChosenAppearenceMods[i - 1].Multiplier, SortedChosenAppearenceMods[i].Multiplier,
+					(InfilProgress - SortedChosenAppearenceMods[i - 1].Progress) / (SortedChosenAppearenceMods[i].Progress - SortedChosenAppearenceMods[i - 1].Progress)
+				);
+				break;
+			}
+		}
+	}
+
+	if (OverInfilScalar <= 0)
+	{
+		`RedScreen("CI: GetChosenAppereanceChance: OverInfilScalar was calculated to be 0 or less. This is invalid and overinfil will be ignored for chosen appearence chance calculation");
+		OverInfilScalar = 1;
+	}
 
 	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
 	if (AlienHQScalar <= 0) AlienHQScalar = 1;
 
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
+}
+
+static protected function int SortChosenAppearenceMods (InfilChosenModifer A, InfilChosenModifer B)
+{
+	if (A.Progress == B.Progress) return 0;
+
+	return A.Progress < B.Progress ? 1 : -1;
 }
 
 function bool ShouldPreformChosenRoll ()
@@ -781,6 +892,18 @@ protected function UnRegisterFromEvents()
 	ThisObj = self;
 
 	EventManager.UnRegisterFromAllEvents(ThisObj);
+}
+
+//////////////////
+/// Validation ///
+//////////////////
+
+static function ValidateConfig ()
+{
+	if (default.ChosenAppearenceMods.Length < 2)
+	{
+		`RedScreen("XCGS_MissionSiteInfiltration::ChosenAppearenceMods needs at least 2 elements");
+	}
 }
 
 ///////////////////////////////

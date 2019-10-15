@@ -165,6 +165,8 @@ static event OnPostTemplatesCreated()
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
 	PatchUIWeaponUpgradeItem();
+	
+	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 }
 
 static protected function PatchUIWeaponUpgradeItem()
@@ -228,6 +230,30 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 	if (InString == "LIGHTNINGSTRIKEDURATIONACTUAL")
 	{
 		OutString = string(class'X2Ability_OfficerTrainingSchool'.default.LIGHTNING_STRIKE_NUM_TURNS);
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_1_CRIT_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_CRIT_BONUS);
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_1_DETECTION_MODIFIER")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_1_DETECTION_MODIFIER * 100));
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_2_CRIT_BONUS")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_CRIT_BONUS);
+		return true;
+	}
+
+	if (InString == "OPPORTUNE_MOMENT_2_DETECTION_MODIFIER")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER * 100));
 		return true;
 	}
 

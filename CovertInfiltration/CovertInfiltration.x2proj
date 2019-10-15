@@ -291,6 +291,15 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration_TemplateMod.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationBonusMilestoneSet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationBonusMilestoneTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationBonusMilestoneTemplateManager.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2InfiltrationModTemplate.uc">
       <SubType>Content</SubType>
     </Content>
