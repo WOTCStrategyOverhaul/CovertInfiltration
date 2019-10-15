@@ -7,6 +7,8 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
+var config int MaxOverLimitTillRed;
+
 // The replacements set directly in config. Will be preferred
 var config array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacements;
 
@@ -446,17 +448,17 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		CurrentBarracksSize = class'X2Helper_Infiltration'.static.GetCurrentBarracksSize();
 		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
 
-		if (CurrentBarracksSize > CurrentBarracksLimit)
+		if (CurrentBarracksSize < CurrentBarracksLimit)
 		{
-			MessageColor = eUIState_Bad;
+			MessageColor = eUIState_Cash;
 		}
-		else if (CurrentBarracksSize == CurrentBarracksLimit)
+		else if (CurrentBarracksSize < CurrentBarracksLimit + default.MaxOverLimitTillRed)
 		{
 			MessageColor = eUIState_Warning;
 		}
 		else
 		{
-			MessageColor = eUIState_Cash;
+			MessageColor = eUIState_Bad;
 		}
 		
 		AvengerHUD.AddResource(default.strBarracksSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentBarracksSize $ "/" $ CurrentBarracksLimit, MessageColor));
