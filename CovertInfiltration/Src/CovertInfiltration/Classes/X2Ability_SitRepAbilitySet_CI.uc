@@ -173,7 +173,7 @@ static function X2AbilityTemplate OpportuneMoment1 ()
     local X2Effect_PersistentStatChange StatEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment1');
-    //Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_OpportuneMoment1";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
@@ -200,7 +200,7 @@ static function X2AbilityTemplate OpportuneMoment2 ()
     local X2Effect_PersistentStatChange StatEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment2');
-    //Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_OpportuneMoment2";
     Template.AbilitySourceName = 'eAbilitySource_Perk';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
