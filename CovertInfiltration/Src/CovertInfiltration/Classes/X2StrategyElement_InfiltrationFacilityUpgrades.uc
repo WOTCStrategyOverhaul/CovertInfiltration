@@ -4,7 +4,15 @@
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
-class X2StrategyElement_InfiltrationFacilityUpgrades extends X2StrategyElement_DefaultFacilityUpgrades;
+class X2StrategyElement_InfiltrationFacilityUpgrades extends X2StrategyElement_DefaultFacilityUpgrades config(Infiltration);
+
+var config int BarracksSizeI_Power;
+var config int BarracksSizeI_UpkeepCost;
+var config StrategyCost BarracksSizeI_Cost;
+
+var config int BarracksSizeII_Power;
+var config int BarracksSizeII_UpkeepCost;
+var config StrategyCost BarracksSizeII_Cost;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -19,7 +27,6 @@ static function array<X2DataTemplate> CreateTemplates()
 static function X2DataTemplate CreateLivingQuarters_BarracksSizeI()
 {
 	local X2FacilityUpgradeTemplate Template;
-	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2FacilityUpgradeTemplate', Template, 'LivingQuarters_BarracksSizeI');
 	Template.PointsToComplete = 0;
@@ -27,18 +34,9 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeI()
 	Template.strImage = "img:///UILibrary_StrategyImages.FacilityIcons.ChooseFacility_PowerConduitUpgrade";
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeI;
 
-	// Stats
-	Template.iPower = -3;
-	Template.UpkeepCost = 10;
-
-	// Cost
-	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = 100;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
-	Resources.ItemTemplateName = 'EleriumDust';
-	Resources.Quantity = 10;
-	Template.Cost.ResourceCosts.AddItem(Resources);
+	Template.iPower = default.BarracksSizeI_Power;
+	Template.UpkeepCost = default.BarracksSizeI_UpkeepCost;
+	Template.Cost = default.BarracksSizeI_Cost;
 
 	return Template;
 }
@@ -46,7 +44,6 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeI()
 static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 {
 	local X2FacilityUpgradeTemplate Template;
-	local ArtifactCost Resources;
 
 	`CREATE_X2TEMPLATE(class'X2FacilityUpgradeTemplate', Template, 'LivingQuarters_BarracksSizeII');
 	Template.PointsToComplete = 0;
@@ -54,22 +51,9 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 	Template.strImage = "img:///UILibrary_StrategyImages.FacilityIcons.ChooseFacility_EleriumConduitUpgrade";
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeII;
 
-	// Stats
-	Template.iPower = -7;
-	Template.UpkeepCost = 20;
-
-	// Cost
-	Resources.ItemTemplateName = 'Supplies';
-	Resources.Quantity = 200;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-
-	Resources.ItemTemplateName = 'EleriumDust';
-	Resources.Quantity = 25;
-	Template.Cost.ResourceCosts.AddItem(Resources);
-	
-	Resources.ItemTemplateName = 'EleriumCore';
-	Resources.Quantity = 1;
-	Template.Cost.ResourceCosts.AddItem(Resources);
+	Template.iPower = default.BarracksSizeII_Power;
+	Template.UpkeepCost = default.BarracksSizeII_UpkeepCost;
+	Template.Cost = default.BarracksSizeII_Cost;
 
 	return Template;
 }
