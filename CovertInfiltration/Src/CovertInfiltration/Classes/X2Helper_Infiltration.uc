@@ -660,8 +660,8 @@ static function float GetRecoveryTimeModifier()
 
 	if (CurrentBarracksSize <= CurrentBarracksLimit)
 	{
-		return 0.0;
+		return 1.0;
 	}
 
-	return (CurrentBarracksSize - CurrentBarracksLimit) * default.RECOVERY_PENALTY_PER_SOLDIER;
+	return 1.0 - ((CurrentBarracksSize - CurrentBarracksLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
 }

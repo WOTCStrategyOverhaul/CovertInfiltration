@@ -579,7 +579,7 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 
 	if (Tuple == none || Tuple.Id != 'WillRecoveryTimeModifier') return ELR_NoInterrupt;
 
-	Tuple.Data[0].f = 1.0 - class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
+	Tuple.Data[0].f = class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
 
 	return ELR_NoInterrupt;
 }
