@@ -7,7 +7,7 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
-var config int MaxOverLimitTillRed;
+var config int MaxOverBarracksLimitTillRed;
 
 // The replacements set directly in config. Will be preferred
 var config array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacements;
@@ -452,7 +452,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		{
 			MessageColor = eUIState_Cash;
 		}
-		else if (CurrentBarracksSize < CurrentBarracksLimit + default.MaxOverLimitTillRed)
+		else if (CurrentBarracksSize < CurrentBarracksLimit + default.MaxOverBarracksLimitTillRed)
 		{
 			MessageColor = eUIState_Warning;
 		}

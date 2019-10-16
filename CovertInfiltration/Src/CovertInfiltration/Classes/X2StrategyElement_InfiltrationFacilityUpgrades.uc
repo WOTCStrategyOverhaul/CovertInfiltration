@@ -28,7 +28,7 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeI()
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeI;
 
 	// Stats
-	Template.iPower = 3;
+	Template.iPower = -3;
 	Template.UpkeepCost = 10;
 
 	// Cost
@@ -55,7 +55,7 @@ static function X2DataTemplate CreateLivingQuarters_BarracksSizeII()
 	Template.OnUpgradeAddedFn = OnUpgradeAdded_IncreaseBarracksSizeII;
 
 	// Stats
-	Template.iPower = 7;
+	Template.iPower = -7;
 	Template.UpkeepCost = 20;
 
 	// Cost
