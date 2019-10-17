@@ -58,7 +58,7 @@ static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverPersonnel", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.OnSuccess = OnSuccessPOI;
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -109,7 +109,7 @@ static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverInformant", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.OnSuccess = OnSuccessPOI;
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -172,7 +172,7 @@ static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
 	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('Supplies', 25));
 
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
-	CovertAction.Rewards.AddItem('Reward_None');
+	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
 
@@ -189,7 +189,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "CounterDarkEvent", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
 
 	Activity.OnSuccess = OnSuccessPOI;
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -210,7 +210,7 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.Rewards.AddItem('Reward_None');
+	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
 
@@ -278,7 +278,7 @@ static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverUFO", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.OnSuccess = OnSuccessPOI;
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -301,7 +301,7 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierCaptured');
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
-	CovertAction.Rewards.AddItem('Reward_None');
+	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
 
@@ -320,7 +320,7 @@ static function CreateLandedUFO (out array<X2DataTemplate> Templates)
 	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
 	
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 
@@ -336,7 +336,7 @@ static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "CommanderSupply", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
 
 	Activity.OnSuccess = OnSuccessPOI;
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -352,7 +352,7 @@ static function CreateSupplyRaid (out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_SupplyRaidInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "SupplyRaid", "SupplyRaid_AdvConvoy", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid");
 
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	
@@ -374,7 +374,7 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Risks.AddItem('CovertActionRisk_Ambush');
-	CovertAction.Rewards.AddItem('Reward_None');
+	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
 
@@ -429,7 +429,7 @@ static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
 	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
 	
-	Activity.MissionRewards.AddItem('Reward_None');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 
