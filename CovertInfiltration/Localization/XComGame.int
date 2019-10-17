@@ -255,3 +255,13 @@ CovertActionRiskLabels[4]="Extreme"
 ; We don't care if the ring is built or not, always show the same message
 CovertActionsGoToRing="SELECT OPERATION"
 CovertActionsBuildRing="SELECT OPERATION"
+
+[LivingQuarters_BarracksSizeI X2FacilityUpgradeTemplate]
+DisplayName="Barracks Size I"
+FacilityName="Living Quarters"
+Summary="Increases Barracks capacity by 10, allowing more soldiers to be maintained without an increase to recovery times."
+
+[LivingQuarters_BarracksSizeII X2FacilityUpgradeTemplate]
+DisplayName="Barracks Size II"
+FacilityName="Living Quarters"
+Summary="Increases Barracks capacity by a further 15 without increasing recovery times."

@@ -26,6 +26,11 @@ var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFa
 var config int ASSAULT_MISSION_SITREPS_CHANCE;
 var config name ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE;
 
+var config int STARTING_BARRACKS_LIMIT;
+var config int BARRACKS_LIMIT_INCREASE_I;
+var config int BARRACKS_LIMIT_INCREASE_II;
+var config float RECOVERY_PENALTY_PER_SOLDIER;
+
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
 {
@@ -635,4 +640,28 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 
 	// Prevent compiler warning
 	EmptyArray.Length = 0;
+}
+
+static function int GetCurrentBarracksSize()
+{
+	local XComGameState_HeadquartersXcom XComHQ;
+		
+	XComHQ = `XCOMHQ;
+
+	return XComHQ.GetNumberOfSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
+}
+
+static function float GetRecoveryTimeModifier()
+{
+	local float CurrentBarracksSize, CurrentBarracksLimit;
+
+	CurrentBarracksSize = GetCurrentBarracksSize();
+	CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
+
+	if (CurrentBarracksSize <= CurrentBarracksLimit)
+	{
+		return 1.0;
+	}
+
+	return 1.0 - ((CurrentBarracksSize - CurrentBarracksLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
 }

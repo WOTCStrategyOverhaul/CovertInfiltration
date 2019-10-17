@@ -138,6 +138,7 @@ OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
+strBarracksSizeTitle="BARRACKS"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration bonus gained"
@@ -322,7 +323,7 @@ strCovertActionFinishedHeader="Fatigue from Covert Actions"
 strCovertActionFinishedBody="Just like missions, Covert Actions will also have an effect on your soldiers' willpower. If they end up tired they won't be able to deploy on another Covert Action until they have recovered.<br/>While Covert Actions can be an easy way to gain benefits, you should be careful about how many you attempt at any given time. Deploying lots of soldiers will leave you exposed when other more time-critical missions appear, and not all Covert Actions are worth the risks."
 
 strFacilityChangesHeader="Facility Changes"
-strFacilityChangesBody="The Resistance Ring is no longer necessary to prepare Covert Actions, instead building it will unlock Resistance Orders. When you finish building the Ring, you will be able to assign the orders instantly (without waiting for a supply drop).<br/>In addition, the GTS now has 2 rookie training slots."
+strFacilityChangesBody="The Resistance Ring is no longer needed to prepare Covert Actions - instead, building it unlocks Resistance Orders. Once the Ring is built, you will be able to assign orders instantly, without waiting for a supply drop.<br/>You are now limited in how many personnel you can maintain at once by the Barracks Limit. For each soldier, scientist, or engineer over the limit, will recovery times are increased by 10%. The limit can be increased via upgrades in the Living Quarters.<br/>In addition, the GTS now has 2 rookie training slots."
 
 strActivityChainsHeader="Activity Chains"
 strActivityChainsBody="An activity chain is a set of missions and/or covert actions that yields big rewards. They will be presented to you by the resistance and as your network grows more opportunities will be revealed.<br/>While the main reward(s) are usually given at the end of the chain, the earlier missions are still beneficial for XP and loot even if you don't intend to finish the chain."

@@ -7,6 +7,8 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
+var config int MaxOverBarracksLimitTillRed;
+
 // The replacements set directly in config. Will be preferred
 var config array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacements;
 
@@ -15,6 +17,7 @@ var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic
 
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
+var localized string strBarracksSizeTitle;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -428,17 +431,42 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 {
 	local UIAvengerHUD AvengerHUD;
 	local UIScreenStack ScreenStack;
-
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
-
+	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
+	
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
-
 	CurrentScreen = ScreenStack.GetCurrentScreen();
-	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	
+	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
+		UIStrategyMap(CurrentScreen) != none ||
+		UIFacilityGrid(CurrentScreen) != none ||
+		UIRecruitSoldiers(CurrentScreen) != none ||
+		(UIChooseUpgrade(CurrentScreen) != none && UIFacility_LivingQuarters(ScreenStack.GetFirstInstanceOf(class'UIFacility_LivingQuarters')) != none))
+	{
+		CurrentBarracksSize = class'X2Helper_Infiltration'.static.GetCurrentBarracksSize();
+		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
 
-	if (CovertActions == none) return ELR_NoInterrupt;
+		if (CurrentBarracksSize < CurrentBarracksLimit)
+		{
+			MessageColor = eUIState_Cash;
+		}
+		else if (CurrentBarracksSize < CurrentBarracksLimit + default.MaxOverBarracksLimitTillRed)
+		{
+			MessageColor = eUIState_Warning;
+		}
+		else
+		{
+			MessageColor = eUIState_Bad;
+		}
+		
+		AvengerHUD.AddResource(default.strBarracksSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentBarracksSize $ "/" $ CurrentBarracksLimit, MessageColor));
+		
+		AvengerHUD.ShowResources();
+	}
+
+	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
 
 	if (
 		CurrentScreen == CovertActions ||
