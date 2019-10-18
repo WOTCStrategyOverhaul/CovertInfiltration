@@ -18,6 +18,7 @@ var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 var config(GameData) array<name> arrRemoveFactionCard;
+var config(GameData) int LiveFireTrainingRanksIncrease;
 
 var config array<name> arrPrototypesToDisable;
 var config bool PrototypePrimaries;
@@ -740,4 +741,39 @@ static function RemoveFactionCards()
 		CardTemplate = X2StrategyCardTemplate(Manager.FindStrategyElementTemplate(TemplateName));
 		CardTemplate.Category = "__REMOVED__";
 	}
+}
+
+static function PatchLiveFireTraining ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local X2StrategyCardTemplate CardTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardTemplate = X2StrategyCardTemplate(Manager.FindStrategyElementTemplate('ResCard_LiveFireTraining'));
+
+	CardTemplate.OnActivatedFn = ActivateLiveFireTraining;
+	CardTemplate.OnDeactivatedFn = DeactivateLiveFireTraining;
+	CardTemplate.GetMutatorValueFn = GetLiveFireTrainingRanksIncrease;
+	CardTemplate.GetSummaryTextFn = class'X2StrategyElement_XpackResistanceActions'.static.GetSummaryTextReplaceInt;
+}
+
+static function int GetLiveFireTrainingRanksIncrease ()
+{
+	return default.LiveFireTrainingRanksIncrease;
+}
+
+static protected function ActivateLiveFireTraining(XComGameState NewGameState, StateObjectReference InRef, optional bool bReactivate = false)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_XpackResistanceActions'.static.GetNewXComHQState(NewGameState);
+	XComHQ.BonusTrainingRanks += GetLiveFireTrainingRanksIncrease();
+}
+
+static protected function DeactivateLiveFireTraining(XComGameState NewGameState, StateObjectReference InRef)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_XpackResistanceActions'.static.GetNewXComHQState(NewGameState);
+	XComHQ.BonusTrainingRanks -= GetLiveFireTrainingRanksIncrease();
 }
