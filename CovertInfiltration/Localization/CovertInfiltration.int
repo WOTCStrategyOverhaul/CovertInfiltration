@@ -139,6 +139,7 @@ OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% 
 strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
 strBarracksSizeTitle="BARRACKS"
+strAcademyTrainingRank="TARGET TRAINING RANK"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration bonus gained"

@@ -18,6 +18,7 @@ var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
 var localized string strBarracksSizeTitle;
+var localized string strAcademyTrainingRank;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -434,11 +435,17 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
-	
+	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
+	local X2FacilityTemplate AcademyTemplate;
+
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
 	
+	//////////////////////
+	/// Barracks limit ///
+	//////////////////////
+
 	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
 		UIStrategyMap(CurrentScreen) != none ||
 		UIFacilityGrid(CurrentScreen) != none ||
@@ -466,19 +473,42 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.ShowResources();
 	}
 
+	///////////////////////////////////////
+	/// New covert ops screen + loadout ///
+	///////////////////////////////////////
+
 	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	if (CovertActions != none)
+	{
+		if (
+			CurrentScreen == CovertActions ||
+			(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name))
+		) {
+			// Just do same thing as done for UICovertActions
+			AvengerHUD.UpdateSupplies();
+			AvengerHUD.UpdateIntel();
+			AvengerHUD.UpdateAlienAlloys();
+			AvengerHUD.UpdateEleriumCrystals();
 
-	if (
-		CurrentScreen == CovertActions ||
-		(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name))
-	) {
-		// Just do same thing as done for UICovertActions
-		AvengerHUD.UpdateSupplies();
-		AvengerHUD.UpdateIntel();
-		AvengerHUD.UpdateAlienAlloys();
-		AvengerHUD.UpdateEleriumCrystals();
+			// Resource bar is hidden by default, show it
+			AvengerHUD.ShowResources();
+		}
+	}
 
-		// Resource bar is hidden by default, show it
+	/////////////////////////
+	/// GTS training rank ///
+	/////////////////////////
+
+	StrategyElementTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	AcademyTemplate = X2FacilityTemplate(StrategyElementTemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
+
+	if (CurrentScreen.IsA(AcademyTemplate.UIFacilityClass.Name))
+	{
+		AvengerHUD.AddResource(
+			default.strAcademyTrainingRank,
+			class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '')
+		);
+
 		AvengerHUD.ShowResources();
 	}
 

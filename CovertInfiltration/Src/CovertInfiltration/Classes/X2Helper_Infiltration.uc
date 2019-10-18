@@ -665,3 +665,8 @@ static function float GetRecoveryTimeModifier()
 
 	return 1.0 - ((CurrentBarracksSize - CurrentBarracksLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
 }
+
+static function int GetAcademyTrainingTargetRank ()
+{
+	return 1 + `XCOMHQ.BonusTrainingRanks;
+}
