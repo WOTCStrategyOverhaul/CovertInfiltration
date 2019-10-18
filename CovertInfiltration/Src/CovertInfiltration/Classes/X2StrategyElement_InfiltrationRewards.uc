@@ -12,12 +12,46 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
 	
+	Rewards.AddItem(CreateRumorRewardTemplate());
+	Rewards.AddItem(CreateMaterielRewardTemplate());
+	Rewards.AddItem(CreateProgressRewardTemplate());
+	
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
 	return Rewards;
+}
+
+static function X2DataTemplate CreateRumorRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	// This is a dummy reward, the Point of Interest is spawned using the mission complete code in DefaultActivities
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Rumor');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateMaterielRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	// This is a dummy reward, the resources are in the mission's crates not the X2Reward
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Materiel');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateProgressRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	// This is a dummy reward, does nothing
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Progress');
+
+	return Template;
 }
 
 static function X2DataTemplate CreateDatapadRewardTemplate()
