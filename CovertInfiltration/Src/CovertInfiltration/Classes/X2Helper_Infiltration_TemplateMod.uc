@@ -536,11 +536,9 @@ static function PatchQuestItems ()
 				QuestItemTemplate.MissionSource.AddItem('MissionSource_RecoverFlightDevice');
 			}
 
-			// This will allow non-DE (the DE ones don't use reward filtering) quest items to be picked for our missions
-			// Note that implementation of #254 will likely break this "fix", so we will need to revist it then
 			if (QuestItemTemplate.RewardType.Length > 0)
 			{
-				QuestItemTemplate.RewardType.AddItem('Reward_None');
+				QuestItemTemplate.RewardType.AddItem('Reward_Rumor');
 			}
 		}
 	}
