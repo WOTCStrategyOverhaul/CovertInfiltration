@@ -506,45 +506,18 @@ static function X2ActivityTemplate_Infiltration CreateStandardInfilActivity (X2C
 static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local XComGameState_MissionSite MissionState;
+	local XComGameState_HeadquartersResistance ResHQ;
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
 
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	MissionState.POIToSpawn = ResHQ.ChoosePOI(NewGameState);
 	class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
 	MissionState.RemoveEntity(NewGameState);
 
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
-}
-
-static function CreateStandardDVIPActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name AlwaysReward, name CaptureReward)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_" $ ActivityName $ "Infil"), true);
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, name("Activity_" $ ActivityName));
-	
-	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
-	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
-	
-	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName $ "Infil"));
-	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
-
-	Activity.CovertActionName = CovertAction.DataName;
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
-	Activity.UIButtonIcon = MissionIcon;
-	
-	Activity.MissionRewards.AddItem(AlwaysReward);
-	Activity.MissionRewards.AddItem(CaptureReward);
-
-	Activity.OnSuccess = DarkVIPOnSuccess;
-
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
 }
 
 static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -559,28 +532,6 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
 	MissionState.RemoveEntity(NewGameState);
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
-}
-
-static function CreateStandardAssaultActivity (out array<X2DataTemplate> Templates, string ActivityName, string MeshPath, string MissionIcon, name RewardName, optional class<UIMission> ScreenClass, optional string MissionImage)
-{
-	local X2ActivityTemplate_Assault Activity;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_" $ ActivityName));
-	
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
-	Activity.UIButtonIcon = MissionIcon;
-	Activity.MissionImage = MissionImage;
-	
-	Activity.MissionRewards.AddItem(RewardName);
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	
-	if (ScreenClass != none)
-	{
-		Activity.ScreenClass = ScreenClass;
-	}
-
-	Templates.AddItem(Activity);
 }
 
 static function X2CovertActionTemplate CreateStandardActivityCA (string ActivityName, string MeshPath)
