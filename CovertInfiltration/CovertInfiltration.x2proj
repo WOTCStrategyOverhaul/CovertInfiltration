@@ -408,6 +408,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationActions.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\XComGameState_HeadquartersProjectTrainAcademy.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\XComGameState_MissionSiteInfiltration.uc">
       <SubType>Content</SubType>
     </Content>
