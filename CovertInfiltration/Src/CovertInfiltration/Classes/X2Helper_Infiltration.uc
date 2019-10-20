@@ -670,8 +670,3 @@ static function int GetAcademyTrainingTargetRank ()
 {
 	return 1 + `XCOMHQ.BonusTrainingRanks;
 }
-
-static function InitiateAcademyTraining (StateObjectReference UnitRef, optional name SelectedClass)
-{
-	// TODO
-}

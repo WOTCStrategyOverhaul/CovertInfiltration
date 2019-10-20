@@ -45,7 +45,21 @@ simulated function TrainRookieDialogCallback (Name eAction, UICallbackData xUser
 		}
 		else
 		{
-			class'X2Helper_Infiltration'.static.InitiateAcademyTraining(CallbackData.ObjectRef);
+			InitiateAcademyTraining(CallbackData.ObjectRef);
 		}
 	}
+}
+
+simulated protected function InitiateAcademyTraining (StateObjectReference UnitRef)
+{
+	local XComGameState_StaffSlot StaffSlotState;
+	local StaffUnitInfo UnitInfo;
+
+	StaffSlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(StaffSlotRef.ObjectID));
+	
+	UnitInfo.UnitRef = UnitRef;
+	StaffSlotState.FillSlot(UnitInfo);
+		
+	`XSTRATEGYSOUNDMGR.PlaySoundEvent("StrategyUI_Staff_Assign");
+	UIFacility(Screen).RealizeFacility();
 }
