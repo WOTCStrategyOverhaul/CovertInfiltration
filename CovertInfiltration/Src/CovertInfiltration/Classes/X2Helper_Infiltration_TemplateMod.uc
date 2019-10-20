@@ -723,6 +723,21 @@ static function PatchLivingQuarters()
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeII');
 }
 
+///////////////////
+/// Staff slots ///
+///////////////////
+
+static function PatchAcademyStaffSlot ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2StaffSlotTemplate SlotTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	SlotTemplate = X2StaffSlotTemplate(TemplateManager.FindStrategyElementTemplate('OTSStaffSlot'));
+
+	SlotTemplate.UIStaffSlotClass = class'UIFacility_AcademySlot_CI';
+}
+
 /////////////////////
 /// Faction Cards ///
 /////////////////////

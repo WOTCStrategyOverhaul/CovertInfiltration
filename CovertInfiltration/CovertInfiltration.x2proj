@@ -128,6 +128,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_ListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIFacility_AcademySlot_CI.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
       <SubType>Content</SubType>
     </Content>

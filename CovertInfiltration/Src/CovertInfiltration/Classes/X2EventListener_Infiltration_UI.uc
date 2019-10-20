@@ -506,7 +506,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	{
 		AvengerHUD.AddResource(
 			default.strAcademyTrainingRank,
-			class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '')
+			class'UIUtilities_Infiltration'.static.GetAcademyTargetRank()
 		);
 
 		AvengerHUD.ShowResources();
