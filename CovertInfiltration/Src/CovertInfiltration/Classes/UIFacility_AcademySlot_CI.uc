@@ -42,6 +42,7 @@ simulated function TrainRookieDialogCallback (Name eAction, UICallbackData xUser
 		if (Unit.GetSoldierRank() == 0)
 		{
 			`HQPRES.UIChooseClass(CallbackData.ObjectRef);
+			UpdateChooseClassDurations(CallbackData.ObjectRef);
 		}
 		else
 		{
@@ -62,4 +63,23 @@ simulated protected function InitiateAcademyTraining (StateObjectReference UnitR
 		
 	`XSTRATEGYSOUNDMGR.PlaySoundEvent("StrategyUI_Staff_Assign");
 	UIFacility(Screen).RealizeFacility();
+}
+
+static protected function UpdateChooseClassDurations (StateObjectReference UnitRef)
+{
+	local UIChooseClass ChooseClassScreen;
+	local UIScreenStack ScreenStack;
+	local int Hours, i;
+
+	ScreenStack = `SCREENSTACK;
+	ChooseClassScreen = UIChooseClass(ScreenStack.GetCurrentScreen());
+	Hours = class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(UnitRef);
+
+	for (i = 0; i < ChooseClassScreen.arrItems.Length; i++)
+	{
+		ChooseClassScreen.arrItems[i].OrderHours = Hours;
+	}
+
+	// Refresh the actual UI elements
+	ChooseClassScreen.PopulateData();
 }

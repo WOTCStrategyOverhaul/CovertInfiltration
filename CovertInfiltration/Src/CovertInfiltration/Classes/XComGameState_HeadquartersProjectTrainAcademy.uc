@@ -3,7 +3,7 @@ class XComGameState_HeadquartersProjectTrainAcademy extends XComGameState_Headqu
 var name NewClassName; // the name of the class the rookie will eventually be promoted to
 var int RanksToAdd; // Stored here to prevent changes to max rank during project don't cause chaos
 
-function SetProjectFocus(StateObjectReference FocusRef, optional XComGameState NewGameState, optional StateObjectReference AuxRef)
+function SetProjectFocus (StateObjectReference FocusRef, optional XComGameState NewGameState, optional StateObjectReference AuxRef)
 {
 	local XComGameState_Unit UnitState;
 
@@ -31,28 +31,17 @@ function SetProjectFocus(StateObjectReference FocusRef, optional XComGameState N
 	}
 }
 
-function int CalculatePointsToTrain()
+function int CalculatePointsToTrain ()
 {
 	// TODO. Also, move this calculation to X2Helper_Infiltration.
 	// Also MCO UIChooseClass to (1) update ClassComm.OrderHours (2) replace OnPurchaseClicked
 
-
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-
-	History = `XCOMHISTORY;
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	return XComHQ.GetTrainRookieDays() * 24;
+	return class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(ProjectFocus);
 }
 
-function int CalculateWorkPerHour(optional XComGameState StartState = none, optional bool bAssumeActive = false)
+function int CalculateWorkPerHour (optional XComGameState StartState = none, optional bool bAssumeActive = false)
 {
 	return 1;
-}
-
-function X2SoldierClassTemplate GetTrainingClassTemplate()
-{
-	return class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager().FindSoldierClassTemplate(NewClassName);
 }
 
 function OnProjectCompleted()

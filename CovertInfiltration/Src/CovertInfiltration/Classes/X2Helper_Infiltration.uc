@@ -7,6 +7,21 @@
 
 class X2Helper_Infiltration extends Object config(Infiltration);
 
+struct TrainingTimeModByRank
+{
+	var int PrePromotionRank; // Example: if you want to affect rookie -> squaddie promotion, set this to 0
+	var int Difficulty;
+
+	var int AdditionalHours;
+	var float Multiplier;
+
+	structdefaultproperties
+	{
+		PrePromotionRank = -1;
+		Difficulty = -1;
+	}
+};
+
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
 
@@ -30,6 +45,9 @@ var config int STARTING_BARRACKS_LIMIT;
 var config int BARRACKS_LIMIT_INCREASE_I;
 var config int BARRACKS_LIMIT_INCREASE_II;
 var config float RECOVERY_PENALTY_PER_SOLDIER;
+
+var config int ACADEMY_HOURS_PER_RANK;
+var config array<TrainingTimeModByRank> ACADEMY_DURATION_MODS;
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -669,4 +687,36 @@ static function float GetRecoveryTimeModifier()
 static function int GetAcademyTrainingTargetRank ()
 {
 	return 1 + `XCOMHQ.BonusTrainingRanks;
+}
+
+static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
+{
+	local float TotalHours, IterationHours, Multiplier;
+	local TrainingTimeModByRank DurationMod;
+	local XComGameState_Unit UnitState;
+	local int IterationRank;
+	
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
+	
+	for (IterationRank = UnitState.GetSoldierRank(); IterationRank < GetAcademyTrainingTargetRank(); IterationRank++)
+	{
+		IterationHours = default.ACADEMY_HOURS_PER_RANK;
+		Multiplier = 0;
+
+		foreach default.ACADEMY_DURATION_MODS(DurationMod)
+		{
+			if (
+				(DurationMod.PrePromotionRank != -1 && DurationMod.PrePromotionRank == IterationRank) ||
+				(DurationMod.Difficulty != -1 && DurationMod.Difficulty == `StrategyDifficultySetting)
+			)
+			{
+				IterationHours += DurationMod.AdditionalHours;
+				Multiplier += DurationMod.Multiplier;
+			}
+		}
+
+		TotalHours += IterationHours * Multiplier;
+	}
+
+	return Round(TotalHours);
 }
