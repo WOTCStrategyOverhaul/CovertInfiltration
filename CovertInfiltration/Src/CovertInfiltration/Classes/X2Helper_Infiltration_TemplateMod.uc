@@ -736,6 +736,98 @@ static function PatchAcademyStaffSlot ()
 	SlotTemplate = X2StaffSlotTemplate(TemplateManager.FindStrategyElementTemplate('OTSStaffSlot'));
 
 	SlotTemplate.UIStaffSlotClass = class'UIFacility_AcademySlot_CI';
+	SlotTemplate.FillFn = FillAcademySlot;
+	SlotTemplate.EmptyStopProjectFn = EmptyStopProjectAcademySlot;
+	SlotTemplate.IsUnitValidForSlotFn = IsUnitValidForAcademySlot;
+}
+
+static protected function FillAcademySlot (XComGameState NewGameState, StateObjectReference SlotRef, StaffUnitInfo UnitInfo, optional bool bTemporary = false)
+{
+	local XComGameState_Unit NewUnitState;
+	local XComGameState_StaffSlot NewSlotState;
+	local XComGameState_HeadquartersXCom NewXComHQ;
+	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+	local StateObjectReference EmptyRef;
+	local int SquadIndex;
+
+	local UIChooseClass ChooseClassScreen;
+	local UIScreenStack ScreenStack;
+
+	class'X2StrategyElement_DefaultStaffSlots'.static.FillSlot(NewGameState, SlotRef, UnitInfo, NewSlotState, NewUnitState);
+	NewXComHQ = class'X2StrategyElement_DefaultStaffSlots'.static.GetNewXComHQState(NewGameState);
+	
+	ProjectState = XComGameState_HeadquartersProjectTrainAcademy(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectTrainAcademy'));
+	ProjectState.SetProjectFocus(UnitInfo.UnitRef, NewGameState, NewSlotState.Facility);
+
+	NewUnitState.SetStatus(eStatus_Training);
+	NewXComHQ.Projects.AddItem(ProjectState.GetReference());
+
+	// Remove their gear
+	NewUnitState.MakeItemsAvailable(NewGameState, false);
+	
+	// If the unit undergoing training is in the squad, remove them
+	SquadIndex = NewXComHQ.Squad.Find('ObjectID', UnitInfo.UnitRef.ObjectID);
+	if (SquadIndex != INDEX_NONE) NewXComHQ.Squad[SquadIndex] = EmptyRef;
+
+	// Assaign the new soldier class if rookie (if coming from UIChooseClass)
+	ScreenStack = `SCREENSTACK;
+	ChooseClassScreen = UIChooseClass(ScreenStack.GetCurrentScreen());
+
+	if (ChooseClassScreen != none)
+	{
+		ProjectState.NewClassName = ChooseClassScreen.m_arrClasses[ChooseClassScreen.iSelectedItem].DataName;
+	}
+}
+
+static protected function EmptyStopProjectAcademySlot (StateObjectReference SlotRef)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+	local HeadquartersOrderInputContext OrderInput;
+	local XComGameState_StaffSlot SlotState;
+	local StateObjectReference UnitRef;
+	local XComGameStateHistory History;
+	local bool bFound;
+	
+	History = `XCOMHISTORY;
+	SlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(SlotRef.ObjectID));
+	UnitRef = SlotState.GetAssignedStaffRef();
+
+	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectTrainAcademy', ProjectState)
+	{
+		if (ProjectState.ProjectFocus == UnitRef)
+		{
+			bFound = true;
+			break;
+		}
+	}
+
+	if (bFound)
+	{
+		// This will just cancel any project given to it, kick the unit out of the slot and set the status back to active
+		// No need to write a custom implementation
+		OrderInput.OrderType = eHeadquartersOrderType_CancelTrainRookie;
+		OrderInput.AcquireObjectReference = ProjectState.GetReference();
+
+		class'XComGameStateContext_HeadquartersOrder'.static.IssueHeadquartersOrder(OrderInput);
+	}
+	else
+	{
+		`RedScreen("CI: Failed to find XComGameState_HeadquartersProjectTrainAcademy for slot" @ SlotRef.ObjectID @ "with unit" @ UnitRef.ObjectID);
+	}
+}
+
+static protected function bool IsUnitValidForAcademySlot (XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
+{
+	local XComGameState_Unit Unit;
+
+	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
+	
+	return Unit.CanBeStaffed()
+		&& Unit.IsSoldier()
+		&& Unit.IsActive()
+		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank()
+		&& !Unit.CanRankUpSoldier()
+		&& SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE;
 }
 
 /////////////////////
