@@ -708,6 +708,9 @@ static function PatchGuerillaTacticsSchool()
 	// Add infiltration size upgrades
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize1');
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize2');
+
+	// Add training target rank unlock
+	GTSTemplate.SoldierUnlockTemplates.AddItem('AcademyTrainingRankUnlock');
 }
 
 static function PatchLivingQuarters()

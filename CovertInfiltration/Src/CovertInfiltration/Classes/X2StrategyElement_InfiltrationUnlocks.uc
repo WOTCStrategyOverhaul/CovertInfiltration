@@ -55,6 +55,8 @@ static function X2SoldierUnlockTemplate CreateAcademyTrainingRankUnlock ()
 	local X2SoldierUnlockTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'X2AcademyTrainingRankUnlockTemplate', Template, 'AcademyTrainingRankUnlock');
+	
+	Template.bAllClasses = true;
 	Template.strImage = "img:///UILibrary_StrategyImages.GTS.GTS_FNG";
 
 	return Template;

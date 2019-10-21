@@ -502,7 +502,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	StrategyElementTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	AcademyTemplate = X2FacilityTemplate(StrategyElementTemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
 
-	if (CurrentScreen.IsA(AcademyTemplate.UIFacilityClass.Name))
+	if (ScreenStack.GetFirstInstanceOf(AcademyTemplate.UIFacilityClass) != none)
 	{
 		AvengerHUD.AddResource(
 			default.strAcademyTrainingRank,
