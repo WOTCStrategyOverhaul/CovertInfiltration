@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: CI's version of XComGameState_HeadquartersProjectTrainRookie that also 
+//           handles promotion from non-rookie
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class XComGameState_HeadquartersProjectTrainAcademy extends XComGameState_HeadquartersProject;
 
 var name NewClassName; // the name of the class the rookie will eventually be promoted to
@@ -11,7 +19,7 @@ function SetProjectFocus (StateObjectReference FocusRef, optional XComGameState 
 	AuxilaryReference = AuxRef; // Facility
 	
 	StartDateTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
-	ProjectPointsRemaining = CalculatePointsToTrain();
+	ProjectPointsRemaining = class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(ProjectFocus);
 	InitialProjectPoints = ProjectPointsRemaining;
 
 	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', ProjectFocus.ObjectID));
@@ -31,20 +39,12 @@ function SetProjectFocus (StateObjectReference FocusRef, optional XComGameState 
 	}
 }
 
-function int CalculatePointsToTrain ()
-{
-	// TODO. Also, move this calculation to X2Helper_Infiltration.
-	// Also MCO UIChooseClass to (1) update ClassComm.OrderHours (2) replace OnPurchaseClicked
-
-	return class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(ProjectFocus);
-}
-
 function int CalculateWorkPerHour (optional XComGameState StartState = none, optional bool bAssumeActive = false)
 {
 	return 1;
 }
 
-function OnProjectCompleted()
+function OnProjectCompleted ()
 {
 	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_StaffSlot SlotState;

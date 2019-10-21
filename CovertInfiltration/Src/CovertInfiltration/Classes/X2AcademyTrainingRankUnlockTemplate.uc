@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: GTS unlock template that increases GTS training target rank
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class X2AcademyTrainingRankUnlockTemplate extends X2SoldierUnlockTemplate;
 
 var config int RanksMod;

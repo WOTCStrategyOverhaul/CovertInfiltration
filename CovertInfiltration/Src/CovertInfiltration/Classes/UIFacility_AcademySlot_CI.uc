@@ -1,3 +1,11 @@
+//---------------------------------------------------------------------------------------
+//  AUTHOR:  Xymanek
+//  PURPOSE: CI's version of UIFacility_AcademySlot that handles behaviour change if
+//           soldier is not a rookie
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
+
 class UIFacility_AcademySlot_CI extends UIFacility_AcademySlot;
 
 simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
