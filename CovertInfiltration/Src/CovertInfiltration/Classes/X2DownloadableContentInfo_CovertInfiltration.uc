@@ -406,6 +406,68 @@ static function GetNumUtilitySlotsOverride (out int NumUtilitySlots, XComGameSta
 	}
 }
 
+static function bool GetDLCEventInfo (out array<HQEvent> arrEvents)
+{
+	local bool bFound;
+
+	bFound = GetProjectEvents(arrEvents);
+
+	return bFound;
+}
+
+static protected function bool GetProjectEvents (out array<HQEvent> arrEvents)
+{
+	local XComGameState_HeadquartersProject ProjectState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local StateObjectReference ProjectRef;
+	local XComGameStateHistory History;
+	local HQEvent kEvent, kEventBlank;
+	local bool bFound;
+
+	History = `XCOMHISTORY;
+	XComHQ = `XCOMHQ;
+
+	foreach XComHQ.Projects(ProjectRef)
+	{
+		ProjectState = XComGameState_HeadquartersProject(History.GetGameStateForObjectID(ProjectRef.ObjectID));
+		if (ProjectState == none) continue;
+
+		// Academy training
+		if (ProcessEventAcademy(ProjectState, kEvent))
+		{
+			bFound = true;
+			arrEvents.AddItem(kEvent);
+		}
+		kEvent = kEventBlank;
+	}
+
+	return bFound;
+}
+
+static protected function bool ProcessEventAcademy (XComGameState_HeadquartersProject ProjectState, out HQEvent kEvent)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local XComGameState_Unit UnitState;
+	local string ClassName;
+
+	AcademyProject = XComGameState_HeadquartersProjectTrainAcademy(ProjectState);
+	if (AcademyProject == none) return false;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(AcademyProject.ProjectFocus.ObjectID));
+	//ClassName = Caps(TrainProject.GetTrainingClassTemplate().DisplayName); 
+	ClassName = ""; // TODO (differentiate between rookie and non-rookie training)
+	kEvent.Data =  Repl(class'XComGameState_HeadquartersXCom'.default.TrainRookieEventLabel @ UnitState.GetName(eNameType_RankFull), "%CLASSNAME", ClassName);
+	kEvent.Hours = AcademyProject.GetCurrentNumHoursRemaining();
+	kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Staff;
+			
+	if (kEvent.Hours < 0)
+	{
+		kEvent.Data = class'XComGameState_HeadquartersXCom'.default.ProjectPausedLabel @ kEvent.Data;
+	}
+
+	return true;
+}
+
 /// //////// ///
 /// COMMANDS ///
 /// //////// ///
