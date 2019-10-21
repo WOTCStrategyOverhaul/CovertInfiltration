@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: GTS unlocks for infiltration squad upgrades
+//  AUTHOR:  NotSoLoneWolf and Xymanek
+//  PURPOSE: GTS unlocks for infiltration squad upgrades and training rank
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -13,9 +13,14 @@ static function array<X2DataTemplate> CreateTemplates()
 
 	Templates.AddItem(CreateInfilSize1Unlock());
 	Templates.AddItem(CreateInfilSize2Unlock());
+	Templates.AddItem(CreateAcademyTrainingRankUnlock());
 
 	return Templates;
 }
+
+///////////////////
+/// Infil sizes ///
+///////////////////
 
 static function X2SoldierUnlockTemplate CreateInfilSize1Unlock()
 {
@@ -37,6 +42,20 @@ static function X2SoldierUnlockTemplate CreateInfilSize2Unlock()
 
 	Template.bAllClasses = true;
 	Template.strImage = "img:///UILibrary_StrategyImages.GTS.GTS_SquadSize2";
+
+	return Template;
+}
+
+////////////////////
+/// GTS Training ///
+////////////////////
+
+static function X2SoldierUnlockTemplate CreateAcademyTrainingRankUnlock ()
+{
+	local X2SoldierUnlockTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2AcademyTrainingRankUnlockTemplate', Template, 'AcademyTrainingRankUnlock');
+	Template.strImage = "img:///UILibrary_StrategyImages.GTS.GTS_FNG";
 
 	return Template;
 }

@@ -349,3 +349,6 @@ FriendlyDesc="Completing this chain has a chance to decrease the Retaliation tim
 strTowerDetectionImmunityName="Disguise"
 strTowerDetectionImmunityDesc="The transponders of this disguise render the user invisible to ADVENT security towers"
 
+[AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
+DisplayName=Better GTS training
+Summary=The GTS training rank is increased by <XGParam:IntValue0>

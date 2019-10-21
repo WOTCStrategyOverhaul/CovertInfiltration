@@ -263,6 +263,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_SitRepAbilitySet_CI.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2AcademyTrainingRankUnlockTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>

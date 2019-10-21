@@ -1,6 +1,6 @@
 class UIFacility_AcademySlot_CI extends UIFacility_AcademySlot;
 
-simulated function OnPersonnelSelected(StaffUnitInfo UnitInfo)
+simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
 {
 	local XComGameStateHistory History;
 	local XGParamTag LocTag;
