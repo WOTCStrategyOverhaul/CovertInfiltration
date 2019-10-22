@@ -9,6 +9,7 @@ event OnInit (UIScreen Screen)
 
 	SpawnViewChainButton(MissionScreen);
 	CleanUpStrategyHudAlert(MissionScreen);
+	FixAmbushEmptySitreps(MissionScreen);
 }
 
 simulated protected function SpawnViewChainButton (UIMission MissionScreen)
@@ -112,4 +113,29 @@ simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)
 			}
 		}
 	}
+}
+
+protected function FixAmbushEmptySitreps (UIMission Screen)
+{
+	local UIMission_ChosenAmbush AmbushScreen;
+
+	AmbushScreen = UIMission_ChosenAmbush(Screen);
+	if (AmbushScreen == none) return;
+
+	if (AmbushScreen.GetMission().GeneratedMission.SitReps.Length == 0)
+	{
+		AmbushScreen.SetTimer(1.0, false, nameof(HideSitRepPanel), self);
+	}
+}
+
+static protected function HideSitRepPanel ()
+{
+	local UIScreenStack ScreenStack;
+	local UIMission MissionScreen;
+
+	ScreenStack = `SCREENSTACK;
+	MissionScreen = UIMission(ScreenStack.GetFirstInstanceOf(class'UIMission'));
+
+	// Neither Hide nor Remove helps. Something's wierd on the flash side
+	MissionScreen.SitrepPanel.Remove();
 }
