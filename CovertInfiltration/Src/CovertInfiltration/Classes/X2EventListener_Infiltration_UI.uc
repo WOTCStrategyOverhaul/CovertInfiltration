@@ -18,6 +18,7 @@ var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
 var localized string strBarracksSizeTitle;
+var localized string strAcademyTrainingRank;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -434,11 +435,17 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
-	
+	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
+	local X2FacilityTemplate AcademyTemplate;
+
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
 	
+	//////////////////////
+	/// Barracks limit ///
+	//////////////////////
+
 	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
 		UIStrategyMap(CurrentScreen) != none ||
 		UIFacilityGrid(CurrentScreen) != none ||
@@ -466,19 +473,42 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.ShowResources();
 	}
 
+	///////////////////////////////////////
+	/// New covert ops screen + loadout ///
+	///////////////////////////////////////
+
 	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	if (CovertActions != none)
+	{
+		if (
+			CurrentScreen == CovertActions ||
+			(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name))
+		) {
+			// Just do same thing as done for UICovertActions
+			AvengerHUD.UpdateSupplies();
+			AvengerHUD.UpdateIntel();
+			AvengerHUD.UpdateAlienAlloys();
+			AvengerHUD.UpdateEleriumCrystals();
 
-	if (
-		CurrentScreen == CovertActions ||
-		(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name))
-	) {
-		// Just do same thing as done for UICovertActions
-		AvengerHUD.UpdateSupplies();
-		AvengerHUD.UpdateIntel();
-		AvengerHUD.UpdateAlienAlloys();
-		AvengerHUD.UpdateEleriumCrystals();
+			// Resource bar is hidden by default, show it
+			AvengerHUD.ShowResources();
+		}
+	}
 
-		// Resource bar is hidden by default, show it
+	/////////////////////////
+	/// GTS training rank ///
+	/////////////////////////
+
+	StrategyElementTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	AcademyTemplate = X2FacilityTemplate(StrategyElementTemplateManager.FindStrategyElementTemplate('OfficerTrainingSchool'));
+
+	if (ScreenStack.GetFirstInstanceOf(AcademyTemplate.UIFacilityClass) != none)
+	{
+		AvengerHUD.AddResource(
+			default.strAcademyTrainingRank,
+			class'UIUtilities_Infiltration'.static.GetAcademyTargetRank()
+		);
+
 		AvengerHUD.ShowResources();
 	}
 
@@ -630,6 +660,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	local XComGameState_StaffSlot OccupiedSlot;
 	local XComGameState_CovertAction Action;
 	local XComGameState_MissionSiteInfiltration MissionSite;
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProjectState;
 	local string TimeValue, TimeLabel;
 
 	Tuple = XComLWTuple(EventData);
@@ -641,6 +672,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	if (OccupiedSlot != none)
 	{
 		Action = OccupiedSlot.GetCovertAction();
+		AcademyProjectState = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(UnitState.GetReference());
 
 		if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
@@ -688,6 +720,13 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
 			Tuple.Data[4].i = eUIState_Normal;
 			Tuple.Data[5].b = true;
+		}
+		else if (AcademyProjectState != none)
+		{
+			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
+			Tuple.Data[3].i = AcademyProjectState.GetCurrentNumHoursRemaining();
+			Tuple.Data[4].i = eUIState_Warning;
+			Tuple.Data[6].b = true;
 		}
 	}
 

@@ -18,6 +18,7 @@ var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 var config(GameData) array<name> arrRemoveFactionCard;
+var config(GameData) int LiveFireTrainingRanksIncrease;
 
 var config array<name> arrPrototypesToDisable;
 var config bool PrototypePrimaries;
@@ -707,6 +708,9 @@ static function PatchGuerillaTacticsSchool()
 	// Add infiltration size upgrades
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize1');
 	GTSTemplate.SoldierUnlockTemplates.AddItem('InfiltrationSize2');
+
+	// Add training target rank unlock
+	GTSTemplate.SoldierUnlockTemplates.AddItem('AcademyTrainingRankUnlock');
 }
 
 static function PatchLivingQuarters()
@@ -720,6 +724,123 @@ static function PatchLivingQuarters()
 	// add barracks size limit upgrades
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeI');
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeII');
+}
+
+///////////////////
+/// Staff slots ///
+///////////////////
+
+static function PatchAcademyStaffSlot ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2StaffSlotTemplate SlotTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	SlotTemplate = X2StaffSlotTemplate(TemplateManager.FindStrategyElementTemplate('OTSStaffSlot'));
+
+	SlotTemplate.UIStaffSlotClass = class'UIFacility_AcademySlot_CI';
+	SlotTemplate.FillFn = FillAcademySlot;
+	SlotTemplate.EmptyStopProjectFn = EmptyStopProjectAcademySlot;
+	SlotTemplate.IsUnitValidForSlotFn = IsUnitValidForAcademySlot;
+	SlotTemplate.GetBonusDisplayStringFn = GetAcademySlotBonusDisplayString;
+}
+
+static protected function FillAcademySlot (XComGameState NewGameState, StateObjectReference SlotRef, StaffUnitInfo UnitInfo, optional bool bTemporary = false)
+{
+	local XComGameState_Unit NewUnitState;
+	local XComGameState_StaffSlot NewSlotState;
+	local XComGameState_HeadquartersXCom NewXComHQ;
+	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+	local StateObjectReference EmptyRef;
+	local int SquadIndex;
+
+	local UIChooseClass ChooseClassScreen;
+	local UIScreenStack ScreenStack;
+
+	class'X2StrategyElement_DefaultStaffSlots'.static.FillSlot(NewGameState, SlotRef, UnitInfo, NewSlotState, NewUnitState);
+	NewXComHQ = class'X2StrategyElement_DefaultStaffSlots'.static.GetNewXComHQState(NewGameState);
+	
+	ProjectState = XComGameState_HeadquartersProjectTrainAcademy(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectTrainAcademy'));
+	ProjectState.SetProjectFocus(UnitInfo.UnitRef, NewGameState, NewSlotState.Facility);
+
+	NewUnitState.SetStatus(eStatus_Training);
+	NewXComHQ.Projects.AddItem(ProjectState.GetReference());
+
+	// Remove their gear
+	NewUnitState.MakeItemsAvailable(NewGameState, false);
+	
+	// If the unit undergoing training is in the squad, remove them
+	SquadIndex = NewXComHQ.Squad.Find('ObjectID', UnitInfo.UnitRef.ObjectID);
+	if (SquadIndex != INDEX_NONE) NewXComHQ.Squad[SquadIndex] = EmptyRef;
+
+	// Assaign the new soldier class if rookie (if coming from UIChooseClass)
+	ScreenStack = `SCREENSTACK;
+	ChooseClassScreen = UIChooseClass(ScreenStack.GetCurrentScreen());
+
+	if (ChooseClassScreen != none)
+	{
+		ProjectState.NewClassName = ChooseClassScreen.m_arrClasses[ChooseClassScreen.iSelectedItem].DataName;
+	}
+}
+
+static protected function EmptyStopProjectAcademySlot (StateObjectReference SlotRef)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+	local HeadquartersOrderInputContext OrderInput;
+	local XComGameState_StaffSlot SlotState;
+	
+	SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(SlotRef.ObjectID));
+	ProjectState = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(SlotState.GetAssignedStaffRef());
+
+	if (ProjectState != none)
+	{
+		// This will just cancel any project given to it, kick the unit out of the slot and set the status back to active
+		// No need to write a custom implementation
+		OrderInput.OrderType = eHeadquartersOrderType_CancelTrainRookie;
+		OrderInput.AcquireObjectReference = ProjectState.GetReference();
+
+		class'XComGameStateContext_HeadquartersOrder'.static.IssueHeadquartersOrder(OrderInput);
+	}
+	else
+	{
+		`RedScreen("CI: Failed to find XComGameState_HeadquartersProjectTrainAcademy for slot" @ SlotRef.ObjectID @ "with unit" @ SlotState.GetAssignedStaffRef().ObjectID);
+	}
+}
+
+static protected function bool IsUnitValidForAcademySlot (XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
+{
+	local XComGameState_Unit Unit;
+
+	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
+	
+	return Unit.CanBeStaffed()
+		&& Unit.IsSoldier()
+		&& Unit.IsActive()
+		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank()
+		&& !Unit.CanRankUpSoldier()
+		&& SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE;
+}
+
+static protected function string GetAcademySlotBonusDisplayString (XComGameState_StaffSlot SlotState, optional bool bPreview)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local string Contribution;
+
+	if (SlotState.IsSlotFilled())
+	{
+		AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(SlotState.GetAssignedStaffRef());
+
+		if (AcademyProject.PromotingFromRookie())
+		{
+			Contribution = Caps(AcademyProject.GetNewClassTemplate().DisplayName);
+		}
+		else
+		{
+			Contribution = "GTS"; // TODO: loc
+		}
+	}
+
+	return class'X2StrategyElement_DefaultStaffSlots'.static.GetBonusDisplayString(SlotState, "%SKILL", Contribution);
 }
 
 /////////////////////
@@ -740,4 +861,39 @@ static function RemoveFactionCards()
 		CardTemplate = X2StrategyCardTemplate(Manager.FindStrategyElementTemplate(TemplateName));
 		CardTemplate.Category = "__REMOVED__";
 	}
+}
+
+static function PatchLiveFireTraining ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local X2StrategyCardTemplate CardTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	CardTemplate = X2StrategyCardTemplate(Manager.FindStrategyElementTemplate('ResCard_LiveFireTraining'));
+
+	CardTemplate.OnActivatedFn = ActivateLiveFireTraining;
+	CardTemplate.OnDeactivatedFn = DeactivateLiveFireTraining;
+	CardTemplate.GetMutatorValueFn = GetLiveFireTrainingRanksIncrease;
+	CardTemplate.GetSummaryTextFn = class'X2StrategyElement_XpackResistanceActions'.static.GetSummaryTextReplaceInt;
+}
+
+static function int GetLiveFireTrainingRanksIncrease ()
+{
+	return default.LiveFireTrainingRanksIncrease;
+}
+
+static protected function ActivateLiveFireTraining(XComGameState NewGameState, StateObjectReference InRef, optional bool bReactivate = false)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_XpackResistanceActions'.static.GetNewXComHQState(NewGameState);
+	XComHQ.BonusTrainingRanks += GetLiveFireTrainingRanksIncrease();
+}
+
+static protected function DeactivateLiveFireTraining(XComGameState NewGameState, StateObjectReference InRef)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = class'X2StrategyElement_XpackResistanceActions'.static.GetNewXComHQState(NewGameState);
+	XComHQ.BonusTrainingRanks -= GetLiveFireTrainingRanksIncrease();
 }

@@ -384,6 +384,16 @@ static function bool SetCountdownTextAndColor(int Turns, XComLWTuple Tuple)
 	return true;
 }
 
+static function string GetAcademyTargetRank (optional XComGameState_Unit UnitState)
+{
+	if (UnitState != none)
+	{
+		return UnitState.GetSoldierRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank());
+	}
+
+	return class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '');
+}
+
 ////////////////////////////////
 /// Removing weapon upgrades ///
 ////////////////////////////////
