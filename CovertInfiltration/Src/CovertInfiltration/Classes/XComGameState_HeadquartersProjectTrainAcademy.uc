@@ -100,3 +100,22 @@ function OnProjectCompleted ()
 	`SubmitGameState(NewGameState);
 	`HQPRES.UITrainingComplete(ProjectFocus);
 }
+
+///////////////
+/// Helpers ///
+///////////////
+
+function bool PromotingFromRookie ()
+{
+	return NewClassName != '';
+}
+
+function X2SoldierClassTemplate GetNewClassTemplate ()
+{
+	if (!PromotingFromRookie())
+	{
+		return none;
+	}
+
+	return class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager().FindSoldierClassTemplate(NewClassName);
+}

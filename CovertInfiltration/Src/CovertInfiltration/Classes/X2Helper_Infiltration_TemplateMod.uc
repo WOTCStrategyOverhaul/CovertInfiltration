@@ -742,6 +742,7 @@ static function PatchAcademyStaffSlot ()
 	SlotTemplate.FillFn = FillAcademySlot;
 	SlotTemplate.EmptyStopProjectFn = EmptyStopProjectAcademySlot;
 	SlotTemplate.IsUnitValidForSlotFn = IsUnitValidForAcademySlot;
+	SlotTemplate.GetBonusDisplayStringFn = GetAcademySlotBonusDisplayString;
 }
 
 static protected function FillAcademySlot (XComGameState NewGameState, StateObjectReference SlotRef, StaffUnitInfo UnitInfo, optional bool bTemporary = false)
@@ -818,6 +819,28 @@ static protected function bool IsUnitValidForAcademySlot (XComGameState_StaffSlo
 		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank()
 		&& !Unit.CanRankUpSoldier()
 		&& SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE;
+}
+
+static protected function string GetAcademySlotBonusDisplayString (XComGameState_StaffSlot SlotState, optional bool bPreview)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local string Contribution;
+
+	if (SlotState.IsSlotFilled())
+	{
+		AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(SlotState.GetAssignedStaffRef());
+
+		if (!AcademyProject.PromotingFromRookie())
+		{
+			Contribution = Caps(AcademyProject.GetNewClassTemplate().DisplayName);
+		}
+		else
+		{
+			Contribution = "GTS"; // TODO: loc
+		}
+	}
+
+	return class'X2StrategyElement_DefaultStaffSlots'.static.GetBonusDisplayString(SlotState, "%SKILL", Contribution);
 }
 
 /////////////////////

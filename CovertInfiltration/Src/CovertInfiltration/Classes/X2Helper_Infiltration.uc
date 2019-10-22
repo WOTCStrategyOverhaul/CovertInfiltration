@@ -724,10 +724,18 @@ static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
 static function XComGameState_HeadquartersProjectTrainAcademy GetAcademyProjectForUnit (StateObjectReference UnitRef)
 {
 	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local StateObjectReference ProjectRef;
+	local XComGameStateHistory History;
 
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_HeadquartersProjectTrainAcademy', ProjectState)
+	History = `XCOMHISTORY;
+	XComHQ = `XCOMHQ;
+
+	foreach XComHQ.Projects(ProjectRef)
 	{
-		if (ProjectState.ProjectFocus == UnitRef)
+		ProjectState = XComGameState_HeadquartersProjectTrainAcademy(History.GetGameStateForObjectID(ProjectRef.ObjectID));
+
+		if (ProjectState != none && ProjectState.ProjectFocus == UnitRef)
 		{
 			return ProjectState;
 		}

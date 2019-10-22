@@ -453,9 +453,16 @@ static protected function bool ProcessEventAcademy (XComGameState_HeadquartersPr
 	AcademyProject = XComGameState_HeadquartersProjectTrainAcademy(ProjectState);
 	if (AcademyProject == none) return false;
 
+	if (AcademyProject.PromotingFromRookie())
+	{
+		ClassName = "GTS"; // TODO: Loc
+	}
+	else
+	{
+		ClassName = Caps(AcademyProject.GetNewClassTemplate().DisplayName); 
+	}
+
 	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(AcademyProject.ProjectFocus.ObjectID));
-	//ClassName = Caps(TrainProject.GetTrainingClassTemplate().DisplayName); 
-	ClassName = ""; // TODO (differentiate between rookie and non-rookie training)
 	kEvent.Data =  Repl(class'XComGameState_HeadquartersXCom'.default.TrainRookieEventLabel @ UnitState.GetName(eNameType_RankFull), "%CLASSNAME", ClassName);
 	kEvent.Hours = AcademyProject.GetCurrentNumHoursRemaining();
 	kEvent.ImagePath = class'UIUtilities_Image'.const.EventQueue_Staff;
