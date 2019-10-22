@@ -8,6 +8,9 @@
 
 class UIFacility_AcademySlot_CI extends UIFacility_AcademySlot;
 
+var localized string strTrainNonRookieDialogTitle;
+var localized string strTrainNonRookieDialogText;
+
 simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
 {
 	local XComGameStateHistory History;
@@ -22,6 +25,7 @@ simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
 	LocTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 	LocTag.StrValue0 = Unit.GetName(eNameType_RankFull);
 	LocTag.StrValue1 = class'UIUtilities_Infiltration'.static.GetAcademyTargetRank(Unit);
+	LocTag.StrValue2 = class'UIUtilities_Text'.static.GetTimeRemainingString(class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(UnitInfo.UnitRef));
 
 	CallbackData = new class'UICallbackData_StateObjectReference';
 	CallbackData.ObjectRef = Unit.GetReference();
@@ -29,8 +33,8 @@ simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
 	DialogData.fnCallbackEx = TrainRookieDialogCallback;
 
 	DialogData.eType = eDialog_Alert;
-	DialogData.strTitle = m_strTrainRookieDialogTitle;
-	DialogData.strText = `XEXPAND.ExpandString(m_strTrainRookieDialogText);
+	DialogData.strTitle = Unit.GetSoldierRank() == 0 ? m_strTrainRookieDialogTitle : strTrainNonRookieDialogTitle;
+	DialogData.strText = `XEXPAND.ExpandString(Unit.GetSoldierRank() == 0 ? m_strTrainRookieDialogText : strTrainNonRookieDialogText);
 	DialogData.strAccept = class'UIUtilities_Text'.default.m_strGenericYes;
 	DialogData.strCancel = class'UIUtilities_Text'.default.m_strGenericNo;
 

@@ -352,3 +352,11 @@ strTowerDetectionImmunityDesc="The transponders of this disguise render the user
 [AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
 DisplayName=Better GTS training
 Summary=The GTS training rank is increased by <XGParam:IntValue0>
+
+[UIFacility_AcademySlot_CI]
+strTrainNonRookieDialogTitle=TRAIN SOLDIER
+strTrainNonRookieDialogText=<XGParam:StrValue0/!UnitName/> can undergo specialized training at the Guerrilla Tactics School, studying to become a <XGParam:StrValue1/!RankName/>, but they will be unavailable for combat during the training process (<b><XGParam:StrValue2/!Duration/></b>). Do you want to proceed?
+m_strStopTrainRookieDialogTitle=STOP GTS TRAINING?
+m_strStopTrainRookieDialogText=Do you want to stop %UNITNAME from training at the GTS?\n\nWARNING: All training progress will be lost.
+m_strNoSoldiersTooltip=There are no soldiers available for Guerrilla Tactics School training. 
+m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (if training is upgraded) a soldier to gain promotions
