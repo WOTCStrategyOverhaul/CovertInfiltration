@@ -19,6 +19,8 @@ struct TrainingTimeModByRank
 	{
 		PrePromotionRank = -1;
 		Difficulty = -1;
+
+		Multiplier = 1;
 	}
 };
 
@@ -701,7 +703,7 @@ static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
 	for (IterationRank = UnitState.GetSoldierRank(); IterationRank < GetAcademyTrainingTargetRank(); IterationRank++)
 	{
 		IterationHours = default.ACADEMY_HOURS_PER_RANK;
-		Multiplier = 0;
+		Multiplier = 1;
 
 		foreach default.ACADEMY_DURATION_MODS(DurationMod)
 		{
@@ -711,7 +713,7 @@ static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
 			)
 			{
 				IterationHours += DurationMod.AdditionalHours;
-				Multiplier += DurationMod.Multiplier;
+				Multiplier *= DurationMod.Multiplier;
 			}
 		}
 

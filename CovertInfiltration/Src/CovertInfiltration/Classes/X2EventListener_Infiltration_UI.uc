@@ -726,6 +726,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
 			Tuple.Data[3].i = AcademyProjectState.GetCurrentNumHoursRemaining();
 			Tuple.Data[4].i = eUIState_Warning;
+			Tuple.Data[6].b = true;
 		}
 	}
 

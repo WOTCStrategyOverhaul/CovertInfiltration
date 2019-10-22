@@ -453,7 +453,7 @@ static protected function bool ProcessEventAcademy (XComGameState_HeadquartersPr
 	AcademyProject = XComGameState_HeadquartersProjectTrainAcademy(ProjectState);
 	if (AcademyProject == none) return false;
 
-	if (AcademyProject.PromotingFromRookie())
+	if (!AcademyProject.PromotingFromRookie())
 	{
 		ClassName = "GTS"; // TODO: Loc
 	}

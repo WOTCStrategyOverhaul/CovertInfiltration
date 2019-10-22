@@ -830,7 +830,7 @@ static protected function string GetAcademySlotBonusDisplayString (XComGameState
 	{
 		AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(SlotState.GetAssignedStaffRef());
 
-		if (!AcademyProject.PromotingFromRookie())
+		if (AcademyProject.PromotingFromRookie())
 		{
 			Contribution = Caps(AcademyProject.GetNewClassTemplate().DisplayName);
 		}

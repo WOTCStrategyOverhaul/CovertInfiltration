@@ -27,6 +27,11 @@ simulated function OnPersonnelSelected (StaffUnitInfo UnitInfo)
 	LocTag.StrValue1 = class'UIUtilities_Infiltration'.static.GetAcademyTargetRank(Unit);
 	LocTag.StrValue2 = class'UIUtilities_Text'.static.GetTimeRemainingString(class'X2Helper_Infiltration'.static.GetAcademyTrainingHours(UnitInfo.UnitRef));
 
+	if (Unit.GetSoldierRank() != 0)
+	{
+		LocTag.StrValue3 = Unit.GetSoldierClassDisplayName();
+	}
+
 	CallbackData = new class'UICallbackData_StateObjectReference';
 	CallbackData.ObjectRef = Unit.GetReference();
 	DialogData.xUserData = CallbackData;
