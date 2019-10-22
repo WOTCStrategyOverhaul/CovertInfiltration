@@ -660,6 +660,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	local XComGameState_StaffSlot OccupiedSlot;
 	local XComGameState_CovertAction Action;
 	local XComGameState_MissionSiteInfiltration MissionSite;
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProjectState;
 	local string TimeValue, TimeLabel;
 
 	Tuple = XComLWTuple(EventData);
@@ -671,6 +672,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	if (OccupiedSlot != none)
 	{
 		Action = OccupiedSlot.GetCovertAction();
+		AcademyProjectState = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(UnitState.GetReference());
 
 		if (OccupiedSlot.GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
@@ -718,6 +720,12 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
 			Tuple.Data[4].i = eUIState_Normal;
 			Tuple.Data[5].b = true;
+		}
+		else if (AcademyProjectState != none)
+		{
+			Tuple.Data[0].s = OccupiedSlot.GetBonusDisplayString();
+			Tuple.Data[3].i = AcademyProjectState.GetCurrentNumHoursRemaining();
+			Tuple.Data[4].i = eUIState_Warning;
 		}
 	}
 

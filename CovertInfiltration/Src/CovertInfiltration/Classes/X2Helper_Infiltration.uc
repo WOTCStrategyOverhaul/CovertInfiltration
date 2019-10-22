@@ -720,3 +720,18 @@ static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
 
 	return Round(TotalHours);
 }
+
+static function XComGameState_HeadquartersProjectTrainAcademy GetAcademyProjectForUnit (StateObjectReference UnitRef)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_HeadquartersProjectTrainAcademy', ProjectState)
+	{
+		if (ProjectState.ProjectFocus == UnitRef)
+		{
+			return ProjectState;
+		}
+	}
+
+	return none;
+}

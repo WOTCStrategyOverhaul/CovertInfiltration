@@ -787,24 +787,11 @@ static protected function EmptyStopProjectAcademySlot (StateObjectReference Slot
 	local XComGameState_HeadquartersProjectTrainAcademy ProjectState;
 	local HeadquartersOrderInputContext OrderInput;
 	local XComGameState_StaffSlot SlotState;
-	local StateObjectReference UnitRef;
-	local XComGameStateHistory History;
-	local bool bFound;
 	
-	History = `XCOMHISTORY;
-	SlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(SlotRef.ObjectID));
-	UnitRef = SlotState.GetAssignedStaffRef();
+	SlotState = XComGameState_StaffSlot(`XCOMHISTORY.GetGameStateForObjectID(SlotRef.ObjectID));
+	ProjectState = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(SlotState.GetAssignedStaffRef());
 
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectTrainAcademy', ProjectState)
-	{
-		if (ProjectState.ProjectFocus == UnitRef)
-		{
-			bFound = true;
-			break;
-		}
-	}
-
-	if (bFound)
+	if (ProjectState != none)
 	{
 		// This will just cancel any project given to it, kick the unit out of the slot and set the status back to active
 		// No need to write a custom implementation
@@ -815,7 +802,7 @@ static protected function EmptyStopProjectAcademySlot (StateObjectReference Slot
 	}
 	else
 	{
-		`RedScreen("CI: Failed to find XComGameState_HeadquartersProjectTrainAcademy for slot" @ SlotRef.ObjectID @ "with unit" @ UnitRef.ObjectID);
+		`RedScreen("CI: Failed to find XComGameState_HeadquartersProjectTrainAcademy for slot" @ SlotRef.ObjectID @ "with unit" @ SlotState.GetAssignedStaffRef().ObjectID);
 	}
 }
 
