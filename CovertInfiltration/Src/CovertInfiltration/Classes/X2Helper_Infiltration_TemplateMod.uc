@@ -351,6 +351,7 @@ static protected function PatchGoldenPathTechs ()
 	local array<X2DataTemplate> DifficulityVariants;
 	local X2DataTemplate DataTemplate;
 	local X2TechTemplate TechTemplate;
+	local int i;
 
 	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	
@@ -362,8 +363,11 @@ static protected function PatchGoldenPathTechs ()
 
 		if (TechTemplate != none)
 		{
-			// TODO: Check if this breaks the game by contacting the blacksite region before the blacksite is revealed
-			TechTemplate.Requirements.RequiredObjectives.RemoveItem('T2_M0_CompleteGuerillaOps');
+			// Replace T2_M0_CompleteGuerillaOps with the blacksite reveal
+			i = TechTemplate.Requirements.RequiredObjectives.Find('T2_M0_CompleteGuerillaOps');
+
+			if (i != INDEX_NONE) TechTemplate.Requirements.RequiredObjectives[i] = 'T2_M0_L0_BlacksiteReveal';
+			else TechTemplate.Requirements.RequiredObjectives.AddItem('T2_M0_L0_BlacksiteReveal');
 		}
 	}
 }
@@ -629,8 +633,35 @@ static function PatchGoldenPath ()
 		ObjectiveTemplate.NextObjectives.Length = 0;
 	}
 
+	// Get rid of MissionExpired listener for T2_M1_L1_RevealBlacksiteObjective, it's fine to skip missions in CI
+	ObjectiveTemplate = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M1_L1_RevealBlacksiteObjective'));
+	if (ObjectiveTemplate == none)
+	{
+		`REDSCREEN("CI: Failed to find T2_M1_L1_RevealBlacksiteObjective template");
+	}
+	else
+	{
+		RemoveNarrativeTriggerByEvent(ObjectiveTemplate, 'MissionExpired');
+		RemoveNarrativeTriggerByEvent(ObjectiveTemplate, 'WelcomeToResistanceComplete');
+		`log(`showvar(ObjectiveTemplate.NarrativeTriggers.Length));
+	}
+
 	// Edit the associated researches
 	PatchGoldenPathTechs();
+}
+
+static protected function RemoveNarrativeTriggerByEvent (X2ObjectiveTemplate ObjectiveTemplate, name EventName)
+{
+	local int i;
+
+	for (i = 0; i < ObjectiveTemplate.NarrativeTriggers.Length; i++)
+	{
+		if (ObjectiveTemplate.NarrativeTriggers[i].TriggeringEvent == EventName)
+		{
+			ObjectiveTemplate.NarrativeTriggers.Remove(i, 1);
+			i--;
+		}
+	}
 }
 
 //////////////////
