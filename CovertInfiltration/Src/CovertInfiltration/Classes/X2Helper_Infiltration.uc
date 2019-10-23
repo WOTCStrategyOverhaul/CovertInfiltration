@@ -563,6 +563,24 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 	MissionState.GenerateMissionFlavorText();
 }
 
+static function SetFactionOnMissionSite (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local X2ActivityTemplate_Mission ActivityTemplate;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_ActivityChain ChainState;
+
+	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (!ActivityTemplate.bAssignFactionToMissionSite) return;
+
+	ChainState = ActivityState.GetActivityChain();
+	if (ChainState.FactionRef.ObjectID == 0) return;
+
+	MissionState = GetMissionStateFromActivity(ActivityState);
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
+
+	MissionState.ResistanceFaction = ChainState.FactionRef;
+}
+
 static function BuildFlatRisksDeck ()
 {
 	local ActionFlatRiskSitRep FlatRiskDef;

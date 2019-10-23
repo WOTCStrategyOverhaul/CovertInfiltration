@@ -63,6 +63,7 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 
 	MissionState = XComGameState_MissionSite(NewGameState.CreateNewStateObject(class'XComGameState_MissionSite'));
 	ActivityState.PrimaryObjectRef = MissionState.GetReference();
+	class'X2Helper_Infiltration'.static.SetFactionOnMissionSite(NewGameState, ActivityState);
 	
 	if (ActivityTemplate.PreMissionSetup != none)
 	{

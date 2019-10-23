@@ -18,6 +18,7 @@ var array<name> MissionRewards;
 var string OverworldMeshPath;
 var string UIButtonIcon;
 var string MissionImage;
+var bool bAssignFactionToMissionSite;
 
 delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
 delegate PreMissionSetup (XComGameState NewGameState, XComGameState_Activity ActivityState);
@@ -146,6 +147,8 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 
 defaultproperties
 {
+	bAssignFactionToMissionSite = true
+
 	InitializeMissionRewards = GenericInitializeMissionRewards
 	GetOverworldMeshPath = GenericGetOverworldMeshPath
 	OnStrategyMapSelected = DefaultOnStrategyMapSelected
