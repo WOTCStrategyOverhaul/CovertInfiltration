@@ -345,6 +345,29 @@ static function AddPrototypeItem(name TechName, name Prototype)
 	}
 }
 
+static protected function PatchGoldenPathTechs ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	// ResistanceCommunications
+	Manager.FindDataTemplateAllDifficulties('ResistanceCommunications', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+
+		if (TechTemplate != none)
+		{
+			// TODO: Check if this breaks the game by contacting the blacksite region before the blacksite is revealed
+			TechTemplate.Requirements.RequiredObjectives.RemoveItem('T2_M0_CompleteGuerillaOps');
+		}
+	}
+}
+
 ////////////////
 /// Missions ///
 ////////////////
@@ -576,42 +599,38 @@ static function RemoveNoCovertActionNags()
 	}
 }
 
-static function ReplaceNarrativeStartObjectives()
+static function PatchGoldenPath ()
 {
 	local X2StrategyElementTemplateManager TemplateManager;
-	local X2ObjectiveTemplate Template;
+	local X2ObjectiveTemplate ObjectiveTemplate;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	
-	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_CompleteGuerillaOps'));
-	if (Template == none)
-	{
-		`REDSCREEN("CI: Failed to find T2_M0_CompleteGuerillaOps template");
-	}
-	else
-	{
-		Template.CompletionEvent = 'ActivityChainEnded';
-	}
-	
-	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_L0_BlacksiteReveal'));
-	if (Template == none)
+	ObjectiveTemplate = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_L0_BlacksiteReveal'));
+	if (ObjectiveTemplate == none)
 	{
 		`REDSCREEN("CI: Failed to find T2_M0_L0_BlacksiteReveal template");
 	}
 	else
 	{
-		Template.CompletionEvent = 'ActivityChainEnded';
+		ObjectiveTemplate.CompletionEvent = 'NonFactionMissionExit';
+		ObjectiveTemplate.NextObjectives.AddItem('T2_M1_ContactBlacksiteRegion');
 	}
-	
-	Template = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('XP0_M5_ActivateChosenLostAndAbandoned'));
-	if (Template == none)
+
+	// Get rid of T2_M0_CompleteGuerillaOps (it's forced complete at the start of the campaign, should do nothing)
+	ObjectiveTemplate = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('T2_M0_CompleteGuerillaOps'));
+	if (ObjectiveTemplate == none)
 	{
-		`REDSCREEN("CI: Failed to find XP0_M5_ActivateChosenLostAndAbandoned template");
+		`REDSCREEN("CI: Failed to find T2_M0_CompleteGuerillaOps template");
 	}
 	else
 	{
-		Template.CompletionEvent = 'ActivityChainEnded';
+		ObjectiveTemplate.CompletionEvent = '_______';
+		ObjectiveTemplate.NextObjectives.Length = 0;
 	}
+
+	// Edit the associated researches
+	PatchGoldenPathTechs();
 }
 
 //////////////////
