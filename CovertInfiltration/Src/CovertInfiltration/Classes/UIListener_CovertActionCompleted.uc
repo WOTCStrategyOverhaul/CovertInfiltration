@@ -26,7 +26,6 @@ function CheckForTiredSoldiers(XComGameState_CovertAction CovertAction, UICovert
 {
 	local XComGameState_StaffSlot StaffSlotState;
 	local XComGameState_Unit UnitState;
-
 	local int idx;
 
 	for (idx = 0; idx < CovertAction.StaffSlots.Length; idx++)
@@ -35,7 +34,7 @@ function CheckForTiredSoldiers(XComGameState_CovertAction CovertAction, UICovert
 		if (StaffSlotState.IsSlotFilled())
 		{
 			UnitState = StaffSlotState.GetAssignedStaff();
-			if (UnitState.GetMentalState() == eMentalState_Tired)
+			if (UnitState.GetMentalState() == eMentalState_Tired && !UnitState.IsDead() && !UnitState.bCaptured)
 			{
 				ShowTiredOnReport(CovertActionReport, StaffSlotState, UnitState, idx);
 			}
