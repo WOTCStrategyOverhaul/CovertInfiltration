@@ -43,6 +43,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	
 	SetRegionFromAction();
 	Source = class'X2ActivityTemplate_Mission'.const.MISSION_SOURCE_NAME;
+	class'X2Helper_Infiltration'.static.SetFactionOnMissionSite(NewGameState, ActivityState);
 
 	if (ActivityTemplate.PreMissionSetup != none)
 	{

@@ -53,8 +53,9 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
+
 	CreateGoldenPathActions(StartState);
-	CompleteTutorial(StartState);
+	ForceObjectivesCompleted(StartState);
 	ForceLockAndLoad(StartState);
 }
 
@@ -63,8 +64,9 @@ static event OnLoadedSavedGame()
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner();
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager();
+
 	CreateGoldenPathActions(none);
-	CompleteTutorial(none);
+	ForceObjectivesCompleted(none);
 	ForceLockAndLoad(none);
 }
 
@@ -96,7 +98,7 @@ static protected function CreateGoldenPathActions(XComGameState NewGameState)
 	}
 }
 
-static function CompleteTutorial(XComGameState NewGameState)
+static function ForceObjectivesCompleted (XComGameState NewGameState)
 {
 	local bool bSubmitLocally;
 
@@ -108,6 +110,7 @@ static function CompleteTutorial(XComGameState NewGameState)
 
 	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'XP2_M0_FirstCovertActionTutorial');
 	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'XP2_M1_SecondCovertActionTutorial');
+	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'T2_M0_CompleteGuerillaOps');
 	
 	if(bSubmitLocally)
 	{
@@ -161,7 +164,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPArmorsets();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPWeapons();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchWeaponTechs();
-	class'X2Helper_Infiltration_TemplateMod'.static.ReplaceNarrativeStartObjectives();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchGoldenPath();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
@@ -274,6 +277,7 @@ static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSi
 static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();
+	TriggerMissionExitEvents();
 }
 
 static protected function ResetInfiltrationChosenRoll ()
@@ -299,6 +303,36 @@ static protected function ResetInfiltrationChosenRoll ()
 	if (NewGameState.GetNumGameStateObjects() > 0)
 	{
 		`SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
+}
+
+static protected function TriggerMissionExitEvents ()
+{
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local bool bSubmit;
+
+	History = `XCOMHISTORY;
+	
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Trigger mission exit events");
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	if (MissionState.ResistanceFaction.ObjectID == 0)
+	{
+		`XEVENTMGR.TriggerEvent('NonFactionMissionExit', , , NewGameState);
+		bSubmit = true;
+	}
+
+	if (bSubmit)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 	else
 	{
