@@ -586,7 +586,7 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
 	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
 	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate);
-	Template.AddCHEvent('SoldierListItem_ShouldDisplayMetalStatus', SoldierListItem_ShouldDisplayMetalStatus, ELD_Immediate);
+	Template.AddCHEvent('SoldierListItem_ShouldDisplayMentalStatus', SoldierListItem_ShouldDisplayMentalStatus, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -748,7 +748,7 @@ static protected function EventListenerReturn OverridePersonnelStatus(Object Eve
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn SoldierListItem_ShouldDisplayMetalStatus (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static protected function EventListenerReturn SoldierListItem_ShouldDisplayMentalStatus (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComLWTuple Tuple;
 	local XComGameState_Unit UnitState;
