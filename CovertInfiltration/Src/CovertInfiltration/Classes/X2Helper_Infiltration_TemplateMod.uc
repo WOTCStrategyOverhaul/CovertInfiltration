@@ -643,7 +643,6 @@ static function PatchGoldenPath ()
 	{
 		RemoveNarrativeTriggerByEvent(ObjectiveTemplate, 'MissionExpired');
 		RemoveNarrativeTriggerByEvent(ObjectiveTemplate, 'WelcomeToResistanceComplete');
-		`log(`showvar(ObjectiveTemplate.NarrativeTriggers.Length));
 	}
 
 	// Edit the associated researches
