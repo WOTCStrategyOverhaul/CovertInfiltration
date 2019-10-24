@@ -61,6 +61,7 @@ static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -78,6 +79,7 @@ static function CreateRescueEngineer (out array<X2DataTemplate> Templates)
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.GetRewardDetailStringFn = GetUnitDetails;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -95,6 +97,7 @@ static function CreateRescueScientist (out array<X2DataTemplate> Templates)
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.GetRewardDetailStringFn = GetUnitDetails;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -112,6 +115,7 @@ static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -131,6 +135,7 @@ static function CreateCaptureInformant (out array<X2DataTemplate> Templates)
 	Activity.OnSuccess = DarkVIPOnSuccess;
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -175,6 +180,7 @@ static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -192,6 +198,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -213,6 +220,7 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -230,6 +238,7 @@ static function CreateJailbreakSoldier (out array<X2DataTemplate> Templates)
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.GetRewardDetailStringFn = GetUnitDetails;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -247,6 +256,7 @@ static function CreateJailbreakChosenSoldier (out array<X2DataTemplate> Template
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.GetRewardDetailStringFn = GetUnitDetails;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -264,6 +274,7 @@ static function CreateJailbreakFactionSoldier (out array<X2DataTemplate> Templat
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.GetRewardDetailStringFn = GetUnitDetails;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -281,6 +292,7 @@ static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -304,6 +316,7 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -323,6 +336,7 @@ static function CreateLandedUFO (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_UFO_Landed";
 
 	Templates.AddItem(Activity);
 }
@@ -339,6 +353,7 @@ static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -355,6 +370,7 @@ static function CreateSupplyRaid (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -377,6 +393,7 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -396,6 +413,7 @@ static function CreateFacilityInformant (out array<X2DataTemplate> Templates)
 	Activity.OnSuccess = DarkVIPOnSuccess;
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -414,6 +432,7 @@ static function CreateGatherIntel (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Intel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
 	Templates.AddItem(Activity);
 }
@@ -432,6 +451,7 @@ static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
 
 	Templates.AddItem(Activity);
 }
@@ -459,6 +479,7 @@ static function CreateIntelRescue (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Container');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
@@ -475,6 +496,7 @@ static function CreateSupplyRescue (out array<X2DataTemplate> Templates)
 	Activity.MissionRewards.AddItem('Reward_Container');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);

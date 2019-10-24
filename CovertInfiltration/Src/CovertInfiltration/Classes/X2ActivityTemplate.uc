@@ -21,6 +21,10 @@ var class<XComGameState_Activity> StateClass;
 var localized string strOverviewHeader;
 var localized string strOverviewDescription;
 
+var string AvailableSound;
+var string CompleteSound;
+var string MilestoneSound;
+
 delegate string GetOverviewDescription (XComGameState_Activity ActivityState);
 delegate string GetOverviewStatus (XComGameState_Activity ActivityState);
 
@@ -72,4 +76,7 @@ defaultproperties
 	StateClass = class'XComGameState_Activity'
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus
+	AvailableSound = "Play_SoldierPromotion"
+	CompleteSound = "Play_SoldierPromotion"
+	MilestoneSound = "Play_SoldierPromotion"
 }
