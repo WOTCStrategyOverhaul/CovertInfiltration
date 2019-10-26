@@ -10,9 +10,6 @@ class X2StrategyElement_DefaultActivityChains extends X2StrategyElement config(I
 var localized string strCounterDarkEventDescription;
 var localized string strCounterHiddenDarkEventDescription;
 
-var config int MinimumSupplies;
-var config int MinimumIntel;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Activites;
@@ -265,25 +262,10 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	//Template.DeckReq = IsSuppliesChainAvailable;
 
 	Template.Stages.AddItem('Activity_GatherSupplies');
 
 	return Template;
-}
-
-static function bool IsSuppliesChainAvailable(XComGameState NewGameState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local X2ItemTemplateManager ItemTemplateManager;
-	local X2ItemTemplate ItemTemplate;
-
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-
-	ItemTemplate = ItemTemplateManager.FindItemTemplate('Supplies');
-
-	return !XComHQ.HasItem(ItemTemplate, default.MinimumSupplies);
 }
 
 static function X2DataTemplate CreateGatherIntelTemplate()
@@ -296,25 +278,10 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	//Template.DeckReq = IsIntelChainAvailable;
 
 	Template.Stages.AddItem('Activity_GatherIntel');
 
 	return Template;
-}
-
-static function bool IsIntelChainAvailable(XComGameState NewGameState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local X2ItemTemplateManager ItemTemplateManager;
-	local X2ItemTemplate ItemTemplate;
-
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-
-	ItemTemplate = ItemTemplateManager.FindItemTemplate('Intel');
-
-	return !XComHQ.HasItem(ItemTemplate, default.MinimumIntel);
 }
 
 static function X2DataTemplate CreateLandedUFOTemplate()
