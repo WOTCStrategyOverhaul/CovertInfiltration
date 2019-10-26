@@ -240,7 +240,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 
 		HQPres = `HQPRES;
 		HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
-		`XSTRATEGYSOUNDMGR.PlaySoundEvent(Activity.GetMyTemplate().CompleteSound);
+		`XSTRATEGYSOUNDMGR.PlaySoundEvent(Activity.GetMyTemplate().MissionReadySound);
 
 		if (`GAME.GetGeoscape().IsScanning())
 		{

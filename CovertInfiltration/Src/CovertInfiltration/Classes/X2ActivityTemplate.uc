@@ -22,7 +22,7 @@ var localized string strOverviewHeader;
 var localized string strOverviewDescription;
 
 var string AvailableSound;
-var string CompleteSound;
+var string MissionReadySound;
 var string MilestoneSound;
 
 delegate string GetOverviewDescription (XComGameState_Activity ActivityState);
@@ -77,6 +77,6 @@ defaultproperties
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus
 	AvailableSound = "Play_SoldierPromotion"
-	CompleteSound = "Play_SoldierPromotion"
+	MissionReadySound = "Play_SoldierPromotion"
 	MilestoneSound = "Play_SoldierPromotion"
 }
