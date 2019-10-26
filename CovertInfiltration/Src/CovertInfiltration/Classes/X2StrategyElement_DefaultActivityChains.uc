@@ -98,9 +98,10 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_SupplyRaid');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseRandomContactedRegion;
+	Template.ChooseRegions = ChooseRandomRelayedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = IsAdvancedChainAvailable;
 	
 	Template.Stages.AddItem('Activity_CommanderSupply');
 	Template.Stages.AddItem('Activity_SupplyRaid');
@@ -115,9 +116,10 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_CaptureInformant');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseRandomContactedRegion;
+	Template.ChooseRegions = ChooseRandomRelayedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.DeckReq = IsAdvancedChainAvailable;
 
 	Template.Stages.AddItem('Activity_RecoverInformant');
 	Template.Stages.AddItem('Activity_CaptureInformant');
@@ -263,7 +265,7 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = IsSuppliesChainAvailable;
+	//Template.DeckReq = IsSuppliesChainAvailable;
 
 	Template.Stages.AddItem('Activity_GatherSupplies');
 
@@ -294,7 +296,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.DeckReq = IsIntelChainAvailable;
+	//Template.DeckReq = IsIntelChainAvailable;
 
 	Template.Stages.AddItem('Activity_GatherIntel');
 
@@ -322,7 +324,7 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_LandedUFO');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseRandomContactedRegion;
+	Template.ChooseRegions = ChooseRandomRelayedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsUFOChainAvailable;
@@ -342,7 +344,7 @@ static function bool IsUFOChainAvailable(XComGameState NewGameState)
 	
 	if (AlienHQ.bHasPlayerBeenIntercepted || AlienHQ.bHasGoldenPathUFOAppeared || AlienHQ.bHasPlayerAvoidedUFO)
 	{
-		return true;
+		return IsAdvancedChainAvailable(NewGameState);
 	}
 
 	return false;
@@ -396,7 +398,7 @@ static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, ou
 
 static function bool IsFacilityChainAvailable(XComGameState NewGameState)
 {
-	return FindRegionForFacilityChain().ObjectID > 0;
+	return (IsAdvancedChainAvailable(NewGameState) && FindRegionForFacilityChain().ObjectID > 0);
 }
 
 static function StateObjectReference FindRegionForFacilityChain ()
@@ -538,4 +540,46 @@ static function ChooseRandomContactedRegion (XComGameState_ActivityChain ChainSt
 
 	PrimaryRegionRef = SelectedRegion;
 	SecondaryRegionRef = SelectedRegion;
+}
+
+static function bool IsAdvancedChainAvailable (XComGameState NewGameState)
+{
+	return FindRegionWithRelay().ObjectID > 0;
+}
+
+static function ChooseRandomRelayedRegion (XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef)
+{
+	local StateObjectReference SelectedRegion;
+
+	SelectedRegion = FindRegionWithRelay();
+	
+	if (SelectedRegion.ObjectID <= 0)
+	{
+		`RedScreen("There are no non-starting regions with Radio Relays! Chain has no region to spawn");
+	}
+
+	PrimaryRegionRef = SelectedRegion;
+	SecondaryRegionRef = SelectedRegion;
+}
+
+static function StateObjectReference FindRegionWithRelay ()
+{
+	local array<StateObjectReference> RegionRefs;
+	local XComGameState_WorldRegion RegionState;
+	local StateObjectReference SelectedRegion;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_WorldRegion', RegionState)
+	{
+		if (RegionState.ResistanceLevel == eResLevel_Outpost && !RegionState.IsStartingRegion())
+		{
+			RegionRefs.AddItem(RegionState.GetReference());
+		}
+	}
+	
+	if (RegionRefs.Length > 0)
+	{
+		SelectedRegion = RegionRefs[`SYNC_RAND_STATIC(RegionRefs.Length)];
+	}
+
+	return SelectedRegion;
 }
