@@ -166,6 +166,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchWeaponTechs();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGoldenPath();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
+	class'X2Helper_Infiltration_TemplateMod'.static.RemoveSabotages();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();

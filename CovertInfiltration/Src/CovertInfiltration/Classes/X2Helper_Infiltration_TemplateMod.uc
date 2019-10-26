@@ -19,6 +19,7 @@ var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
+var config(GameData) array<name> arrSabotagesToRemove;
 
 var config array<name> arrPrototypesToDisable;
 var config bool PrototypePrimaries;
@@ -945,4 +946,24 @@ static protected function DeactivateLiveFireTraining(XComGameState NewGameState,
 
 	XComHQ = class'X2StrategyElement_XpackResistanceActions'.static.GetNewXComHQState(NewGameState);
 	XComHQ.BonusTrainingRanks -= GetLiveFireTrainingRanksIncrease();
+}
+
+//////////////
+/// Chosen ///
+//////////////
+
+static function RemoveSabotages ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local X2SabotageTemplate SabotageTemplate;
+	local name TemplateName;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	`CI_Log("Disabling Chosen sabotages");
+
+	foreach default.arrSabotagesToRemove(TemplateName)
+	{
+		SabotageTemplate = X2SabotageTemplate(Manager.FindStrategyElementTemplate(TemplateName));
+		SabotageTemplate.CanActivateDelegate = class'X2Helper_Infiltration'.static.ReturnFalse;
+	}
 }
