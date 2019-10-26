@@ -181,12 +181,21 @@ static function StateObjectReference FindFactionForExtraSoldier (XComGameState N
 	local XComGameState_ResistanceFaction FactionState;
 	local array<StateObjectReference> FactionRefs;
 	local StateObjectReference EmptyRef;
+	local int NumFactionSoldiers;
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
-		if (FactionState.bMetXCom && FactionState.GetInfluence() >= eFactionInfluence_Influential && FactionState.IsExtraFactionSoldierRewardAllowed(NewGameState))
+		if (FactionState.bMetXCom)
 		{
-			FactionRefs.AddItem(FactionState.GetReference());
+			NumFactionSoldiers = FactionState.GetNumFactionSoldiers(NewGameState);
+
+			if (
+				NumFactionSoldiers > 0 && // If we currently have none, allow the normal recruit CA to spawn instead
+				NumFactionSoldiers < class'XComGameState_ResistanceFaction'.default.MaxHeroesPerFaction
+			)
+			{
+				FactionRefs.AddItem(FactionState.GetReference());
+			}
 		}
 	}
 
