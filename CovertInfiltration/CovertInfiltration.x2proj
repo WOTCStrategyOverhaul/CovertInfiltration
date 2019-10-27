@@ -134,6 +134,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_AlienFacilityBuilt.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
       <SubType>Content</SubType>
     </Content>

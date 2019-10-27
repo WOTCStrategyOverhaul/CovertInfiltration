@@ -20,7 +20,11 @@ var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
-static event UpdateDLC()
+//////////////////////////////////
+/// Vanilla DLCInfo misc hooks ///
+//////////////////////////////////
+
+static event UpdateDLC ()
 {
 	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
@@ -30,6 +34,7 @@ static event UpdateDLC()
 static protected function UpdateShowTutorial ()
 {
 	local XComHQPresentationLayer HQPres;
+	local XComGameState NewGameState;
 
 	HQPres = `HQPRES;
 	
@@ -37,11 +42,20 @@ static protected function UpdateShowTutorial ()
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.GeoscapeEntry();
 	}
-}
 
-static event OnLoadedSavedGameToStrategy()
-{
-	class'XComGameState_ActivityChainSpawner'.static.PrintDebugInfo();
+	if (
+		class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bAlienFacilityBuiltTutorialPending &&
+		
+		// Do the same check again, as the previous tutorial could have been shown
+		(HQPres.StrategyMap2D != none && HQPres.StrategyMap2D.m_eUIState != eSMS_Flight && HQPres.ScreenStack.GetCurrentScreen() == HQPres.StrategyMap2D)
+	)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Turn off bAlienFacilityBuiltTutorialPending");
+		class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState).bAlienFacilityBuiltTutorialPending = false;
+		`SubmitGameState(NewGameState);
+
+		class'UIUtilities_InfiltrationTutorial'.static.AlienFacilityBuilt();
+	}
 }
 
 ///////////////////////

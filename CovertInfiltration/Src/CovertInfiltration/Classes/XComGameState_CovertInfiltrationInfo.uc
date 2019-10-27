@@ -16,9 +16,10 @@ var bool bCompletedFirstOrdersAssignment; // If false (just built the ring) - al
 var bool bRingStaffReplacement; // True if we are replacing the staff assigned to resistance ring and no empty wildcard slots - do not un-grant/grant slot
 var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
 var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to highlight new missions after spawning one to avoid full screen popups
-var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
-
 var int CurrentBarracksLimit;
+
+var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
+var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is built and we are waiting for Geoscape control to return to the player to show the tutorial
 
 /////////////////////
 /// Tactical vars ///

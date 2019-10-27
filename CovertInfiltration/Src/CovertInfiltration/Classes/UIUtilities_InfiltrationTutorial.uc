@@ -28,6 +28,9 @@ var localized string strFacilityChangesBody;
 var localized string strActivityChainsHeader;
 var localized string strActivityChainsBody;
 
+var localized string strAlienFacilityBuiltHeader;
+var localized string strAlienFacilityBuiltBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -75,6 +78,32 @@ static function ActivityChains ()
 	if (!ShouldShowPopup('ActivityChains')) return;
 
 	`PRESBASE.UITutorialBox(default.strActivityChainsHeader, default.strActivityChainsBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function AlienFacilityBuilt ()
+{
+	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
+
+	`PRESBASE.UITutorialBox(default.strAlienFacilityBuiltHeader, default.strAlienFacilityBuiltBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+// This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
+static function QueueAlienFacilityBuilt ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+
+	// Set the tutorial flag, if we didn't see the tutorial before
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	if (!CIInfo.bAlienFacilityBuiltTutorialPending && CIInfo.TutorialStagesShown.Find('AlienFacilityBuilt') == INDEX_NONE)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Turn on bAlienFacilityBuiltTutorialPending");
+		
+		CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+		CIInfo.bAlienFacilityBuiltTutorialPending = true;
+		
+		`SubmitGameState(NewGameState);
+	}
 }
 
 ///////////////

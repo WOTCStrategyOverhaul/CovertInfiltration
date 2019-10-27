@@ -9,6 +9,11 @@ event OnInit (UIScreen Screen)
 
 	SpawnViewChainButton(MissionScreen);
 	CleanUpStrategyHudAlert(MissionScreen);
+
+	if (MissionScreen.IsA(class'UIMission_AlienFacility'.Name))
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.QueueAlienFacilityBuilt();
+	}
 }
 
 simulated protected function SpawnViewChainButton (UIMission MissionScreen)

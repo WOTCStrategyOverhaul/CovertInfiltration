@@ -329,6 +329,9 @@ strFacilityChangesBody="The Resistance Ring is no longer needed to prepare Cover
 strActivityChainsHeader="Activity Chains"
 strActivityChainsBody="An activity chain is a set of missions and/or covert actions that yields big rewards. They will be presented to you by the resistance and as your network grows more opportunities will be revealed.<br/>While the main reward(s) are usually given at the end of the chain, the earlier missions are still beneficial for XP and loot even if you don't intend to finish the chain."
 
+strAlienFacilityBuiltHeader="More resistance opportunities"
+strAlienFacilityBuiltBody="Building a radio relay will allow the resistance to discover more opportunities<br/><br/>You will be able to assault ADVENT supply convoys, find information about VIPs, assault UFOs and even embark on complex activity chains that will allow you to assault AVATAR facilities in non-contacted regions"
+
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
