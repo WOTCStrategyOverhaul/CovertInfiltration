@@ -60,6 +60,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate);
 	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate);
 	Template.AddCHEvent('UIResistanceReport_ShowCouncil', UIResistanceReport_ShowCouncil, ELD_Immediate);
+	Template.AddCHEvent('OverrideNextRetaliationDisplay', OverrideNextRetaliationDisplay, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -410,6 +411,18 @@ static protected function EventListenerReturn UIResistanceReport_ShowCouncil (Ob
 	Tuple.Data[0].b =
 		class'UIUtilities_Strategy'.static.GetXComHQ().IsObjectiveCompleted('T2_M0_L0_BlacksiteReveal') && // We saw the "Welcome to resistance" cinematic
 		!class'UIUtilities_Strategy'.static.GetXComHQ().IsObjectiveCompleted('T5_M1_AutopsyTheAvatar'); // And the guy isn't toodled yet
+	
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideNextRetaliationDisplay (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none) return ELR_NoInterrupt;
+	
+	Tuple.Data[0].b = false;
 	
 	return ELR_NoInterrupt;
 }
