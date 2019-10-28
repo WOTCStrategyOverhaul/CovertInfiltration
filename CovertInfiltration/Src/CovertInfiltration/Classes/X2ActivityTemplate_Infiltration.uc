@@ -12,6 +12,9 @@ var name CovertActionName;
 var localized string ActionRewardDisplayName;
 var localized string ActionRewardDetails;
 
+var string MissionReadySound;
+var string MilestoneSound;
+
 // Expiry in hours
 var config bool bExpires;
 var config int ExpirationBaseTime;
@@ -161,4 +164,6 @@ defaultproperties
 
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'
+	MissionReadySound = "Play_SoldierPromotion"
+	MilestoneSound = "Play_SoldierPromotion"
 }

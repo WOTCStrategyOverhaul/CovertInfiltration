@@ -386,7 +386,7 @@ function UpdateGameBoard()
 
 		HQPres = `HQPRES;
 		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
-		`XSTRATEGYSOUNDMGR.PlaySoundEvent(ActivityState.GetMyTemplate().MilestoneSound);
+		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
 		if (`GAME.GetGeoscape().IsScanning())
 		{
