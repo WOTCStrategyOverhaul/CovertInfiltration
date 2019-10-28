@@ -314,6 +314,7 @@ static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity Geosc
 {
 	local XComGameState_Continent ContinentState;
 	local XComGameState_WorldRegion RegionState;
+	local XComGameState_Activity ActivityState;
 	local XComHQPresentationLayer HQPres;
 	local string strLocation;
 
@@ -324,9 +325,11 @@ static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity Geosc
 	else if (ContinentState != none) strLocation = ContinentState.GetMyTemplate().DisplayName;
 	else strLocation = default.strOpportunityAvaliableUnknownLocation;
 
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(GeoscapeEntity);
+
 	HQPres = `HQPRES;
 	HQPres.NotifyBanner(Header, IconPath, strLocation, Description, eState);
-	HQPres.PlayUISound(eSUISound_SoldierPromotion);
+	`XSTRATEGYSOUNDMGR.PlaySoundEvent(ActivityState.GetMyTemplate().AvailableSound);
 	
 	// If we are currently looking at the map, refresh the list of missions in the HUD
 	// so that the new one appears there

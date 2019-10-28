@@ -359,6 +359,7 @@ function UpdateSitrepTags()
 function UpdateGameBoard()
 {
 	local XComGameState NewGameState;
+	local XComGameState_Activity ActivityState;
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local XComHQPresentationLayer HQPres;
@@ -380,10 +381,12 @@ function UpdateGameBoard()
 		NewMissionState.SelectedInfiltartionBonuses[NewMissionState.GetBonusMilestoneSelectionIndexByMilestone(BonusTemplate.Milestone)].bGranted = true;
 
 		`SubmitGamestate(NewGameState);
+		
+		ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(NewMissionState);
 
 		HQPres = `HQPRES;
 		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
-		HQPres.PlayUISound(eSUISound_SoldierPromotion);
+		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
 		if (`GAME.GetGeoscape().IsScanning())
 		{
