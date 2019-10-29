@@ -26,6 +26,11 @@ var config bool PrototypePrimaries;
 var config bool PrototypeSecondaries;
 var config bool PrototypeArmorsets;
 
+var config int COST_MEDIKIT_MK1;
+var config int COST_MEDIKIT_MK2;
+var config int COST_FLASHGRENADE;
+var config int COST_SMOKEGRENADE;
+
 /////////////
 /// Items ///
 /////////////
@@ -265,6 +270,51 @@ static function PatchTLPWeapons()
 		{
 			Template.CreatorTemplateName = 'none';
 		}
+	}
+}
+
+static function PatchUtilityItems ()
+{
+	local X2ItemTemplateManager TemplateManager;
+	local X2ItemTemplate ItemTemplate;
+	local ArtifactCost Resources;
+
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	
+	ItemTemplate = TemplateManager.FindItemTemplate('Medikit');
+	if(ItemTemplate != none)
+	{
+		ItemTemplate.Cost.ResourceCosts.Length = 0;
+		Resources.ItemTemplateName = 'Supplies';
+		Resources.Quantity = default.COST_MEDIKIT_MK1;
+		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
+	}
+	
+	ItemTemplate = TemplateManager.FindItemTemplate('NanoMedikit');
+	if(ItemTemplate != none)
+	{
+		ItemTemplate.Cost.ResourceCosts.Length = 0;
+		Resources.ItemTemplateName = 'Supplies';
+		Resources.Quantity = default.COST_MEDIKIT_MK2;
+		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
+	}
+	
+	ItemTemplate = TemplateManager.FindItemTemplate('FlashbangGrenade');
+	if(ItemTemplate != none)
+	{
+		ItemTemplate.Cost.ResourceCosts.Length = 0;
+		Resources.ItemTemplateName = 'Supplies';
+		Resources.Quantity = default.COST_FLASHGRENADE;
+		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
+	}
+	
+	ItemTemplate = TemplateManager.FindItemTemplate('SmokeGrenade');
+	if(ItemTemplate != none)
+	{
+		ItemTemplate.Cost.ResourceCosts.Length = 0;
+		Resources.ItemTemplateName = 'Supplies';
+		Resources.Quantity = default.COST_SMOKEGRENADE;
+		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
 	}
 }
 

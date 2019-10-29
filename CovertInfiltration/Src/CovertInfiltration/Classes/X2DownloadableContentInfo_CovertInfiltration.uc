@@ -173,6 +173,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchNewRetaliationNarrative();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGatecrasher();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchUtilityItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAcademyStaffSlot();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPArmorsets();
