@@ -139,7 +139,7 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
 		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
 
-		if (RiskChance <= 0 || RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
+		if (RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
 		{
 			continue;
 		}
@@ -158,11 +158,12 @@ static function string GetRiskDifficultyColouredString(int RiskLevel)
 	
 	switch (RiskLevel)
 	{
-	case 0: TextColor = "fdce2b";   break; // yellow
-	case 1: TextColor = "e6af31";   break; // yellow-orange
-	case 2: TextColor = "e69831";   break; // orange
-	case 3: TextColor = "e66d31";   break; // orange-red
-	case 4: TextColor = "bf1e2e";   break; // red
+	case 0: TextColor = "53b45e";   break; // green
+	case 1: TextColor = "fdce2b";   break; // yellow
+	case 2: TextColor = "e6af31";   break; // yellow-orange
+	case 3: TextColor = "e69831";   break; // orange
+	case 4: TextColor = "e66d31";   break; // orange-red
+	case 5: TextColor = "bf1e2e";   break; // red
 	}
 
 	return ColourText(Text, TextColor);

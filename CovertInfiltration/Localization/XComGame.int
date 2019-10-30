@@ -244,11 +244,12 @@ FriendlyName="Increased Detection Range"
 Description="ADVENT's perimeter sensors have put the garrison on high alert - our concealed units will be more easily spotted"
 
 [X2StrategyGameRulesetDataStructures]
-CovertActionRiskLabels[0]="Trivial"
-CovertActionRiskLabels[1]="Minor"
-CovertActionRiskLabels[2]="Moderate"
-CovertActionRiskLabels[3]="Major"
-CovertActionRiskLabels[4]="Extreme"
+CovertActionRiskLabels[0]="Countered"
+CovertActionRiskLabels[1]="Trivial"
+CovertActionRiskLabels[2]="Minor"
+CovertActionRiskLabels[3]="Moderate"
+CovertActionRiskLabels[4]="Major"
+CovertActionRiskLabels[5]="Extreme"
 
 [XComGameState_HeadquartersXCom]
 ;CovertActionsSelectOp="SELECT OPERATION" **Vanilla option for reference**
