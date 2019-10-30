@@ -15,6 +15,7 @@ const MISSION_SOURCE_NAME = 'MissionSource_ActivityCI';
 
 var class<UIMission> ScreenClass;
 var array<name> MissionRewards;
+var int Difficulty; // Meaning depends on the GetMissionDifficulty delegate used
 var string OverworldMeshPath;
 var string UIButtonIcon;
 var string MissionImage;

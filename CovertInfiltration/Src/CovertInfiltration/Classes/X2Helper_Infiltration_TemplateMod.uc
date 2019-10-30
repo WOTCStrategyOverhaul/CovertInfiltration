@@ -392,6 +392,9 @@ static function PatchRetailationMissionSource()
 		MissionSource = X2MissionSourceTemplate(DataTemplate);
 		MissionSource.SpawnMissionsFn = SpawnRetaliationMission;
 		MissionSource.GetSitrepsFn = class'X2Helper_Infiltration'.static.GetSitrepsForAssaultMission;
+
+		MissionSource.DifficultyValue = 3;
+		MissionSource.GetMissionDifficultyFn = GetMissionDifficultyFromMonthPlusTemplate;
 	}
 }
 
@@ -571,6 +574,32 @@ static function PatchQuestItems ()
 			}
 		}
 	}
+}
+
+static protected function int GetMissionDifficultyFromMonthPlusTemplate (XComGameState_MissionSite MissionState)
+{
+	local TDateTime StartDate;
+	local array<int> MonthlyDifficultyAdd;
+	local int Difficulty, MonthDiff;
+
+	class'X2StrategyGameRulesetDataStructures'.static.SetTime(StartDate, 0, 0, 0, class'X2StrategyGameRulesetDataStructures'.default.START_MONTH,
+		class'X2StrategyGameRulesetDataStructures'.default.START_DAY, class'X2StrategyGameRulesetDataStructures'.default.START_YEAR);
+
+	Difficulty = MissionState.GetMissionSource().DifficultyValue;
+	MonthDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInMonths(class'XComGameState_GeoscapeEntity'.static.GetCurrentTime(), StartDate);
+	MonthlyDifficultyAdd = class'X2StrategyElement_DefaultMissionSources'.static.GetMonthlyDifficultyAdd();
+
+	if(MonthDiff >= MonthlyDifficultyAdd.Length)
+	{
+		MonthDiff = MonthlyDifficultyAdd.Length - 1;
+	}
+
+	Difficulty += MonthlyDifficultyAdd[MonthDiff];
+
+	Difficulty = Clamp(Difficulty, class'X2StrategyGameRulesetDataStructures'.default.MinMissionDifficulty,
+						class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
+
+	return Difficulty;
 }
 
 //////////////////

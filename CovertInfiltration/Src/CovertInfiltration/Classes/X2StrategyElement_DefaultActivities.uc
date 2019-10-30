@@ -332,9 +332,10 @@ static function CreateLandedUFO (out array<X2DataTemplate> Templates)
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
 	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
+	Activity.Difficulty = 3;
 	
 	Activity.MissionRewards.AddItem('Reward_Materiel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "Geoscape_UFO_Landed";
 
@@ -428,9 +429,10 @@ static function CreateGatherIntel (out array<X2DataTemplate> Templates)
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.RadioTower";
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
+	Activity.Difficulty = 2;
 	
 	Activity.MissionRewards.AddItem('Reward_Intel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
@@ -447,9 +449,10 @@ static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
 	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
+	Activity.Difficulty = 2;
 	
 	Activity.MissionRewards.AddItem('Reward_Materiel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
 
@@ -593,6 +596,32 @@ static function int GetMissionDifficultyFromMonth (XComGameState_Activity Activi
 		class'X2StrategyGameRulesetDataStructures'.default.START_DAY, class'X2StrategyGameRulesetDataStructures'.default.START_YEAR);
 
 	Difficulty = 1;
+	MonthDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInMonths(class'XComGameState_GeoscapeEntity'.static.GetCurrentTime(), StartDate);
+	MonthlyDifficultyAdd = class'X2StrategyElement_DefaultMissionSources'.static.GetMonthlyDifficultyAdd();
+
+	if(MonthDiff >= MonthlyDifficultyAdd.Length)
+	{
+		MonthDiff = MonthlyDifficultyAdd.Length - 1;
+	}
+
+	Difficulty += MonthlyDifficultyAdd[MonthDiff];
+
+	Difficulty = Clamp(Difficulty, class'X2StrategyGameRulesetDataStructures'.default.MinMissionDifficulty,
+						class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
+
+	return Difficulty;
+}
+
+static function int GetMissionDifficultyFromMonthPlusTemplate (XComGameState_Activity ActivityState)
+{
+	local TDateTime StartDate;
+	local array<int> MonthlyDifficultyAdd;
+	local int Difficulty, MonthDiff;
+
+	class'X2StrategyGameRulesetDataStructures'.static.SetTime(StartDate, 0, 0, 0, class'X2StrategyGameRulesetDataStructures'.default.START_MONTH,
+		class'X2StrategyGameRulesetDataStructures'.default.START_DAY, class'X2StrategyGameRulesetDataStructures'.default.START_YEAR);
+
+	Difficulty = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate()).Difficulty;
 	MonthDiff = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInMonths(class'XComGameState_GeoscapeEntity'.static.GetCurrentTime(), StartDate);
 	MonthlyDifficultyAdd = class'X2StrategyElement_DefaultMissionSources'.static.GetMonthlyDifficultyAdd();
 
