@@ -16,8 +16,8 @@ struct TradingPostValueModifier
 struct ItemCostOverride
 {
 	var name ItemName;
-	var StrategyCost NewCost;
 	var array<int> Difficulties;
+	var StrategyCost NewCost;
 };
 
 var config(StrategyTuning) array<name> arrDataSetsToForceVariants;
@@ -303,27 +303,23 @@ static function PatchUtilityItems ()
 
 			if (ItemTemplate == none)
 			{
-				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate");
-				continue;
+				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate, cannot override cost");
+				break;
 			}
 
-			if (ItemTemplate.TemplateAvailability < 32)
-			{
-				continue; // Non-singleplayer template
-			}
-			else if (ItemTemplate.TemplateAvailability < 64)
+			if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Rookie))
 			{
 				TemplateDifficulty = 0; // Rookie
 			}
-			else if (ItemTemplate.TemplateAvailability < 128)
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Veteran))
 			{
 				TemplateDifficulty = 1; // Veteran
 			}
-			else if (ItemTemplate.TemplateAvailability < 256)
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Commander))
 			{
 				TemplateDifficulty = 2; // Commander
 			}
-			else if (ItemTemplate.TemplateAvailability < 512)
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Legend))
 			{
 				TemplateDifficulty = 3; // Legend
 			}
@@ -334,7 +330,7 @@ static function PatchUtilityItems ()
 			
 			if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
 			{
-				`CI_Log(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " overridden to " $ ItemCostOverride.NewCost.ResourceCosts[0].Quantity @ ItemCostOverride.NewCost.ResourceCosts[0].ItemTemplateName);
+				`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
 				ItemTemplate.Cost = ItemCostOverride.NewCost;
 			}
 		}
