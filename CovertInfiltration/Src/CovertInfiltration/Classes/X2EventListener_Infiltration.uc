@@ -597,6 +597,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', CallReinforcementsOnSupplyExtraction);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun, ELD_OnStateSubmitted, 99999);
+	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -718,6 +719,63 @@ static function EventListenerReturn OnTacticalPlayBegun(Object EventData, Object
 	// Ensure that our singletons exist
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_CIReinforcementsManager'.static.CreateReinforcementsManager();
+
+	return ELR_NoInterrupt;
+}
+
+static function EventListenerReturn XpKillShot (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_Unit KillerState, VictimState, UnitState;
+	local float XpMult, OriginalKillXp, OriginalBonusKillXP;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XpEventData XpEventData;
+
+	XpEventData = XpEventData(EventData);
+	if (XpEventData == none) return ELR_NoInterrupt;
+
+	KillerState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.XpEarner.ObjectID));
+	VictimState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.EventTarget.ObjectID));
+	if (KillerState == none || VictimState == none) return ELR_NoInterrupt;
+
+	XComHQ = `XCOMHQ;
+
+	// Temp value, while building the framework. TODO: Implement scaling
+	XpMult = 1.2;
+
+	// Save the original values, we will need them quite a bit
+	OriginalKillXp = VictimState.GetMyTemplate().KillContribution;
+	OriginalBonusKillXP = XComHQ != none ? XComHQ.BonusKillXP : 0.0;
+
+	// Undo the original values
+	KillerState.KillCount -= OriginalKillXp;
+	KillerState.BonusKills -= OriginalBonusKillXP;
+
+	// Apply the new (scaled) values
+	KillerState.KillCount += OriginalKillXp * XpMult;
+	KillerState.BonusKills += OriginalBonusKillXP * XpMult;
+
+	// Special handling for Wet Work GTS bonus
+	// In theory, this code should never be reached as this was removed in WOTC
+	// However, the code is still there, and can very easily reenabled by a mod
+	// As such, we would like to handle this case as well
+	if (XComHQ != none && XComHQ.SoldierUnlockTemplates.Find('WetWorkUnlock') != INDEX_NONE)
+	{
+		// Unapply the wetwork kill
+		KillerState.WetWorkKills--;
+
+		// Apply the bonus as BonusKills (WOTC's replacement for WetWorkKills)
+		KillerState.BonusKills += class'X2ExperienceConfig'.default.NumKillsBonus * XpMult;
+	}
+
+	// Adjust kill assists as well
+	foreach NewGameState.IterateByClassType(class'XComGameState_Unit', UnitState)
+	{
+		if (UnitState != KillerState && UnitState.ControllingPlayer.ObjectID == KillerState.ControllingPlayer.ObjectID && UnitState.CanEarnXp() && UnitState.IsAlive())
+		{
+			UnitState.KillAssistsCount -= OriginalKillXp;
+			UnitState.KillAssistsCount += OriginalKillXp * XpMult;
+		}
+	}
 
 	return ELR_NoInterrupt;
 }
