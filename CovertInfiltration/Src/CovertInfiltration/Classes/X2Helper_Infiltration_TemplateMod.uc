@@ -13,23 +13,29 @@ struct TradingPostValueModifier
 	var int NewValue;
 };
 
-var config array<name> arrDataSetsToForceVariants;
+struct ItemCostOverride
+{
+	var name ItemName;
+	var StrategyCost NewCost;
+	var array<int> Difficulties;
+};
+
+var config(StrategyTuning) array<name> arrDataSetsToForceVariants;
+
 var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
+
+var config(StrategyTuning) array<name> arrPrototypesToDisable;
+var config(StrategyTuning) bool PrototypePrimaries;
+var config(StrategyTuning) bool PrototypeSecondaries;
+var config(StrategyTuning) bool PrototypeArmorsets;
+
+var config(StrategyTuning) array<ItemCostOverride> arrItemCostOverrides;
+
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
-
-var config array<name> arrPrototypesToDisable;
-var config bool PrototypePrimaries;
-var config bool PrototypeSecondaries;
-var config bool PrototypeArmorsets;
-
-var config int COST_MEDIKIT_MK1;
-var config int COST_MEDIKIT_MK2;
-var config int COST_FLASHGRENADE;
-var config int COST_SMOKEGRENADE;
 
 /////////////
 /// Items ///
@@ -275,46 +281,63 @@ static function PatchTLPWeapons()
 
 static function PatchUtilityItems ()
 {
-	local X2ItemTemplateManager TemplateManager;
+	local X2ItemTemplateManager ItemTemplateManager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
 	local X2ItemTemplate ItemTemplate;
-	local ArtifactCost Resources;
+	local ItemCostOverride ItemCostOverride;
+	local name TemplateName;
+	local int TemplateDifficulty;
+	
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	`CI_Log("Overriding item costs");
 
-	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-	
-	ItemTemplate = TemplateManager.FindItemTemplate('Medikit');
-	if(ItemTemplate != none)
+	foreach default.arrItemCostOverrides(ItemCostOverride)
 	{
-		ItemTemplate.Cost.ResourceCosts.Length = 0;
-		Resources.ItemTemplateName = 'Supplies';
-		Resources.Quantity = default.COST_MEDIKIT_MK1;
-		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
-	}
-	
-	ItemTemplate = TemplateManager.FindItemTemplate('NanoMedikit');
-	if(ItemTemplate != none)
-	{
-		ItemTemplate.Cost.ResourceCosts.Length = 0;
-		Resources.ItemTemplateName = 'Supplies';
-		Resources.Quantity = default.COST_MEDIKIT_MK2;
-		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
-	}
-	
-	ItemTemplate = TemplateManager.FindItemTemplate('FlashbangGrenade');
-	if(ItemTemplate != none)
-	{
-		ItemTemplate.Cost.ResourceCosts.Length = 0;
-		Resources.ItemTemplateName = 'Supplies';
-		Resources.Quantity = default.COST_FLASHGRENADE;
-		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
-	}
-	
-	ItemTemplate = TemplateManager.FindItemTemplate('SmokeGrenade');
-	if(ItemTemplate != none)
-	{
-		ItemTemplate.Cost.ResourceCosts.Length = 0;
-		Resources.ItemTemplateName = 'Supplies';
-		Resources.Quantity = default.COST_SMOKEGRENADE;
-		ItemTemplate.Cost.ResourceCosts.AddItem(Resources);
+		DifficulityVariants.Length = 0;
+		ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverride.ItemName, DifficulityVariants);
+
+		foreach DifficulityVariants(DataTemplate)
+		{
+			ItemTemplate = X2ItemTemplate(DataTemplate);
+
+			if (ItemTemplate == none)
+			{
+				`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate");
+				continue;
+			}
+
+			if (ItemTemplate.TemplateAvailability < 32)
+			{
+				continue; // Non-singleplayer template
+			}
+			else if (ItemTemplate.TemplateAvailability < 64)
+			{
+				TemplateDifficulty = 0; // Rookie
+			}
+			else if (ItemTemplate.TemplateAvailability < 128)
+			{
+				TemplateDifficulty = 1; // Veteran
+			}
+			else if (ItemTemplate.TemplateAvailability < 256)
+			{
+				TemplateDifficulty = 2; // Commander
+			}
+			else if (ItemTemplate.TemplateAvailability < 512)
+			{
+				TemplateDifficulty = 3; // Legend
+			}
+			else
+			{
+				TemplateDifficulty = -1; // Untranslatable Bitfield
+			}
+			
+			if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
+			{
+				`CI_Log(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " overridden to " $ ItemCostOverride.NewCost.ResourceCosts[0].Quantity @ ItemCostOverride.NewCost.ResourceCosts[0].ItemTemplateName);
+				ItemTemplate.Cost = ItemCostOverride.NewCost;
+			}
+		}
 	}
 }
 
