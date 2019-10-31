@@ -36,6 +36,7 @@ var config(StrategyTuning) array<ItemCostOverride> arrItemCostOverrides;
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
+var config(GameData) array<name> arrPointsOfInterestToRemove;
 
 /////////////
 /// Items ///
@@ -1070,4 +1071,37 @@ static function RemoveSabotages ()
 		SabotageTemplate = X2SabotageTemplate(Manager.FindStrategyElementTemplate(TemplateName));
 		SabotageTemplate.CanActivateDelegate = class'X2Helper_Infiltration'.static.ReturnFalse;
 	}
+}
+
+//////////////////////////
+/// Points of Interest ///
+//////////////////////////
+
+static function RemovePointsOfInterest ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local X2PointOfInterestTemplate POITemplate;
+	local name TemplateName;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	`CI_Log("Disabling Points of Interest");
+
+	foreach default.arrPointsOfInterestToRemove(TemplateName)
+	{
+		POITemplate = X2PointOfInterestTemplate(Manager.FindStrategyElementTemplate(TemplateName));
+
+		if(POITemplate != none)
+		{
+			POITemplate.CanAppearFn = NeverAppear;
+		}
+		else
+		{
+			`CI_Warn(TemplateName $ " is not a POI template, cannot disable!");
+		}
+	}
+}
+
+static function bool NeverAppear(XComGameState_PointOfInterest POIState)
+{
+	return false;
 }
