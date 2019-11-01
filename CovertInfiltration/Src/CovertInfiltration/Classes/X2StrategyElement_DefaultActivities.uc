@@ -693,7 +693,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 /// Copied from X2StrategyElement_DefaultCovertActions ///
 //////////////////////////////////////////////////////////
 
-static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass)
+static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed)
 {
 	local CovertActionSlot SoldierSlot;
 
@@ -704,7 +704,8 @@ static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optiona
 	SoldierSlot.Rewards.AddItem('Reward_StatBoostDodge');
 	SoldierSlot.Rewards.AddItem('Reward_StatBoostWill');
 	SoldierSlot.Rewards.AddItem('Reward_StatBoostHacking');
-	SoldierSlot.Rewards.AddItem('Reward_RankUp');
+	if (bPromotionAllowed) SoldierSlot.Rewards.AddItem('Reward_RankUp');
+
 	SoldierSlot.iMinRank = iMinRank;
 	SoldierSlot.bChanceFame = false;
 	SoldierSlot.bRandomClass = bRandomClass;
