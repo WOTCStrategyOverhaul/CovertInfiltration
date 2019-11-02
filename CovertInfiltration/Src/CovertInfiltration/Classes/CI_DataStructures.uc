@@ -89,4 +89,8 @@ struct MultiStepLerpStep
 struct MultiStepLerpConfig
 {
 	var array<MultiStepLerpStep> Steps;
+
+	var float ResultIfNoSteps;
+	var float ResultIfXExceedsBottomBoundary;
+	var float ResultIfXExceedsUpperBoundary;
 };

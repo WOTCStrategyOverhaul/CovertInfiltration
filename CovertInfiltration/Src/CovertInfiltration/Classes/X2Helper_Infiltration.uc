@@ -71,8 +71,8 @@ var config float XP_GROUP_TO_STARTING_RATIO;
 
 // An array of steps of num kills -> xp multiplication. The final value will be derived using multi-step lerp
 // 1 kill and 0% xp at the end will added automatically
-// The entry with largest GroupStartingCountRatio must have XpMultipler = 0!!!
-var config array<XpMultiplerEntry> XP_MULTIPLIERS; 
+// When exceeding the entry with largest GroupStartingCountRatio, no more kill XP will be given
+var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS; 
 
 // Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
 var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
@@ -834,11 +834,45 @@ static function SetStartingEnemiesForXp (XComGameState NewGameState)
 }
 
 // IMPORTANT!!! This assumes that the kill was already recorded in CIInfo tracker
-static function float GetKillContributionMultiplerForKill (name VictimCharacterTemplate)
+static function float GetKillContributionMultiplerForKill (name VictimCharacterGroup)
 {
-	// TODO
+	// TODO: Logging
 
-	return default.XP_GLOBAL_KILL_MULTIPLER;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local MultiStepLerpConfig AlgorithmConfig;
+	local MultiStepLerpStep AlgorithmStep;
+	local XpMultiplerEntry XpConfigEntry;
+	local float GroupKillsReferenceCount;
+	local int NumKills;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+
+	// Do not grant kill XP if there were no enemies at mission start
+	// This makes the logic below easier as we can assume that at least 1 enemy was present
+	if (CIInfo.NumEnemiesAtMissionStart <= 0) return 0;
+
+	NumKills = CIInfo.GetCharacterGroupsKills(VictimCharacterGroup);
+	GroupKillsReferenceCount = CIInfo.NumEnemiesAtMissionStart * default.XP_GROUP_TO_STARTING_RATIO;
+
+	// Convert XP_GROUP_MULTIPLIERS to AlgorithmConfig.Steps
+	foreach default.XP_GROUP_MULTIPLIERS(XpConfigEntry) // TODO: Validate this array
+	{
+		AlgorithmStep.X = XpConfigEntry.GroupStartingCountRatio * GroupKillsReferenceCount;
+		AlgorithmStep.Y = XpConfigEntry.XpMultipler;
+		AlgorithmConfig.Steps.AddItem(AlgorithmStep);
+	}
+
+	// Add 1 kill
+	AlgorithmStep.X = 1;
+	AlgorithmStep.Y = 1;
+	AlgorithmConfig.Steps.AddItem(AlgorithmStep);
+
+	// Configure excesses
+	AlgorithmConfig.ResultIfXExceedsBottomBoundary = 1; // No idea how this can happen, but just grant full XP in this case
+	AlgorithmConfig.ResultIfXExceedsUpperBoundary = 0; // Oh boy, you are really taking your time, aren't you? *evil grin*
+
+	// Scale by global modifier and then by the character group one
+	return default.XP_GLOBAL_KILL_MULTIPLER * ExecuteMultiStepLerp(NumKills, AlgorithmConfig);
 }
 
 ///////////////////////
@@ -849,16 +883,28 @@ static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig 
 {
 	local array<MultiStepLerpStep> SortedSteps;
 	local float Result;
+	local bool bFound;
 	local int i;
+
+	if (AlgorithmConfig.Steps.Length == 0)
+	{
+		return AlgorithmConfig.ResultIfNoSteps;
+	}
 
 	SortedSteps = AlgorithmConfig.Steps;
 	SortedSteps.Sort(SortMultiStepLerpSteps);
+
+	if (DesiredX < SortedSteps[i].X)
+	{
+		return AlgorithmConfig.ResultIfXExceedsBottomBoundary;
+	}
 
 	for (i = 0; i < SortedSteps.Length; i++)
 	{
 		if (DesiredX == SortedSteps[i].X)
 		{
 			Result = SortedSteps[i].Y;
+			bFound = true;
 			break;
 		}
 		else if (i != 0)
@@ -869,9 +915,15 @@ static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig 
 					SortedSteps[i - 1].Y, SortedSteps[i].Y,
 					(DesiredX - SortedSteps[i - 1].X) / (SortedSteps[i].X - SortedSteps[i - 1].X)
 				);
+				bFound = true;
 				break;
 			}
 		}
+	}
+
+	if (!bFound)
+	{
+		return AlgorithmConfig.ResultIfXExceedsUpperBoundary;
 	}
 
 	return Result;
