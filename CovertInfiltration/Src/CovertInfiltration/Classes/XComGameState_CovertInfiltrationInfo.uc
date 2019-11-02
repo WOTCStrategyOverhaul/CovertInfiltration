@@ -80,7 +80,7 @@ static function XComGameState_CovertInfiltrationInfo ChangeForGamestate(XComGame
 	return NewInfo;
 }
 
-// CharacterTemplatesKillTracker
+// CharacterGroupsKillTracker
 
 function int GetCharacterGroupsKills (name CharacterGroup)
 {

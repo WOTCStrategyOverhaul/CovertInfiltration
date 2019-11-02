@@ -628,11 +628,10 @@ function XComGameState_AdventChosen GetCurrentChosen()
 
 function int GetChosenAppereanceChance()
 {
-	local array<InfilChosenModifer> SortedChosenAppearenceMods;
-	local float InfilProgress, OverInfilScalar, AlienHQScalar;
+	local float OverInfilScalar, AlienHQScalar;
 	local XComGameState_AdventChosen CurrentChosen;
 	local XComGameState_HeadquartersAlien AlienHQ;
-	local int BaseChance, i;
+	local int BaseChance;
 
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
@@ -644,30 +643,7 @@ function int GetChosenAppereanceChance()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	InfilProgress = GetCurrentInfilInt();
-	SortedChosenAppearenceMods = ChosenAppearenceMods;
-	SortedChosenAppearenceMods.Sort(SortChosenAppearenceMods);
-
-	for (i = 0; i < SortedChosenAppearenceMods.Length; i++)
-	{
-		if (InfilProgress == SortedChosenAppearenceMods[i].Progress)
-		{
-			OverInfilScalar = SortedChosenAppearenceMods[i].Multiplier;
-			break;
-		}
-		else if (i != 0)
-		{
-			if (InfilProgress > SortedChosenAppearenceMods[i - 1].Progress && InfilProgress < SortedChosenAppearenceMods[i].Progress)
-			{
-				OverInfilScalar = Lerp(
-					SortedChosenAppearenceMods[i - 1].Multiplier, SortedChosenAppearenceMods[i].Multiplier,
-					(InfilProgress - SortedChosenAppearenceMods[i - 1].Progress) / (SortedChosenAppearenceMods[i].Progress - SortedChosenAppearenceMods[i - 1].Progress)
-				);
-				break;
-			}
-		}
-	}
-
+	OverInfilScalar = class'X2Helper_Infiltration'.static.ExecuteMultiStepLerp(GetCurrentInfilInt(), GetChosenOverinfilLerpConfig());
 	if (OverInfilScalar <= 0)
 	{
 		`RedScreen("CI: GetChosenAppereanceChance: OverInfilScalar was calculated to be 0 or less. This is invalid and overinfil will be ignored for chosen appearence chance calculation");
@@ -680,11 +656,20 @@ function int GetChosenAppereanceChance()
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
 }
 
-static protected function int SortChosenAppearenceMods (InfilChosenModifer A, InfilChosenModifer B)
+static protected function MultiStepLerpConfig GetChosenOverinfilLerpConfig ()
 {
-	if (A.Progress == B.Progress) return 0;
+	local MultiStepLerpConfig AlgoConfig;
+	local int i;
 
-	return A.Progress < B.Progress ? 1 : -1;
+	AlgoConfig.Steps.Length = default.ChosenAppearenceMods.Length;
+
+	for (i = 0; i < default.ChosenAppearenceMods.Length; i++)
+	{
+		AlgoConfig.Steps[i].X = default.ChosenAppearenceMods[i].Progress;
+		AlgoConfig.Steps[i].Y = default.ChosenAppearenceMods[i].Multiplier;
+	}
+
+	return AlgoConfig;
 }
 
 function bool ShouldPreformChosenRoll ()

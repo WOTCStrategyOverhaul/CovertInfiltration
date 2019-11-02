@@ -844,3 +844,42 @@ static function float GetKillContributionMultiplerForKill (name VictimCharacterT
 ///////////////////////
 /// Multi step lerp ///
 ///////////////////////
+
+static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig AlgorithmConfig)
+{
+	local array<MultiStepLerpStep> SortedSteps;
+	local float Result;
+	local int i;
+
+	SortedSteps = AlgorithmConfig.Steps;
+	SortedSteps.Sort(SortMultiStepLerpSteps);
+
+	for (i = 0; i < SortedSteps.Length; i++)
+	{
+		if (DesiredX == SortedSteps[i].X)
+		{
+			Result = SortedSteps[i].Y;
+			break;
+		}
+		else if (i != 0)
+		{
+			if (DesiredX > SortedSteps[i - 1].X && DesiredX < SortedSteps[i].X)
+			{
+				Result = Lerp(
+					SortedSteps[i - 1].Y, SortedSteps[i].Y,
+					(DesiredX - SortedSteps[i - 1].X) / (SortedSteps[i].X - SortedSteps[i - 1].X)
+				);
+				break;
+			}
+		}
+	}
+
+	return Result;
+}
+
+static protected function int SortMultiStepLerpSteps (MultiStepLerpStep A, MultiStepLerpStep B)
+{
+	if (A.X == B.X) return 0;
+
+	return A.X < B.X ? 1 : -1;
+}
