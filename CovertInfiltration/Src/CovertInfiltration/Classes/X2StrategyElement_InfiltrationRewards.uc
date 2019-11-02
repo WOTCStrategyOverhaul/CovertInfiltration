@@ -12,12 +12,21 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
 	
+	// Dummy rewards
 	Rewards.AddItem(CreateRumorRewardTemplate());
 	Rewards.AddItem(CreateMaterielRewardTemplate());
 	Rewards.AddItem(CreateProgressRewardTemplate());
 	
+	// Activity rewards
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
+
+	// POI rewards
+	Rewards.AddItem(CreatePrototypeT2RewardTemplate());
+	Rewards.AddItem(CreatePrototypeT3RewardTemplate());
+	Rewards.AddItem(CreateSidegradeT1RewardTemplate());
+	Rewards.AddItem(CreateSidegradeT2RewardTemplate());
+	Rewards.AddItem(CreateSidegradeT3RewardTemplate());
 
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
@@ -230,4 +239,78 @@ static protected function bool RewardNotAvaliable(optional XComGameState NewGame
 {
 	// Since these rewards are only used for display purposes, we flag them as unavaliable to prevent P1/P2 CAs from randomly spawning
 	return false;
+}
+
+///////////////////
+/// POI rewards ///
+///////////////////
+
+static function X2DataTemplate CreatePrototypeT2RewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_PrototypeT2');
+	Template.rewardObjectTemplateName = 'PrototypeT2';
+	
+	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+
+	return Template;
+}
+
+static function X2DataTemplate CreatePrototypeT3RewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_PrototypeT3');
+	Template.rewardObjectTemplateName = 'PrototypeT3';
+	
+	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+
+	return Template;
+}
+
+static function X2DataTemplate CreateSidegradeT1RewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT1');
+	Template.rewardObjectTemplateName = 'SidegradeT1';
+	
+	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+
+	return Template;
+}
+
+static function X2DataTemplate CreateSidegradeT2RewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT2');
+	Template.rewardObjectTemplateName = 'SidegradeT2';
+	
+	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+
+	return Template;
+}
+
+static function X2DataTemplate CreateSidegradeT3RewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT3');
+	Template.rewardObjectTemplateName = 'SidegradeT3';
+	
+	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+
+	return Template;
 }

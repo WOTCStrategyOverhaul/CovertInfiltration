@@ -693,7 +693,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 /// Copied from X2StrategyElement_DefaultCovertActions ///
 //////////////////////////////////////////////////////////
 
-static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed)
+static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed = false)
 {
 	local CovertActionSlot SoldierSlot;
 
