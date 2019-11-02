@@ -24,6 +24,18 @@ struct TrainingTimeModByRank
 	}
 };
 
+struct XpMissionStartingEnemiesOverride
+{
+	var string MissionType;
+	var int NumEnemies;
+};
+
+struct XpMultiplerEntry
+{
+	var float GroupStartingCountRatio;
+	var float XpMultipler;
+};
+
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
 
@@ -50,6 +62,20 @@ var config float RECOVERY_PENALTY_PER_SOLDIER;
 
 var config int ACADEMY_HOURS_PER_RANK;
 var config array<TrainingTimeModByRank> ACADEMY_DURATION_MODS;
+
+// The value by which all kill XP will be multiplied before any kill-count-based scaling will be done
+var config float XP_GLOBAL_KILL_MULTIPLER;
+
+// Starting enemies * this = how many enemies of one character group the player can kill before xp throttling kicks in
+var config float XP_GROUP_TO_STARTING_RATIO; 
+
+// An array of steps of num kills -> xp multiplication. The final value will be derived using multi-step lerp
+// 1 kill and 0% xp at the end will added automatically
+// The entry with largest GroupStartingCountRatio must have XpMultipler = 0!!!
+var config array<XpMultiplerEntry> XP_MULTIPLIERS; 
+
+// Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
+var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -763,3 +789,58 @@ static function XComGameState_HeadquartersProjectTrainAcademy GetAcademyProjectF
 
 	return none;
 }
+
+///////////////
+/// Kill XP ///
+///////////////
+
+static function SetStartingEnemiesForXp (XComGameState NewGameState)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComTacticalMissionManager MissionManager;
+	local array <XComGameState_Unit> arrUnits;
+	local XGPlayer LocalPlayer, OtherPlayer;
+	local XGBattle Battle;
+	local int i;
+
+	MissionManager = `TACTICALMISSIONMGR;
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	i = default.XP_STARTING_ENEMIES_OVERRIDE.Find('MissionType', MissionManager.ActiveMission.sType);
+
+	if (i != INDEX_NONE)
+	{
+		CIInfo.NumEnemiesAtMissionStart = default.XP_STARTING_ENEMIES_OVERRIDE[i].NumEnemies;
+		return;
+	}
+	
+	// No override, do the maths manually
+	Battle = `BATTLE;
+	LocalPlayer = Battle.GetLocalPlayer();
+	CIInfo.NumEnemiesAtMissionStart = 0;
+
+	for (i = 0; i < Battle.m_iNumPlayers; i++)
+	{
+		OtherPlayer = Battle.m_arrPlayers[i];
+
+		if (OtherPlayer == none) continue;
+		if (OtherPlayer == LocalPlayer) continue;
+		if (!LocalPlayer.IsEnemy(OtherPlayer)) continue;
+
+		arrUnits.Length = 0;
+		OtherPlayer.GetPlayableUnits(arrUnits);
+
+		CIInfo.NumEnemiesAtMissionStart += arrUnits.Length;
+	}
+}
+
+// IMPORTANT!!! This assumes that the kill was already recorded in CIInfo tracker
+static function float GetKillContributionMultiplerForKill (name VictimCharacterTemplate)
+{
+	// TODO
+
+	return default.XP_GLOBAL_KILL_MULTIPLER;
+}
+
+///////////////////////
+/// Multi step lerp ///
+///////////////////////

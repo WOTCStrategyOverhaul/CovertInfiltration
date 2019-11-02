@@ -596,7 +596,8 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Tactical');
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate);
 	Template.AddEvent('SquadConcealmentBroken', CallReinforcementsOnSupplyExtraction);
-	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun, ELD_OnStateSubmitted, 99999);
+	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryEarly, ELD_OnStateSubmitted, 99999);
+	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryLate, ELD_OnStateSubmitted, -99999);
 	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate);
 	Template.RegisterInTactical = true;
 
@@ -714,11 +715,25 @@ static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object 
 	return ELR_NoInterrupt;
 }
 
-static function EventListenerReturn OnTacticalPlayBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+static function EventListenerReturn OnTacticalPlayBegun_VeryEarly (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	// Ensure that our singletons exist
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo();
 	class'XComGameState_CIReinforcementsManager'.static.CreateReinforcementsManager();
+
+	return ELR_NoInterrupt;
+}
+
+static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: OnTacticalPlayBegun_VeryLate");
+
+	// We want to do this very late, since some mods spawn units in OnTacticalBeginPlay and we want to account for them
+	class'X2Helper_Infiltration'.static.SetStartingEnemiesForXp(NewGameState);
+
+	`SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
 }
@@ -737,10 +752,12 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 	VictimState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.EventTarget.ObjectID));
 	if (KillerState == none || VictimState == none) return ELR_NoInterrupt;
 
-	XComHQ = `XCOMHQ;
+	// First record the kill - it's needed for GetKillContributionMultiplerForKill
+	class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState)
+		.RecordCharacterGroupsKill(VictimState.GetMyTemplate().CharacterGroupName);
 
-	// Temp value, while building the framework. TODO: Implement scaling
-	XpMult = 1.2;
+	XpMult = class'X2Helper_Infiltration'.static.GetKillContributionMultiplerForKill(VictimState.GetMyTemplate().CharacterGroupName);
+	XComHQ = `XCOMHQ;
 
 	// Save the original values, we will need them quite a bit
 	OriginalKillXp = VictimState.GetMyTemplate().KillContribution;
