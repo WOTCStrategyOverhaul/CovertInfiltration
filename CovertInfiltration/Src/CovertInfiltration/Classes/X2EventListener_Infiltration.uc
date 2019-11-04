@@ -765,7 +765,7 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 	OriginalKillXp = VictimState.GetMyTemplate().KillContribution;
 	OriginalBonusKillXP = XComHQ != none ? XComHQ.BonusKillXP : 0.0;
 
-	`CI_Trace("XpMult=" $ XpMult $ "OriginalKillXp=" $ OriginalKillXp $ ", OriginalBonusKillXP=" $ OriginalBonusKillXP);
+	`CI_Trace("XpMult=" $ XpMult $ ", OriginalKillXp=" $ OriginalKillXp $ ", OriginalBonusKillXP=" $ OriginalBonusKillXP);
 
 	// Undo the original values
 	KillerState.KillCount -= OriginalKillXp;

@@ -93,21 +93,26 @@ function int GetCharacterGroupsKills (name CharacterGroup)
 
 function RecordCharacterGroupsKill (name CharacterGroup, optional int Count = 1)
 {
+	Count = Max(Count, 0);
+	SetCharacterGroupsKills(CharacterGroup, GetCharacterGroupsKills(CharacterGroup) + Count);
+}
+
+function SetCharacterGroupsKills (name CharacterGroup, int NewCount)
+{
 	local CharacterGroupKillCount CountStruct;
 	local int i;
 
 	i = CharacterGroupsKillTracker.Find('CharacterGroup', CharacterGroup);
-	Count = Max(Count, 0);
 
 	if (i == INDEX_NONE)
 	{
 		CountStruct.CharacterGroup = CharacterGroup;
-		CountStruct.KillCount = Count;
+		CountStruct.KillCount = NewCount;
 		CharacterGroupsKillTracker.AddItem(CountStruct);
 	}
 	else
 	{
-		CharacterGroupsKillTracker[i].KillCount += Count;
+		CharacterGroupsKillTracker[i].KillCount = NewCount;
 	}
 }
 

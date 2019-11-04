@@ -836,8 +836,6 @@ static function SetStartingEnemiesForXp (XComGameState NewGameState)
 // IMPORTANT!!! This assumes that the kill was already recorded in CIInfo tracker
 static function float GetKillContributionMultiplerForKill (name VictimCharacterGroup)
 {
-	// TODO: Logging
-
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local MultiStepLerpConfig AlgorithmConfig;
 	local MultiStepLerpStep AlgorithmStep;
