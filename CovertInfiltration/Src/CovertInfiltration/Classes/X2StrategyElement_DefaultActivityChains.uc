@@ -7,6 +7,8 @@
 
 class X2StrategyElement_DefaultActivityChains extends X2StrategyElement config(Infiltration);
 
+var config EFactionInfluence MinFactionInfluenceForExtraSoldier;
+
 var localized string strCounterDarkEventDescription;
 var localized string strCounterHiddenDarkEventDescription;
 
@@ -185,7 +187,7 @@ static function StateObjectReference FindFactionForExtraSoldier (XComGameState N
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
 	{
-		if (FactionState.bMetXCom)
+		if (FactionState.bMetXCom && FactionState.GetInfluence() >= default.MinFactionInfluenceForExtraSoldier)
 		{
 			NumFactionSoldiers = FactionState.GetNumFactionSoldiers(NewGameState);
 
