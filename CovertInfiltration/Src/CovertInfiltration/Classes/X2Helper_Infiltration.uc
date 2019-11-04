@@ -854,8 +854,10 @@ static function float GetKillContributionMultiplerForKill (name VictimCharacterG
 	NumKills = CIInfo.GetCharacterGroupsKills(VictimCharacterGroup);
 	GroupKillsReferenceCount = CIInfo.NumEnemiesAtMissionStart * default.XP_GROUP_TO_STARTING_RATIO;
 
+	`CI_Trace("GroupKillsReferenceCount=" $ GroupKillsReferenceCount $ ", VictimCharacterGroup=" $ VictimCharacterGroup $ ", NumKills=" $ NumKills);
+
 	// Convert XP_GROUP_MULTIPLIERS to AlgorithmConfig.Steps
-	foreach default.XP_GROUP_MULTIPLIERS(XpConfigEntry) // TODO: Validate this array
+	foreach default.XP_GROUP_MULTIPLIERS(XpConfigEntry)
 	{
 		AlgorithmStep.X = XpConfigEntry.GroupStartingCountRatio * GroupKillsReferenceCount;
 		AlgorithmStep.Y = XpConfigEntry.XpMultipler;
@@ -873,6 +875,14 @@ static function float GetKillContributionMultiplerForKill (name VictimCharacterG
 
 	// Scale by global modifier and then by the character group one
 	return default.XP_GLOBAL_KILL_MULTIPLER * ExecuteMultiStepLerp(NumKills, AlgorithmConfig);
+}
+
+static function ValidateXpMultiplers ()
+{
+	if (default.XP_GROUP_MULTIPLIERS.Length < 2)
+	{
+		`RedScreen("X2Helper_Infiltration::XP_GROUP_MULTIPLIERS needs at least 2 elements");
+	}
 }
 
 ///////////////////////

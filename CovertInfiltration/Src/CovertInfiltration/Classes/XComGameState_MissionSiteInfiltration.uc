@@ -653,6 +653,8 @@ function int GetChosenAppereanceChance()
 	AlienHQScalar = AlienHQ.ChosenAppearChanceScalar;
 	if (AlienHQScalar <= 0) AlienHQScalar = 1;
 
+	`CI_Trace("ChosenAppereanceChance: BaseChance=" $ BaseChance $ ", OverInfilScalar=" $ OverInfilScalar $ ", AlienHQScalar=" $ AlienHQScalar);
+
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
 }
 

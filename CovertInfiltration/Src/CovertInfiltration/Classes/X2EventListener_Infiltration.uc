@@ -752,6 +752,8 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 	VictimState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.EventTarget.ObjectID));
 	if (KillerState == none || VictimState == none) return ELR_NoInterrupt;
 
+	`CI_Trace("Processing kill XP granted by" @ VictimState.GetFullName() @ "to" @ KillerState.GetFullName());
+
 	// First record the kill - it's needed for GetKillContributionMultiplerForKill
 	class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState)
 		.RecordCharacterGroupsKill(VictimState.GetMyTemplate().CharacterGroupName);
@@ -762,6 +764,8 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 	// Save the original values, we will need them quite a bit
 	OriginalKillXp = VictimState.GetMyTemplate().KillContribution;
 	OriginalBonusKillXP = XComHQ != none ? XComHQ.BonusKillXP : 0.0;
+
+	`CI_Trace("XpMult=" $ XpMult $ "OriginalKillXp=" $ OriginalKillXp $ ", OriginalBonusKillXP=" $ OriginalBonusKillXP);
 
 	// Undo the original values
 	KillerState.KillCount -= OriginalKillXp;
@@ -791,8 +795,12 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 		{
 			UnitState.KillAssistsCount -= OriginalKillXp;
 			UnitState.KillAssistsCount += OriginalKillXp * XpMult;
+
+			`CI_Trace("Adjusted kill assist for" @ UnitState.GetFullName());
 		}
 	}
+
+	`CI_Trace("Finished processing kill XP");
 
 	return ELR_NoInterrupt;
 }
