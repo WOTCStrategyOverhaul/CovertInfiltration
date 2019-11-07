@@ -4,8 +4,7 @@
 //  PURPOSE: Create new POI templates needed for the mod
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_InfiltrationPointsOfInterest extends X2StrategyElement
-	dependson(X2PointOfInterestTemplate);
+class X2StrategyElement_InfiltrationPointsOfInterest extends X2StrategyElement;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -94,101 +93,75 @@ static function X2DataTemplate CreatePOIReduceRelayCostTemplate()
 
 static function bool CurrentTierPartially1(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') && `XCOMHQ.IsTechResearched('PlatedArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') && `XCOMHQ.IsTechResearched('PlatedArmor'))
-		{
-			`CI_Log("CurrentTierPartially1 FAILED");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return false;
 	}
-	`CI_Log("CurrentTierPartially1 FAILED");
+	else
+	{
+		return true;
+	}
+
 	return false;
 }
 
 static function bool CurrentTierFully1(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
-		{
-			`CI_Log("CurrentTierFully1 FAILED");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return false;
 	}
-	`CI_Log("CurrentTierFully1 FAILED");
+	else
+	{
+		return true;
+	}
+
 	return false;
 }
 
 static function bool CurrentTierPartially2(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
-		{
-			return true;
-		}
+		return true;
 	}
-	`CI_Log("CurrentTierPartially2 FAILED");
+
 	return false;
 }
 
 static function bool CurrentTierFully2(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons')
+		&& `XCOMHQ.IsTechResearched('GaussWeapons')
+		&& `XCOMHQ.IsTechResearched('PlatedArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('MagnetizedWeapons')
-		 && `XCOMHQ.IsTechResearched('GaussWeapons')
-		 && `XCOMHQ.IsTechResearched('PlatedArmor'))
-		{
-			return true;
-		}
+		return true;
 	}
-	`CI_Log("CurrentTierFully2 FAILED");
+
 	return false;
 }
 
 static function bool CurrentTierPartially3(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('PlasmaRifle') || `XCOMHQ.IsTechResearched('PoweredArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('PlasmaRifle') || `XCOMHQ.IsTechResearched('PoweredArmor'))
-		{
-			return true;
-		}
+		return true;
 	}
-	`CI_Log("CurrentTierPartially2 FAILED");
+
 	return false;
 }
 
 static function bool CurrentTierFully3(XComGameState_PointOfInterest POIState)
 {
-	if (`ONLINEEVENTMGR.HasTLEEntitlement())
+	if (`XCOMHQ.IsTechResearched('PlasmaRifle')
+		&& `XCOMHQ.IsTechResearched('HeavyPlasma')
+		&& `XCOMHQ.IsTechResearched('PlasmaSniper')
+		&& `XCOMHQ.IsTechResearched('AlloyCannon')
+		&& `XCOMHQ.IsTechResearched('PoweredArmor'))
 	{
-		`CI_Log("Has TLE");
-		if (`XCOMHQ.IsTechResearched('PlasmaRifle')
-		 && `XCOMHQ.IsTechResearched('HeavyPlasma')
-		 && `XCOMHQ.IsTechResearched('PlasmaSniper')
-		 && `XCOMHQ.IsTechResearched('AlloyCannon')
-		 && `XCOMHQ.IsTechResearched('PoweredArmor'))
-		{
-			return true;
-		}
+		return true;
 	}
-	`CI_Log("CurrentTierFully3 FAILED");
+
 	return false;
 }
 /*

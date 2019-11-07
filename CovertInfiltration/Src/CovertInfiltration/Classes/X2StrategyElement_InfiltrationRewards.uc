@@ -16,17 +16,23 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateRumorRewardTemplate());
 	Rewards.AddItem(CreateMaterielRewardTemplate());
 	Rewards.AddItem(CreateProgressRewardTemplate());
+	Rewards.AddItem(CreatePromotionsRewardTemplate());
 	
 	// Activity rewards
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 
 	// POI rewards
-	Rewards.AddItem(CreatePrototypeT2RewardTemplate());
-	Rewards.AddItem(CreatePrototypeT3RewardTemplate());
-	Rewards.AddItem(CreateSidegradeT1RewardTemplate());
-	Rewards.AddItem(CreateSidegradeT2RewardTemplate());
-	Rewards.AddItem(CreateSidegradeT3RewardTemplate());
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT2', 'PrototypeT2'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT3', 'PrototypeT3'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT1', 'SidegradeT1'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT2', 'SidegradeT2'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT1', 'SidegradeT3'));
+
+	// CA rewards
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_AlienCorpses', 'AlienCorpses'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_ExperimentalItem', 'ExperimentalItem'));
 
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
@@ -59,6 +65,16 @@ static function X2DataTemplate CreateProgressRewardTemplate()
 
 	// This is a dummy reward, does nothing
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Progress');
+
+	return Template;
+}
+
+static function X2DataTemplate CreatePromotionsRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	// This is a dummy reward, does nothing
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Promotions');
 
 	return Template;
 }
@@ -245,72 +261,83 @@ static protected function bool RewardNotAvaliable(optional XComGameState NewGame
 /// POI rewards ///
 ///////////////////
 
-static function X2DataTemplate CreatePrototypeT2RewardTemplate()
+static function X2DataTemplate CreateLootTableRewardTemplate (name RewardName, name LootTableName)
 {
 	local X2RewardTemplate Template;
 
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_PrototypeT2');
-	Template.rewardObjectTemplateName = 'PrototypeT2';
+	`CREATE_X2Reward_TEMPLATE(Template, RewardName);
+	Template.rewardObjectTemplateName = LootTableName;
 	
-	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
-	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+	Template.SetRewardByTemplateFn = SetLootTableReward;
+	Template.GiveRewardFn = GiveLootTableReward;
+	Template.GetRewardStringFn = GetLootTableRewardString;
 
 	return Template;
 }
 
-static function X2DataTemplate CreatePrototypeT3RewardTemplate()
+static function SetLootTableReward(XComGameState_Reward RewardState, name TemplateName)
 {
-	local X2RewardTemplate Template;
-
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_PrototypeT3');
-	Template.rewardObjectTemplateName = 'PrototypeT3';
-	
-	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
-	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
-
-	return Template;
+	RewardState.RewardObjectTemplateName = TemplateName;
 }
 
-static function X2DataTemplate CreateSidegradeT1RewardTemplate()
+static function GiveLootTableReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
 {
-	local X2RewardTemplate Template;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2ItemTemplateManager ItemTemplateManager;
+	local XComGameState_Item ItemState;
+	local X2ItemTemplate ItemTemplate;
+	local X2LootTableManager LootManager;
+	local LootResults LootToGive;
+	local name LootName;
+	local int LootIndex, idx;
+	local string LootString;
 
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT1');
-	Template.rewardObjectTemplateName = 'SidegradeT1';
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+
+	LootManager = class'X2LootTableManager'.static.GetLootTableManager();
+	LootIndex = LootManager.FindGlobalLootCarrier(RewardState.GetMyTemplate().rewardObjectTemplateName);
+	if (LootIndex >= 0)
+	{
+		LootManager.RollForGlobalLootCarrier(LootIndex, LootToGive);
+	}
 	
-	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
-	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
+	`CI_Log("Roll Total: " $ LootToGive.LootToBeCreated.Length);
 
-	return Template;
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	// First give each piece of loot to XComHQ so it can be collected and added to LootRecovered, which will stack it automatically
+	foreach LootToGive.LootToBeCreated(LootName)
+	{
+		`CI_Log("Result: " $ string(LootName));
+		ItemTemplate = ItemTemplateManager.FindItemTemplate(LootName);
+		ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+		XComHQ.PutItemInInventory(NewGameState, ItemState, true);
+	}
+
+	// Then create the loot string for the room
+	for (idx = 0; idx < XComHQ.LootRecovered.Length; idx++)
+	{
+		ItemState = XComGameState_Item(NewGameState.GetGameStateForObjectID(XComHQ.LootRecovered[idx].ObjectID));
+
+		if (ItemState != none)
+		{
+			LootString $= ItemState.GetMyTemplate().GetItemFriendlyName() $ " x" $ ItemState.Quantity;
+
+			if (idx < XComHQ.LootRecovered.Length - 1)
+			{
+				LootString $= ", ";
+			}
+		}
+	}
+	RewardState.RewardString = LootString;
+	
+	// Actually add the loot which was generated to the inventory
+	class'XComGameStateContext_StrategyGameRule'.static.AddLootToInventory(NewGameState);
 }
 
-static function X2DataTemplate CreateSidegradeT2RewardTemplate()
+static function string GetLootTableRewardString(XComGameState_Reward RewardState)
 {
-	local X2RewardTemplate Template;
-
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT2');
-	Template.rewardObjectTemplateName = 'SidegradeT2';
-	
-	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
-	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
-
-	return Template;
-}
-
-static function X2DataTemplate CreateSidegradeT3RewardTemplate()
-{
-	local X2RewardTemplate Template;
-
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SidegradeT3');
-	Template.rewardObjectTemplateName = 'SidegradeT3';
-	
-	Template.SetRewardByTemplateFn = class'X2StrategyElement_DefaultRewards'.static.SetLootTableReward;
-	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveLootTableReward;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetLootTableRewardString;
-
-	return Template;
+	`CI_Log("String: '" $ RewardState.RewardString $ "'");
+	return RewardState.RewardString;
 }
