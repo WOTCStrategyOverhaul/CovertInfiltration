@@ -8,6 +8,12 @@
 
 class XComGameState_CovertInfiltrationInfo extends XComGameState_BaseObject;
 
+struct CharacterGroupKillCount
+{
+	var name CharacterGroup;
+	var int KillCount;
+};
+
 /////////////////////
 /// Strategy vars ///
 /////////////////////
@@ -27,6 +33,10 @@ var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is b
 
 var bool bAirPatrolsTriggered;
 
+// Kill XP scaling system
+var int NumEnemiesAtMissionStart;
+var protected array<CharacterGroupKillCount> CharacterGroupsKillTracker;
+
 ////////////////////////
 /// Tactical helpers ///
 ////////////////////////
@@ -39,6 +49,8 @@ static function ResetPreMission (XComGameState StartGameState)
 	NewInfo = XComGameState_CovertInfiltrationInfo(StartGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
 
 	NewInfo.bAirPatrolsTriggered = false;
+	NewInfo.NumEnemiesAtMissionStart = default.NumEnemiesAtMissionStart;
+	NewInfo.CharacterGroupsKillTracker.Length = 0;
 }
 
 /////////////////
@@ -66,6 +78,42 @@ static function XComGameState_CovertInfiltrationInfo ChangeForGamestate(XComGame
 	}
 
 	return NewInfo;
+}
+
+// CharacterGroupsKillTracker
+
+function int GetCharacterGroupsKills (name CharacterGroup)
+{
+	local int i;
+
+	i = CharacterGroupsKillTracker.Find('CharacterGroup', CharacterGroup);
+
+	return i == INDEX_NONE ? 0 : CharacterGroupsKillTracker[i].KillCount;
+}
+
+function RecordCharacterGroupsKill (name CharacterGroup, optional int Count = 1)
+{
+	Count = Max(Count, 0);
+	SetCharacterGroupsKills(CharacterGroup, GetCharacterGroupsKills(CharacterGroup) + Count);
+}
+
+function SetCharacterGroupsKills (name CharacterGroup, int NewCount)
+{
+	local CharacterGroupKillCount CountStruct;
+	local int i;
+
+	i = CharacterGroupsKillTracker.Find('CharacterGroup', CharacterGroup);
+
+	if (i == INDEX_NONE)
+	{
+		CountStruct.CharacterGroup = CharacterGroup;
+		CountStruct.KillCount = NewCount;
+		CharacterGroupsKillTracker.AddItem(CountStruct);
+	}
+	else
+	{
+		CharacterGroupsKillTracker[i].KillCount = NewCount;
+	}
 }
 
 ////////////////
@@ -103,4 +151,9 @@ protected function InitExistingCampaign()
 	}
 
 	CurrentBarracksLimit = class'X2Helper_Infiltration'.default.STARTING_BARRACKS_LIMIT;
+}
+
+defaultproperties
+{
+	NumEnemiesAtMissionStart = -1;
 }

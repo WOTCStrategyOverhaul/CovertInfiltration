@@ -159,6 +159,9 @@ static protected function ForceLockAndLoad(XComGameState NewGameState)
 static function OnPreCreateTemplates()
 {
 	class'X2Helper_Infiltration_TemplateMod'.static.ForceDifficultyVariants();
+
+	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
+	class'X2Helper_Infiltration'.static.ValidateXpMultiplers();
 }
 
 static event OnPostTemplatesCreated()
@@ -186,8 +189,6 @@ static event OnPostTemplatesCreated()
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
 	PatchUIWeaponUpgradeItem();
-	
-	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 }
 
 static protected function PatchUIWeaponUpgradeItem()
@@ -684,4 +685,18 @@ exec function CompleteCurrentCovertActionImproved (optional bool bCompleted = tr
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+exec function SetNumKillsOfCharacterGroup (name CharacterGroup, int NewKills)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SetNumKillsOfCharacterGroup" @ CharacterGroup);
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.SetCharacterGroupsKills(CharacterGroup, NewKills);
+
+	`SubmitGameState(NewGameState);
+
+	`CI_Log("Set kill count for" @ CharacterGroup @ "to" @ CIInfo.GetCharacterGroupsKills(CharacterGroup));
 }

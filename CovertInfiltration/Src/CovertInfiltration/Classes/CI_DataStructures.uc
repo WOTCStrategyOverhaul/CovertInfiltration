@@ -79,3 +79,18 @@ struct InfilChosenModifer
 	var int Progress;
 	var float Multiplier;
 };
+
+struct MultiStepLerpStep
+{
+	var float X;
+	var float Y;
+};
+
+struct MultiStepLerpConfig
+{
+	var array<MultiStepLerpStep> Steps;
+
+	var float ResultIfNoSteps;
+	var float ResultIfXExceedsBottomBoundary;
+	var float ResultIfXExceedsUpperBoundary;
+};

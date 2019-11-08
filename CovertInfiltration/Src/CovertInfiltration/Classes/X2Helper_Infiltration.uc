@@ -24,6 +24,18 @@ struct TrainingTimeModByRank
 	}
 };
 
+struct XpMissionStartingEnemiesOverride
+{
+	var string MissionType;
+	var int NumEnemies;
+};
+
+struct XpMultiplerEntry
+{
+	var float GroupStartingCountRatio;
+	var float XpMultipler;
+};
+
 var config int PERSONNEL_INFIL;
 var config int PERSONNEL_DETER;
 
@@ -50,6 +62,20 @@ var config float RECOVERY_PENALTY_PER_SOLDIER;
 
 var config int ACADEMY_HOURS_PER_RANK;
 var config array<TrainingTimeModByRank> ACADEMY_DURATION_MODS;
+
+// The value by which all kill XP will be multiplied before any kill-count-based scaling will be done
+var config float XP_GLOBAL_KILL_MULTIPLER;
+
+// Starting enemies * this = how many enemies of one character group the player can kill before xp throttling kicks in
+var config float XP_GROUP_TO_STARTING_RATIO; 
+
+// An array of steps of num kills -> xp multiplication. The final value will be derived using multi-step lerp
+// 1 kill and 0% xp at the end will added automatically
+// When exceeding the entry with largest GroupStartingCountRatio, no more kill XP will be given
+var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS; 
+
+// Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
+var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
@@ -762,4 +788,158 @@ static function XComGameState_HeadquartersProjectTrainAcademy GetAcademyProjectF
 	}
 
 	return none;
+}
+
+///////////////
+/// Kill XP ///
+///////////////
+
+static function SetStartingEnemiesForXp (XComGameState NewGameState)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComTacticalMissionManager MissionManager;
+	local array <XComGameState_Unit> arrUnits;
+	local XGPlayer LocalPlayer, OtherPlayer;
+	local XGBattle Battle;
+	local int i;
+
+	MissionManager = `TACTICALMISSIONMGR;
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	i = default.XP_STARTING_ENEMIES_OVERRIDE.Find('MissionType', MissionManager.ActiveMission.sType);
+
+	if (i != INDEX_NONE)
+	{
+		CIInfo.NumEnemiesAtMissionStart = default.XP_STARTING_ENEMIES_OVERRIDE[i].NumEnemies;
+		return;
+	}
+	
+	// No override, do the maths manually
+	Battle = `BATTLE;
+	LocalPlayer = Battle.GetLocalPlayer();
+	CIInfo.NumEnemiesAtMissionStart = 0;
+
+	for (i = 0; i < Battle.m_iNumPlayers; i++)
+	{
+		OtherPlayer = Battle.m_arrPlayers[i];
+
+		if (OtherPlayer == none) continue;
+		if (OtherPlayer == LocalPlayer) continue;
+		if (!LocalPlayer.IsEnemy(OtherPlayer)) continue;
+
+		arrUnits.Length = 0;
+		OtherPlayer.GetPlayableUnits(arrUnits);
+
+		CIInfo.NumEnemiesAtMissionStart += arrUnits.Length;
+	}
+}
+
+// IMPORTANT!!! This assumes that the kill was already recorded in CIInfo tracker
+static function float GetKillContributionMultiplerForKill (name VictimCharacterGroup)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local MultiStepLerpConfig AlgorithmConfig;
+	local MultiStepLerpStep AlgorithmStep;
+	local XpMultiplerEntry XpConfigEntry;
+	local float GroupKillsReferenceCount;
+	local int NumKills;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+
+	// Do not grant kill XP if there were no enemies at mission start
+	// This makes the logic below easier as we can assume that at least 1 enemy was present
+	if (CIInfo.NumEnemiesAtMissionStart <= 0) return 0;
+
+	NumKills = CIInfo.GetCharacterGroupsKills(VictimCharacterGroup);
+	GroupKillsReferenceCount = CIInfo.NumEnemiesAtMissionStart * default.XP_GROUP_TO_STARTING_RATIO;
+
+	`CI_Trace("GroupKillsReferenceCount=" $ GroupKillsReferenceCount $ ", VictimCharacterGroup=" $ VictimCharacterGroup $ ", NumKills=" $ NumKills);
+
+	// Convert XP_GROUP_MULTIPLIERS to AlgorithmConfig.Steps
+	foreach default.XP_GROUP_MULTIPLIERS(XpConfigEntry)
+	{
+		AlgorithmStep.X = XpConfigEntry.GroupStartingCountRatio * GroupKillsReferenceCount;
+		AlgorithmStep.Y = XpConfigEntry.XpMultipler;
+		AlgorithmConfig.Steps.AddItem(AlgorithmStep);
+	}
+
+	// Add 1 kill
+	AlgorithmStep.X = 1;
+	AlgorithmStep.Y = 1;
+	AlgorithmConfig.Steps.AddItem(AlgorithmStep);
+
+	// Configure excesses
+	AlgorithmConfig.ResultIfXExceedsBottomBoundary = 1; // No idea how this can happen, but just grant full XP in this case
+	AlgorithmConfig.ResultIfXExceedsUpperBoundary = 0; // Oh boy, you are really taking your time, aren't you? *evil grin*
+
+	// Scale by global modifier and then by the character group one
+	return default.XP_GLOBAL_KILL_MULTIPLER * ExecuteMultiStepLerp(NumKills, AlgorithmConfig);
+}
+
+static function ValidateXpMultiplers ()
+{
+	if (default.XP_GROUP_MULTIPLIERS.Length < 2)
+	{
+		`RedScreen("X2Helper_Infiltration::XP_GROUP_MULTIPLIERS needs at least 2 elements");
+	}
+}
+
+///////////////////////
+/// Multi step lerp ///
+///////////////////////
+
+static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig AlgorithmConfig)
+{
+	local array<MultiStepLerpStep> SortedSteps;
+	local float Result;
+	local bool bFound;
+	local int i;
+
+	if (AlgorithmConfig.Steps.Length == 0)
+	{
+		return AlgorithmConfig.ResultIfNoSteps;
+	}
+
+	SortedSteps = AlgorithmConfig.Steps;
+	SortedSteps.Sort(SortMultiStepLerpSteps);
+
+	if (DesiredX < SortedSteps[i].X)
+	{
+		return AlgorithmConfig.ResultIfXExceedsBottomBoundary;
+	}
+
+	for (i = 0; i < SortedSteps.Length; i++)
+	{
+		if (DesiredX == SortedSteps[i].X)
+		{
+			Result = SortedSteps[i].Y;
+			bFound = true;
+			break;
+		}
+		else if (i != 0)
+		{
+			if (DesiredX > SortedSteps[i - 1].X && DesiredX < SortedSteps[i].X)
+			{
+				Result = Lerp(
+					SortedSteps[i - 1].Y, SortedSteps[i].Y,
+					(DesiredX - SortedSteps[i - 1].X) / (SortedSteps[i].X - SortedSteps[i - 1].X)
+				);
+				bFound = true;
+				break;
+			}
+		}
+	}
+
+	if (!bFound)
+	{
+		return AlgorithmConfig.ResultIfXExceedsUpperBoundary;
+	}
+
+	return Result;
+}
+
+static protected function int SortMultiStepLerpSteps (MultiStepLerpStep A, MultiStepLerpStep B)
+{
+	if (A.X == B.X) return 0;
+
+	return A.X < B.X ? 1 : -1;
 }
