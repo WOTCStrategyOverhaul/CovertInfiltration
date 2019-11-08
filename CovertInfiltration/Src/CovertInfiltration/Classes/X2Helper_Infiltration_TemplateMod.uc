@@ -285,27 +285,27 @@ static function PatchUtilityItems ()
 	local array<X2DataTemplate> DifficulityVariants;
 	local X2DataTemplate DataTemplate;
 	local X2ItemTemplate ItemTemplate;
-	local ItemCostOverride ItemCostOverride;
-	local name TemplateName;
+	local ItemCostOverride ItemCostOverrideEntry;
 	local int TemplateDifficulty;
 	
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	`CI_Log("Overriding item costs");
 
-	foreach default.arrItemCostOverrides(ItemCostOverride)
+	foreach default.arrItemCostOverrides(ItemCostOverrideEntry)
 	{
 		DifficulityVariants.Length = 0;
-		ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverride.ItemName, DifficulityVariants);
+		ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverrideEntry.ItemName, DifficulityVariants);
 		
 		if (DifficulityVariants.Length == 0)
 		{
-			`CI_Warn(ItemCostOverride.ItemName @ "is not an X2ItemTemplate, cannot override cost");
+			`CI_Warn(ItemCostOverrideEntry.ItemName @ "is not an X2ItemTemplate, cannot override cost");
 			continue;
 		}
 		else if (DifficulityVariants.Length == 1)
 		{
-			`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
-			ItemTemplate.Cost = ItemCostOverride.NewCost;
+			ItemTemplate = X2ItemTemplate(DifficulityVariants[0]);
+			`CI_Trace(ItemTemplate.DataName $ " has had its cost overridden");
+			ItemTemplate.Cost = ItemCostOverrideEntry.NewCost;
 			continue;
 		}
 
@@ -334,10 +334,10 @@ static function PatchUtilityItems ()
 				TemplateDifficulty = -1; // Untranslatable Bitfield
 			}
 			
-			if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
+			if (ItemCostOverrideEntry.Difficulties.Find(TemplateDifficulty) > -1)
 			{
 				`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
-				ItemTemplate.Cost = ItemCostOverride.NewCost;
+				ItemTemplate.Cost = ItemCostOverrideEntry.NewCost;
 			}
 		}
 	}
