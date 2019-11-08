@@ -13,18 +13,29 @@ struct TradingPostValueModifier
 	var int NewValue;
 };
 
-var config array<name> arrDataSetsToForceVariants;
+struct ItemCostOverride
+{
+	var name ItemName;
+	var array<int> Difficulties;
+	var StrategyCost NewCost;
+};
+
+var config(StrategyTuning) array<name> arrDataSetsToForceVariants;
+
 var config(StrategyTuning) array<name> arrMakeItemBuildable;
 var config(StrategyTuning) array<name> arrKillItems;
 var config(StrategyTuning) array<TradingPostValueModifier> arrTradingPostModifiers;
+
+var config(StrategyTuning) array<name> arrPrototypesToDisable;
+var config(StrategyTuning) bool PrototypePrimaries;
+var config(StrategyTuning) bool PrototypeSecondaries;
+var config(StrategyTuning) bool PrototypeArmorsets;
+
+var config(StrategyTuning) array<ItemCostOverride> arrItemCostOverrides;
+
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
-
-var config array<name> arrPrototypesToDisable;
-var config bool PrototypePrimaries;
-var config bool PrototypeSecondaries;
-var config bool PrototypeArmorsets;
 
 /////////////
 /// Items ///
@@ -264,6 +275,70 @@ static function PatchTLPWeapons()
 		if(Template != none)
 		{
 			Template.CreatorTemplateName = 'none';
+		}
+	}
+}
+
+static function PatchUtilityItems ()
+{
+	local X2ItemTemplateManager ItemTemplateManager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2ItemTemplate ItemTemplate;
+	local ItemCostOverride ItemCostOverride;
+	local name TemplateName;
+	local int TemplateDifficulty;
+	
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	`CI_Log("Overriding item costs");
+
+	foreach default.arrItemCostOverrides(ItemCostOverride)
+	{
+		DifficulityVariants.Length = 0;
+		ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverride.ItemName, DifficulityVariants);
+		
+		if (DifficulityVariants.Length == 0)
+		{
+			`CI_Warn(ItemCostOverride.ItemName @ "is not an X2ItemTemplate, cannot override cost");
+			continue;
+		}
+		else if (DifficulityVariants.Length == 1)
+		{
+			`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
+			ItemTemplate.Cost = ItemCostOverride.NewCost;
+			continue;
+		}
+
+		foreach DifficulityVariants(DataTemplate)
+		{
+			ItemTemplate = X2ItemTemplate(DataTemplate);
+
+			if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Rookie))
+			{
+				TemplateDifficulty = 0; // Rookie
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Veteran))
+			{
+				TemplateDifficulty = 1; // Veteran
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Commander))
+			{
+				TemplateDifficulty = 2; // Commander
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Legend))
+			{
+				TemplateDifficulty = 3; // Legend
+			}
+			else
+			{
+				TemplateDifficulty = -1; // Untranslatable Bitfield
+			}
+			
+			if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
+			{
+				`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
+				ItemTemplate.Cost = ItemCostOverride.NewCost;
+			}
 		}
 	}
 }
