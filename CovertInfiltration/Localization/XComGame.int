@@ -379,12 +379,12 @@ ActionPostNarrative="Luck is with us today. ADVENT only had time to partially co
 
 [CovertActionNarrative_ExperimentalItem_Reapers X2CovertActionNarrativeTemplate]
 ActionName="Our Experiment Now"
-ActionPreNarrative="My people stumbled upon an ADVENT research outpost that has since been claimed by the Lost. Who knows, the helmet-heads may have forgotten to blow the joint when they retreated. We could go back there and see if anything survived."
+ActionPreNarrative="My people stumbled upon an ADVENT research outpost that has been claimed by the Lost. Who knows, the helmet-heads may have forgotten to blow the joint when they retreated. We could go back there and see if anything survived."
 ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
 
 [CovertActionNarrative_ExperimentalItem_Templars X2CovertActionNarrativeTemplate]
 ActionName="Our Experiment Now"
-ActionPreNarrative="My followers have told me of an ADVENT research outpost that has since been claimed by the Lost. Who knows, the Elders' slaves may have forgotten to cleanse the area when they retreated. We could go back there and see if anything survived."
+ActionPreNarrative="My followers have told me of an ADVENT research outpost that has been claimed by the Lost. Who knows, the Elders' slaves may have forgotten to cleanse the area when they retreated. We could go back there and see if anything survived."
 ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
 
 [Reward_Progress X2RewardTemplate]

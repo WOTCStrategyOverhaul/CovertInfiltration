@@ -27,7 +27,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT3', 'PrototypeT3'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT1', 'SidegradeT1'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT2', 'SidegradeT2'));
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT1', 'SidegradeT3'));
+	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT3', 'SidegradeT3'));
 
 	// CA rewards
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_AlienCorpses', 'AlienCorpses'));
@@ -302,14 +302,11 @@ static function GiveLootTableReward(XComGameState NewGameState, XComGameState_Re
 		LootManager.RollForGlobalLootCarrier(LootIndex, LootToGive);
 	}
 	
-	`CI_Log("Roll Total: " $ LootToGive.LootToBeCreated.Length);
-
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 
 	// First give each piece of loot to XComHQ so it can be collected and added to LootRecovered, which will stack it automatically
 	foreach LootToGive.LootToBeCreated(LootName)
 	{
-		`CI_Log("Result: " $ string(LootName));
 		ItemTemplate = ItemTemplateManager.FindItemTemplate(LootName);
 		ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
 		XComHQ.PutItemInInventory(NewGameState, ItemState, true);
