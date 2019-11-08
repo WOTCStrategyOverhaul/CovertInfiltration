@@ -287,68 +287,59 @@ static function PatchUtilityItems ()
 	local X2ItemTemplate ItemTemplate;
 	local ItemCostOverride ItemCostOverride;
 	local name TemplateName;
+	local int TemplateDifficulty;
 	
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	`CI_Log("Overriding item costs");
 
 	foreach default.arrItemCostOverrides(ItemCostOverride)
 	{
-		ItemTemplate = ItemTemplateManager.FindItemTemplate(ItemCostOverride.ItemName);
-
-		if (ItemTemplate.bShouldCreateDifficultyVariants)
+		DifficulityVariants.Length = 0;
+		ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverride.ItemName, DifficulityVariants);
+		
+		if (DifficulityVariants.Length == 0)
 		{
-			DifficulityVariants.Length = 0;
-			ItemTemplateManager.FindDataTemplateAllDifficulties(ItemCostOverride.ItemName, DifficulityVariants);
+			`CI_Warn(ItemCostOverride.ItemName @ "is not an X2ItemTemplate, cannot override cost");
+			continue;
+		}
+		else if (DifficulityVariants.Length == 1)
+		{
+			`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
+			ItemTemplate.Cost = ItemCostOverride.NewCost;
+			continue;
+		}
 
-			foreach DifficulityVariants(DataTemplate)
+		foreach DifficulityVariants(DataTemplate)
+		{
+			ItemTemplate = X2ItemTemplate(DataTemplate);
+
+			if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Rookie))
 			{
-				ItemTemplate = X2ItemTemplate(DataTemplate);
-
-				if (ItemTemplate == none)
-				{
-					`CI_Warn(DataTemplate.Name @ "is not an X2ItemTemplate, cannot override cost");
-					break;
-				}
-
-				OverrideItemCost(ItemTemplate, ItemCostOverride);
+				TemplateDifficulty = 0; // Rookie
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Veteran))
+			{
+				TemplateDifficulty = 1; // Veteran
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Commander))
+			{
+				TemplateDifficulty = 2; // Commander
+			}
+			else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Legend))
+			{
+				TemplateDifficulty = 3; // Legend
+			}
+			else
+			{
+				TemplateDifficulty = -1; // Untranslatable Bitfield
+			}
+			
+			if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
+			{
+				`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
+				ItemTemplate.Cost = ItemCostOverride.NewCost;
 			}
 		}
-		else
-		{
-			OverrideItemCost(ItemTemplate, ItemCostOverride);
-		}
-	}
-}
-
-static function OverrideItemCost (X2ItemTemplate ItemTemplate, ItemCostOverride ItemCostOverride)
-{
-	local int TemplateDifficulty;
-
-	if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Rookie))
-	{
-		TemplateDifficulty = 0; // Rookie
-	}
-	else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Veteran))
-	{
-		TemplateDifficulty = 1; // Veteran
-	}
-	else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Commander))
-	{
-		TemplateDifficulty = 2; // Commander
-	}
-	else if (ItemTemplate.IsTemplateAvailableToAllAreas(class'X2DataTemplate'.const.BITFIELD_GAMEAREA_Legend))
-	{
-		TemplateDifficulty = 3; // Legend
-	}
-	else
-	{
-		TemplateDifficulty = -1; // Untranslatable Bitfield
-	}
-			
-	if (ItemCostOverride.Difficulties.Find(TemplateDifficulty) > -1)
-	{
-		`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
-		ItemTemplate.Cost = ItemCostOverride.NewCost;
 	}
 }
 
