@@ -66,7 +66,7 @@ ActionPostNarrative="Tygan has cracked the officer's neural implant and recovere
 
 [CovertActionNarrative_SupplyRaidInfil X2CovertActionNarrativeTemplate]
 ActionName="Secure ADVENT Materials"
-ActionPreNarrative="This location is host to an ADVENT <font color='#CBB11F'>supply convoy</font> Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
+ActionPreNarrative="This location is host to an ADVENT <font color='#CBB11F'>supply convoy</font>. Unlike the thousands of other such convoys, this one is isolated and ready for the taking. It will be a heavily defended target nonetheless."
 ActionPostNarrative="A job well done, Commander. I trust you will put your spoils of war to good use."
 
 [CovertActionNarrative_RecoverInformantInfil X2CovertActionNarrativeTemplate]
@@ -142,6 +142,16 @@ ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team f
 [CovertActionNarrative_FacilityInformantInfil X2CovertActionNarrativeTemplate]
 ActionName="Capture Avatar Collaborator"
 ActionPreNarrative="Our friends in the Resistance have found someone who may know where the <font color='#842015'>hidden facility</font> is. All that's left is the hard part - bringing them in for questioning."
+ActionPostNarrative=""
+
+[CovertActionNarrative_IntelRescueInfil X2CovertActionNarrativeTemplate]
+ActionName="Save Intercepted Courier"
+ActionPreNarrative="On the way back to a Resistance Haven, one of our <font color='#27AAE1'>couriers carrying intel</font> from the last mission was attacked and narrowly escaped, but is now trapped. ADVENT forces will find the courier's foxhole any day now, unless we intervene."
+ActionPostNarrative=""
+
+[CovertActionNarrative_SupplyRescueInfil X2CovertActionNarrativeTemplate]
+ActionName="Save Intercepted Convoy"
+ActionPreNarrative="On the way back to a nearby Resistance Haven, one of our <font color='#CBB11F'>supply convoys</font> from the last mission was interdicted by ADVENT troops. They escaped, but had to detour through a Lost city. If we don't send help, the convoy isn't coming home."
 ActionPostNarrative=""
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
@@ -283,4 +293,4 @@ RewardDetails="Unlock the next mission in the chain"
 BonusEmptyText="Trains Soldiers as Specific Class"
 
 [ResCard_LiveFireTraining X2StrategyCardTemplate]
-SummaryText="GTS training will promote soldiers by further <XGParam:IntValue0/> ranks"
+SummaryText="GTS training will promote soldiers by a further <XGParam:IntValue0/> ranks"

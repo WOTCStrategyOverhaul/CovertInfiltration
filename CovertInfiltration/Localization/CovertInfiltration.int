@@ -81,7 +81,7 @@ strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
 strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
 strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
 strReinforcementsBodyImminent="Imminent"
-strOpportunityAvaliableUnknownLocation=Out in the wilds
+strOpportunityAvaliableUnknownLocation=Unknown Location
 strAssaultAvaliableHeader=New Assault Mission
 strInfiltrationAvaliableHeader=New Infiltration Mission
 strCovertActionAvaliableHeader=New Covert Action
@@ -137,12 +137,12 @@ OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% 
 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
-strCanWaitForBonusOrLaunch="You can launch now or wait to accumulate bonuses"
+strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
 strBarracksSizeTitle="BARRACKS"
 strAcademyTrainingRank="TARGET TRAINING RANK"
 
 [XComGameState_MissionSiteInfiltration]
-strBannerBonusGained="Overinfiltration bonus gained"
+strBannerBonusGained="Overinfiltration Bonus Gained"
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
@@ -227,6 +227,14 @@ strOverviewDescription=Neutralize AVATAR VIP
 ActionRewardDisplayName="Enemy Intelligence"
 ActionRewardDetails="<font color='#27AAE1'>Datapad</font> (on Kill or Capture) and <font color='#842015'>Facility Lead</font> (on Capture)"
 
+[Activity_IntelRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue Resistance Courier
+ActionRewardDisplayName=<font color='#27AAE1'>Intercepted Intel</font>
+
+[Activity_SupplyRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription=Rescue Resistance Convoy
+ActionRewardDisplayName=<font color='#CBB11F'>Intercepted Materiel</font>
+
 [Activity_GatherIntel X2ActivityTemplate_Assault]
 strOverviewDescription=Protect Resistance Datatap
 MissionPinLabel=Resistance Datatap
@@ -293,7 +301,7 @@ strDescription="Interrupt an ADVENT supply transfer before reinforcements arrive
 
 [ActivityChain_GatherIntel X2ActivityChainTemplate]
 strTitle="Gather Intel"
-strDescription="Protect a resistance listening post that recently captured important data from ADVENT counterintelligence teams."
+strDescription="Protect a resistance listening post that recently intercepted important data from ADVENT transmissions."
 
 [ActivityChain_LandedUFO X2ActivityChainTemplate]
 strTitle="Raid Alien UFO"
@@ -302,6 +310,14 @@ strDescription="Force a UFO to ground, eliminate the crew, and strip the site be
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Find Avatar Facility"
 strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them where their facilities are."
+
+[ActivityChain_SupplyIntercept X2ActivityChainTemplate]
+strTitle="Save Intercepted Supplies"
+strDescription="Protect a vital Resistance convoy that was intercepted by ADVENT forces."
+
+[ActivityChain_IntelIntercept X2ActivityChainTemplate]
+strTitle="Save Intercepted Intel"
+strDescription="Protect a crucial Resistance courier who has been cornered by ADVENT troops."
 
 [X2StrategyElement_DefaultActivityChains]
 strCounterDarkEventDescription="Resistance heard about ADVENT's <font color='#E52E11'>'<XGParam:StrValue0/>'</font> project. If you think it necessary, Commander, we can send a team to disrupt it."
@@ -329,8 +345,8 @@ strFacilityChangesBody="The Resistance Ring is no longer needed to prepare Cover
 strActivityChainsHeader="Activity Chains"
 strActivityChainsBody="An activity chain is a set of missions and/or covert actions that yields big rewards. They will be presented to you by the resistance and as your network grows more opportunities will be revealed.<br/>While the main reward(s) are usually given at the end of the chain, the earlier missions are still beneficial for XP and loot even if you don't intend to finish the chain."
 
-strAlienFacilityBuiltHeader="More resistance opportunities"
-strAlienFacilityBuiltBody="Building a radio relay will allow the resistance to discover more opportunities<br/><br/>You will be able to assault ADVENT supply convoys, find information about VIPs, assault UFOs and even embark on complex activity chains that will allow you to assault AVATAR facilities in non-contacted regions"
+strAlienFacilityBuiltHeader="More Resistance Opportunities"
+strAlienFacilityBuiltBody="Building a Radio Relay in a region will increase the number of opportunities the Resistance can find each month. A relay will also allow us to find previously hidden types of ADVENT targets, perhaps even ones related to their AVATAR Project."
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
@@ -350,11 +366,11 @@ FriendlyDesc="Completing this chain has a chance to decrease the Retaliation tim
 
 [X2Ability_InfiltrationAbilitySet]
 strTowerDetectionImmunityName="Disguise"
-strTowerDetectionImmunityDesc="The transponders of this disguise render the user invisible to ADVENT security towers"
+strTowerDetectionImmunityDesc="The fake neural transponders of this disguise render the wearer invisible to ADVENT security towers"
 
 [AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
-DisplayName=Better GTS training
-Summary=The GTS training rank is increased by <XGParam:IntValue0>
+DisplayName=Enhanced Guerilla Training
+Summary=The maximum GTS training rank is increased by <XGParam:IntValue0>
 
 [UIFacility_AcademySlot_CI]
 strTrainNonRookieDialogTitle=TRAIN SOLDIER
@@ -362,4 +378,4 @@ strTrainNonRookieDialogText=<XGParam:StrValue3/!ExistingClass/> <XGParam:StrValu
 m_strStopTrainRookieDialogTitle=STOP GTS TRAINING?
 m_strStopTrainRookieDialogText=Do you want to stop %UNITNAME from training at the GTS?\n\nWARNING: All training progress will be lost.
 m_strNoSoldiersTooltip=There are no soldiers available for Guerrilla Tactics School training. 
-m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (if training is upgraded) a soldier to gain promotions
+m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (if training is upgraded) a higher ranked soldier to gain promotions.
