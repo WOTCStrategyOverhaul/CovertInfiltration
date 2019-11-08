@@ -301,10 +301,10 @@ static function PatchUtilityItems ()
 			`CI_Warn(ItemCostOverrideEntry.ItemName @ "is not an X2ItemTemplate, cannot override cost");
 			continue;
 		}
-		else if (DifficulityVariants.Length == 1)
+		else if (DifficulityVariants.Length == 1 && ItemCostOverrideEntry.Difficulties.Find(3) > -1)
 		{
 			ItemTemplate = X2ItemTemplate(DifficulityVariants[0]);
-			`CI_Trace(ItemTemplate.DataName $ " has had its cost overridden");
+			`CI_Trace(ItemTemplate.DataName $ " has had its cost overridden to non-legend values");
 			ItemTemplate.Cost = ItemCostOverrideEntry.NewCost;
 			continue;
 		}
