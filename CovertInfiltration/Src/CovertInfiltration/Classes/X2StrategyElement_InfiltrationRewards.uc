@@ -336,7 +336,6 @@ static function GiveLootTableReward(XComGameState NewGameState, XComGameState_Re
 
 static function string GetLootTableRewardString(XComGameState_Reward RewardState)
 {
-	`CI_Log("String: '" $ RewardState.RewardString $ "'");
 	return RewardState.RewardString;
 }
 
@@ -361,7 +360,18 @@ static function X2DataTemplate CreateTechInspireRewardTemplate()
 
 static function SetTechInspireReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
-	RewardState.RewardObjectReference = RewardObjectRef;
+	local XComGameState_Tech TechState;
+
+	TechState = XComGameState_Tech(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	
+	if (TechState == none)
+	{
+		`Redscreen("Invalid TechState passed to SetTechInspireReward!");
+	}
+	else
+	{
+		RewardState.RewardObjectReference = RewardObjectRef;
+	}
 }
 
 static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)

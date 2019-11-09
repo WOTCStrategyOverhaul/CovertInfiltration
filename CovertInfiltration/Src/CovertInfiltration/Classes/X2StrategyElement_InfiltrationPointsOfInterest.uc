@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------------------
-//  FILE:    X2StrategyElement_InfiltrationPointsOfInterest.uc
 //  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: Create new POI templates needed for the mod
+//  PURPOSE: This class contains all the new Points of Interest
+//           used by the mod as part of the POI rework
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
 class X2StrategyElement_InfiltrationPointsOfInterest extends X2StrategyElement;
@@ -15,8 +17,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreatePOISidegradeT1Template());
 	Templates.AddItem(CreatePOISidegradeT2Template());
 	Templates.AddItem(CreatePOISidegradeT3Template());
-
-	//Templates.AddItem(CreatePOIReduceRelayCostTemplate());
 
 	return Templates;
 }
@@ -77,18 +77,7 @@ static function X2DataTemplate CreatePOISidegradeT3Template()
 
 	return Template;
 }
-/*
-static function X2DataTemplate CreatePOIReduceRelayCostTemplate()
-{
-	local X2PointOfInterestTemplate Template;
 
-	`CREATE_X2POINTOFINTEREST_TEMPLATE(Template, 'POI_ReduceRelayCost');
-
-	Template.CanAppearFn = CanBuildRadioRelay;
-
-	return Template;
-}
-*/
 //----------------------------------------------------------------------
 
 static function bool CurrentTierPartially1(XComGameState_PointOfInterest POIState)
