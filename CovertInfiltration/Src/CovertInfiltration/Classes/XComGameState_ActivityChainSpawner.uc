@@ -12,6 +12,8 @@ class XComGameState_ActivityChainSpawner extends XComGameState_BaseObject config
 var protectedwrite float PreviousWork;
 var protectedwrite TDateTime PreviousWorkSubmittedAt;
 
+var bool bSpawnedFirstChain;
+
 // Work rate is meaured in hours
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
@@ -24,6 +26,8 @@ var const config bool bStaringRegionContributesToWork;
 var const config array<int> GameStartWork; // How much work to add when the campaign starts
 var const config array<int> WorkRequiredForSpawn;
 var const config array<int> WorkRequiredForSpawnVariance;
+
+var config name PresetFirstChain; // Which chain will be the first spawned in each campaign
 
 // These 2 control the interval in which the counter-DE ops will pop
 var const config int MinCounterDarkEventDay;
@@ -193,14 +197,32 @@ function SpawnActivityChain (XComGameState NewGameState)
 {
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
-
-	BuildChainDeck();
-	ChainTemplate = PickChainToSpawn(NewGameState);
+	local X2StrategyElementTemplateManager StratMgr;
 	
-	if (ChainTemplate == none)
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	if (self.bSpawnedFirstChain)
 	{
-		`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
-		return;
+		BuildChainDeck();
+		ChainTemplate = PickChainToSpawn(NewGameState);
+
+		if (ChainTemplate == none)
+		{
+			`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
+			return;
+		}
+	}
+	else
+	{
+		ChainTemplate = X2ActivityChainTemplate(StratMgr.FindStrategyElementTemplate(default.PresetFirstChain));
+
+		if (ChainTemplate == none)
+		{
+			`RedScreen("CI: Cannot spawn chain - PresetFirstChain is invalid");
+			return;
+		}
+
+		self.bSpawnedFirstChain = true;
 	}
 
 	`CI_Trace("All inputs ok, spawning chain");
@@ -389,6 +411,7 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner = XComGameState_ActivityChainSpawner(StartState.CreateNewStateObject(class'XComGameState_ActivityChainSpawner'));
 		Spawner.PreviousWork = `ScaleStrategyArrayInt(default.GameStartWork);
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
+		Spawner.bSpawnedFirstChain = false;
 		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 	}
@@ -398,6 +421,7 @@ static function CreateSpawner(optional XComGameState StartState)
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating Activity Chain Spawner singleton");
 		Spawner = XComGameState_ActivityChainSpawner(NewGameState.CreateNewStateObject(class'XComGameState_ActivityChainSpawner'));
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
+		Spawner.bSpawnedFirstChain = false;
 		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 		
