@@ -230,20 +230,23 @@ Description="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% Detection Radius 
 FriendlyName="Opportune Moment II"
 Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
-[CovertActionRisk_AdventPatrols X2CovertActionRiskTemplate]
-RiskName="Show Of Force"
-
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Full Sensor Coverage"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
 RiskName="ADVENT Air Patrols"
 
-[CovertActionRisk_GunneryEmplacements X2CovertActionRiskTemplate]
-RiskName="Gunnery Emplacements"
-
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
+
+[CovertActionRisk_UpdatedFirewalls X2CovertActionRiskTemplate]
+RiskName="Updated Firewalls"
+
+[CovertActionRisk_Phalanx_CI X2CovertActionRiskTemplate]
+RiskName="Phalanx"
+
+[CovertActionRisk_Congregation X2CovertActionRiskTemplate]
+RiskName="Congregation"
 
 [NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
 FriendlyName="No Starting Concealment"

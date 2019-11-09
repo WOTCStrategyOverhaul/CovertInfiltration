@@ -10,7 +10,6 @@ class X2CovertInfiltrationTemplate extends X2CovertActionTemplate;
 function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState NewGameState, StateObjectReference FactionRef)
 {
 	local XComGameState_CovertAction ActionState;
-	local int i;
 
 	ActionState = super.CreateInstanceFromTemplate(NewGameState, FactionRef);
 	

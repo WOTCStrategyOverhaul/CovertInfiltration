@@ -356,7 +356,7 @@ static function SetTechInspireReward(XComGameState_Reward RewardState, optional 
 {
 	local XComGameState_Tech TechState;
 
-	TechState = XComGameState_Tech(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	TechState = XComGameState_Tech(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID));
 	
 	if (TechState == none)
 	{
@@ -394,13 +394,9 @@ static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_
 
 static function GenerateTechInspireReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
 {
-	local X2StrategyElementTemplateManager StratMgr;
 	local array<XComGameState_Tech> TechList;
 
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	
-	TechList = RollForTechRushItems();
-	
+	TechList = GetCandidatesForTechRush();
 	RewardState.SetReward(TechList[`SYNC_RAND_STATIC(TechList.Length)].GetReference());
 }
 
@@ -437,7 +433,7 @@ static function string GetTechInspireRewardImage(XComGameState_Reward RewardStat
 	return TechState.GetMyTemplate().strImage;
 }
 
-static function array<XComGameState_Tech> RollForTechRushItems()
+static function array<XComGameState_Tech> GetCandidatesForTechRush()
 {
 	local XComGameStateHistory History;
 	local XComGameState_HeadquartersXCom XComHQ;
