@@ -201,28 +201,13 @@ function SpawnActivityChain (XComGameState NewGameState)
 	
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-	if (self.bSpawnedFirstChain)
+	BuildChainDeck();
+	ChainTemplate = PickChainToSpawn(NewGameState, self);
+
+	if (ChainTemplate == none)
 	{
-		BuildChainDeck();
-		ChainTemplate = PickChainToSpawn(NewGameState);
-
-		if (ChainTemplate == none)
-		{
-			`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
-			return;
-		}
-	}
-	else
-	{
-		ChainTemplate = X2ActivityChainTemplate(StratMgr.FindStrategyElementTemplate(default.PresetFirstChain));
-
-		if (ChainTemplate == none)
-		{
-			`RedScreen("CI: Cannot spawn chain - PresetFirstChain is invalid");
-			return;
-		}
-
-		self.bSpawnedFirstChain = true;
+		`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
+		return;
 	}
 
 	`CI_Trace("All inputs ok, spawning chain");
@@ -253,7 +238,7 @@ static protected function BuildChainDeck ()
 	}
 }
 
-static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState)
+static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState, XComGameState_ActivityChainSpawner Spawner)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityChainTemplate ChainTemplate;
@@ -264,6 +249,21 @@ static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameStat
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	CardManager = class'X2CardManager'.static.GetCardManager();
 
+	if (Spawner.bSpawnedFirstChain == false)
+	{
+		Spawner.bSpawnedFirstChain = true;
+		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(default.PresetFirstChain));
+
+		if (ChainTemplate == none)
+		{
+			`RedScreen("CI: PresetFirstChain is invalid");
+		}
+		else
+		{
+			return ChainTemplate;
+		}
+	}
+	
 	CardManager.GetAllCardsInDeck('ActivityChainSpawner', CardLabels);
 	foreach CardLabels(Card)
 	{
@@ -411,7 +411,6 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner = XComGameState_ActivityChainSpawner(StartState.CreateNewStateObject(class'XComGameState_ActivityChainSpawner'));
 		Spawner.PreviousWork = `ScaleStrategyArrayInt(default.GameStartWork);
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
-		Spawner.bSpawnedFirstChain = false;
 		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 	}
@@ -421,7 +420,6 @@ static function CreateSpawner(optional XComGameState StartState)
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating Activity Chain Spawner singleton");
 		Spawner = XComGameState_ActivityChainSpawner(NewGameState.CreateNewStateObject(class'XComGameState_ActivityChainSpawner'));
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
-		Spawner.bSpawnedFirstChain = false;
 		Spawner.SetCachedWorkRate();
 		Spawner.SetNextSpawnAt();
 		
