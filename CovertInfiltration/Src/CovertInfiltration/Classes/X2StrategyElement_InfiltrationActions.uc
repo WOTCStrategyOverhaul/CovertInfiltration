@@ -137,7 +137,7 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionScientistStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
