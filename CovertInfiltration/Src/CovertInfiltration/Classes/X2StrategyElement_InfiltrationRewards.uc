@@ -269,16 +269,10 @@ static function X2DataTemplate CreateLootTableRewardTemplate (name RewardName, n
 	`CREATE_X2Reward_TEMPLATE(Template, RewardName);
 	Template.rewardObjectTemplateName = LootTableName;
 	
-	Template.SetRewardByTemplateFn = SetLootTableReward;
 	Template.GiveRewardFn = GiveLootTableReward;
 	Template.GetRewardStringFn = GetLootTableRewardString;
 
 	return Template;
-}
-
-static function SetLootTableReward(XComGameState_Reward RewardState, name TemplateName)
-{
-	RewardState.RewardObjectTemplateName = TemplateName;
 }
 
 static function GiveLootTableReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
