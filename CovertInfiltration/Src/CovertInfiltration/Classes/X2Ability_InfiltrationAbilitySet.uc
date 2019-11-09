@@ -7,9 +7,6 @@
 
 class X2Ability_InfiltrationAbilitySet extends X2Ability_ItemGrantedAbilitySet config(GameCore);
 
-var config int TLP_KEVLAR_HEALTH_BONUS;
-
-var config int CIVILIAN_DISGUISE_HEALTH_BONUS;
 var config int CIVILIAN_DISGUISE_MOBILITY_BONUS;
 var config float CIVILIAN_DISGUISE_DETECTION_MODIFIER;
 
@@ -28,44 +25,11 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	Templates.AddItem(TLPKevlarArmorStats());
 	Templates.AddItem(CivilianDisguiseStats());
 	Templates.AddItem(AdventDisguiseStats());
 	Templates.AddItem(HolographicDisguiseStats());
 
 	return Templates;
-}
-
-static function X2AbilityTemplate TLPKevlarArmorStats()
-{
-	local X2AbilityTemplate                 Template;	
-	local X2AbilityTrigger					Trigger;
-	local X2AbilityTarget_Self				TargetStyle;
-	local X2Effect_PersistentStatChange		PersistentStatChangeEffect;
-
-	`CREATE_X2ABILITY_TEMPLATE(Template, 'AdventDisguiseStats');
-
-	Template.AbilitySourceName = 'eAbilitySource_Item';
-	Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
-	Template.Hostility = eHostility_Neutral;
-	Template.bDisplayInUITacticalText = false;
-	
-	Template.AbilityToHitCalc = default.DeadEye;
-	
-	TargetStyle = new class'X2AbilityTarget_Self';
-	Template.AbilityTargetStyle = TargetStyle;
-
-	Trigger = new class'X2AbilityTrigger_UnitPostBeginPlay';
-	Template.AbilityTriggers.AddItem(Trigger);
-
-	PersistentStatChangeEffect = new class'X2Effect_PersistentStatChange';
-	PersistentStatChangeEffect.BuildPersistentEffect(1, true, false, false);
-	PersistentStatChangeEffect.AddPersistentStatChange(eStat_HP, default.TLP_KEVLAR_HEALTH_BONUS);
-	Template.AddTargetEffect(PersistentStatChangeEffect);
-
-	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
-
-	return Template;	
 }
 
 static function X2AbilityTemplate CivilianDisguiseStats()
@@ -92,7 +56,6 @@ static function X2AbilityTemplate CivilianDisguiseStats()
 
 	PersistentStatChangeEffect = new class'X2Effect_PersistentStatChange';
 	PersistentStatChangeEffect.BuildPersistentEffect(1, true, false, false);
-	PersistentStatChangeEffect.AddPersistentStatChange(eStat_HP, default.CIVILIAN_DISGUISE_HEALTH_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_Mobility, default.CIVILIAN_DISGUISE_MOBILITY_BONUS);
 	PersistentStatChangeEffect.AddPersistentStatChange(eStat_DetectionModifier, default.CIVILIAN_DISGUISE_DETECTION_MODIFIER);
 

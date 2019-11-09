@@ -40,7 +40,7 @@ static function X2DataTemplate CreateCivilianDisguise()
 	Template.AkAudioSoldierArmorSwitch = 'Conventional';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Conventional";
 
-	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.CIVILIAN_DISGUISE_HEALTH_BONUS, true);
+	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, 0, true);
 	Template.SetUIStatMarkup(class'XLocalizedData'.default.MobilityLabel, eStat_Mobility, class'X2Ability_InfiltrationAbilitySet'.default.CIVILIAN_DISGUISE_MOBILITY_BONUS);
 
 	return Template;
@@ -107,14 +107,13 @@ static function X2DataTemplate CreateTLPKevlar()
 	Template.StartingItem = true;
 	Template.CanBeBuilt = false;
 	Template.bInfiniteItem = false;
-	Template.Abilities.AddItem('TLPKevlarArmorStats');
 	Template.ArmorTechCat = 'conventional';
 	Template.ArmorClass = 'basic';
 	Template.Tier = 0;
 	Template.AkAudioSoldierArmorSwitch = 'Conventional';
 	Template.EquipSound = "StrategyUI_Armor_Equip_Conventional";
 
-	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, class'X2Ability_InfiltrationAbilitySet'.default.TLP_KEVLAR_HEALTH_BONUS, true);
+	Template.SetUIStatMarkup(class'XLocalizedData'.default.HealthLabel, eStat_HP, 0, true);
 
 	Template.ArmorCat = 'soldier';
 
