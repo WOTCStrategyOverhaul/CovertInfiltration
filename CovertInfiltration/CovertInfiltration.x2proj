@@ -369,6 +369,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationMissionSources.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationPointsOfInterest.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationRewards.uc">
       <SubType>Content</SubType>
     </Content>

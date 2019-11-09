@@ -294,3 +294,126 @@ BonusEmptyText="Trains Soldiers as Specific Class"
 
 [ResCard_LiveFireTraining X2StrategyCardTemplate]
 SummaryText="GTS training will promote soldiers by a further <XGParam:IntValue0/> ranks"
+
+[POI_Prototype_T2 X2PointOfInterestTemplate]
+DisplayNames[0]="Resistance SOS"
+
+CompletedSummaries[0]="While scanning in this area, we detected an SOS signal coming from a hidden structure deep inside the ruins of the city. It seems some scientists defected from ADVENT and continued their research in hiding. We don't know what happened to them, but underneath a collapsed support beam we found a functioning prototype that looks beyond anything we've yet developed."
+
+POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_OvergrownCity"
+
+[Reward_PrototypeT2 X2RewardTemplate]
+DisplayName="Advanced Prototype"
+
+[POI_Prototype_T3 X2PointOfInterestTemplate]
+DisplayNames[0]="Old XCOM Signal"
+
+CompletedSummaries[0]="Tracing a signal once used by XCOM during the invasion, we found an underground bunker, apparently an offsite research lab. The facility is deserted, and plasma impacts score the walls. The defenders seem to have been armed with equipment on-par to the aliens' own designs, and among the fallen troopers who died during the facility's last stand, we found an item that is still undamaged."
+
+POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_WhatsInTheBarn"
+
+[Reward_PrototypeT3 X2RewardTemplate]
+DisplayName="Advanced Prototype"
+
+[POI_Sidegrade_T1 X2PointOfInterestTemplate]
+DisplayNames[0]="Old World Bunker"
+
+CompletedSummaries[0]="The local resistance tipped us off to the existence of an old world bunker hidden in the mountains. The Avenger's scanners easily located it, but unfortunately the innermost rooms of the bunker were eliminated by a direct strike from an orbital plasma weapon. However, there were several secondary rooms which were far enough away to be spared, and in one of them we found an armory with some intact weapons of old."
+
+POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_RadioTower"
+
+[Reward_SidegradeT1 X2RewardTemplate]
+DisplayName="Prototype Items"
+
+[POI_Sidegrade_T2 X2PointOfInterestTemplate]
+DisplayNames[0]="Resistance SOS"
+
+CompletedSummaries[0]="While scanning in this area, we detected an SOS signal coming from a hidden structure deep inside the ruins of the city. It seems some engineers defected from ADVENT and continued their projects in hiding. We don't know what happened to them, but using the Avenger's scanning equipment we were able to identify a metal safe, buried several meters belowground. We excavated it and found a few examples of the engineers' work."
+
+POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_OvergrownCity"
+
+[Reward_SidegradeT2 X2RewardTemplate]
+DisplayName="Prototype Items"
+
+[POI_Sidegrade_T3 X2PointOfInterestTemplate]
+DisplayNames[0]="Old XCOM Signal"
+
+CompletedSummaries[0]="Tracing a signal once used by XCOM during the invasion, we found an underground bunker, apparently an offsite manufactory. The facility is deserted, and plasma impacts score the walls. The defenders seem to have been armed with highly advanced equipment, all rendered unusable by the aliens. But near the main autofabricator, a control panel was still lit. It accepted one of our old codes, and opened a vault filled with several items."
+
+POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_WhatsInTheBarn"
+
+[Reward_SidegradeT3 X2RewardTemplate]
+DisplayName="Prototype Items"
+
+[Reward_UtilityItems X2RewardTemplate]
+DisplayName="Basic Utility Items"
+
+[CovertAction_UtilityItems X2CovertActionTemplate]
+ActionObjective="Recover Useful Items"
+
+[CovertActionNarrative_UtilityItems_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Factory Reactivation"
+ActionPreNarrative="My kind have found a defunct factory complex from the old world. With your old XCOM command codes and a few helping hands, we could get it working again and get away with the goods before ADVENT detects us."
+ActionPostNarrative="Success! Thanks to your help, we were able to get a few production cycles done and get out before ADVENT crashed the party."
+
+[CovertActionNarrative_UtilityItems_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Factory Reactivation"
+ActionPreNarrative="My people have discovered a defunct factory complex from the old world. With your old XCOM command codes and a few helping hands, we could get it working again and get away with the spoils before ADVENT detects us."
+ActionPostNarrative="Success! Thanks to your help, we were able to get a few production cycles done and get out before ADVENT crashed the party."
+
+[CovertActionNarrative_UtilityItems_Templars X2CovertActionNarrativeTemplate]
+ActionName="Factory Reactivation"
+ActionPreNarrative="My followers have sensed a defunct factory complex from the old world. With your old XCOM command codes and a few helping hands, we could get it working again and get away with our gifts before ADVENT detects us."
+ActionPostNarrative="Success! Thanks to your help, we were able to get a few production cycles done and get out before ADVENT crashed the party."
+
+[Reward_ExperimentalItem X2RewardTemplate]
+DisplayName="Experimental Item"
+
+[CovertAction_ExperimentalItem X2CovertActionTemplate]
+ActionObjective="Recover Experimental Item"
+
+[CovertActionNarrative_ExperimentalItem_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Our Experiment Now"
+ActionPreNarrative="My kind once knew of an ADVENT research outpost that has since been claimed by the Lost. Who knows, the false gods may have forgotten to trash the place when they retreated. We could go back there and see if anything survived."
+ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
+
+[CovertActionNarrative_ExperimentalItem_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Our Experiment Now"
+ActionPreNarrative="My people stumbled upon an ADVENT research outpost that has been claimed by the Lost. Who knows, the helmet-heads may have forgotten to blow the joint when they retreated. We could go back there and see if anything survived."
+ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
+
+[CovertActionNarrative_ExperimentalItem_Templars X2CovertActionNarrativeTemplate]
+ActionName="Our Experiment Now"
+ActionPreNarrative="My followers have told me of an ADVENT research outpost that has been claimed by the Lost. Who knows, the Elders' slaves may have forgotten to cleanse the area when they retreated. We could go back there and see if anything survived."
+ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
+
+[Reward_Promotions X2RewardTemplate]
+DisplayName="Promotions"
+RewardDetails="Our soldiers' recent improvements will not go unnoticed."
+
+[CovertAction_ExhaustiveTraining X2CovertActionTemplate]
+ActionObjective="Exhaustive Training"
+
+[CovertActionNarrative_ExhaustiveTraining_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Inter-Resistance Exercises"
+ActionPreNarrative="Skirmisher training is the best on or off this planet. Why don't you send some of your best over here, and we'll show them how it's done. Hopefully without breaking 'em."
+ActionPostNarrative="I must admit, your soldiers made quite the impression. I believe all our people emerged stronger and ready to take the fight back to ADVENT."
+
+[CovertActionNarrative_ExhaustiveTraining_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Inter-Resistance Exercises"
+ActionPreNarrative="Reapers are subjected to only the most demanding of training exercises. I think your troops could learn a thing or two - let's see if they can survive the experience."
+ActionPostNarrative="I never had any doubt in your soldiers, and it would seem that faith has been rewarded. They leave us as honorary Reapers."
+
+[CovertActionNarrative_ExhaustiveTraining_Templars X2CovertActionNarrativeTemplate]
+ActionName="Inter-Resistance Exercises"
+ActionPreNarrative="My followers can only be those of strong will, molded by my hand to become true Templars. Your soldiers could benefit from such conditioning... provided they are worthy."
+ActionPostNarrative="Your candidates were found to be of strong character. If they were not needed elsewhere, I would have already inducted them into my following."
+
+[CovertAction_TechRush X2CovertActionTemplate]
+ActionObjective="Accelerate Research"
+
+[Reward_TechInspire X2RewardTemplate]
+DisplayName="Rush Research"
+
+[Reward_AlienCorpses X2RewardTemplate]
+DisplayName="Alien Corpses"
