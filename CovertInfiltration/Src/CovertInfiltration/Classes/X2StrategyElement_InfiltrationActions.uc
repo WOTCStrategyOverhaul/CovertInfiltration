@@ -16,6 +16,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	CovertActions.AddItem(CreateUtilityItemsTemplate());
 	CovertActions.AddItem(CreateExperimentalItemTemplate());
 	CovertActions.AddItem(CreateExhaustiveTrainingTemplate());
+	CovertActions.AddItem(CreateTechnologyRushTemplate());
 	
 	return CovertActions;
 }
@@ -50,7 +51,7 @@ static function X2DataTemplate CreateUtilityItemsTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'UtilityItems');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_UtilityItems');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
@@ -74,7 +75,7 @@ static function X2DataTemplate CreateExperimentalItemTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'ExperimentalItem');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_ExperimentalItem');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
@@ -100,7 +101,7 @@ static function X2DataTemplate CreateExhaustiveTrainingTemplate()
 {
 	local X2CovertActionTemplate Template;
 
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'ExhaustiveTraining');
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_ExhaustiveTraining');
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
@@ -115,6 +116,32 @@ static function X2DataTemplate CreateExhaustiveTrainingTemplate()
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
 	Template.Rewards.AddItem('Reward_Promotions');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateTechnologyRushTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_TechRush');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+	Template.bMultiplesAllowed = true;
+	Template.bUseRewardImage = true;
+
+	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Skirmishers');
+	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Reapers');
+	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Templars');
+
+	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionScientistStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot'));
+
+	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
+
+	Template.Rewards.AddItem('Reward_TechInspire');
 
 	return Template;
 }

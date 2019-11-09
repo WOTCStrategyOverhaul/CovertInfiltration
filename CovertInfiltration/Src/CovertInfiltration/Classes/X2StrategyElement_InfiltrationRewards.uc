@@ -33,6 +33,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_AlienCorpses', 'AlienCorpses'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_ExperimentalItem', 'ExperimentalItem'));
+	Rewards.AddItem(CreateTechInspireRewardTemplate());
 
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
@@ -337,4 +338,134 @@ static function string GetLootTableRewardString(XComGameState_Reward RewardState
 {
 	`CI_Log("String: '" $ RewardState.RewardString $ "'");
 	return RewardState.RewardString;
+}
+
+static function X2DataTemplate CreateTechInspireRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_TechInspire');
+
+	Template.SetRewardFn = SetTechInspireReward;
+	Template.GiveRewardFn = GiveTechInspireReward;
+	Template.GenerateRewardFn = GenerateTechInspireReward;
+	Template.GetRewardStringFn = GetTechInspireRewardString;
+	Template.GetRewardPreviewStringFn = GetTechInspireRewardString;
+	Template.GetRewardDetailsStringFn = GetTechInspireRewardDetails;
+	Template.GetRewardImageFn = GetTechInspireRewardImage;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+	Template.CleanUpRewardFn = class'X2StrategyElement_DefaultRewards'.static.CleanUpRewardWithoutRemoval;
+
+	return Template;
+}
+
+static function SetTechInspireReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.RewardObjectReference = RewardObjectRef;
+}
+
+static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersProjectResearch ProjectState;
+	local XComGameState_Tech TechState;
+
+	History = `XCOMHISTORY;
+
+	// Adjust Tech's time reduction value
+	TechState = XComGameState_Tech(NewGameState.ModifyStateObject(class'XComGameState_Tech', RewardState.RewardObjectReference.ObjectID));
+	TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
+
+	// If there is already a project rush it
+	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectResearch', ProjectState)
+	{
+		if(ProjectState.ProjectFocus == RewardState.RewardObjectReference)
+		{
+			ProjectState = XComGameState_HeadquartersProjectResearch(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersProjectResearch', ProjectState.ObjectID));
+			ProjectState.RushResearch(NewGameState);
+			return;
+		}
+	}
+}
+
+static function GenerateTechInspireReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local array<XComGameState_Tech> TechList;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	TechList = RollForTechRushItems();
+	
+	RewardState.SetReward(TechList[`SYNC_RAND_STATIC(TechList.Length)].GetReference());
+}
+
+static function string GetTechInspireRewardString(XComGameState_Reward RewardState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Tech TechState;
+
+	History = `XCOMHISTORY;
+	TechState = XComGameState_Tech(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	return class'X2StrategyElement_DefaultRewards'.default.TechRushText @ TechState.GetDisplayName();
+}
+
+static function string GetTechInspireRewardDetails(XComGameState_Reward RewardState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Tech TechState;
+
+	History = `XCOMHISTORY;
+	TechState = XComGameState_Tech(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	return "Halve the remaining research time of the" @ TechState.GetDisplayName() @ "project.";
+}
+
+static function string GetTechInspireRewardImage(XComGameState_Reward RewardState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Tech TechState;
+
+	History = `XCOMHISTORY;
+	TechState = XComGameState_Tech(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	return TechState.GetMyTemplate().strImage;
+}
+
+static function array<XComGameState_Tech> RollForTechRushItems()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<XComGameState_Tech> ChosenTechs;
+	local XComGameState_Tech TechState;
+	local array<StateObjectReference> AvailableTechRefs;
+	local int idx;
+
+	History = `XCOMHISTORY;
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+	// Grab all available techs
+	AvailableTechRefs = XComHQ.GetAvailableTechsForResearch();
+
+	// Include current Tech being researched
+	TechState = XComHQ.GetCurrentResearchTech();
+	
+	if(TechState != none)
+	{
+		AvailableTechRefs.AddItem(TechState.GetReference());
+	}
+
+	// Filter Techs (no instant, repeatable, priority)
+	for(idx = 0; idx < AvailableTechRefs.Length; idx++)
+	{
+		TechState = XComGameState_Tech(History.GetGameStateForObjectID(AvailableTechRefs[idx].ObjectID));
+
+		if(TechState != none && TechState.CanBeRushed())
+		{
+			ChosenTechs.AddItem(TechState);
+		}
+	}
+
+	return ChosenTechs;
 }

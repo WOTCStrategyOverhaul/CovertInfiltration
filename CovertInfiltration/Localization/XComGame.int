@@ -387,7 +387,7 @@ ActionName="Our Experiment Now"
 ActionPreNarrative="My followers have told me of an ADVENT research outpost that has been claimed by the Lost. Who knows, the Elders' slaves may have forgotten to cleanse the area when they retreated. We could go back there and see if anything survived."
 ActionPostNarrative="Luck is with us today. ADVENT only had time to partially collapse the underground sections before the Lost overran them, and in the rubble we found something special."
 
-[Reward_Progress X2RewardTemplate]
+[Reward_Promotions X2RewardTemplate]
 DisplayName="Promotions"
 RewardDetails="Our soldiers' recent improvements will not go unnoticed."
 
@@ -408,6 +408,12 @@ ActionPostNarrative="I never had any doubt in your soldiers, and it would seem t
 ActionName="Inter-Resistance Exercises"
 ActionPreNarrative="My followers can only be those of strong will, molded by my hand to become true Templars. Your soldiers could benefit from such conditioning... provided they are worthy."
 ActionPostNarrative="Your candidates were found to be of strong character. If they were not needed elsewhere, I would have already inducted them into my following."
+
+[CovertAction_TechRush X2CovertActionTemplate]
+ActionObjective="Accelerate Research"
+
+[Reward_TechInspire X2RewardTemplate]
+DisplayName="Rush Research"
 
 [Reward_AlienCorpses X2RewardTemplate]
 DisplayName="Alien Corpses"
