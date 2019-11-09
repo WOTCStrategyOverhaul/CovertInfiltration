@@ -197,12 +197,9 @@ function SpawnActivityChain (XComGameState NewGameState)
 {
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
-	local X2StrategyElementTemplateManager StratMgr;
-	
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	BuildChainDeck();
-	ChainTemplate = PickChainToSpawn(NewGameState, self);
+	ChainTemplate = PickChainToSpawn(NewGameState);
 
 	if (ChainTemplate == none)
 	{
@@ -238,7 +235,7 @@ static protected function BuildChainDeck ()
 	}
 }
 
-static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState, XComGameState_ActivityChainSpawner Spawner)
+protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityChainTemplate ChainTemplate;
@@ -249,9 +246,9 @@ static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameStat
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	CardManager = class'X2CardManager'.static.GetCardManager();
 
-	if (Spawner.bSpawnedFirstChain == false)
+	if (!bSpawnedFirstChain)
 	{
-		Spawner.bSpawnedFirstChain = true;
+		bSpawnedFirstChain = true;
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(default.PresetFirstChain));
 
 		if (ChainTemplate == none)
