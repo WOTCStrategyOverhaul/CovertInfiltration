@@ -13,13 +13,11 @@ function XComGameState_CovertAction CreateInstanceFromTemplate(XComGameState New
 	local int i;
 
 	ActionState = super.CreateInstanceFromTemplate(NewGameState, FactionRef);
-
-	// 5th and 6th are optional
-	for (i = 4; i < ActionState.StaffSlots.Length; i++)
-	{
-		ActionState.StaffSlots[i].bOptional = true;
-	}
-
+	
+	// 1st and 6th slots are optional
+	ActionState.StaffSlots[0].bOptional = true;
+	ActionState.StaffSlots[5].bOptional = true;
+	
 	AddRisk(SelectFlatRisk(), ActionState);
 	ActionState.RecalculateRiskChanceToOccurModifiers();
 
