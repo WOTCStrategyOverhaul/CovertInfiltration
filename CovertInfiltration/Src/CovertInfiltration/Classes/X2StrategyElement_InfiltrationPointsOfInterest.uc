@@ -93,80 +93,38 @@ static function X2DataTemplate CreatePOIReduceRelayCostTemplate()
 
 static function bool CurrentTierPartially1(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') && `XCOMHQ.IsTechResearched('PlatedArmor'))
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-
-	return false;
+	return (`XCOMHQ.IsTechResearched('MagnetizedWeapons') && `XCOMHQ.IsTechResearched('PlatedArmor')) == false;
 }
 
 static function bool CurrentTierFully1(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-
-	return false;
+	return (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor')) == false;
 }
 
 static function bool CurrentTierPartially2(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
-	{
-		return true;
-	}
-
-	return false;
+	return (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'));
 }
 
 static function bool CurrentTierFully2(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons')
+	return (`XCOMHQ.IsTechResearched('MagnetizedWeapons')
 		&& `XCOMHQ.IsTechResearched('GaussWeapons')
-		&& `XCOMHQ.IsTechResearched('PlatedArmor'))
-	{
-		return true;
-	}
-
-	return false;
+		&& `XCOMHQ.IsTechResearched('PlatedArmor')
+	);
 }
 
 static function bool CurrentTierPartially3(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('PlasmaRifle') || `XCOMHQ.IsTechResearched('PoweredArmor'))
-	{
-		return true;
-	}
-
-	return false;
+	return (`XCOMHQ.IsTechResearched('PlasmaRifle') || `XCOMHQ.IsTechResearched('PoweredArmor'));
 }
 
 static function bool CurrentTierFully3(XComGameState_PointOfInterest POIState)
 {
-	if (`XCOMHQ.IsTechResearched('PlasmaRifle')
+	return (`XCOMHQ.IsTechResearched('PlasmaRifle')
 		&& `XCOMHQ.IsTechResearched('HeavyPlasma')
 		&& `XCOMHQ.IsTechResearched('PlasmaSniper')
 		&& `XCOMHQ.IsTechResearched('AlloyCannon')
-		&& `XCOMHQ.IsTechResearched('PoweredArmor'))
-	{
-		return true;
-	}
-
-	return false;
+		&& `XCOMHQ.IsTechResearched('PoweredArmor')
+	);
 }
-/*
-static function bool CanBuildRadioRelay(XComGameState_PointOfInterest POIState)
-{
-	return `XCOMHQ.IsOutpostResearched();
-}
-*/
