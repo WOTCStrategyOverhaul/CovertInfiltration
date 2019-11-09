@@ -12,6 +12,8 @@ class XComGameState_ActivityChainSpawner extends XComGameState_BaseObject config
 var protectedwrite float PreviousWork;
 var protectedwrite TDateTime PreviousWorkSubmittedAt;
 
+var bool bSpawnedFirstChain;
+
 // Work rate is meaured in hours
 var protectedwrite int CachedWorkRate;
 var protectedwrite int NextSpawnAt; // In work units
@@ -24,6 +26,8 @@ var const config bool bStaringRegionContributesToWork;
 var const config array<int> GameStartWork; // How much work to add when the campaign starts
 var const config array<int> WorkRequiredForSpawn;
 var const config array<int> WorkRequiredForSpawnVariance;
+
+var config name PresetFirstChain; // Which chain will be the first spawned in each campaign
 
 // These 2 control the interval in which the counter-DE ops will pop
 var const config int MinCounterDarkEventDay;
@@ -196,7 +200,7 @@ function SpawnActivityChain (XComGameState NewGameState)
 
 	BuildChainDeck();
 	ChainTemplate = PickChainToSpawn(NewGameState);
-	
+
 	if (ChainTemplate == none)
 	{
 		`RedScreen("CI: Cannot spawn chain - failed to pick a chain");
@@ -231,7 +235,7 @@ static protected function BuildChainDeck ()
 	}
 }
 
-static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState)
+protected function X2ActivityChainTemplate PickChainToSpawn (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityChainTemplate ChainTemplate;
@@ -242,6 +246,21 @@ static protected function X2ActivityChainTemplate PickChainToSpawn (XComGameStat
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	CardManager = class'X2CardManager'.static.GetCardManager();
 
+	if (!bSpawnedFirstChain)
+	{
+		bSpawnedFirstChain = true;
+		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate(default.PresetFirstChain));
+
+		if (ChainTemplate == none)
+		{
+			`RedScreen("CI: PresetFirstChain is invalid");
+		}
+		else
+		{
+			return ChainTemplate;
+		}
+	}
+	
 	CardManager.GetAllCardsInDeck('ActivityChainSpawner', CardLabels);
 	foreach CardLabels(Card)
 	{
