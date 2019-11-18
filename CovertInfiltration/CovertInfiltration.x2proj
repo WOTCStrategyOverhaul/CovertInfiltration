@@ -318,6 +318,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration_DLC2.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Helper_Infiltration_TemplateMod.uc">
       <SubType>Content</SubType>
     </Content>

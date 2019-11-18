@@ -66,6 +66,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity()); // This also selects sitreps from plot type
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout. This also selects sitreps from plot type
 	class'X2Helper_Infiltration'.static.SelectEnviromentalSitreps(self);
+	PlaceRuler(NewGameState);
 
 	// Invoke the CHL sitrep hook here, before we do any of our own sitrep messing
 	// This should ensure compatibility with mods like LSC
@@ -644,6 +645,9 @@ function int GetChosenAppereanceChance()
 		return -1;
 	}
 
+	// Chosen cannot spawn if ruler is waiting on this mission
+	if (IsRulerPresent()) return 0;
+
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
@@ -833,6 +837,8 @@ function StartMission()
 function RemoveEntity(XComGameState NewGameState)
 {
 	super.RemoveEntity(NewGameState);
+
+	RemoveRuler(NewGameState);
 	UnRegisterFromEvents();
 }
 
@@ -878,6 +884,36 @@ static function bool ShouldPauseGeoscapeAtMilestone (name MilestoneReached)
 		default:
 			`RedScreen("XCGS_MissionSiteInfiltration::ShouldPauseGeoscapeAtMilestone was passed an invalid milestone name!");
 			return true;
+	}
+}
+
+////////////
+/// DLC2 ///
+////////////
+
+function bool IsRulerPresent ()
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		return class'X2Helper_Infiltration_DLC2'.static.InfiltrationHasRuler(GetReference());
+	}
+
+	return false;
+}
+
+protected function PlaceRuler (XComGameState NewGameState)
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		class'X2Helper_Infiltration_DLC2'.static.PlaceRulerOnInfiltration(NewGameState, self);
+	}
+}
+
+protected function RemoveRuler (XComGameState NewGameState)
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		class'X2Helper_Infiltration_DLC2'.static.RemoveRulerFromInfiltration(NewGameState, self);
 	}
 }
 
