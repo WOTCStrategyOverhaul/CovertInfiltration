@@ -26,6 +26,7 @@ static function bool InfiltrationHasRuler (StateObjectReference InfiltrationRef)
     return GetRulerOnInfiltration(InfiltrationRef).ObjectID != 0;
 }
 
+// TODO: AlienRulerLocations is not checked if class'X2Helpers_DLC_Day60'.static.IsXPackIntegrationEnabled() == false
 static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameState_MissionSiteInfiltration InfiltrationState)
 {
     local XComGameState_AlienRulerManager RulerManager;
