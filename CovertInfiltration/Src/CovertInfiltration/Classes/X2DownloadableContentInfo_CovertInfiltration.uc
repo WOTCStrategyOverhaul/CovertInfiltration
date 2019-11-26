@@ -186,6 +186,8 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemoveSabotages();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemovePointsOfInterest();
+	class'X2Helper_Infiltration_TemplateMod'.static.RemoveFactionCards();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
@@ -700,4 +702,73 @@ exec function SetNumKillsOfCharacterGroup (name CharacterGroup, int NewKills)
 	`SubmitGameState(NewGameState);
 
 	`CI_Log("Set kill count for" @ CharacterGroup @ "to" @ CIInfo.GetCharacterGroupsKills(CharacterGroup));
+}
+
+exec function SpawnResistanceCardAction (name CardName)
+{
+	local XComGameState_StrategyCard DesiredCardState, CardState;
+	local XComGameState_ResistanceFaction FactionState;
+	local X2StrategyElementTemplateManager StratMgr;
+	local XComGameState_CovertAction ActionState;
+	local X2CovertActionTemplate ActionTemplate;
+	local StateObjectReference ActionRef;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	History = `XCOMHISTORY;
+
+	foreach History.IterateByClassType(class'XComGameState_StrategyCard', CardState)
+	{
+		if (CardState.GetMyTemplateName() == CardName)
+		{
+			DesiredCardState = CardState;
+			break;
+		}
+	}
+
+	if (DesiredCardState == none)
+	{
+		`CI_Log("SpawnResistanceCardAction: Failed to find" @ CardName @ "card");
+		return;
+	}
+
+	if (DesiredCardState.bDrawn)
+	{
+		`CI_Log("SpawnResistanceCardAction: Card" @ CardName @ "is already drawn, cannot spawn CA for it");
+		return;
+	}
+
+	FactionState = DesiredCardState.GetAssociatedFaction();
+	if (FactionState == none)
+	{
+		`CI_Log("SpawnResistanceCardAction: Card" @ CardName @ "does not belong to a faction, cannot spawn CA for it");
+		return;		
+	}
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ActionTemplate = X2CovertActionTemplate(StratMgr.FindStrategyElementTemplate('CovertAction_ResistanceCard'));
+
+	if (ActionTemplate == none)
+	{
+		`CI_Log("SpawnResistanceCardAction: Failed to find CA template, cannot spawn CA");
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SpawnResistanceCardAction" @ CardName);
+	DesiredCardState = XComGameState_StrategyCard(NewGameState.ModifyStateObject(class'XComGameState_StrategyCard', DesiredCardState.ObjectID));
+	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
+
+	ActionRef = FactionState.CreateCovertAction(NewGameState, ActionTemplate, eFactionInfluence_Minimal);
+	ActionState = XComGameState_CovertAction(NewGameState.GetGameStateForObjectID(ActionRef.ObjectID));
+	FactionState.CovertActions.AddItem(ActionRef);
+
+	// Unlink the randomly selected card
+	CardState = XComGameState_StrategyCard(NewGameState.GetGameStateForObjectID(ActionState.StoredRewardRef.ObjectID));
+	if (CardState != none) CardState.bDrawn = false;
+
+	// Set the desired card
+	ActionState.StoredRewardRef = DesiredCardState.GetReference();
+	DesiredCardState.bDrawn = true;
+
+	`SubmitGameState(NewGameState);
 }
