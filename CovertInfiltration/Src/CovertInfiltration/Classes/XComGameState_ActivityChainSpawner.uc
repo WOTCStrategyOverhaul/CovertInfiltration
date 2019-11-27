@@ -173,18 +173,23 @@ static function GetNumContactsAndRelays(out int Contacts, out int Relays)
 	}
 }
 
-function SetNextSpawnAt()
+function SetNextSpawnAt(optional bool StartingChain = false)
 {
 	local int WorkRequired, Variance;
 	local bool bVarianceHigher;
 
 	WorkRequired = `ScaleStrategyArrayInt(WorkRequiredForSpawn);
-	Variance = `SYNC_RAND(`ScaleStrategyArrayInt(WorkRequiredForSpawnVariance));
+	NextSpawnAt = WorkRequired;
 
-	bVarianceHigher = `SYNC_RAND(2) < 1;
-	if (!bVarianceHigher) Variance *= -1;
+	if (StartingChain == false)
+	{
+		Variance = `SYNC_RAND(`ScaleStrategyArrayInt(WorkRequiredForSpawnVariance));
 
-	NextSpawnAt = WorkRequired + Variance;
+		bVarianceHigher = `SYNC_RAND(2) < 1;
+		if (!bVarianceHigher) Variance *= -1;
+
+		NextSpawnAt = WorkRequired + Variance;
+	}
 
 	`CI_Trace("Next chain at" @ NextSpawnAt @ "work");
 }
@@ -409,7 +414,7 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner.PreviousWork = `ScaleStrategyArrayInt(default.GameStartWork);
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
 		Spawner.SetCachedWorkRate();
-		Spawner.SetNextSpawnAt();
+		Spawner.SetNextSpawnAt(true);
 	}
 	// Do not create if already exists
 	else if (GetSpawner(true) == none)
@@ -418,7 +423,7 @@ static function CreateSpawner(optional XComGameState StartState)
 		Spawner = XComGameState_ActivityChainSpawner(NewGameState.CreateNewStateObject(class'XComGameState_ActivityChainSpawner'));
 		Spawner.PreviousWorkSubmittedAt = GetGameTimeFromHistory();
 		Spawner.SetCachedWorkRate();
-		Spawner.SetNextSpawnAt();
+		Spawner.SetNextSpawnAt(true);
 		
 		`XCOMHISTORY.AddGameStateToHistory(NewGameState);
 	}
