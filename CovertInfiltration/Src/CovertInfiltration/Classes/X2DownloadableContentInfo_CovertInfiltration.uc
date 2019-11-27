@@ -71,6 +71,51 @@ static event InstallNewCampaign(XComGameState StartState)
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	ForceLockAndLoad(StartState);
+	EditGatecrasher(StartState);
+}
+
+static function EditGatecrasher(XComGameState StartState)
+{
+	local XComGameState_MissionSite MissionState;
+	local X2StrategyElementTemplateManager StratMgr;
+	local array<XComGameState_Reward> Rewards;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local XComGameState NewGameState;
+	
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Replacing Gatecrasher");
+
+	`CI_Log("Editing Gatecrasher!");
+
+	foreach StartState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+	{
+		if (MissionState.Source == 'MissionSource_Start')
+			break;
+	}
+
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
+
+	if (MissionState != none)
+	{
+		MissionState.Rewards.Length = 0;
+
+		RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Engineer'));
+		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		MissionState.Rewards.AddItem(RewardState.GetReference());
+	
+		RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Scientist'));
+		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		MissionState.Rewards.AddItem(RewardState.GetReference());
+		
+		`CI_Log("Gatecrasher Replaced!");
+	}
+	else
+	{
+		`RedScreen("Failed to find existing Gatecrasher!");
+	}
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
 static event OnLoadedSavedGame()
