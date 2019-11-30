@@ -423,7 +423,7 @@ DisplayName="Alien Corpses"
 
 [DefaultGatecrasher X2MissionNarrativeTemplate]
 ObjectiveTextPools[0]="Eliminate All Hostiles"
-ObjectiveTextPools[1]="Rescue Defectors From Cells"
+ObjectiveTextPools[1]="Eliminate All Hostiles"
 
 [Gatecrasher X2MissionTemplate]
 DisplayName="Assault ADVENT Offsite Holding Facility"
@@ -431,4 +431,4 @@ Briefing="Crash This Gate"
 PostMissionType="Offsite Holding Facility"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
 ObjectiveTextPools[0]="Eliminate All Hostiles"
-ObjectiveTextPools[1]="Rescue Defectors From Cells"
+ObjectiveTextPools[1]="Eliminate All Hostiles"

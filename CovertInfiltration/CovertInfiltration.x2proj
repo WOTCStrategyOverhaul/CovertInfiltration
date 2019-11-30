@@ -76,6 +76,9 @@
     <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_Gatecrasher_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
       <SubType>Content</SubType>
     </Content>
@@ -337,6 +340,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityChainTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2MissionNarrative_CovertNarrativeSet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
