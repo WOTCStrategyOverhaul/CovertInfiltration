@@ -280,9 +280,13 @@ DisplayName="Barracks Size II"
 FacilityName="Living Quarters"
 Summary="Increases Barracks capacity by a further 15, allowing more soldiers to be maintained without an increase to recovery times."
 
+[Reward_SmallIntel X2RewardTemplate]
+DisplayName="Intel"
+RewardDetails="Intel"
+
 [Reward_Rumor X2RewardTemplate]
-DisplayName="Intel and Rumor"
-RewardDetails="Gain Intel and reveal a Point of Interest on the Geoscape"
+DisplayName="Resistance Rumor"
+RewardDetails="Reveal a Point of Interest on the Geoscape"
 
 [Reward_Materiel X2RewardTemplate]
 DisplayName="Enemy Materiel"

@@ -59,6 +59,7 @@ static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
 
 	Activity.OnSuccess = OnSuccessPOI;
 	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -113,6 +114,7 @@ static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
 
 	Activity.OnSuccess = OnSuccessPOI;
 	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -196,6 +198,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 
 	Activity.OnSuccess = OnSuccessPOI;
 	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -290,6 +293,7 @@ static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
 
 	Activity.OnSuccess = OnSuccessPOI;
 	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -352,6 +356,7 @@ static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
 
 	Activity.OnSuccess = OnSuccessPOI;
 	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";

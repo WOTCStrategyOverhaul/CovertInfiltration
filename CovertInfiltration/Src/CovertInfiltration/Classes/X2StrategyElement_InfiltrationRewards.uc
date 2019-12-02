@@ -8,20 +8,21 @@
 
 class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(GameData);
 
-var config array<int> IntelRumorRewardMin;
-var config array<int> IntelRumorRewardMax;
+var config array<int> SmallIntelRewardMin;
+var config array<int> SmallIntelRewardMax;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
 	
 	// Dummy rewards
+	Rewards.AddItem(CreateRumorRewardTemplate());
 	Rewards.AddItem(CreateMaterielRewardTemplate());
 	Rewards.AddItem(CreateProgressRewardTemplate());
 	Rewards.AddItem(CreatePromotionsRewardTemplate());
 	
 	// Activity rewards
-	Rewards.AddItem(CreateRumorRewardTemplate());
+	Rewards.AddItem(CreateIntelRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 
@@ -41,6 +42,16 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 
 	return Rewards;
+}
+
+static function X2DataTemplate CreateRumorRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	// This is a dummy reward, the Point of Interest is spawned using the mission complete code in DefaultActivities
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Rumor');
+
+	return Template;
 }
 
 static function X2DataTemplate CreateMaterielRewardTemplate()
@@ -73,17 +84,16 @@ static function X2DataTemplate CreatePromotionsRewardTemplate()
 	return Template;
 }
 
-static function X2DataTemplate CreateRumorRewardTemplate()
+static function X2DataTemplate CreateIntelRewardTemplate()
 {
 	local X2RewardTemplate Template;
 
-	// This is a half-dummy reward, the Point of Interest is spawned using the mission complete code in DefaultActivities
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Rumor');
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SmallIntel');
 	Template.rewardObjectTemplateName = 'Intel';
 	Template.RewardImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Intel";
 	Template.bResourceReward = true;
 
-	Template.GenerateRewardFn = GenerateIntelRumorReward;
+	Template.GenerateRewardFn = GenerateIntelReward;
 	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetResourceReward;
 	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveResourceReward;
 	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetResourceRewardString;
@@ -94,18 +104,18 @@ static function X2DataTemplate CreateRumorRewardTemplate()
 	return Template;
 }
 
-static function GenerateIntelRumorReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
+static function GenerateIntelReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
 {
-	RewardState.Quantity = GetIntelRumorReward();
+	RewardState.Quantity = GetSmallIntelReward();
 }
 
-static function int GetIntelRumorReward()
+static function int GetSmallIntelReward()
 {
 	local int IntelMin;
 	local int IntelMax;
 	
-	IntelMin = `ScaleStrategyArrayInt(default.IntelRumorRewardMin);
-	IntelMax = `ScaleStrategyArrayInt(default.IntelRumorRewardMax);
+	IntelMin = `ScaleStrategyArrayInt(default.SmallIntelRewardMin);
+	IntelMax = `ScaleStrategyArrayInt(default.SmallIntelRewardMax);
 	
 	return IntelMin + `SYNC_RAND_STATIC(IntelMax - IntelMin);
 }
