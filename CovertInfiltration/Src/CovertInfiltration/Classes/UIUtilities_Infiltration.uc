@@ -36,6 +36,9 @@ var localized string strCompletionStatusLabel_Available;
 var localized string strCompletionStatusLabel_Ongoing;
 var localized string strCompletionStatusLabel_Infiltrating;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 //////////////////
 /// Game state ///
 //////////////////
@@ -501,13 +504,18 @@ static function OnStripUpgradesDialogCallback(Name eAction)
 			{
 				ItemState = XComGameState_Item(UpdateState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
 				EquippedUpgrades = ItemState.GetMyWeaponUpgradeTemplates();
-				ItemState.WipeUpgradeTemplates();
-				foreach EquippedUpgrades(UpgradeTemplate)
+				
+				if (ShouldRemoveNicknamedUpgrades(ItemState))
 				{
-					UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
-					XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
-				}
+					ItemState.WipeUpgradeTemplates();
 
+					foreach EquippedUpgrades(UpgradeTemplate)
+					{
+						UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
+						XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
+					}
+				}
+				
 				if (!ItemState.HasBeenModified() && !WeaponTemplate.bAlwaysUnique)
 				{
 					if (WeaponTemplate.bInfiniteItem)
@@ -531,11 +539,16 @@ static function OnStripUpgradesDialogCallback(Name eAction)
 				{
 					ItemState = XComGameState_Item(UpdateState.ModifyStateObject(class'XComGameState_Item', ItemState.ObjectID));
 					EquippedUpgrades = ItemState.GetMyWeaponUpgradeTemplates();
-					ItemState.WipeUpgradeTemplates();
-					foreach EquippedUpgrades(UpgradeTemplate)
+
+					if (ShouldRemoveNicknamedUpgrades(ItemState))
 					{
-						UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
-						XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
+						ItemState.WipeUpgradeTemplates();
+
+						foreach EquippedUpgrades(UpgradeTemplate)
+						{
+							UpgradeItem = UpgradeTemplate.CreateInstanceFromTemplate(UpdateState);
+							XComHQ.PutItemInInventory(UpdateState, UpgradeItem);
+						}
 					}
 				}
 			}
@@ -543,6 +556,20 @@ static function OnStripUpgradesDialogCallback(Name eAction)
 
 		`GAMERULES.SubmitGameState(UpdateState);
 	}
+}
+
+static protected function bool ShouldRemoveNicknamedUpgrades(XComGameState_Item ItemState)
+{
+	local bool RemoveNicknamedUpgrades, thisthing;
+
+	RemoveNicknamedUpgrades = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, class'UIListener_ModConfigMenu'.default.REMOVE_NICKNAMED_UPGRADES);
+	thisthing = ItemState.Nickname == "";
+	if (!RemoveNicknamedUpgrades)
+	{
+		`CI_Log("Inside logic block, Nickname empty:" @ thisthing);
+		return ItemState.Nickname == "";
+	}
+
 }
 
 static function string GetLabelForActivityCompletionStatus (EActivityCompletion eCompletion)
