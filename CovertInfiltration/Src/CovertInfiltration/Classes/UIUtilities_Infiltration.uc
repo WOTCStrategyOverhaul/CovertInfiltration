@@ -564,11 +564,14 @@ static protected function bool ShouldRemoveNicknamedUpgrades(XComGameState_Item 
 
 	RemoveNicknamedUpgrades = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, class'UIListener_ModConfigMenu'.default.REMOVE_NICKNAMED_UPGRADES);
 
-	if (!RemoveNicknamedUpgrades)
+	if (RemoveNicknamedUpgrades)
+	{
+		return true;
+	}
+	else
 	{
 		return ItemState.Nickname == "";
 	}
-
 }
 
 static function string GetLabelForActivityCompletionStatus (EActivityCompletion eCompletion)
