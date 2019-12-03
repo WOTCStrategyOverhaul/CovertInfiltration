@@ -560,13 +560,12 @@ static function OnStripUpgradesDialogCallback(Name eAction)
 
 static protected function bool ShouldRemoveNicknamedUpgrades(XComGameState_Item ItemState)
 {
-	local bool RemoveNicknamedUpgrades, thisthing;
+	local bool RemoveNicknamedUpgrades;
 
 	RemoveNicknamedUpgrades = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, class'UIListener_ModConfigMenu'.default.REMOVE_NICKNAMED_UPGRADES);
-	thisthing = ItemState.Nickname == "";
+
 	if (!RemoveNicknamedUpgrades)
 	{
-		`CI_Log("Inside logic block, Nickname empty:" @ thisthing);
 		return ItemState.Nickname == "";
 	}
 
