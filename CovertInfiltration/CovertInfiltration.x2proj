@@ -342,6 +342,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2SitRepEffect_ModifyEncounter.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2SitRepEventListenerTemplate.uc">
       <SubType>Content</SubType>
     </Content>

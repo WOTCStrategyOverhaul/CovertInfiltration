@@ -529,6 +529,53 @@ static protected function bool ProcessEventAcademy (XComGameState_HeadquartersPr
 	return true;
 }
 
+static function PostEncounterCreation (out name EncounterName, out PodSpawnInfo Encounter, int ForceLevel, int AlertLevel, optional XComGameState_BaseObject SourceObject)
+{
+	local X2SitRepEffect_ModifyEncounter SitRepEffect;
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = XComGameState_MissionSite(SourceObject);
+	if (MissionState == none)
+	{
+		`CI_Warn("PostEncounterCreation recived SourceObject which is not instance of XComGameState_MissionSite");
+		return;
+	}
+
+	foreach class'X2SitreptemplateManager'.static.IterateEffects(class'X2SitRepEffect_ModifyEncounter', SitRepEffect, MissionState.GeneratedMission.SitReps)
+	{
+		if (SitRepEffect.bApplyToPreplaced && SitRepEffect.ProcessEncounter != none)
+		{
+			SitRepEffect.ProcessEncounter(
+				EncounterName, Encounter,
+				ForceLevel, AlertLevel,
+				MissionState, none
+			);
+		}
+	}
+}
+
+static function PostReinforcementCreation (out name EncounterName, out PodSpawnInfo Encounter, int ForceLevel, int AlertLevel, optional XComGameState_BaseObject SourceObject, optional XComGameState_BaseObject ReinforcementState)
+{
+	local X2SitRepEffect_ModifyEncounter SitRepEffect;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_BattleData BattleData;
+
+	BattleData = XComGameState_BattleData(SourceObject);
+	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	foreach class'X2SitreptemplateManager'.static.IterateEffects(class'X2SitRepEffect_ModifyEncounter', SitRepEffect, BattleData.ActiveSitReps)
+	{
+		if (SitRepEffect.bApplyToReinforcement && SitRepEffect.ProcessEncounter != none)
+		{
+			SitRepEffect.ProcessEncounter(
+				EncounterName, Encounter,
+				ForceLevel, AlertLevel,
+				MissionState, ReinforcementState
+			);
+		}
+	}
+}
+
 /// //////// ///
 /// COMMANDS ///
 /// //////// ///
