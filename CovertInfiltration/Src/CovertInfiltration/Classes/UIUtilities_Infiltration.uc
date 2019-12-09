@@ -459,10 +459,22 @@ static function RemoveWeaponUpgrade(UIArmory_WeaponUpgradeItem Slot)
 static function OnStripWeaponUpgrades()
 {
 	local TDialogueBoxData DialogData;
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+
+	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, class'UIListener_ModConfigMenu'.default.REMOVE_NICKNAMED_UPGRADES))
+	{
+		kTag.StrValue0 = class'UIUtilities_Text'.static.GetColoredText("REMOVED", eUIState_Bad);
+	}
+	else
+	{
+		kTag.StrValue0 = class'UIUtilities_Text'.static.GetColoredText("PRESERVED", eUIState_Good);
+	}
 	
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = default.strStripUpgradesConfirm;
-	DialogData.strText = default.strStripUpgradesConfirmDesc;
+	DialogData.strText = `XEXPAND.ExpandString(default.strStripUpgradesConfirmDesc);
 	DialogData.fnCallback = OnStripUpgradesDialogCallback;
 	DialogData.strAccept = class'UIDialogueBox'.default.m_strDefaultAcceptLabel;
 	DialogData.strCancel = class'UIDialogueBox'.default.m_strDefaultCancelLabel;
