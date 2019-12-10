@@ -38,6 +38,14 @@ var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 
+var localized string strSoldiers;
+var localized string strReady;
+var localized string strTired;
+var localized string strWounded;
+var localized string strInfiltrating;
+var localized string strOnCovertAction;
+var localized string strUnavailable;
+
 /////////////
 /// Items ///
 /////////////
@@ -879,6 +887,66 @@ static function PatchLivingQuarters()
 	// add barracks size limit upgrades
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeI');
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeII');
+}
+
+static function PatchHangar()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2FacilityTemplate HangarTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	HangarTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('Hangar'));
+
+	HangarTemplate.GetQueueMessageFn = GetPatchedHangarQueueMessage;
+}
+
+static function string GetPatchedHangarQueueMessage(StateObjectReference FacilityRef)
+{
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Unit Soldier;
+	local EMentalState eState;
+	local string strStatus;
+	local int iInfiltrating, iOnCovertAction, iTired, iWounded, iReady, iUnavailable;
+
+	Soldiers = `XCOMHQ.GetSoldiers();
+
+	foreach Soldiers(Soldier)
+	{
+		if (Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
+		{
+			iInfiltrating++;
+		}
+		else if (Soldier.IsOnCovertAction())
+		{
+			iOnCovertAction++;
+		}
+		else if (Soldier.IsInjured())
+		{
+			iWounded++;
+		}
+		else if (Soldier.GetMentalStateUIState() == eMentalState_Tired)
+		{
+			iTired++;
+		}
+		else if (Soldier.CanGoOnMission())
+		{
+			iReady++;
+		}
+		else
+		{
+			iUnavailable++;
+		}
+	}
+
+	strStatus = default.strSoldiers $ ": ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strReady $ ":" @ iReady, eUIState_Good) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strTired $ ":" @ iTired, eUIState_Warning) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strWounded $ ":" @ iWounded, eUIState_Bad) $ ", ";
+	strStatus $= default.strInfiltrating $ ":" @ iInfiltrating $ ", ";
+	strStatus $= default.strOnCovertAction $ ":" @ iOnCovertAction $ ", ";
+	strStatus $= default.strUnavailable $ ":" @ iUnavailable;
+
+	return strStatus;
 }
 
 ///////////////////
