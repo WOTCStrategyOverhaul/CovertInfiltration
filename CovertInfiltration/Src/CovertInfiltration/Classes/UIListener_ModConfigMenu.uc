@@ -15,6 +15,7 @@ var config int CONFIG_VERSION;
 var config bool DAYS_TO_HOURS;
 var config int DAYS_BEFORE_HOURS;
 var config bool ENABLE_TUTORIAL;
+var config bool REMOVE_NICKNAMED_UPGRADES;
 
 // localized strings
 var localized string PageTitle;
@@ -25,6 +26,8 @@ var localized string DaysBeforeHoursDesc;
 var localized string DaysBeforeHoursTooltip;
 var localized string EnableTutorialDesc;
 var localized string EnableTutorialTooltip;
+var localized string RemoveNicknamedUpgradesDesc;
+var localized string RemoveNicknamedUpgradesTooltip;
 
 event OnInit(UIScreen Screen)
 {
@@ -50,6 +53,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Group.AddCheckBox('checkbox', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, CheckboxSaveHandler);
 	Group.AddSlider('slider', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, SliderSaveHandler);
 	Group.AddCheckBox('EnableTutorial', EnableTutorialDesc, EnableTutorialTooltip, ENABLE_TUTORIAL, EnableTutorialSaveHandler);
+	Group.AddCheckBox('RemoveNicknamedUpgrades', RemoveNicknamedUpgradesDesc, RemoveNicknamedUpgradesTooltip, REMOVE_NICKNAMED_UPGRADES, RemoveNicknamedUpgradesSaveHandler);
 
 	Page.ShowSettings();
 }
@@ -61,11 +65,13 @@ simulated function LoadSavedSettings()
     DAYS_TO_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, DAYS_TO_HOURS);
 	DAYS_BEFORE_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, DAYS_BEFORE_HOURS);
 	ENABLE_TUTORIAL = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, ENABLE_TUTORIAL);
+	REMOVE_NICKNAMED_UPGRADES = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, REMOVE_NICKNAMED_UPGRADES);
 }
 
 `MCM_API_BasicCheckboxSaveHandler(CheckboxSaveHandler, DAYS_TO_HOURS)
 `MCM_API_BasicSliderSaveHandler(SliderSaveHandler, DAYS_BEFORE_HOURS)
 `MCM_API_BasicCheckboxSaveHandler(EnableTutorialSaveHandler, ENABLE_TUTORIAL)
+`MCM_API_BasicCheckboxSaveHandler(RemoveNicknamedUpgradesSaveHandler, REMOVE_NICKNAMED_UPGRADES)
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {

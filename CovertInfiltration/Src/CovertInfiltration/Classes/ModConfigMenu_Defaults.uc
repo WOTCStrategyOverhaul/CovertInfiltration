@@ -12,5 +12,7 @@ var config int DAYS_BEFORE_HOURS_DEFAULT;
 
 var config bool ENABLE_TUTORIAL_DEFAULT;
 
+var config bool REMOVE_NICKNAMED_UPGRADES_DEFAULT;
+
 // "i" added to prevent case warnings
 var config int iVERSION;
