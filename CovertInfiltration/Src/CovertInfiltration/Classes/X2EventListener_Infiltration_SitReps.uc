@@ -120,7 +120,7 @@ static function EventListenerReturn CommsJamming_ReinforcementDelay(Object Event
 
 		return ELR_NoInterrupt;
 	}
-	// we cannot delay instant RNFs and we only wave to do this once per mission
+	// we cannot delay instant RNFs and we only want to do this once per mission
 	else if (ReinforcementSpawner.Countdown <= 0 || CIInfo.bCommsJammingTriggered)
 	{
 		return ELR_NoInterrupt;
