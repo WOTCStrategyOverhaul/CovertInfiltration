@@ -13,7 +13,18 @@ struct CharacterAppearanceDensity
 	var int Count;
 };
 
+struct SitRepUnitSelectionData
+{
+	var name CharacterTemplate;
+
+	var int MinFL;
+	var int MaxFL;
+};
+
 var config bool EmplaceFollower_AllowEncountersWithFollowerOverride;
+
+var config array<SitRepUnitSelectionData> PhalanxCharacterSelection;
+var config array<SitRepUnitSelectionData> CongregationCharacterSelection;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -180,6 +191,29 @@ static function X2SitRepEffectTemplate CreatePhalanxEffectTemplate_CI()
 	return Template;
 }
 
+static protected function PhalanxProcessEncounter (
+	out name EncounterName, out PodSpawnInfo Encounter,
+	int ForceLevel, int AlertLevel,
+	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
+)
+{
+	local name Character;
+
+	Character = SelectCharacter(default.PhalanxCharacterSelection);
+	if (Character == '')
+	{
+		`RedScreenOnce("CI: PhalanxProcessEncounter failed to find character template, aborting");
+		return;
+	}
+
+	EmplaceFollowerIntoEncounter(
+		Character,
+		EncounterName, Encounter,
+		ForceLevel, AlertLevel,
+		MissionState, ReinforcementState
+	);
+}
+
 static function X2SitRepEffectTemplate CreateCongregationEffectTemplate()
 {
 	local X2SitRepEffect_ModifyEncounter Template;
@@ -192,32 +226,45 @@ static function X2SitRepEffectTemplate CreateCongregationEffectTemplate()
 	return Template;
 }
 
-static protected function PhalanxProcessEncounter (
-	out name EncounterName, out PodSpawnInfo Encounter,
-	int ForceLevel, int AlertLevel,
-	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
-)
-{
-	EmplaceFollowerIntoEncounter(
-		'AdvShieldBearerM2', // TODO: Decide based on FL
-		EncounterName, Encounter,
-		ForceLevel, AlertLevel,
-		MissionState, ReinforcementState
-	);
-}
-
 static protected function CongregationProcessEncounter (
 	out name EncounterName, out PodSpawnInfo Encounter,
 	int ForceLevel, int AlertLevel,
 	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
 )
 {
+	local name Character;
+
+	Character = SelectCharacter(default.CongregationCharacterSelection);
+	if (Character == '')
+	{
+		`RedScreenOnce("CI: CongregationProcessEncounter failed to find character template, aborting");
+		return;
+	}
+
 	EmplaceFollowerIntoEncounter(
-		'AdvPriestM1', // TODO: Decide based on FL
+		Character,
 		EncounterName, Encounter,
 		ForceLevel, AlertLevel,
 		MissionState, ReinforcementState
 	);
+}
+
+static protected function name SelectCharacter (const out array<SitRepUnitSelectionData> SelectionData)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local int i;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+
+	for (i = 0; i < SelectionData.Length; i++)
+	{
+		if (SelectionData[i].MinFL >= AlienHQ.ForceLevel && SelectionData[i].MaxFL <= AlienHQ.ForceLevel)
+		{
+			return SelectionData[i].CharacterTemplate;
+		}
+	}
+
+	return '';
 }
 
 static protected function EmplaceFollowerIntoEncounter (
@@ -335,12 +382,11 @@ static protected function EmplaceFollowerIntoEncounter (
 	Encounter.SelectedCharacterTemplateNames[Encounter.SelectedCharacterTemplateNames.Length - 1] = UnitToEmplace;
 }
 
-// TODO: is this in correct direction? We want the higher to be first
 static protected function int SortCharacterAppearanceDensity (CharacterAppearanceDensity A, CharacterAppearanceDensity B)
 {
 	if (A.Count == B.Count) return 0;
 
-	return A.Count < B.Count ? 1 : -1;
+	return A.Count > B.Count ? 1 : -1;
 }
 
 ////////////////////////
