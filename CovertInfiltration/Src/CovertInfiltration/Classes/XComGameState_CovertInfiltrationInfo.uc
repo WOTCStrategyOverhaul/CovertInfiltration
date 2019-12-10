@@ -32,6 +32,7 @@ var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is b
 /////////////////////
 
 var bool bAirPatrolsTriggered;
+var bool bCommsJammingTriggered;
 
 // Kill XP scaling system
 var int NumEnemiesAtMissionStart;
@@ -49,6 +50,7 @@ static function ResetPreMission (XComGameState StartGameState)
 	NewInfo = XComGameState_CovertInfiltrationInfo(StartGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', NewInfo.ObjectID));
 
 	NewInfo.bAirPatrolsTriggered = false;
+	NewInfo.bCommsJammingTriggered = false;
 	NewInfo.NumEnemiesAtMissionStart = default.NumEnemiesAtMissionStart;
 	NewInfo.CharacterGroupsKillTracker.Length = 0;
 }
