@@ -6,7 +6,10 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_InfiltrationRewards extends X2StrategyElement;
+class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(GameData);
+
+var config array<int> SmallIntelRewardMin;
+var config array<int> SmallIntelRewardMax;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -19,6 +22,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreatePromotionsRewardTemplate());
 	
 	// Activity rewards
+	Rewards.AddItem(CreateSmallIntelRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 
@@ -78,6 +82,42 @@ static function X2DataTemplate CreatePromotionsRewardTemplate()
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Promotions');
 
 	return Template;
+}
+
+static function X2DataTemplate CreateSmallIntelRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SmallIntel');
+	Template.rewardObjectTemplateName = 'Intel';
+	Template.RewardImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Intel";
+	Template.bResourceReward = true;
+
+	Template.GenerateRewardFn = GenerateSmallIntelReward;
+	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetResourceReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveResourceReward;
+	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetResourceRewardString;
+	Template.GetRewardPreviewStringFn = class'X2StrategyElement_DefaultRewards'.static.GetResourceRewardString;
+	Template.GetRewardImageFn = class'X2StrategyElement_DefaultRewards'.static.GetResourceRewardImage;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+
+	return Template;
+}
+
+static function GenerateSmallIntelReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
+{
+	RewardState.Quantity = GetSmallIntelReward();
+}
+
+static function int GetSmallIntelReward()
+{
+	local int IntelMin;
+	local int IntelMax;
+	
+	IntelMin = `ScaleStrategyArrayInt(default.SmallIntelRewardMin);
+	IntelMax = `ScaleStrategyArrayInt(default.SmallIntelRewardMax);
+	
+	return IntelMin + `SYNC_RAND_STATIC(IntelMax - IntelMin);
 }
 
 static function X2DataTemplate CreateDatapadRewardTemplate()
