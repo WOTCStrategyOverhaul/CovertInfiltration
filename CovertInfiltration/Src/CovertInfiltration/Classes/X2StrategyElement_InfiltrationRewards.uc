@@ -22,7 +22,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreatePromotionsRewardTemplate());
 	
 	// Activity rewards
-	Rewards.AddItem(CreateIntelRewardTemplate());
+	Rewards.AddItem(CreateSmallIntelRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 
@@ -84,7 +84,7 @@ static function X2DataTemplate CreatePromotionsRewardTemplate()
 	return Template;
 }
 
-static function X2DataTemplate CreateIntelRewardTemplate()
+static function X2DataTemplate CreateSmallIntelRewardTemplate()
 {
 	local X2RewardTemplate Template;
 
@@ -93,7 +93,7 @@ static function X2DataTemplate CreateIntelRewardTemplate()
 	Template.RewardImage = "img:///UILibrary_StrategyImages.X2InventoryIcons.Inv_Intel";
 	Template.bResourceReward = true;
 
-	Template.GenerateRewardFn = GenerateIntelReward;
+	Template.GenerateRewardFn = GenerateSmallIntelReward;
 	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetResourceReward;
 	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveResourceReward;
 	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetResourceRewardString;
@@ -104,7 +104,7 @@ static function X2DataTemplate CreateIntelRewardTemplate()
 	return Template;
 }
 
-static function GenerateIntelReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
+static function GenerateSmallIntelReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
 {
 	RewardState.Quantity = GetSmallIntelReward();
 }
