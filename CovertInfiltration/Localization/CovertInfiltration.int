@@ -81,13 +81,15 @@ DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
 EnableTutorialDesc="Enable tutorial"
 EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
+RemoveNicknamedUpgradesDesc="Remove upgrades from nicknamed items"
+RemoveNicknamedUpgradesTooltip="Disabling this will preserve any nicknamed weapon's upgrades when selecting 'MAKE UPGRADES AVAILABLE' at the squad select screen"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE
 strStripUpgrades=MAKE UPGRADES AVAILABLE
 strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
 strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
-strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately.
+strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately. Upgrades from weapons with nicknames will be <XGParam:StrValue0>. This can be changed in MCM.
 strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
 strReinforcementsBodyImminent="Imminent"
 strOpportunityAvaliableUnknownLocation=Unknown Location
@@ -149,6 +151,8 @@ strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
 strBarracksSizeTitle="BARRACKS"
 strAcademyTrainingRank="TARGET TRAINING RANK"
+strReadySoldiers="READY SOLDIERS"
+strTiredSoldiers="TIRED SOLDIERS"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration Bonus Gained"

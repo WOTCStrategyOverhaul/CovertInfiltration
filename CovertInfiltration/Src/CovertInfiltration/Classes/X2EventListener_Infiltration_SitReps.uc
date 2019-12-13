@@ -108,9 +108,11 @@ static function CHEventListenerTemplate CreateCommsJammingListeners()
 static function EventListenerReturn CommsJamming_ReinforcementDelay(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_AIReinforcementSpawner ReinforcementSpawner;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState NewGameState;
 
 	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(EventSource);
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 	
 	if (ReinforcementSpawner == none)
 	{
@@ -118,16 +120,18 @@ static function EventListenerReturn CommsJamming_ReinforcementDelay(Object Event
 
 		return ELR_NoInterrupt;
 	}
-	// we cannot delay instant RNFs
-	else if (ReinforcementSpawner.Countdown <= 0)
+	// we cannot delay instant RNFs and we only want to do this once per mission
+	else if (ReinforcementSpawner.Countdown <= 0 || CIInfo.bCommsJammingTriggered)
 	{
 		return ELR_NoInterrupt;
 	}
-	
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: CommsJamming_ReinforcementDelay");
 
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: CommsJamming_ReinforcementDelay");
 	ReinforcementSpawner = XComGameState_AIReinforcementSpawner(NewGameState.ModifyStateObject(class'XComGameState_AIReinforcementSpawner', ReinforcementSpawner.ObjectID));
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+
 	ReinforcementSpawner.Countdown += 1;
+	CIInfo.bCommsJammingTriggered = true;
 
 	XComGameStateContext_ChangeContainer(NewGameState.GetContext()).BuildVisualizationFn = XComReinforcementsDelayedVisualizationFn;
 	`TACTICALRULES.SubmitGameState(NewGameState);
