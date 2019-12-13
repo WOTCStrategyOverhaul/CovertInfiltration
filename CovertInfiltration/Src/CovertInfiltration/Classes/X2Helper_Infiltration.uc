@@ -790,6 +790,45 @@ static function XComGameState_HeadquartersProjectTrainAcademy GetAcademyProjectF
 	return none;
 }
 
+static function BarracksStatusReport GetBarracksStatusReport()
+{
+	local BarracksStatusReport CurrentBarracksStatus;
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Unit Soldier;
+	
+	Soldiers = `XCOMHQ.GetSoldiers();
+
+	foreach Soldiers(Soldier)
+	{
+		if (Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
+		{
+			CurrentBarracksStatus.Infiltrating++;
+		}
+		else if (Soldier.IsOnCovertAction())
+		{
+			CurrentBarracksStatus.OnCovertAction++;
+		}
+		else if (Soldier.IsInjured())
+		{
+			CurrentBarracksStatus.Wounded++;
+		}
+		else if (Soldier.GetMentalStateUIState() == eMentalState_Tired)
+		{
+			CurrentBarracksStatus.Tired++;
+		}
+		else if (Soldier.CanGoOnMission())
+		{
+			CurrentBarracksStatus.Ready++;
+		}
+		else
+		{
+			CurrentBarracksStatus.Unavailable++;
+		}
+	}
+
+	return CurrentBarracksStatus;
+}
+
 ///////////////
 /// Kill XP ///
 ///////////////

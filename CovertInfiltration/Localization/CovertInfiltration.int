@@ -142,6 +142,8 @@ strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
 strBarracksSizeTitle="BARRACKS"
 strAcademyTrainingRank="TARGET TRAINING RANK"
+strReadySoldiers="READY SOLDIERS"
+strTiredSoldiers="TIRED SOLDIERS"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration Bonus Gained"
