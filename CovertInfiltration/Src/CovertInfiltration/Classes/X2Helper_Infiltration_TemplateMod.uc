@@ -902,49 +902,19 @@ static function PatchHangar()
 
 static function string GetPatchedHangarQueueMessage(StateObjectReference FacilityRef)
 {
-	local array<XComGameState_Unit> Soldiers;
-	local XComGameState_Unit Soldier;
+	local BarracksStatusReport CurrentBarracksStatus;
 	local EMentalState eState;
 	local string strStatus;
-	local int iInfiltrating, iOnCovertAction, iTired, iWounded, iReady, iUnavailable;
 
-	Soldiers = `XCOMHQ.GetSoldiers();
-
-	foreach Soldiers(Soldier)
-	{
-		if (Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
-		{
-			iInfiltrating++;
-		}
-		else if (Soldier.IsOnCovertAction())
-		{
-			iOnCovertAction++;
-		}
-		else if (Soldier.IsInjured())
-		{
-			iWounded++;
-		}
-		else if (Soldier.GetMentalStateUIState() == eMentalState_Tired)
-		{
-			iTired++;
-		}
-		else if (Soldier.CanGoOnMission())
-		{
-			iReady++;
-		}
-		else
-		{
-			iUnavailable++;
-		}
-	}
+	CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
 
 	strStatus = default.strSoldiers $ ": ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strReady $ ":" @ iReady, eUIState_Good) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strTired $ ":" @ iTired, eUIState_Warning) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strWounded $ ":" @ iWounded, eUIState_Bad) $ ", ";
-	strStatus $= default.strInfiltrating $ ":" @ iInfiltrating $ ", ";
-	strStatus $= default.strOnCovertAction $ ":" @ iOnCovertAction $ ", ";
-	strStatus $= default.strUnavailable $ ":" @ iUnavailable;
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strReady $ ":" @ CurrentBarracksStatus.Ready, eUIState_Good) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strTired $ ":" @ CurrentBarracksStatus.Tired, eUIState_Warning) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strWounded $ ":" @ CurrentBarracksStatus.Wounded, eUIState_Bad) $ ", ";
+	strStatus $= default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating $ ", ";
+	strStatus $= default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction $ ", ";
+	strStatus $= default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable;
 
 	return strStatus;
 }
