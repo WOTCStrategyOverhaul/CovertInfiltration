@@ -258,7 +258,7 @@ static protected function name SelectCharacter (const out array<SitRepUnitSelect
 
 	for (i = 0; i < SelectionData.Length; i++)
 	{
-		if (SelectionData[i].MinFL >= AlienHQ.ForceLevel && SelectionData[i].MaxFL <= AlienHQ.ForceLevel)
+		if (SelectionData[i].MinFL <= AlienHQ.ForceLevel && AlienHQ.ForceLevel <= SelectionData[i].MaxFL)
 		{
 			return SelectionData[i].CharacterTemplate;
 		}
@@ -348,7 +348,7 @@ static protected function EmplaceFollowerIntoEncounter (
 		// (since the CharacterTemplateCounts array is sorted, all next iteractions will have Count == 1 as well)
 		if (CharacterAppearanceDensityPair.Count == 1) break;
 
-		for (i = NumClosedSlots - 1; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
+		for (i = NumClosedSlots; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
 		{
 			if (Encounter.SelectedCharacterTemplateNames[i] == CharacterAppearanceDensityPair.ID)
 			{
@@ -366,7 +366,7 @@ static protected function EmplaceFollowerIntoEncounter (
 		// (since the CharacterTemplateCounts array is sorted, all next iteractions will have Count == 1 as well)
 		if (CharacterAppearanceDensityPair.Count == 1) break;
 
-		for (i = NumClosedSlots - 1; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
+		for (i = NumClosedSlots; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
 		{
 			CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(Encounter.SelectedCharacterTemplateNames[i]);
 
