@@ -819,3 +819,160 @@ exec function SpawnResistanceCardAction (name CardName)
 
 	`SubmitGameState(NewGameState);
 }
+
+exec function SetBonusForInfiltrationMilestone (name Milestone, name Bonus)
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local UIMission_Infiltrated MissionScreen;
+	local XComGameState NewGameState;
+	local int i;
+
+	MissionScreen = UIMission_Infiltrated(`SCREENSTACK.GetCurrentScreen());
+	if (MissionScreen == none)
+	{
+		`CI_Log("SetBonusForInfiltrationMilestone failed - not looking at infiltration mission blades");
+		return;
+	}
+
+	InfiltrationState = MissionScreen.GetInfiltration();
+	i = InfiltrationState.SelectedInfiltartionBonuses.Find('MilestoneName', Milestone);
+
+	if (i == INDEX_NONE)
+	{
+		`CI_Log("SetBonusForInfiltrationMilestone failed - invalid milestone");
+		return;
+	}
+
+	if (InfiltrationState.SelectedInfiltartionBonuses[i].bGranted)
+	{
+		`CI_Log("SetBonusForInfiltrationMilestone failed - milestone already granted");
+		return;
+	}
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	BonusTemplate = X2OverInfiltrationBonusTemplate(TemplateManager.FindStrategyElementTemplate(Bonus));
+
+	if (BonusTemplate == none)
+	{
+		`CI_Log("SetBonusForInfiltrationMilestone failed - invalid bonus");
+		return;
+	}
+
+	if (BonusTemplate.Milestone != Milestone)
+	{
+		`CI_Log("SetBonusForInfiltrationMilestone failed - bonus milestone mismatch");
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SetBonusForInfiltrationMilestone");
+	InfiltrationState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', InfiltrationState.ObjectID));
+	InfiltrationState.SelectedInfiltartionBonuses[i].BonusName = BonusTemplate.DataName;
+	`SubmitGameState(NewGameState);
+
+	// Recreate the screen
+	MissionScreen.CloseScreenOnly();
+	InfiltrationState.AttemptSelectionCheckInterruption();
+}
+
+exec function SetFlatRisk (name FlatRiskName)
+{
+	local X2CovertInfiltrationTemplate ActionTemplate;
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2CovertActionRiskTemplate RiskTemplate;
+	local XComGameState_CovertAction ActionState;
+	local UICovertActionsGeoscape ActionsScreen;
+	local XComGameState NewGameState;
+
+	if (class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', FlatRiskName) == INDEX_NONE)
+	{
+		`CI_Log("SetFlatRisk failed - invalid FlatRiskName");
+		return;
+	}
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(FlatRiskName));
+
+	if (RiskTemplate == none)
+	{
+		`CI_Log("SetFlatRisk failed - risk template not found");
+		return;
+	}
+
+	ActionsScreen = UICovertActionsGeoscape(`SCREENSTACK.GetCurrentScreen());
+	if (ActionsScreen == none)
+	{
+		`CI_Log("SetFlatRisk failed - not looking at covert actions screen");
+		return;
+	}
+
+	ActionState = ActionsScreen.GetAction();
+	if (ActionState.bStarted)
+	{
+		`CI_Log("SetFlatRisk failed - action already started");
+		return;
+	}
+
+	ActionTemplate = X2CovertInfiltrationTemplate(ActionState.GetMyTemplate());
+	if (ActionTemplate == none)
+	{
+		`CI_Log("SetFlatRisk failed - not looking at an infiltration action");
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SetFlatRisk");
+	ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+	
+	// Clear existing risks
+	ActionState.Risks.Length = 0;
+	ActionState.NegatedRisks.Length = 0;
+
+	// Add the new one
+	ActionTemplate.AddRisk(RiskTemplate, ActionState);
+	ActionState.RecalculateRiskChanceToOccurModifiers();
+	`SubmitGameState(NewGameState);
+
+	// Refresh the UI
+	ActionsScreen.UpdateData();
+}
+
+exec function SetRiskOccurance (name RiskName, bool bOccurs)
+{
+	local XComGameState_CovertAction ActionState;
+	local UICovertActionsGeoscape ActionsScreen;
+	local XComGameState NewGameState;
+	local int i;
+
+	ActionsScreen = UICovertActionsGeoscape(`SCREENSTACK.GetCurrentScreen());
+	if (ActionsScreen == none)
+	{
+		`CI_Log("SetRiskActivation failed - not looking at covert actions screen");
+		return;
+	}
+
+	ActionState = ActionsScreen.GetAction();
+	if (!ActionState.bStarted || ActionState.bCompleted)
+	{
+		`CI_Log("SetRiskActivation failed - action is not ongoing");
+		return;
+	}
+
+	if (ActionState.NegatedRisks.Find(RiskName) != INDEX_NONE)
+	{
+		`CI_Log("SetRiskActivation failed - risk is nagated");
+		return;
+	}
+
+	i = ActionState.Risks.Find('RiskTemplateName', RiskName);
+	if (i == INDEX_NONE)
+	{
+		`CI_Log("SetRiskActivation failed - risk does not exist on the action");
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SetRiskActivation");
+	ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
+	ActionState.Risks[i].bOccurs = bOccurs;
+	`SubmitGameState(NewGameState);
+}
