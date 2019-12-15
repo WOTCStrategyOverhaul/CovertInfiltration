@@ -28,9 +28,6 @@
     <Content Include="Config\XComContent.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComEncounterLists.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Config\XComGameBoard.ini">
       <SubType>Content</SubType>
     </Content>
@@ -340,6 +337,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2SitRepEffect_ModifyEncounter.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2SitRepEventListenerTemplate.uc">

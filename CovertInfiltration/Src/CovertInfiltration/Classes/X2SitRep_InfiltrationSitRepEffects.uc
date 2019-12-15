@@ -5,7 +5,26 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2SitRep_InfiltrationSitRepEffects extends X2SitRepEffect;
+class X2SitRep_InfiltrationSitRepEffects extends X2SitRepEffect config(GameData);
+
+struct CharacterAppearanceDensity
+{
+	var name ID;
+	var int Count;
+};
+
+struct SitRepUnitSelectionData
+{
+	var name CharacterTemplate;
+
+	var int MinFL;
+	var int MaxFL;
+};
+
+var config bool EmplaceFollower_AllowEncountersWithFollowerOverride;
+
+var config array<SitRepUnitSelectionData> PhalanxCharacterSelection;
+var config array<SitRepUnitSelectionData> CongregationCharacterSelection;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -162,24 +181,212 @@ static function X2SitRepEffectTemplate CreateGunneryEmplacementsEffectTemplate()
 
 static function X2SitRepEffectTemplate CreatePhalanxEffectTemplate_CI()
 {
-	local X2SitRepEffect_ModifyDefaultEncounterLists Template;
+	local X2SitRepEffect_ModifyEncounter Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyDefaultEncounterLists', Template, 'PhalanxEffect_CI');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyEncounter', Template, 'PhalanxEffect_CI');
 
-	Template.DefaultLeaderListOverride = 'PhalanxLeaders';
+	Template.ProcessEncounter = PhalanxProcessEncounter;
+	Template.bApplyToPreplaced = true;
 
 	return Template;
 }
 
+static protected function PhalanxProcessEncounter (
+	out name EncounterName, out PodSpawnInfo Encounter,
+	int ForceLevel, int AlertLevel,
+	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
+)
+{
+	local name Character;
+
+	Character = SelectCharacter(default.PhalanxCharacterSelection);
+	if (Character == '')
+	{
+		`RedScreenOnce("CI: PhalanxProcessEncounter failed to find character template, aborting");
+		return;
+	}
+
+	EmplaceFollowerIntoEncounter(
+		Character,
+		EncounterName, Encounter,
+		ForceLevel, AlertLevel,
+		MissionState, ReinforcementState
+	);
+}
+
 static function X2SitRepEffectTemplate CreateCongregationEffectTemplate()
 {
-	local X2SitRepEffect_ModifyDefaultEncounterLists Template;
+	local X2SitRepEffect_ModifyEncounter Template;
 
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyDefaultEncounterLists', Template, 'CongregationEffect');
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyEncounter', Template, 'CongregationEffect');
 
-	Template.DefaultLeaderListOverride = 'CongregationLeaders';
+	Template.ProcessEncounter = CongregationProcessEncounter;
+	Template.bApplyToPreplaced = true;
 
 	return Template;
+}
+
+static protected function CongregationProcessEncounter (
+	out name EncounterName, out PodSpawnInfo Encounter,
+	int ForceLevel, int AlertLevel,
+	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
+)
+{
+	local name Character;
+
+	Character = SelectCharacter(default.CongregationCharacterSelection);
+	if (Character == '')
+	{
+		`RedScreenOnce("CI: CongregationProcessEncounter failed to find character template, aborting");
+		return;
+	}
+
+	EmplaceFollowerIntoEncounter(
+		Character,
+		EncounterName, Encounter,
+		ForceLevel, AlertLevel,
+		MissionState, ReinforcementState
+	);
+}
+
+static protected function name SelectCharacter (const out array<SitRepUnitSelectionData> SelectionData)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local int i;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+
+	for (i = 0; i < SelectionData.Length; i++)
+	{
+		if (SelectionData[i].MinFL <= AlienHQ.ForceLevel && AlienHQ.ForceLevel <= SelectionData[i].MaxFL)
+		{
+			return SelectionData[i].CharacterTemplate;
+		}
+	}
+
+	return '';
+}
+
+static protected function EmplaceFollowerIntoEncounter (
+	name UnitToEmplace,
+	out name EncounterName, out PodSpawnInfo Encounter,
+	int ForceLevel, int AlertLevel,
+	XComGameState_MissionSite MissionState, XComGameState_BaseObject ReinforcementState
+)
+{
+	local array<CharacterAppearanceDensity> CharacterTemplateCounts, CharacterGroupCounts;
+	local CharacterAppearanceDensity CharacterAppearanceDensityPair;
+	local X2CharacterTemplateManager CharacterTemplateManager;
+	local X2CharacterTemplate CharacterTemplate;
+	local int i, NumClosedSlots, NumOpenSlots;
+	local ConfigurableEncounter EncounterDef;
+	local name CharacterName;
+
+	// Do not edit the pod if the unit that we want it to have already is included
+	if (Encounter.SelectedCharacterTemplateNames.Find(UnitToEmplace) != INDEX_NONE) return;
+
+	// Do not edit non-alien pods
+    if (Encounter.Team != eTeam_Alien) return;
+
+	// Find the encounter's config definition
+	i = class'XComTacticalMissionManager'.default.ConfigurableEncounters.Find('EncounterID', EncounterName);
+	if (i != INDEX_NONE) EncounterDef = class'XComTacticalMissionManager'.default.ConfigurableEncounters[i];
+	else
+	{
+		`CI_Warn("EmplaceFollowerIntoEncounter got EncounterName that doesn't exist - aborting");
+		return;
+	}
+
+	// Skip encounters with follower override if we aren't allowed to touch those
+	if (EncounterDef.EncounterFollowerSpawnList != '' && !default.EmplaceFollower_AllowEncountersWithFollowerOverride) return;
+
+	// Get number of slots that cannot accept random followers
+	// Note that the first slot is always the pod leader, even if not forced
+	NumClosedSlots = Max(EncounterDef.ForceSpawnTemplateNames.Length, 1);
+
+	// Get the number of slots that are open to any followers
+	NumOpenSlots = Encounter.SelectedCharacterTemplateNames.Length - NumClosedSlots;
+
+	// If there are no slots that accept random followers, do nothing
+	if (NumOpenSlots < 1) return;
+
+	// All checks passed, we are ready to edit the slot
+	// Note that we will try replace the most occuring character to ensure pod varienty
+
+	CharacterTemplateManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
+
+	foreach Encounter.SelectedCharacterTemplateNames(CharacterName)
+	{
+		CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(CharacterName);
+
+		i = CharacterTemplateCounts.Find('ID', CharacterTemplate.DataName);
+		if (i != INDEX_NONE) CharacterTemplateCounts[i].Count++;
+		else 
+		{
+			CharacterAppearanceDensityPair.ID = CharacterTemplate.DataName;
+			CharacterAppearanceDensityPair.Count = 1;
+
+			CharacterTemplateCounts.AddItem(CharacterAppearanceDensityPair);
+		}
+
+		i = CharacterGroupCounts.Find('ID', CharacterTemplate.CharacterGroupName);
+		if (i != INDEX_NONE) CharacterGroupCounts[i].Count++;
+		else 
+		{
+			CharacterAppearanceDensityPair.ID = CharacterTemplate.CharacterGroupName;
+			CharacterAppearanceDensityPair.Count = 1;
+
+			CharacterGroupCounts.AddItem(CharacterAppearanceDensityPair);
+		}
+	}
+
+	// Attempt to replace based on character name
+	CharacterTemplateCounts.Sort(SortCharacterAppearanceDensity);
+	foreach CharacterTemplateCounts(CharacterAppearanceDensityPair)
+	{
+		// Skip the characters which show up once, try to replace by group instead
+		// (since the CharacterTemplateCounts array is sorted, all next iteractions will have Count == 1 as well)
+		if (CharacterAppearanceDensityPair.Count == 1) break;
+
+		for (i = NumClosedSlots; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
+		{
+			if (Encounter.SelectedCharacterTemplateNames[i] == CharacterAppearanceDensityPair.ID)
+			{
+				Encounter.SelectedCharacterTemplateNames[i] = UnitToEmplace;
+				return;
+			}
+		}
+	}
+
+	// Attempt to replace based on character group
+	CharacterGroupCounts.Sort(SortCharacterAppearanceDensity);
+	foreach CharacterGroupCounts(CharacterAppearanceDensityPair)
+	{
+		// Skip the groups which show up once, fallback to default instead
+		// (since the CharacterTemplateCounts array is sorted, all next iteractions will have Count == 1 as well)
+		if (CharacterAppearanceDensityPair.Count == 1) break;
+
+		for (i = NumClosedSlots; i < Encounter.SelectedCharacterTemplateNames.Length; i++)
+		{
+			CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(Encounter.SelectedCharacterTemplateNames[i]);
+
+			if (CharacterTemplate.CharacterGroupName == CharacterAppearanceDensityPair.ID)
+			{
+				Encounter.SelectedCharacterTemplateNames[i] = UnitToEmplace;
+				return;
+			}
+		}
+	}
+
+	// Failed to diversify the pod, just replace the last unit
+	Encounter.SelectedCharacterTemplateNames[Encounter.SelectedCharacterTemplateNames.Length - 1] = UnitToEmplace;
+}
+
+static protected function int SortCharacterAppearanceDensity (CharacterAppearanceDensity A, CharacterAppearanceDensity B)
+{
+	if (A.Count == B.Count) return 0;
+
+	return A.Count > B.Count ? 1 : -1;
 }
 
 ////////////////////////
