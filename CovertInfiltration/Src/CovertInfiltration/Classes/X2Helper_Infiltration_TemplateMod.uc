@@ -908,12 +908,12 @@ static function string GetPatchedHangarQueueMessage(StateObjectReference Facilit
 	CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
 
 	strStatus = default.strSoldiers $ ": ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strReady $ ":" @ CurrentBarracksStatus.Ready, eUIState_Good) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strTired $ ":" @ CurrentBarracksStatus.Tired, eUIState_Warning) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strWounded $ ":" @ CurrentBarracksStatus.Wounded, eUIState_Bad) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating, eUIState_Warning2) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction, eUIState_Normal) $ ", ";
-	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable, eUIState_Disabled);
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strReady $ ":" @ CurrentBarracksStatus.Ready, "53b45e") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strTired $ ":" @ CurrentBarracksStatus.Tired, "fdce2b") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strWounded $ ":" @ CurrentBarracksStatus.Wounded, "bf1e2e") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating, "2ed1b6") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction, "219481") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable, "828282");
 
 	return strStatus;
 }
