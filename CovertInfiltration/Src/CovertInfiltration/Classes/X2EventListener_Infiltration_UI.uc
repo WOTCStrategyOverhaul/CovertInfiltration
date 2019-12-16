@@ -515,42 +515,28 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 			CurrentScreen == CovertActions ||
 			(CovertActions.SSManager != none && CovertActions.SSManager.ShouldShowResourceBar() && CurrentScreen.IsA(class'UISquadSelect'.Name)))
 		{
-			CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
+
 			// Just do same thing as done for UICovertActions
 			AvengerHUD.UpdateSupplies();
 			AvengerHUD.UpdateIntel();
 			AvengerHUD.UpdateAlienAlloys();
 			AvengerHUD.UpdateEleriumCrystals();
 
-			if (CurrentBarracksStatus.Tired > 0)
-			{
-				AvengerHUD.AddResource(default.strTiredSoldiers, class'UIUtilities_Text'.static.GetColoredText(string(CurrentBarracksStatus.Tired), eUIState_Warning));
-			}
-			AvengerHUD.AddResource(default.strReadySoldiers, class'UIUtilities_Text'.static.GetColoredText(string(CurrentBarracksStatus.Ready), eUIState_Good));
-
 			// Resource bar is hidden by default, show it
 			AvengerHUD.ShowResources();
 		}
 	}
 
-	////////////////////////
-	/// UIMission screen ///
-	////////////////////////
+	//////////////////////
+	/// Soldier counts ///
+	//////////////////////
 
-	if (UIMission(CurrentScreen) != none)
+	if (UIMission(CurrentScreen) != none && CurrentScreen != UIMission_Infiltrated(ScreenStack.GetFirstInstanceOf(class'UIMission_Infiltrated')) ||
+		CurrentScreen == CovertActions)
 	{
 		CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
 
-		// Just do same thing as done for UICovertActions
-		AvengerHUD.UpdateSupplies();
-		AvengerHUD.UpdateIntel();
-		AvengerHUD.UpdateAlienAlloys();
-		AvengerHUD.UpdateEleriumCrystals();
-
-		if (CurrentBarracksStatus.Tired > 0)
-			{
-				AvengerHUD.AddResource(default.strTiredSoldiers, class'UIUtilities_Text'.static.GetColoredText(string(CurrentBarracksStatus.Tired), eUIState_Warning));
-			}
+		AvengerHUD.AddResource(default.strTiredSoldiers, class'UIUtilities_Text'.static.GetColoredText(string(CurrentBarracksStatus.Tired), eUIState_Warning));
 		AvengerHUD.AddResource(default.strReadySoldiers, class'UIUtilities_Text'.static.GetColoredText(string(CurrentBarracksStatus.Ready), eUIState_Good));
 
 		// Resource bar is hidden by default, show it

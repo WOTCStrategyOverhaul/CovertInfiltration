@@ -903,7 +903,6 @@ static function PatchHangar()
 static function string GetPatchedHangarQueueMessage(StateObjectReference FacilityRef)
 {
 	local BarracksStatusReport CurrentBarracksStatus;
-	local EMentalState eState;
 	local string strStatus;
 
 	CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
@@ -912,9 +911,9 @@ static function string GetPatchedHangarQueueMessage(StateObjectReference Facilit
 	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strReady $ ":" @ CurrentBarracksStatus.Ready, eUIState_Good) $ ", ";
 	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strTired $ ":" @ CurrentBarracksStatus.Tired, eUIState_Warning) $ ", ";
 	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strWounded $ ":" @ CurrentBarracksStatus.Wounded, eUIState_Bad) $ ", ";
-	strStatus $= default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating $ ", ";
-	strStatus $= default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction $ ", ";
-	strStatus $= default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable;
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating, eUIState_Warning2) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction, eUIState_Normal) $ ", ";
+	strStatus $= class'UIUtilities_Text'.static.GetColoredText(default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable, eUIState_Disabled);
 
 	return strStatus;
 }
