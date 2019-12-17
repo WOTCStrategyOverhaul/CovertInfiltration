@@ -40,57 +40,6 @@ var int NumEnemiesAtMissionStart;
 var protected array<CharacterGroupKillCount> CharacterGroupsKillTracker;
 
 ////////////////////////
-/// Strategy helpers ///
-////////////////////////
-
-static function Update ()
-{
-	local XComGameState NewGameState;
-	local XComGameState_CovertInfiltrationInfo CIInfo;
-	local XComGameState_CovertAction ActionState;
-	local StateObjectReference ActionRef;
-	local bool bDirty;
-	
-	bDirty = false;
-	CIInfo = GetInfo();
-
-	if (CIInfo == none) return;
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing Flagged Covert Actions");
-	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
-
-	foreach CIInfo.CovertActionsToRemove(ActionRef)
-	{
-		ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
-		if (ActionState != none && ActionState.bCompleted == false)
-		{
-			if (ActionState.bStarted)
-			{
-				ActionState.bCompleted = true;
-				ActionState.CompleteCovertAction(NewGameState);
-			}
-			else
-			{
-				ActionState.RemoveEntity(NewGameState);
-			}
-
-			bDirty = true;
-		}
-	}
-	
-	CIInfo.CovertActionsToRemove.Length = 0;
-
-	if (bDirty)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
-	}
-}
-
-////////////////////////
 /// Tactical helpers ///
 ////////////////////////
 

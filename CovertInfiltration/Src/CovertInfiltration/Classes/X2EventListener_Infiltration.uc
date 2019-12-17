@@ -56,8 +56,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate);
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
 	Template.AddCHEvent('OnResearchReport', TriggerPrototypeAlert, ELD_OnStateSubmitted);
-	Template.AddCHEvent('OnResearchReport', CheckTechRushCovertActions, ELD_OnStateSubmitted);
-	Template.AddCHEvent('OnResearchCompletePopupClosed', CheckTechRushCovertActions, ELD_OnStateSubmitted);
+	Template.AddCHEvent('ResearchCompleted', CheckTechRushCovertActions, ELD_OnStateSubmitted);
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
@@ -306,14 +305,6 @@ static protected function EventListenerReturn CheckTechRushCovertActions(Object 
 	RemovedAction = false;
 	History = `XCOMHISTORY;
 	TechState = XComGameState_Tech(EventData);
-
-	if(TechState == none)
-	{
-		foreach History.IterateByClassType(class'XComGameState_Tech', TechState)
-		{
-			if (TechState.bSeenResearchCompleteScreen == false) break;
-		}
-	}
 
 	if(TechState == none) return ELR_NoInterrupt;
 
