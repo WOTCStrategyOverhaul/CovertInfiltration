@@ -38,6 +38,14 @@ var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 
+var localized string strSoldiers;
+var localized string strReady;
+var localized string strTired;
+var localized string strWounded;
+var localized string strInfiltrating;
+var localized string strOnCovertAction;
+var localized string strUnavailable;
+
 /////////////
 /// Items ///
 /////////////
@@ -879,6 +887,35 @@ static function PatchLivingQuarters()
 	// add barracks size limit upgrades
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeI');
 	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeII');
+}
+
+static function PatchHangar()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2FacilityTemplate HangarTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	HangarTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('Hangar'));
+
+	HangarTemplate.GetQueueMessageFn = GetPatchedHangarQueueMessage;
+}
+
+static function string GetPatchedHangarQueueMessage(StateObjectReference FacilityRef)
+{
+	local BarracksStatusReport CurrentBarracksStatus;
+	local string strStatus;
+
+	CurrentBarracksStatus = class'X2Helper_Infiltration'.static.GetBarracksStatusReport();
+
+	strStatus = default.strSoldiers $ ": ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strReady $ ":" @ CurrentBarracksStatus.Ready, "53b45e") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strTired $ ":" @ CurrentBarracksStatus.Tired, "fdce2b") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strWounded $ ":" @ CurrentBarracksStatus.Wounded, "bf1e2e") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strInfiltrating $ ":" @ CurrentBarracksStatus.Infiltrating, "2ed1b6") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strOnCovertAction $ ":" @ CurrentBarracksStatus.OnCovertAction, "219481") $ ", ";
+	strStatus $= class'UIUtilities_Infiltration'.static.ColourText(default.strUnavailable $ ":" @ CurrentBarracksStatus.Unavailable, "828282");
+
+	return strStatus;
 }
 
 ///////////////////

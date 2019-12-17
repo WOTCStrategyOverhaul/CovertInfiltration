@@ -188,6 +188,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.RemovePointsOfInterest();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemoveFactionCards();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchHangar();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();

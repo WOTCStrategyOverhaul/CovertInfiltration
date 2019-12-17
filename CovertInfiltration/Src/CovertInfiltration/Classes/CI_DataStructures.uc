@@ -94,3 +94,13 @@ struct MultiStepLerpConfig
 	var float ResultIfXExceedsBottomBoundary;
 	var float ResultIfXExceedsUpperBoundary;
 };
+
+struct BarracksStatusReport
+{
+	var int Ready;
+	var int Tired;
+	var int Wounded;
+	var int Infiltrating;
+	var int OnCovertAction;
+	var int Unavailable;
+};
