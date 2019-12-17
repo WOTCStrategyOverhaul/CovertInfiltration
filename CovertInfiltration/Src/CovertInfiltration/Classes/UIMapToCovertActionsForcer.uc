@@ -84,7 +84,12 @@ simulated protected function OpenScreenConditionally()
 	HQPres = XComHQPresentationLayer(Movie.Pres);
 	Geoscape =`GAME.GetGeoscape();
 
-	if (Geoscape.IsPaused() || HQPres.ScreenStack.GetCurrentScreen() != HQPres.StrategyMap2D || HQPres.CAMIsBusy())
+	if (
+		Geoscape.IsPaused() ||
+		HQPres.ScreenStack.GetCurrentScreen() != HQPres.StrategyMap2D ||
+		HQPres.StrategyMap2D.m_eUIState == eSMS_Flight ||
+		HQPres.CAMIsBusy()
+	)
 	{
 		// Something is going on - allow next tick to handle it
 		return;
