@@ -22,6 +22,7 @@ var bool bCompletedFirstOrdersAssignment; // If false (just built the ring) - al
 var bool bRingStaffReplacement; // True if we are replacing the staff assigned to resistance ring and no empty wildcard slots - do not un-grant/grant slot
 var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
 var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to highlight new missions after spawning one to avoid full screen popups
+var array<StateObjectReference> CovertActionsToRemove; // Used to mark outdated CAs for removal when the player next enters the geoscape screen
 var int CurrentBarracksLimit;
 
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
@@ -37,6 +38,57 @@ var bool bCommsJammingTriggered;
 // Kill XP scaling system
 var int NumEnemiesAtMissionStart;
 var protected array<CharacterGroupKillCount> CharacterGroupsKillTracker;
+
+////////////////////////
+/// Strategy helpers ///
+////////////////////////
+
+static function Update ()
+{
+	local XComGameState NewGameState;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_CovertAction ActionState;
+	local StateObjectReference ActionRef;
+	local bool bDirty;
+	
+	bDirty = false;
+	CIInfo = GetInfo();
+
+	if (CIInfo == none) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing Flagged Covert Actions");
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+
+	foreach CIInfo.CovertActionsToRemove(ActionRef)
+	{
+		ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+		if (ActionState != none && ActionState.bCompleted == false)
+		{
+			if (ActionState.bStarted)
+			{
+				ActionState.bCompleted = true;
+				ActionState.CompleteCovertAction(NewGameState);
+			}
+			else
+			{
+				ActionState.RemoveEntity(NewGameState);
+			}
+
+			bDirty = true;
+		}
+	}
+	
+	CIInfo.CovertActionsToRemove.Length = 0;
+
+	if (bDirty)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
+	}
+}
 
 ////////////////////////
 /// Tactical helpers ///

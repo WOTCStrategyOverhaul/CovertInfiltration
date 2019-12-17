@@ -57,6 +57,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate);
 	Template.AddCHEvent('OnResearchReport', TriggerPrototypeAlert, ELD_OnStateSubmitted);
 	Template.AddCHEvent('OnResearchReport', CheckTechRushCovertActions, ELD_OnStateSubmitted);
+	Template.AddCHEvent('OnResearchCompletePopupClosed', CheckTechRushCovertActions, ELD_OnStateSubmitted);
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
@@ -295,21 +296,29 @@ static protected function EventListenerReturn CheckTechRushCovertActions(Object 
 {
 	local XComGameState NewGameState;
 	local XComGameStateHistory History;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_Tech TechState, AttachedTech;
-	local X2TechTemplate TechTemplate;
-	local XComGameState_CovertAction ActionState, NewActionState;
+	local XComGameState_CovertAction ActionState;
 	local StateObjectReference RewardRef;
 	local XComGameState_Reward RewardState;
 	local bool RemovedAction;
 
 	RemovedAction = false;
+	History = `XCOMHISTORY;
 	TechState = XComGameState_Tech(EventData);
 
+	if(TechState == none)
+	{
+		foreach History.IterateByClassType(class'XComGameState_Tech', TechState)
+		{
+			if (TechState.bSeenResearchCompleteScreen == false) break;
+		}
+	}
+
 	if(TechState == none) return ELR_NoInterrupt;
-	
-	TechTemplate = TechState.GetMyTemplate();
-	History = `XCOMHISTORY;
+
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Clear TechRush Covert Actions");
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
 	
 	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
 	{
@@ -322,7 +331,8 @@ static protected function EventListenerReturn CheckTechRushCovertActions(Object 
 
 				if (AttachedTech == TechState)
 				{
-					ActionState.RemoveEntity(NewGameState);
+					`CI_Trace("Flagged " $ ActionState.GetMyTemplateName $ " for removal on next update");
+					CIInfo.CovertActionsToRemove.AddItem(ActionState.GetReference());
 					RemovedAction = true;
 				}
 			}

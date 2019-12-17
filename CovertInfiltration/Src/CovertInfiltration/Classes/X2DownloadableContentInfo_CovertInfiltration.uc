@@ -28,6 +28,7 @@ static event UpdateDLC ()
 {
 	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
+	class'XComGameState_CovertInfiltrationInfo'.static.Update();
 	UpdateShowTutorial();
 }
 
