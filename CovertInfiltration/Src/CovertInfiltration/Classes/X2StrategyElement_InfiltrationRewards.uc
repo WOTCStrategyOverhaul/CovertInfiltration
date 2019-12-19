@@ -418,16 +418,19 @@ static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_
 
 	// Adjust Tech's time reduction value
 	TechState = XComGameState_Tech(NewGameState.ModifyStateObject(class'XComGameState_Tech', RewardState.RewardObjectReference.ObjectID));
-	TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
-
-	// If there is already a project rush it
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectResearch', ProjectState)
+	if(TechState != None && TechState.TimesResearched > 0)
 	{
-		if(ProjectState.ProjectFocus == RewardState.RewardObjectReference)
+		TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
+
+		// If there is already a project rush it
+		foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectResearch', ProjectState)
 		{
-			ProjectState = XComGameState_HeadquartersProjectResearch(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersProjectResearch', ProjectState.ObjectID));
-			ProjectState.RushResearch(NewGameState);
-			return;
+			if (ProjectState.ProjectPointsRemaining > 0 && ProjectState.ProjectFocus == RewardState.RewardObjectReference)
+			{
+				ProjectState = XComGameState_HeadquartersProjectResearch(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersProjectResearch', ProjectState.ObjectID));
+				ProjectState.RushResearch(NewGameState);
+				return;
+			}
 		}
 	}
 }
