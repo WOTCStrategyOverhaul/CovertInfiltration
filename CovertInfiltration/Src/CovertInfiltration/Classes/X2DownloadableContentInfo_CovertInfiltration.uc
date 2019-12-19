@@ -879,7 +879,6 @@ exec function SetBonusForInfiltrationMilestone (name Milestone, name Bonus)
 
 exec function SetFlatRisk (name FlatRiskName)
 {
-	local X2CovertInfiltrationTemplate ActionTemplate;
 	local X2StrategyElementTemplateManager StratMgr;
 	local X2CovertActionRiskTemplate RiskTemplate;
 	local XComGameState_CovertAction ActionState;
@@ -909,14 +908,14 @@ exec function SetFlatRisk (name FlatRiskName)
 	}
 
 	ActionState = ActionsScreen.GetAction();
+
 	if (ActionState.bStarted)
 	{
 		`CI_Log("SetFlatRisk failed - action already started");
 		return;
 	}
 
-	ActionTemplate = X2CovertInfiltrationTemplate(ActionState.GetMyTemplate());
-	if (ActionTemplate == none)
+	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(ActionState))
 	{
 		`CI_Log("SetFlatRisk failed - not looking at an infiltration action");
 		return;
@@ -930,7 +929,7 @@ exec function SetFlatRisk (name FlatRiskName)
 	ActionState.NegatedRisks.Length = 0;
 
 	// Add the new one
-	ActionTemplate.AddRisk(RiskTemplate, ActionState);
+	class'X2ActivityTemplate_Infiltration'.static.AddRisk(RiskTemplate, ActionState);
 	ActionState.RecalculateRiskChanceToOccurModifiers();
 	`SubmitGameState(NewGameState);
 
