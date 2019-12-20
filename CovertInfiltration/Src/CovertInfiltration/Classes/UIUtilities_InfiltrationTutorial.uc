@@ -10,26 +10,41 @@
 
 class UIUtilities_InfiltrationTutorial extends Object;
 
+// On Geoscape
 var localized string strGeoscapeEntryHeader;
 var localized string strGeoscapeEntryBody;
+var localized string strBarracksLimitHeader;
+var localized string strBarracksLimitBody;
 
+// On Squad Select
 var localized string strCovertActionLoadoutHeader;
 var localized string strCovertActionLoadoutBody;
+var localized string strInfiltrationLoadoutHeader;
+var localized string strInfiltrationLoadoutBody;
+var localized string strAssaultLoadoutHeader;
+var localized string strAssaultLoadoutBody;
 
-var localized string strInfiltrationSelectionHeader;
-var localized string strInfiltrationSelectionBody;
+// On Mission Readout
+var localized string strOverInfiltrationHeader;
+var localized string strOverInfiltrationBody;
 
+// On Covert Action Debrief
 var localized string strCovertActionFinishedHeader;
 var localized string strCovertActionFinishedBody;
 
-var localized string strFacilityChangesHeader;
-var localized string strFacilityChangesBody;
+// On Empty Room
+var localized string strFacilityRingHeader;
+var localized string strFacilityRingBody;
+var localized string strFacilityGTSHeader;
+var localized string strFacilityGTSBody;
 
+// On Chain Selected
 var localized string strActivityChainsHeader;
 var localized string strActivityChainsBody;
 
-var localized string strAlienFacilityBuiltHeader;
-var localized string strAlienFacilityBuiltBody;
+// On Facility Built
+var localized string strAdvancedChainsHeader;
+var localized string strAdvancedChainsBody;
 
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
@@ -41,7 +56,8 @@ var localized string strAlienFacilityBuiltBody;
 static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
-
+	
+	`PRESBASE.UITutorialBox(default.strBarracksLimitHeader, default.strBarracksLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 	`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
@@ -52,11 +68,25 @@ static function CovertActionLoadout ()
 	`PRESBASE.UITutorialBox(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
-static function InfiltrationSelection ()
+static function InfiltrationLoadout ()
 {
-	if (!ShouldShowPopup('InfiltrationSelection')) return;
+	if (!ShouldShowPopup('InfiltrationLoadout')) return;
 
-	`PRESBASE.UITutorialBox(default.strInfiltrationSelectionHeader, default.strInfiltrationSelectionBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	`PRESBASE.UITutorialBox(default.strInfiltrationLoadoutHeader, default.strInfiltrationLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function AssaultLoadout ()
+{
+	if (!ShouldShowPopup('AssaultLoadout')) return;
+
+	`PRESBASE.UITutorialBox(default.strAssaultLoadoutHeader, default.strAssaultLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+}
+
+static function OverInfiltration ()
+{
+	if (!ShouldShowPopup('OverInfiltration')) return;
+
+	`PRESBASE.UITutorialBox(default.strOverInfiltrationHeader, default.strOverInfiltrationBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 static function CovertActionFinished ()
@@ -70,7 +100,8 @@ static function FacilityChanges ()
 {
 	if (!ShouldShowPopup('FacilityChanges')) return;
 
-	`PRESBASE.UITutorialBox(default.strFacilityChangesHeader, default.strFacilityChangesBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	`PRESBASE.UITutorialBox(default.strFacilityGTSHeader, default.strFacilityGTSBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	`PRESBASE.UITutorialBox(default.strFacilityRingHeader, default.strFacilityRingBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 static function ActivityChains ()
@@ -84,7 +115,7 @@ static function AlienFacilityBuilt ()
 {
 	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
 
-	`PRESBASE.UITutorialBox(default.strAlienFacilityBuiltHeader, default.strAlienFacilityBuiltBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	`PRESBASE.UITutorialBox(default.strAdvancedChainsHeader, default.strAdvancedChainsBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player

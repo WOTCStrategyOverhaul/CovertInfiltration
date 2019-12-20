@@ -77,7 +77,7 @@ simulated protected function UpdateText()
 
 	if (bIsOngoing)
 	{
-		strText = class'UIUtilities_Infiltration'.static.MakeFirstCharCapOnly(class'UICovertActions'.default.CovertActions_CurrentActiveHeader);
+		strText = class'UICovertActionsGeoscape'.default.strInProgressHeader;
 	}
 	else 
 	{
