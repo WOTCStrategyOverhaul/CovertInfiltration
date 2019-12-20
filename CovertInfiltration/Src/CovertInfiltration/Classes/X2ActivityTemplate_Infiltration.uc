@@ -23,11 +23,17 @@ var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "blo
 
 delegate string GetRewardDetailStringFn(XComGameState_Activity ActivityState, XComGameState_Reward RewardState);
 
+//////////////////////
+/// Initialization ///
+//////////////////////
+
 static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	CreateCovertAction(NewGameState, ActivityState);
 	CreateMission(NewGameState, ActivityState);
+
 	AddExpiration(NewGameState, ActivityState);
+	SetupFlatRisk(NewGameState, ActivityState);
 }
 
 static function CreateCovertAction (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -100,12 +106,77 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState.InitializeFromActivity(NewGameState);
 }
 
+static function SetupFlatRisk (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local X2CovertActionRiskTemplate RiskTemplate;
+	local XComGameState_CovertAction ActionState;
+
+	MissionState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+	ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActivityState.SecondaryObjectRef.ObjectID));
+	
+	RiskTemplate = SelectFlatRisk(MissionState);
+
+	if (RiskTemplate != none)
+	{
+		class'X2Helper_Infiltration'.static.AddRiskToAction(RiskTemplate, ActionState);
+		ActionState.RecalculateRiskChanceToOccurModifiers();
+	}
+}
+
+static function X2CovertActionRiskTemplate SelectFlatRisk (XComGameState_MissionSiteInfiltration MissionState)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2SitRepTemplateManager SitRepManager;
+	local ActionFlatRiskSitRep FlatRiskDef;
+	local X2SitRepTemplate SitRepTemplate;
+	local X2CardManager CardManager;
+	local array<string> CardLabels;
+	local name RiskName;
+	local string sRisk;
+	local int i;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	SitRepManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+	CardManager = class'X2CardManager'.static.GetCardManager();
+
+	// Build the deck
+	class'X2Helper_Infiltration'.static.BuildFlatRisksDeck();
+
+	// Try to find a matching one
+	CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
+	foreach CardLabels(sRisk)
+	{
+		RiskName = name(sRisk);
+		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
+
+		if (i != INDEX_NONE)
+		{
+			FlatRiskDef = class'X2Helper_Infiltration'.default.FlatRiskSitReps[i];
+			SitRepTemplate = SitRepManager.FindSitRepTemplate(FlatRiskDef.SitRepName);
+
+			if (SitRepTemplate.MeetsRequirements(MissionState))
+			{
+				CardManager.MarkCardUsed('FlatRisks', sRisk);
+				return X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(FlatRiskDef.FlatRiskName));
+			}
+		}
+	}
+
+	`RedScreen("CI: Failed to find a flat risk to use for infiltration");
+	return none;
+}
+
 static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState)
 {
 	class'UIUtilities_Infiltration'.static.InfiltrationAvaliable(
 		XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState))
 	);
 }
+
+/////////////////
+/// Callbacks ///
+/////////////////
 
 static function string DefaultGetMissionImageInfiltration (XComGameState_Activity ActivityState)
 {

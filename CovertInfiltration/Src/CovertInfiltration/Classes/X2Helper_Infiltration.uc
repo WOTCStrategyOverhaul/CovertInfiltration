@@ -443,6 +443,17 @@ static function int GetMaxAllowedInfil (array<StateObjectReference> Soldiers, XC
 	return default.MAX_INFIL_PER_EXTRA_SOLDIER[i];
 }
 
+// Must call ActionState.RecalculateRiskChanceToOccurModifiers() after using this
+static function AddRiskToAction (X2CovertActionRiskTemplate RiskTemplate, XComGameState_CovertAction ActionState)
+{
+	local CovertActionRisk SelectedRisk;
+
+	SelectedRisk.RiskTemplateName = RiskTemplate.DataName;
+	SelectedRisk.ChanceToOccur = (RiskTemplate.MinChanceToOccur + `SYNC_RAND_STATIC(RiskTemplate.MaxChanceToOccur - RiskTemplate.MinChanceToOccur + 1));
+
+	ActionState.Risks.AddItem(SelectedRisk);
+}
+
 static function MissionDefinition GetMissionDefinitionForActivity (XComGameState_Activity ActivityState)
 {
 	local XComTacticalMissionManager MissionManager;
