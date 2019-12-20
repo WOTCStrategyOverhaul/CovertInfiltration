@@ -811,7 +811,7 @@ static function BarracksStatusReport GetBarracksStatusReport()
 
 	foreach Soldiers(Soldier)
 	{
-		if (Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
+		if (Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
 			CurrentBarracksStatus.Infiltrating++;
 		}
