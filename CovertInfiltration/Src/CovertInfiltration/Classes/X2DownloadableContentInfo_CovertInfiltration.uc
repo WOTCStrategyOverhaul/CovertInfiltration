@@ -929,7 +929,7 @@ exec function SetFlatRisk (name FlatRiskName)
 	ActionState.NegatedRisks.Length = 0;
 
 	// Add the new one
-	class'X2ActivityTemplate_Infiltration'.static.AddRisk(RiskTemplate, ActionState);
+	class'X2Helper_Infiltration'.static.AddRiskToAction(RiskTemplate, ActionState);
 	ActionState.RecalculateRiskChanceToOccurModifiers();
 	`SubmitGameState(NewGameState);
 

@@ -33,7 +33,7 @@ static function DefaultInfiltrationSetup (XComGameState NewGameState, XComGameSt
 	CreateMission(NewGameState, ActivityState);
 
 	AddExpiration(NewGameState, ActivityState);
-	AttachFlatRisk(NewGameState, ActivityState);
+	SetupFlatRisk(NewGameState, ActivityState);
 }
 
 static function CreateCovertAction (XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -106,7 +106,7 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	MissionState.InitializeFromActivity(NewGameState);
 }
 
-static function AttachFlatRisk (XComGameState NewGameState, XComGameState_Activity ActivityState)
+static function SetupFlatRisk (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local X2CovertActionRiskTemplate RiskTemplate;
@@ -119,7 +119,7 @@ static function AttachFlatRisk (XComGameState NewGameState, XComGameState_Activi
 
 	if (RiskTemplate != none)
 	{
-		AddRisk(RiskTemplate, ActionState);
+		class'X2Helper_Infiltration'.static.AddRiskToAction(RiskTemplate, ActionState);
 		ActionState.RecalculateRiskChanceToOccurModifiers();
 	}
 }
@@ -165,16 +165,6 @@ static function X2CovertActionRiskTemplate SelectFlatRisk (XComGameState_Mission
 
 	`RedScreen("CI: Failed to find a flat risk to use for infiltration");
 	return none;
-}
-
-static function AddRisk (X2CovertActionRiskTemplate RiskTemplate, XComGameState_CovertAction ActionState)
-{
-	local CovertActionRisk SelectedRisk;
-
-	SelectedRisk.RiskTemplateName = RiskTemplate.DataName;
-	SelectedRisk.ChanceToOccur = (RiskTemplate.MinChanceToOccur + `SYNC_RAND_STATIC(RiskTemplate.MaxChanceToOccur - RiskTemplate.MinChanceToOccur + 1));
-
-	ActionState.Risks.AddItem(SelectedRisk);
 }
 
 static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState)
