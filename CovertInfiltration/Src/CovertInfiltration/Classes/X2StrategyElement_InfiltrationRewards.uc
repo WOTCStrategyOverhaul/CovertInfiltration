@@ -405,6 +405,7 @@ static function SetTechInspireReward(XComGameState_Reward RewardState, optional 
 	else
 	{
 		RewardState.RewardObjectReference = RewardObjectRef;
+		RewardState.Quantity = TechState.TimesResearched;
 	}
 }
 
@@ -418,7 +419,7 @@ static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_
 
 	// Adjust Tech's time reduction value
 	TechState = XComGameState_Tech(NewGameState.ModifyStateObject(class'XComGameState_Tech', RewardState.RewardObjectReference.ObjectID));
-	if(TechState != None && TechState.TimesResearched > 0)
+	if(TechState != None && TechState.TimesResearched == RewardState.Quantity)
 	{
 		TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
 
