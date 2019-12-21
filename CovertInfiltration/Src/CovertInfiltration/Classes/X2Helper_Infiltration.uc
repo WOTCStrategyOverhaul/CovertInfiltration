@@ -301,6 +301,20 @@ static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction Cove
 	return ExfiltrateCost;
 }
 
+static function int GetExfiltrationIntegerCost(XComGameState_CovertAction CovertAction)
+{
+	local int ExfiltrateCost;
+	local TDateTime CurrentTime;
+	local float Days;
+
+	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	Days = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24;
+
+	ExfiltrateCost = default.EXFIL_INTEL_COST_BASEAMOUNT + Round(Days * default.EXFIL_INTEL_COST_MULTIPLIER);
+
+	return ExfiltrateCost;
+}
+
 static function bool IsInfiltrationAction(XComGameState_CovertAction Action)
 {
 	return class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action) != none;

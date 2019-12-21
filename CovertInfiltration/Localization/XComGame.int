@@ -273,12 +273,12 @@ CovertActionsBuildRing="SELECT OPERATION"
 [LivingQuarters_BarracksSizeI X2FacilityUpgradeTemplate]
 DisplayName="Barracks Size I"
 FacilityName="Living Quarters"
-Summary="Increases crew capacity by 10, allowing more personnel to be maintained without an increase to recovery times."
+Summary="Increases barracks capacity by 10, allowing more personnel to be maintained without an increase to recovery times."
 
 [LivingQuarters_BarracksSizeII X2FacilityUpgradeTemplate]
 DisplayName="Barracks Size II"
 FacilityName="Living Quarters"
-Summary="Increases crew capacity by a further 15, allowing more personnel to be maintained without an increase to recovery times."
+Summary="Increases barracks capacity by a further 15, allowing even more personnel to be maintained without an increase to recovery times."
 
 [Reward_SmallIntel X2RewardTemplate]
 DisplayName="Intel"

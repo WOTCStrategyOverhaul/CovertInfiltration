@@ -1323,10 +1323,14 @@ simulated function OnAbortClicked(UIButton Button)
 simulated function ConfirmAbortPopup()
 {
 	local TDialogueBoxData DialogData;
+	local XGParamTag ParamTag;
+	
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.IntValue0 = class'X2Helper_Infiltration'.static.GetExfiltrationIntegerCost(GetAction());
 
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = strDialogDataTitle;
-	DialogData.strText = strDialogDataText;
+	DialogData.strText = `XEXPAND.ExpandString(strDialogDataText);
 	DialogData.strAccept = class'UIUtilities_Text'.default.m_strGenericConfirm;
 	DialogData.strCancel = class'UIUtilities_Text'.default.m_strGenericBack;
 	DialogData.fnCallback = ConfirmAbortPopupCallback;
