@@ -12,7 +12,7 @@ strAbortAction="Abort Action"
 strCloseScreen="Close Covert Ops"
 strRisksHeader=Risks
 strDialogDataTitle="ABORT COVERT OPERATION"
-strDialogDataText="The squad is in deep cover, and opening a line of communication will require us to spend <XGParam:IntValue0> Intel, which will only increase the closer they get to their objective. It may be a better choice to let the squad continue on. If we pull them out, the opportunity will be lost forever. Are you sure, Commander?"
+strDialogDataText="The squad is in deep cover, and opening a line of communication will require us to spend <XGParam:StrValue0>, which will only increase the closer they get to their objective. It may be a better choice to let the squad continue on. If we pull them out, the opportunity will be lost forever. Are you sure, Commander?"
 strInProgressHeader="In Progress"
 
 [UISSManager_CovertAction]

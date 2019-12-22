@@ -1322,11 +1322,13 @@ simulated function OnAbortClicked(UIButton Button)
 
 simulated function ConfirmAbortPopup()
 {
+	local array<StrategyCostScalar> CostScalars;
 	local TDialogueBoxData DialogData;
 	local XGParamTag ParamTag;
 	
+	CostScalars.Length = 0; // Avoid compiler warning
 	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	ParamTag.IntValue0 = class'X2Helper_Infiltration'.static.GetExfiltrationIntegerCost(GetAction());
+	ParamTag.StrValue0 = class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
 
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = strDialogDataTitle;
