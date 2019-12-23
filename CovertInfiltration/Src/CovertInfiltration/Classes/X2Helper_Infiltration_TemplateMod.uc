@@ -884,9 +884,9 @@ static function PatchLivingQuarters()
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	FacilityTemplate = X2FacilityTemplate(TemplateManager.FindStrategyElementTemplate('LivingQuarters'));
 	
-	// add barracks size limit upgrades
-	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeI');
-	FacilityTemplate.Upgrades.AddItem('LivingQuarters_BarracksSizeII');
+	// add crew size limit upgrades
+	FacilityTemplate.Upgrades.AddItem('LivingQuarters_CrewSizeI');
+	FacilityTemplate.Upgrades.AddItem('LivingQuarters_CrewSizeII');
 }
 
 static function PatchHangar()

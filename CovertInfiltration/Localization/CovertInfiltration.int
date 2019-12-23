@@ -150,7 +150,7 @@ OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
-strBarracksSizeTitle="BARRACKS"
+strCrewSizeTitle="CREW"
 strAcademyTrainingRank="TARGET TRAINING RANK"
 strReadySoldiers="READY"
 strTiredSoldiers="TIRED"
@@ -344,8 +344,8 @@ strLabel=View Chain
 strGeoscapeEntryHeader=Proactive Deployment
 strGeoscapeEntryBody=In Covert Infiltration, most missions will no longer appear automatically on the geoscape. Instead, opportunities will appear in the Covert Ops menu, accessible from the button at the bottom of the screen. You can send out as many squads as you wish but be aware that new opportunities may appear at any time and that ADVENT can and will initiate retaliations against your havens!
 
-strBarracksLimitHeader=Barracks Limit
-strBarracksLimitBody=Onboard the Avenger, space is precious, but everyone needs their own bed for optimal recovery. We are limited in how many personnel can be maintained at once by the Barracks Limit. Each soldier, scientist, and engineer count towards the limit - other crewmembers are not counted. For each person over the limit, fatigue recovery times are increased by 10%. The Barracks Limit can be increased via upgrades in the Living Quarters (the room below the Commander's Quarters).
+strCrewLimitHeader=Crew Limit
+strCrewLimitBody=Onboard the Avenger, space is precious, but everyone needs their own bed for optimal recovery. We are limited in how many personnel can be maintained at once by the Crew Limit, which is visible in the top left corner of the screen. Every soldier, scientist, and engineer counts towards the limit - other crewmembers are not counted. For each person over the limit, fatigue recovery times are increased by 10%. The Crew Limit can be increased via upgrades in the Living Quarters (the room below the Commander's Quarters).
 
 strCovertActionLoadoutHeader=Covert Actions
 strCovertActionLoadoutBody=Traditional Covert Actions still involve you sending out soldiers into the unknown, but there are a few major changes. First, the time to complete them is now dependent on your soldiers' gear. A lightly equipped squad will complete them more quickly. In addition, you also have to watch out for the squad's deterrence, which affects the trigger chance of risks. A squad that is equipped with heavier or higher-tier items will be more likely to come home safe. Balance out infiltration and deterrence to complete Covert Actions successfully!

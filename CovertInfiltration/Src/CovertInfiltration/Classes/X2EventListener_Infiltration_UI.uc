@@ -7,7 +7,7 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
-var config int MaxOverBarracksLimitTillRed;
+var config int MaxOverCrewLimitTillRed;
 
 // The replacements set directly in config. Will be preferred
 var config array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacements;
@@ -17,7 +17,7 @@ var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic
 
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
-var localized string strBarracksSizeTitle;
+var localized string strCrewSizeTitle;
 var localized string strReadySoldiers;
 var localized string strTiredSoldiers;
 var localized string strAcademyTrainingRank;
@@ -465,7 +465,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 	local BarracksStatusReport CurrentBarracksStatus;
-	local int CurrentBarracksSize, CurrentBarracksLimit, MessageColor;
+	local int CurrentCrewSize, CurrentCrewLimit, MessageColor;
 	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
 	local X2FacilityTemplate AcademyTemplate;
 
@@ -473,9 +473,9 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
 	
-	//////////////////////
-	/// Barracks limit ///
-	//////////////////////
+	//////////////////
+	/// Crew limit ///
+	//////////////////
 
 	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
 		UIStrategyMap(CurrentScreen) != none ||
@@ -483,14 +483,14 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		UIRecruitSoldiers(CurrentScreen) != none ||
 		(UIChooseUpgrade(CurrentScreen) != none && UIFacility_LivingQuarters(ScreenStack.GetFirstInstanceOf(class'UIFacility_LivingQuarters')) != none))
 	{
-		CurrentBarracksSize = class'X2Helper_Infiltration'.static.GetCurrentBarracksSize();
-		CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
+		CurrentCrewSize = class'X2Helper_Infiltration'.static.GetCurrentCrewSize();
+		CurrentCrewLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentCrewLimit;
 
-		if (CurrentBarracksSize < CurrentBarracksLimit)
+		if (CurrentCrewSize < CurrentCrewLimit)
 		{
 			MessageColor = eUIState_Cash;
 		}
-		else if (CurrentBarracksSize < CurrentBarracksLimit + default.MaxOverBarracksLimitTillRed)
+		else if (CurrentCrewSize < CurrentCrewLimit + default.MaxOverCrewLimitTillRed)
 		{
 			MessageColor = eUIState_Warning;
 		}
@@ -499,7 +499,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 			MessageColor = eUIState_Bad;
 		}
 		
-		AvengerHUD.AddResource(default.strBarracksSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentBarracksSize $ "/" $ CurrentBarracksLimit, MessageColor));
+		AvengerHUD.AddResource(default.strCrewSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentCrewSize $ "/" $ CurrentCrewLimit, MessageColor));
 		
 		AvengerHUD.ShowResources();
 	}

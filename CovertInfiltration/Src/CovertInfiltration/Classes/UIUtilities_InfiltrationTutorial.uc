@@ -13,8 +13,8 @@ class UIUtilities_InfiltrationTutorial extends Object;
 // On Geoscape
 var localized string strGeoscapeEntryHeader;
 var localized string strGeoscapeEntryBody;
-var localized string strBarracksLimitHeader;
-var localized string strBarracksLimitBody;
+var localized string strCrewLimitHeader;
+var localized string strCrewLimitBody;
 
 // On Squad Select
 var localized string strCovertActionLoadoutHeader;
@@ -57,7 +57,7 @@ static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	`PRESBASE.UITutorialBox(default.strBarracksLimitHeader, default.strBarracksLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	`PRESBASE.UITutorialBox(default.strCrewLimitHeader, default.strCrewLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 	`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 

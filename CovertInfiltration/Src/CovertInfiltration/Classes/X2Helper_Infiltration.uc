@@ -55,9 +55,9 @@ var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFa
 var config int ASSAULT_MISSION_SITREPS_CHANCE;
 var config name ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE;
 
-var config int STARTING_BARRACKS_LIMIT;
-var config int BARRACKS_LIMIT_INCREASE_I;
-var config int BARRACKS_LIMIT_INCREASE_II;
+var config int STARTING_CREW_LIMIT;
+var config int CREW_LIMIT_INCREASE_I;
+var config int CREW_LIMIT_INCREASE_II;
 var config float RECOVERY_PENALTY_PER_SOLDIER;
 
 var config int ACADEMY_HOURS_PER_RANK;
@@ -706,7 +706,7 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 	EmptyArray.Length = 0;
 }
 
-static function int GetCurrentBarracksSize()
+static function int GetCurrentCrewSize()
 {
 	local XComGameState_HeadquartersXcom XComHQ;
 		
@@ -717,17 +717,17 @@ static function int GetCurrentBarracksSize()
 
 static function float GetRecoveryTimeModifier()
 {
-	local float CurrentBarracksSize, CurrentBarracksLimit;
+	local float CurrentCrewSize, CurrentCrewLimit;
 
-	CurrentBarracksSize = GetCurrentBarracksSize();
-	CurrentBarracksLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentBarracksLimit;
+	CurrentCrewSize = GetCurrentCrewSize();
+	CurrentCrewLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentCrewLimit;
 
-	if (CurrentBarracksSize <= CurrentBarracksLimit)
+	if (CurrentCrewSize <= CurrentCrewLimit)
 	{
 		return 1.0;
 	}
 
-	return 1.0 - ((CurrentBarracksSize - CurrentBarracksLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
+	return 1.0 - ((CurrentCrewSize - CurrentCrewLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
 }
 
 static function int GetAcademyTrainingTargetRank ()
