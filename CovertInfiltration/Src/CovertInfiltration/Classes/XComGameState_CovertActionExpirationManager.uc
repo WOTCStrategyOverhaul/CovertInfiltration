@@ -10,6 +10,9 @@ class XComGameState_CovertActionExpirationManager extends XComGameState_BaseObje
 
 var array<ActionExpirationInfo> ActionExpirationInfoList;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 static function CreateExpirationManager(optional XComGameState StartState)
 {
 	local XComGameState NewGameState;
@@ -34,8 +37,10 @@ static function Update()
 	local XComGameState_CovertAction CovertAction;
 	local XComGameState NewGameState;
 
-	local ActionExpirationInfo ExpirationInfo;
-	local bool bDirty;
+	local ActionExpirationInfo ExpirationInfo, ExpirationWarning;
+	local TDateTime CurrentTime, AdjustedTime;
+	local bool WarnBeforeExpiration, bDirty, bWarn;
+	local int HoursBeforeWarning;
 
 	ActionExpirationManager = GetExpirationManager(true); 
 	if (ActionExpirationManager == none)
@@ -50,6 +55,8 @@ static function Update()
 	foreach ActionExpirationManager.ActionExpirationInfoList(ExpirationInfo)
 	{
 		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ExpirationInfo.ActionRef.ObjectID));
+		WarnBeforeExpiration = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION);
+		CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 
 		if (CovertAction == none)
 		{
@@ -64,7 +71,7 @@ static function Update()
 			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
 		}
 		// if expiration has passed remove from expiration manager and delete the covert action
-		else if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, class'XComGameState_GeoscapeEntity'.static.GetCurrentTime()))
+		else if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, CurrentTime))
 		{
 			bDirty = true;
 			CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CovertAction.ObjectID));
@@ -72,6 +79,21 @@ static function Update()
 
 			ActionExpirationManager.RemoveActionExpirationInfo(ExpirationInfo);
 			`XEVENTMGR.TriggerEvent('CovertActionExpired', CovertAction, CovertAction, NewGameState); // Use CovertAction as source so that we can use native filtering
+		}
+		if (WarnBeforeExpiration && !ExpirationInfo.bAlreadyWarnedOfExpiration)
+		{
+			HoursBeforeWarning = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.HOURS_BEFORE_WARNING);
+			AdjustedTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+			class'X2StrategyGameRulesetDataStructures'.static.AddHours(AdjustedTime, HoursBeforeWarning);
+
+			if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, AdjustedTime))
+			{
+				bDirty = true;
+				bWarn = true;
+				ExpirationWarning = ExpirationInfo;
+				// break here for (most likely unnecessary) durablity
+				break;
+			}
 		}
 	}			
 	
@@ -82,6 +104,11 @@ static function Update()
 	else
 	{
 		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
+	}
+	// can't have an open gamestate update happening before calling this function
+	if (bWarn)
+	{
+		ActionExpirationManager.WarnOfExpiration(ExpirationWarning.ActionRef, CovertAction);
 	}
 }
 
@@ -124,4 +151,18 @@ function AddActionExpirationInfo(StateObjectReference ActionRef, TDateTime Expir
 function RemoveActionExpirationInfo(ActionExpirationInfo ExpirationInfo)
 {
 	ActionExpirationInfoList.RemoveItem(ExpirationInfo);
+}
+
+function WarnOfExpiration(StateObjectReference WarningRef, XComGameState_CovertAction CovertAction)
+{
+	local int idx;
+	
+	for (idx = 0; idx < ActionExpirationInfoList.Length; idx++)
+	{
+		if (ActionExpirationInfoList[idx].ActionRef == WarningRef)
+		{
+			ActionExpirationInfoList[idx].bAlreadyWarnedOfExpiration = true;
+			class'UIUtilities_Infiltration'.static.CovertActionExpiring(CovertAction);
+		}
+	}
 }

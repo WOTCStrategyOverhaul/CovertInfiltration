@@ -83,6 +83,10 @@ EnableTutorialDesc="Enable tutorial"
 EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
 RemoveNicknamedUpgradesDesc="Remove upgrades from nicknamed items"
 RemoveNicknamedUpgradesTooltip="Disabling this will preserve any nicknamed weapon's upgrades when selecting 'MAKE UPGRADES AVAILABLE' at the squad select screen"
+WarnBeforeExpirationDesc="Warn Before Expiration"
+WarnBeforeExpirationTooltip="Warn before an activity is about to expire"
+HoursBeforeWarningDesc="Hours Before Warning"
+HoursBeforeWarningTooltip="How many hours left before warning"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE
@@ -94,8 +98,10 @@ strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
 strReinforcementsBodyImminent="Imminent"
 strOpportunityAvaliableUnknownLocation=Unknown Location
 strAssaultAvaliableHeader=New Assault Mission
+strAssaultExpiringHeader=Assualt Mission Expiring
 strInfiltrationAvaliableHeader=New Infiltration Mission
 strCovertActionAvaliableHeader=New Covert Action
+strCovertActionExpiringHeader=Covert Action Expiring
 
 strCompletionStatusLabel_NotReached=Not Reached
 strCompletionStatusLabel_NotCompleted=Not Completed Yet

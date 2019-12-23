@@ -22,6 +22,8 @@ var localized string strOpportunityAvaliableUnknownLocation;
 var localized string strAssaultAvaliableHeader;
 var localized string strInfiltrationAvaliableHeader;
 var localized string strCovertActionAvaliableHeader;
+var localized string strAssaultExpiringHeader;
+var localized string strCovertActionExpiringHeader;
 
 // Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
 var localized string strCompletionStatusLabel_NotReached;
@@ -304,6 +306,11 @@ static function AssaultMissionAvaliable (XComGameState_MissionSite MissionState)
 	GeoscapeOpportunityAvaliable(MissionState, default.strAssaultAvaliableHeader, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText());
 }
 
+static function AssaultMissionExpiring (XComGameState_MissionSite MissionState)
+{
+	GeoscapeOpportunityAvaliable(MissionState, default.strAssaultExpiringHeader, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), eUIState_Warning);
+}
+
 static function InfiltrationAvaliable (XComGameState_MissionSiteInfiltration InfiltrationState)
 {
 	GeoscapeOpportunityAvaliable(InfiltrationState, default.strInfiltrationAvaliableHeader, InfiltrationState.GetUIButtonIcon(), InfiltrationState.GetMissionObjectiveText());
@@ -312,6 +319,11 @@ static function InfiltrationAvaliable (XComGameState_MissionSiteInfiltration Inf
 static function CovertActionAvaliable (XComGameState_CovertAction ActionState)
 {
 	GeoscapeOpportunityAvaliable(ActionState, default.strCovertActionAvaliableHeader, "img:///UILibrary_XPACK_Common.MissionIcon_CovertAction", GetActionObjective(ActionState));
+}
+
+static function CovertActionExpiring (XComGameState_CovertAction ActionState)
+{
+	GeoscapeOpportunityAvaliable(ActionState, default.strCovertActionExpiringHeader, "img:///UILibrary_XPACK_Common.MissionIcon_CovertAction", GetActionObjective(ActionState), eUIState_Warning);
 }
 
 static function GeoscapeOpportunityAvaliable (XComGameState_GeoscapeEntity GeoscapeEntity, string Header, string IconPath, string Description, optional EUIState eState = eUIState_Normal)
