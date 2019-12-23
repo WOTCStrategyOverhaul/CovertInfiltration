@@ -452,7 +452,6 @@ static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyExtraction";
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
-	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
 	Activity.Difficulty = 2;
 	
