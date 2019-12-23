@@ -59,6 +59,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('ResearchCompleted', CheckTechRushCovertActions, ELD_OnStateSubmitted);
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate);
+	Template.AddCHEvent('CovertAction_AllowResActivityRecord', CovertAction_AllowResActivityRecord, ELD_Immediate);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted);
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
@@ -457,6 +458,24 @@ static protected function EventListenerReturn CovertActionAllowCheckForProjectOv
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionAllowCheckForProjectOverlap') return ELR_NoInterrupt;
 
 	// For now preserve the vanilla behaviour for non-infil CAs
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
+	{
+		Tuple.Data[0].b = false;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn CovertAction_AllowResActivityRecord (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_CovertAction Action;
+	local XComLWTuple Tuple;
+
+	Action = XComGameState_CovertAction(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Action == none || Tuple == none) return ELR_NoInterrupt;
+
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action))
 	{
 		Tuple.Data[0].b = false;
