@@ -150,12 +150,13 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 //   Helpers   //
 /////////////////
 
-static function X2CovertInfiltrationTemplate CreateInfiltrationTemplate(name CovertActionName, optional bool bCreateSlots=false)
+static function X2CovertActionTemplate CreateInfiltrationTemplate(name CovertActionName, optional bool bCreateSlots=false)
 {
-	local X2CovertInfiltrationTemplate Template;
+	local X2CovertActionTemplate Template;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
 
-	`CREATE_X2TEMPLATE(class'X2CovertInfiltrationTemplate', Template, CovertActionName);
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, CovertActionName);
+	Template.bCanNeverBeRookie = true;
 
 	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
 	{

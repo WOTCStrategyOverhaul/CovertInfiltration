@@ -54,6 +54,8 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	ActivityState.SecondaryObjectRef = ActionState.GetReference(); // Needed here so that we can get reference to chain for region select inside Spawn
 	
 	ActionState.PostCreateInit(NewGameState, FactionState.GetReference());
+	PostActionInit(NewGameState, ActionState, ActivityState);
+
 	ActionState.Spawn(NewGameState);
 	ActionState.RequiredFactionInfluence = eFactionInfluence_Minimal;
 	ActionState.bNewAction = true;
@@ -61,6 +63,13 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	FactionState.CovertActions.AddItem(ActionState.GetReference());
 
 	XComGameState_Activity_Infiltration(ActivityState).RegisterForActionEvents();
+}
+
+static function PostActionInit (XComGameState NewGameState, XComGameState_CovertAction ActionState, XComGameState_Activity ActivityState)
+{
+	// 1st and 6th slots are optional
+	ActionState.StaffSlots[0].bOptional = true;
+	ActionState.StaffSlots[5].bOptional = true;
 }
 
 static function AddExpiration (XComGameState NewGameState, XComGameState_Activity ActivityState)
