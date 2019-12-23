@@ -100,6 +100,7 @@ strOpportunityAvaliableUnknownLocation=Unknown Location
 strAssaultAvaliableHeader=New Assault Mission
 strAssaultExpiringHeader=Assualt Mission Expiring
 strInfiltrationAvaliableHeader=New Infiltration Mission
+strInfiltrationExpiringHeader=Infiltration Mission Expiring
 strCovertActionAvaliableHeader=New Covert Action
 strCovertActionExpiringHeader=Covert Action Expiring
 

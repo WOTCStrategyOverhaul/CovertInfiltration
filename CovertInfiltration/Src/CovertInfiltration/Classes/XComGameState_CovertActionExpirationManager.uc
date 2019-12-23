@@ -107,7 +107,14 @@ static function Update()
 
 	foreach ExpiringActions(CovertAction)
 	{
-		class'UIUtilities_Infiltration'.static.CovertActionExpiring(CovertAction);
+		if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+		{
+			class'UIUtilities_Infiltration'.static.InfiltrationExpiring(XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(CovertAction)));
+		}
+		else
+		{
+			class'UIUtilities_Infiltration'.static.CovertActionExpiring(CovertAction);
+		}
 	}
 }
 

@@ -24,6 +24,7 @@ var localized string strInfiltrationAvaliableHeader;
 var localized string strCovertActionAvaliableHeader;
 var localized string strAssaultExpiringHeader;
 var localized string strCovertActionExpiringHeader;
+var localized string strInfiltrationExpiringHeader;
 
 // Non-native packages don't seem to support BoundEnum (or something, no idea) so we manually list the completion statuses
 var localized string strCompletionStatusLabel_NotReached;
@@ -314,6 +315,11 @@ static function AssaultMissionExpiring (XComGameState_MissionSite MissionState)
 static function InfiltrationAvaliable (XComGameState_MissionSiteInfiltration InfiltrationState)
 {
 	GeoscapeOpportunityNotification(InfiltrationState, default.strInfiltrationAvaliableHeader, InfiltrationState.GetUIButtonIcon(), InfiltrationState.GetMissionObjectiveText());
+}
+
+static function InfiltrationExpiring (XComGameState_MissionSiteInfiltration InfiltrationState)
+{
+	GeoscapeOpportunityNotification(InfiltrationState, default.strInfiltrationExpiringHeader, InfiltrationState.GetUIButtonIcon(), InfiltrationState.GetMissionObjectiveText(), eUIState_Warning);
 }
 
 static function CovertActionAvaliable (XComGameState_CovertAction ActionState)
