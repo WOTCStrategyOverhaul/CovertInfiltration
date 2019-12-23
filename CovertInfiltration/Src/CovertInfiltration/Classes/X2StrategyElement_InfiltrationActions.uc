@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  NotSoLoneWolf
-//  PURPOSE: This class contains all the Covert Action templates
-//           required for the mod, both Phase 1 and Phase 2
+//  PURPOSE: This class contains all the non-activity Covert Action
+//           templates required for the mod
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------

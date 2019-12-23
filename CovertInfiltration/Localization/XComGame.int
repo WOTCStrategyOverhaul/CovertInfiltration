@@ -106,17 +106,17 @@ ActionPostNarrative=""
 
 [CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
 ActionName="Consult the Faction"
-ActionPreNarrative="We could use additional field support from the <FactionName>. If we send a delegation, they may be willing to commit another soldier to XCOM's ranks."
-ActionPostNarrative="Good news, the <FactionName> has agreed with our proposal. Bad news, the soldier pledged to our cause has recently been captured. If we want their support, we'll have to stage a jailbreak."
+ActionPreNarrative="We could use additional field support from the <XGParam:StrValue0/>. If we send a delegation, they may be willing to commit another soldier to XCOM's ranks."
+ActionPostNarrative="Good news, the <XGParam:StrValue0/> have agreed with our proposal. Bad news, the soldier pledged to our cause has recently been captured. If we want their support, we'll have to stage a jailbreak."
 
 [CovertActionNarrative_JailbreakSoldierInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Captured Soldier"
-ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the enemy recently, and we know where they're being held. It's time for a jailbreak."
+ActionPreNarrative="One of our soldiers, <XGParam:StrValue4/>, was captured by the enemy recently, and we know where they're being held. It's time for a jailbreak."
 ActionPostNarrative=""
 
 [CovertActionNarrative_JailbreakChosenSoldierInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Captured Soldier"
-ActionPreNarrative="One of our soldiers, <SolderName>, was captured by the Chosen recently, and we know where they're being held. It's time for a jailbreak."
+ActionPreNarrative="One of our soldiers, <XGParam:StrValue4/>, was captured by the Chosen recently, and we know where they're being held. It's time for a jailbreak."
 ActionPostNarrative=""
 
 [CovertActionNarrative_JailbreakFactionSoldierInfil X2CovertActionNarrativeTemplate]

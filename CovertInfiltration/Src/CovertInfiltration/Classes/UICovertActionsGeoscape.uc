@@ -122,7 +122,7 @@ const ACTION_SLOTS_PER_ROW = 2;
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
-	`log("Opening UICovertActionsGeoscape",, 'CI');
+	`CI_Log("Opening UICovertActionsGeoscape");
 
 	super.InitScreen(InitController, InitMovie, InitName);
 
@@ -640,7 +640,7 @@ simulated function FindActions()
 		ActionRef = arrActions[0].GetReference();
 	}
 
-	`log("Found" @ arrActions.Length @ "actions",, 'CI');
+	`CI_Log("Found" @ arrActions.Length @ "actions");
 }
 
 simulated protected function EnsureSelectedActionIsInList()
