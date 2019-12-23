@@ -28,7 +28,46 @@ static event UpdateDLC ()
 {
 	class'XComGameState_ActivityChainSpawner'.static.Update();
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
+	UpdateRemoveCovertActions();
 	UpdateShowTutorial();
+}
+
+static function UpdateRemoveCovertActions ()
+{
+	local XComGameState NewGameState;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_CovertAction ActionState;
+	local StateObjectReference ActionRef;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+
+	if (CIInfo == none) return;
+	
+	if (CIInfo.CovertActionsToRemove.Length <= 0  || class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate() == false) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing Flagged Covert Actions");
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+
+	foreach CIInfo.CovertActionsToRemove(ActionRef)
+	{
+		ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
+		if (ActionState != none && ActionState.bCompleted == false)
+		{
+			if (ActionState.bStarted)
+			{
+				ActionState.bCompleted = true;
+				ActionState.CompleteCovertAction(NewGameState);
+			}
+			else
+			{
+				ActionState.RemoveEntity(NewGameState);
+			}
+		}
+	}
+	
+	CIInfo.CovertActionsToRemove.Length = 0;
+
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
 static protected function UpdateShowTutorial ()

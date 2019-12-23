@@ -23,6 +23,7 @@ var bool bRingStaffReplacement; // True if we are replacing the staff assigned t
 var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
 var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to highlight new missions after spawning one to avoid full screen popups
 var int CurrentCrewLimit;
+var array<StateObjectReference> CovertActionsToRemove; // Used to mark outdated CAs for removal when the player next enters the geoscape screen
 
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
 var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is built and we are waiting for Geoscape control to return to the player to show the tutorial

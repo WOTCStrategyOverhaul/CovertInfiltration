@@ -405,6 +405,7 @@ static function SetTechInspireReward(XComGameState_Reward RewardState, optional 
 	else
 	{
 		RewardState.RewardObjectReference = RewardObjectRef;
+		RewardState.Quantity = TechState.TimesResearched;
 	}
 }
 
@@ -418,16 +419,19 @@ static function GiveTechInspireReward(XComGameState NewGameState, XComGameState_
 
 	// Adjust Tech's time reduction value
 	TechState = XComGameState_Tech(NewGameState.ModifyStateObject(class'XComGameState_Tech', RewardState.RewardObjectReference.ObjectID));
-	TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
-
-	// If there is already a project rush it
-	foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectResearch', ProjectState)
+	if(TechState != None && TechState.TimesResearched == RewardState.Quantity)
 	{
-		if(ProjectState.ProjectFocus == RewardState.RewardObjectReference)
+		TechState.TimeReductionScalar = class'X2StrategyElement_DefaultRewards'.static.GetTechRushReductionScalar();
+
+		// If there is already a project rush it
+		foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectResearch', ProjectState)
 		{
-			ProjectState = XComGameState_HeadquartersProjectResearch(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersProjectResearch', ProjectState.ObjectID));
-			ProjectState.RushResearch(NewGameState);
-			return;
+			if (ProjectState.ProjectPointsRemaining > 0 && ProjectState.ProjectFocus == RewardState.RewardObjectReference)
+			{
+				ProjectState = XComGameState_HeadquartersProjectResearch(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersProjectResearch', ProjectState.ObjectID));
+				ProjectState.RushResearch(NewGameState);
+				return;
+			}
 		}
 	}
 }
@@ -480,20 +484,36 @@ static function array<XComGameState_Tech> GetCandidatesForTechRush()
 	local array<XComGameState_Tech> ChosenTechs;
 	local XComGameState_Tech TechState;
 	local array<StateObjectReference> AvailableTechRefs;
-	local int idx;
+	local XComGameState_HeadquartersProjectResearch ProjectState;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate Template;
+	local int WorkPerHour, ProjectPoints, HoursToComplete, CovertActionHours, idx;
 
 	History = `XCOMHISTORY;
 	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	// Grab all available techs
 	AvailableTechRefs = XComHQ.GetAvailableTechsForResearch();
 
 	// Include current Tech being researched
+	ProjectState = XComHQ.GetCurrentResearchProject();
 	TechState = XComHQ.GetCurrentResearchTech();
-	
-	if(TechState != none)
+
+	if (ProjectState != none && TechState != none)
 	{
-		AvailableTechRefs.AddItem(TechState.GetReference());
+		WorkPerHour = ProjectState.GetCurrentWorkPerHour();
+		ProjectPoints = TechState.GetProjectPoints(WorkPerHour);
+		HoursToComplete = ProjectPoints / WorkPerHour;
+
+		Template = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate('CovertAction_TechRush'));
+		CovertActionHours = `ScaleStrategyArrayInt(Template.default.MaxActionHours);
+
+		// Only include current tech if it won't be finished before the Covert Action is complete (+33% in case a new scientist is acquired)
+		if (HoursToComplete > CovertActionHours * 1.33)
+		{
+			AvailableTechRefs.AddItem(TechState.GetReference());
+		}
 	}
 
 	// Filter Techs (no instant, repeatable, priority)
