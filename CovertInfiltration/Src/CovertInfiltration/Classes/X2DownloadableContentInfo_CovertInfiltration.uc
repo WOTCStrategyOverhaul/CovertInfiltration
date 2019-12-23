@@ -38,12 +38,12 @@ static function UpdateRemoveCovertActions ()
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_CovertAction ActionState;
 	local StateObjectReference ActionRef;
-	local bool bDirty;
-	
-	bDirty = false;
+
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 
 	if (CIInfo == none) return;
+	
+	if (CIInfo.CovertActionsToRemove.Length <= 0) return;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing Flagged Covert Actions");
 	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
@@ -62,21 +62,12 @@ static function UpdateRemoveCovertActions ()
 			{
 				ActionState.RemoveEntity(NewGameState);
 			}
-
-			bDirty = true;
 		}
 	}
 	
 	CIInfo.CovertActionsToRemove.Length = 0;
 
-	if (bDirty)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
-	}
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
 static protected function UpdateShowTutorial ()
