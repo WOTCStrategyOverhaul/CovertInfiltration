@@ -43,7 +43,7 @@ static function UpdateRemoveCovertActions ()
 
 	if (CIInfo == none) return;
 	
-	if (CIInfo.CovertActionsToRemove.Length <= 0) return;
+	if (CIInfo.CovertActionsToRemove.Length <= 0  || class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate() == false) return;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Removing Flagged Covert Actions");
 	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
