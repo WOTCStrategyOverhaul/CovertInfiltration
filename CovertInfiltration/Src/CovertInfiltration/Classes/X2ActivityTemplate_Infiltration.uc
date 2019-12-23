@@ -50,9 +50,10 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplate.CovertActionName));
 
 	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
-	ActionState = ActionTemplate.CreateInstanceFromTemplate(NewGameState, FactionState.GetReference());
+	ActionState = XComGameState_CovertAction(NewGameState.CreateNewStateObject(class'XComGameState_CovertAction', ActionTemplate));
 	ActivityState.SecondaryObjectRef = ActionState.GetReference(); // Needed here so that we can get reference to chain for region select inside Spawn
 	
+	ActionState.PostCreateInit(NewGameState, FactionState.GetReference());
 	ActionState.Spawn(NewGameState);
 	ActionState.RequiredFactionInfluence = eFactionInfluence_Minimal;
 	ActionState.bNewAction = true;
