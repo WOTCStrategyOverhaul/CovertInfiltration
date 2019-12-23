@@ -77,6 +77,8 @@ simulated function BuildScreen()
 		OverInfiltrationHeader.SetHeaderWidth(OverInfiltrationBG.Width - 20);
 		OverInfiltrationHeader.SetPosition(OverInfiltrationBG.X + 10, OverInfiltrationBG.Y + 10);
 		OverInfiltrationHeader.Show();
+
+		class'UIUtilities_InfiltrationTutorial'.static.OverInfiltration();
 	}
 
 	// There is no navigation on this screen.

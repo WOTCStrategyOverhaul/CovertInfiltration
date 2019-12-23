@@ -270,15 +270,15 @@ CovertActionRiskLabels[5]="Extreme"
 CovertActionsGoToRing="SELECT OPERATION"
 CovertActionsBuildRing="SELECT OPERATION"
 
-[LivingQuarters_BarracksSizeI X2FacilityUpgradeTemplate]
-DisplayName="Barracks Size I"
+[LivingQuarters_CrewSizeI X2FacilityUpgradeTemplate]
+DisplayName="Crew Size I"
 FacilityName="Living Quarters"
-Summary="Increases Barracks capacity by 10, allowing more soldiers to be maintained without an increase to recovery times."
+Summary="Increases crew capacity by 10, allowing more personnel to be maintained without an increase to recovery times."
 
-[LivingQuarters_BarracksSizeII X2FacilityUpgradeTemplate]
-DisplayName="Barracks Size II"
+[LivingQuarters_CrewSizeII X2FacilityUpgradeTemplate]
+DisplayName="Crew Size II"
 FacilityName="Living Quarters"
-Summary="Increases Barracks capacity by a further 15, allowing more soldiers to be maintained without an increase to recovery times."
+Summary="Increases crew capacity by a further 15, allowing even more personnel to be maintained without an increase to recovery times."
 
 [Reward_SmallIntel X2RewardTemplate]
 DisplayName="Intel"
@@ -424,3 +424,6 @@ DisplayName="Rush Research"
 
 [Reward_AlienCorpses X2RewardTemplate]
 DisplayName="Alien Corpses"
+
+[UIAlert]
+m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:StrValue0/!WorldRegionName/> will increase their monthly collection to +<XGParam:IntValue0/> supplies. The contact cost of nearby regions will also be reduced, and Advanced Activity Chains will begin to spawn in the region.

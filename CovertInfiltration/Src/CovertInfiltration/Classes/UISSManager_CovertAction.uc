@@ -59,7 +59,11 @@ simulated protected function PostScreenInit()
 	bCreatedUIElements = true;
 	UpdateUIElements();
 
-	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.InfiltrationLoadout();
+	}
+	else
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.CovertActionLoadout();
 	}

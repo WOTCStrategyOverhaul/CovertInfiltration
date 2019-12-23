@@ -108,6 +108,7 @@ var localized string strCloseScreen;
 var localized string strRisksHeader;
 var localized string strDialogDataTitle;
 var localized string strDialogDataText;
+var localized string strInProgressHeader;
 
 const ANIMATE_IN_DURATION = 0.5f;
 const CAMERA_ZOOM = 0.5f;
@@ -1072,17 +1073,11 @@ simulated protected function TriggerTutorialOnSelection ()
 {
 	bHideOnLoseFocus = false;
 
-	// Fisrt show the chains popup (if needed) so that it's underneath the infiltration one (so the infiltration will be shown first to the player)
 	if (class'XComGameState_Activity'.static.GetActivityFromObject(GetAction()) != none)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 	}
 	
-	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
-	{
-		class'UIUtilities_InfiltrationTutorial'.static.InfiltrationSelection();
-	}
-
 	bHideOnLoseFocus = true;
 }
 
@@ -1327,11 +1322,17 @@ simulated function OnAbortClicked(UIButton Button)
 
 simulated function ConfirmAbortPopup()
 {
+	local array<StrategyCostScalar> CostScalars;
 	local TDialogueBoxData DialogData;
+	local XGParamTag ParamTag;
+	
+	CostScalars.Length = 0; // Avoid compiler warning
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
 
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = strDialogDataTitle;
-	DialogData.strText = strDialogDataText;
+	DialogData.strText = `XEXPAND.ExpandString(strDialogDataText);
 	DialogData.strAccept = class'UIUtilities_Text'.default.m_strGenericConfirm;
 	DialogData.strCancel = class'UIUtilities_Text'.default.m_strGenericBack;
 	DialogData.fnCallback = ConfirmAbortPopupCallback;
