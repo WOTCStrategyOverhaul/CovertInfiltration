@@ -13,6 +13,7 @@ struct ActionExpirationInfo
 	var TDateTime Expiration;
 	var TDateTime OriginTime;
 	var bool bBlockMonthlyCleanup;
+	var bool bAlreadyWarnedOfExpiration;
 };
 
 struct ActionFlatRiskSitRep
