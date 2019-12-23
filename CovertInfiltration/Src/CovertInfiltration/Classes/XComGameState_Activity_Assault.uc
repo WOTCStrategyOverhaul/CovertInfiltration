@@ -46,7 +46,7 @@ protected function UpdateActivity ()
 
 		`SubmitGameState(NewGameState);
 	}
-	else if (WarnBeforeExpiration && !bAlreadyWarnedOfExpiration)
+	else if (WarnBeforeExpiration && bExpiring && !bAlreadyWarnedOfExpiration)
 	{
 		HoursBeforeWarning = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.HOURS_BEFORE_WARNING);
 		AdjustedTime = GetCurrentTime();
@@ -54,7 +54,7 @@ protected function UpdateActivity ()
 
 		if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, AdjustedTime))
 		{
-			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(assault mission) has expired");
+			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(assault mission) expiration warning triggered");
 			NewActivityState = XComGameState_Activity_Assault(NewGameState.ModifyStateObject(class'XComGameState_Activity_Assault', ObjectID));
 			
 			NewActivityState.bAlreadyWarnedOfExpiration = true;

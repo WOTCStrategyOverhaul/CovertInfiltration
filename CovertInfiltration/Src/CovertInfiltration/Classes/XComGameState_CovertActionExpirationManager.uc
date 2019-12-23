@@ -34,12 +34,13 @@ static function CreateExpirationManager(optional XComGameState StartState)
 static function Update()
 {
 	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
+	local array<XComGameState_CovertAction> ExpiringActions;
 	local XComGameState_CovertAction CovertAction;
 	local XComGameState NewGameState;
 
-	local ActionExpirationInfo ExpirationInfo, ExpirationWarning;
+	local ActionExpirationInfo ExpirationInfo;
 	local TDateTime CurrentTime, AdjustedTime;
-	local bool WarnBeforeExpiration, bDirty, bWarn;
+	local bool WarnBeforeExpiration, bDirty;
 	local int HoursBeforeWarning;
 
 	ActionExpirationManager = GetExpirationManager(true); 
@@ -89,13 +90,11 @@ static function Update()
 			if (class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpirationInfo.Expiration, AdjustedTime))
 			{
 				bDirty = true;
-				bWarn = true;
-				ExpirationWarning = ExpirationInfo;
-				// break here for (most likely unnecessary) durablity
-				break;
+				ActionExpirationManager.MarkAlreadyWarnedOfExpiration(ExpirationInfo.ActionRef);
+				ExpiringActions.AddItem(CovertAction);
 			}
 		}
-	}			
+	}
 	
 	if (bDirty)
 	{
@@ -105,10 +104,10 @@ static function Update()
 	{
 		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
 	}
-	// can't have an open gamestate update happening before calling this function
-	if (bWarn)
+
+	foreach ExpiringActions(CovertAction)
 	{
-		ActionExpirationManager.WarnOfExpiration(ExpirationWarning.ActionRef, CovertAction);
+		class'UIUtilities_Infiltration'.static.CovertActionExpiring(CovertAction);
 	}
 }
 
@@ -153,7 +152,7 @@ function RemoveActionExpirationInfo(ActionExpirationInfo ExpirationInfo)
 	ActionExpirationInfoList.RemoveItem(ExpirationInfo);
 }
 
-function WarnOfExpiration(StateObjectReference WarningRef, XComGameState_CovertAction CovertAction)
+function MarkAlreadyWarnedOfExpiration(StateObjectReference WarningRef)
 {
 	local int idx;
 	
@@ -162,7 +161,6 @@ function WarnOfExpiration(StateObjectReference WarningRef, XComGameState_CovertA
 		if (ActionExpirationInfoList[idx].ActionRef == WarningRef)
 		{
 			ActionExpirationInfoList[idx].bAlreadyWarnedOfExpiration = true;
-			class'UIUtilities_Infiltration'.static.CovertActionExpiring(CovertAction);
 		}
 	}
 }
