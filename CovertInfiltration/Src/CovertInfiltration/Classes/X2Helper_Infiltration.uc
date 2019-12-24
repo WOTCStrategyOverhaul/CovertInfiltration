@@ -539,6 +539,30 @@ static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameS
 	return XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
 }
 
+static function XComGameState_HeadquartersProjectTrainAcademy GetTrainAcademyProject(StateObjectReference UnitRef)
+{
+	local int idx;
+	local XComGameState_HeadquartersProjectTrainAcademy TrainAcademyProject;
+	local array<StateObjectReference> Projects;
+
+	Projects = `XCOMHQ.Projects;
+
+	for (idx = 0; idx < Projects.Length; idx++)
+	{
+		TrainAcademyProject = XComGameState_HeadquartersProjectTrainAcademy(`XCOMHISTORY.GetGameStateForObjectID(Projects[idx].ObjectID));
+
+		if (TrainAcademyProject != none)
+		{
+			if (UnitRef == TrainAcademyProject.ProjectFocus)
+			{
+				return TrainAcademyProject;
+			}
+		}
+	}
+
+	return none;
+}
+
 static function StateObjectReference CreateRewardNone (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;

@@ -860,6 +860,8 @@ static function PatchGuerillaTacticsSchool()
 		return;
 	}
 	
+	GTSTemplate.IsFacilityProjectActiveFn = IsAcademyProjectActive;
+
 	// Add 2nd training slot
 	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
 	GTSTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
@@ -874,6 +876,30 @@ static function PatchGuerillaTacticsSchool()
 
 	// Add training target rank unlock
 	GTSTemplate.SoldierUnlockTemplates.AddItem('AcademyTrainingRankUnlock');
+}
+
+static function bool IsAcademyProjectActive(StateObjectReference FacilityRef)
+{
+	local XComGameState_FacilityXCom FacilityState;
+	local XComGameState_StaffSlot StaffSlot;
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local int idx;
+
+	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
+
+	for (idx = 0; idx < FacilityState.StaffSlots.Length; idx++)
+	{
+		StaffSlot = FacilityState.GetStaffSlot(idx);
+		if (StaffSlot.IsSlotFilled())
+		{
+			AcademyProject = class'X2Helper_Infiltration'.static.GetTrainAcademyProject(StaffSlot.GetAssignedStaffRef());
+			if (AcademyProject != none)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 static function PatchLivingQuarters()
