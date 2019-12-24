@@ -98,7 +98,10 @@ function OnProjectCompleted ()
 	}
 
 	`SubmitGameState(NewGameState);
-	`HQPRES.UITrainingComplete(ProjectFocus);
+
+	// Trigger the popup
+	if (bFromRookie) `HQPRES.UITrainingComplete(ProjectFocus);
+	else `HQPRES.UISoldierPromoted(ProjectFocus);
 }
 
 ///////////////
