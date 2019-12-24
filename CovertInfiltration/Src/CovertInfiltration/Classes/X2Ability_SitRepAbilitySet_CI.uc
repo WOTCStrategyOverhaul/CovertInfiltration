@@ -55,7 +55,7 @@ static function X2AbilityTemplate UpdatedFirewallsBuff()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'UpdatedFirewallsBuff');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_updated_firewalls";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
@@ -81,7 +81,7 @@ static function X2AbilityTemplate MentalReadinessBuff()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'MentalReadinessBuff');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_bonus_mental_readiness";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
@@ -109,7 +109,7 @@ static function X2AbilityTemplate IntelligenceLeakDebuff()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'IntelligenceLeakDebuff');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_risk_full_sensor_coverage";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
@@ -137,7 +137,7 @@ static function X2AbilityTemplate FoxholesBuff()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'FoxholesBuff');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_bonus_foxholes";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
@@ -174,7 +174,7 @@ static function X2AbilityTemplate OpportuneMoment1 ()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment1');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_OpportuneMoment1";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
@@ -201,7 +201,7 @@ static function X2AbilityTemplate OpportuneMoment2 ()
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'OpportuneMoment2');
     Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_OpportuneMoment2";
-    Template.AbilitySourceName = 'eAbilitySource_Perk';
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;
     Template.AbilityToHitCalc = default.DeadEye;
