@@ -65,6 +65,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
+	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -652,6 +653,49 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 	if (Tuple == none || Tuple.Id != 'WillRecoveryTimeModifier') return ELR_NoInterrupt;
 
 	Tuple.Data[0].f = class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
+
+	return ELR_NoInterrupt;
+}
+
+// Note that we cannot use DLCInfo::OnPostMission as the gear of dead soldiers is stripped by that point
+// This otoh is called right before the gear is stripped
+static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgradeGear (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local array<XComGameState_Item> AllEquippedItems;
+	local XComGameState_Item ItemState;
+	local XComGameState_Unit UnitState;
+
+	InfiltrationState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
+	UnitState = XComGameState_Unit(EventSource);
+
+	if (InfiltrationState == none || UnitState == none) return ELR_NoInterrupt;
+
+	// This is required as EventData/EventSource inside ELD_Immediate are from last submitted state, not the pending one
+	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	AllEquippedItems = UnitState.GetAllInventoryItems(NewGameState, true);
+
+	foreach AllEquippedItems(ItemState)
+	{
+		if (ItemState != none)
+		{
+			// TODO: Handle captured soldiers differently
+			
+			if (!UnitState.IsDead())
+			{
+				// If we upgrade here, soldiers will have magically upgraded gear when exiting the skyranger, so defer it
+				CIInfo.ItemsToConsiderUpgradingOnMissionExit.AddItem(ItemState.GetReference());
+			}
+			else
+			{
+				// Upgrade here so that it's stripped/added to hq inventory correctly
+				class'X2Helper_Infiltration'.static.TryUpgradeInventoryItem(NewGameState, ItemState);
+			}
+		}
+	}
 
 	return ELR_NoInterrupt;
 }

@@ -840,6 +840,49 @@ static function BarracksStatusReport GetBarracksStatusReport()
 	return CurrentBarracksStatus;
 }
 
+static function TryUpgradeInventoryItem (XComGameState NewGameState, XComGameState_Item EquippedItemState)
+{
+	local X2WeaponUpgradeTemplate WeaponUpgradeTemplate;
+	local array<X2WeaponUpgradeTemplate> WeaponUpgrades;
+	local XComGameState_Item UpgradedItemState;
+	local X2ItemTemplate UpgradedItemTemplate;
+	local XComGameState_Unit UnitState;
+	local EInventorySlot InventorySlot;
+
+	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', EquippedItemState.OwnerStateObject.ObjectID));
+	if (UnitState == none)
+	{
+		`CI_Warn("UpgradeInventoryItem got an item that doesn't belong to a unit, aborting");
+		return;
+	}
+
+	// Copy paste from X2StrategyElement_XpackStaffSlots::CheckToUpgradeItems
+	UpgradedItemTemplate = EquippedItemState.GetMyTemplate();
+	`XCOMHQ.UpdateItemTemplateToHighestAvailableUpgrade(UpgradedItemTemplate);
+
+	if (UpgradedItemTemplate != EquippedItemState.GetMyTemplate())
+	{
+		UpgradedItemState = UpgradedItemTemplate.CreateInstanceFromTemplate(NewGameState);
+		UpgradedItemState.WeaponAppearance = EquippedItemState.WeaponAppearance;
+		UpgradedItemState.Nickname = EquippedItemState.Nickname;
+		InventorySlot = EquippedItemState.InventorySlot; // save the slot location for the new item
+					
+		// Remove the old item from the soldier and transfer over all weapon upgrades to the new item
+		UnitState.RemoveItemFromInventory(EquippedItemState, NewGameState);
+		WeaponUpgrades = EquippedItemState.GetMyWeaponUpgradeTemplates();
+		foreach WeaponUpgrades(WeaponUpgradeTemplate)
+		{
+			UpgradedItemState.ApplyWeaponUpgradeTemplate(WeaponUpgradeTemplate);
+		}
+
+		// Delete the old item
+		NewGameState.RemoveStateObject(EquippedItemState.GetReference().ObjectID);
+
+		// Then add the new item to the soldier in the same slot
+		UnitState.AddItemToInventory(UpgradedItemState, InventorySlot, NewGameState);
+	}
+}
+
 ///////////////
 /// Kill XP ///
 ///////////////

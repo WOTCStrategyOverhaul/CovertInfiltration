@@ -400,6 +400,47 @@ static protected function TriggerMissionExitEvents ()
 	}
 }
 
+static event OnExitPostMissionSequence ()
+{
+	PostMissionUpgradeItems();
+}
+
+static function PostMissionUpgradeItems ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Unit OwnerUnitState;
+	local XComGameState_Item ItemState;
+	local StateObjectReference ItemRef;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	if (CIInfo.ItemsToConsiderUpgradingOnMissionExit.Length == 0) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionUpgradeItems");
+	History = `XCOMHISTORY;
+	
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+
+	foreach CIInfo.ItemsToConsiderUpgradingOnMissionExit(ItemRef)
+	{
+		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+		if (ItemState == none || ItemState.bRemoved) continue;
+
+		OwnerUnitState = XComGameState_Unit(History.GetGameStateForObjectID(ItemState.OwnerStateObject.ObjectID));
+		if (OwnerUnitState == none)
+		{
+			`CI_Log("PostMissionUpgradeItems encountered item" @ ItemState.GetMyTemplateName() @ ItemState.ObjectID @ "and has no idea where it's located. Skipping");
+			continue;
+		}
+		
+		class'X2Helper_Infiltration'.static.TryUpgradeInventoryItem(NewGameState, ItemState);
+	}
+
+	CIInfo.ItemsToConsiderUpgradingOnMissionExit.Length = 0;
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
 /// ////////////// ///
 /// DLC (HL) HOOKS ///
 /// ////////////// ///
