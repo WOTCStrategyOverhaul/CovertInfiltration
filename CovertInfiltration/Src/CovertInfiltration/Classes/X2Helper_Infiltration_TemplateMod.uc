@@ -861,6 +861,7 @@ static function PatchGuerillaTacticsSchool()
 	}
 	
 	GTSTemplate.IsFacilityProjectActiveFn = IsAcademyProjectActive;
+	GTSTemplate.GetQueueMessageFn = GetAcademyQueueMessage;
 
 	// Add 2nd training slot
 	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
@@ -892,7 +893,7 @@ static function bool IsAcademyProjectActive(StateObjectReference FacilityRef)
 		StaffSlot = FacilityState.GetStaffSlot(idx);
 		if (StaffSlot.IsSlotFilled())
 		{
-			AcademyProject = class'X2Helper_Infiltration'.static.GetTrainAcademyProject(StaffSlot.GetAssignedStaffRef());
+			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
 			if (AcademyProject != none)
 			{
 				return true;
@@ -900,6 +901,37 @@ static function bool IsAcademyProjectActive(StateObjectReference FacilityRef)
 		}
 	}
 	return false;
+}
+
+static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local XComGameState_FacilityXCom FacilityState;
+	local XComGameState_StaffSlot StaffSlot;
+	local string strStatus, Message;
+	local int i;
+
+	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
+
+	for (i = 0; i < FacilityState.StaffSlots.Length; i++)
+	{
+		StaffSlot = FacilityState.GetStaffSlot(i);
+		if (StaffSlot.IsSlotFilled())
+		{
+			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
+			if (AcademyProject != none)
+			{
+				if (AcademyProject.GetCurrentNumHoursRemaining() < 0)
+					Message = class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_Powercore'.default.m_strStalledResearch, eUIState_Warning);
+				else
+					Message = class'UIUtilities_Text'.static.GetTimeRemainingString(AcademyProject.GetCurrentNumHoursRemaining());
+
+				strStatus = StaffSlot.GetBonusDisplayString() $ ":" @ Message;
+				break;
+			}
+		}
+	}
+	return strStatus;
 }
 
 static function PatchLivingQuarters()
