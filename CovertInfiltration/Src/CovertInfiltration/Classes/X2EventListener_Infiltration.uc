@@ -29,6 +29,10 @@ var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
 var config(GameBoard) array<name> CovertActionsPreventRandomSpawn;
 
+var config(GameData) int NumDarkEventsFirstMonth;
+var config(GameData) int NumDarkEventsSecondMonth;
+var config(GameData) int NumDarkEventsThirdMonth;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -65,6 +69,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
+	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -653,6 +658,30 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 
 	Tuple.Data[0].f = class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
 
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+	
+	Tuple = XComLWTuple(EventData);
+
+	if (Tuple == none || Tuple.Id != 'OverrideDarkEventCount') return ELR_NoInterrupt;
+	
+	if (Tuple.Data[0].i == 0)
+	{
+		Tuple.Data[1].i = default.NumDarkEventsFirstMonth;
+	}
+	else if (Tuple.Data[0].i == 1)
+	{
+		Tuple.Data[1].i = default.NumDarkEventsSecondMonth;
+	}
+	else
+	{
+		Tuple.Data[1].i = default.NumDarkEventsThirdMonth;
+	}
+	
 	return ELR_NoInterrupt;
 }
 
