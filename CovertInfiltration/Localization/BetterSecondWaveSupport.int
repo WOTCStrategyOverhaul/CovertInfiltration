@@ -1,0 +1,3 @@
+[NoEnviromentalSitreps SecondWaveOptionObject]
+Tooltip="When enabled, missions will aquire SitReps only from plot/mission type and infiltration risks. Can be changed mid-campaign, but will not affect existing missions"
+Description="Controlled Environment: No enviromental SitReps on missions"
