@@ -664,22 +664,29 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComLWTuple Tuple;
+	local XComGameState_HeadquartersResistance ResistanceHQ;
 	
 	Tuple = XComLWTuple(EventData);
+	ResistanceHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
 
 	if (Tuple == none || Tuple.Id != 'OverrideDarkEventCount') return ELR_NoInterrupt;
 	
-	if (Tuple.Data[0].i == 0)
+	if (ResistanceHQ.NumMonths == 0)
 	{
-		Tuple.Data[1].i = default.NumDarkEventsFirstMonth;
+		Tuple.Data[0].i = default.NumDarkEventsFirstMonth;
 	}
-	else if (Tuple.Data[0].i == 1)
+	else if (ResistanceHQ.NumMonths == 1)
 	{
-		Tuple.Data[1].i = default.NumDarkEventsSecondMonth;
+		Tuple.Data[0].i = default.NumDarkEventsSecondMonth;
 	}
 	else
 	{
-		Tuple.Data[1].i = default.NumDarkEventsThirdMonth;
+		Tuple.Data[0].i = default.NumDarkEventsThirdMonth;
+	}
+	
+	if (Tuple.Data[1].b)
+	{
+		Tuple.Data[0].i += 1;
 	}
 	
 	return ELR_NoInterrupt;
