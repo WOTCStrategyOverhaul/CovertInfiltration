@@ -300,6 +300,7 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	local array<XComGameState_ActivityChain> SpawnedChains;
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
+	local StateObjectReference PrimaryRegionRef, SecondaryRegionRef;
 
 	local int SecondsDelay, SecondsDuration, WindowDuration, SecondsChainDelay;
 	local XComGameState_Activity_Wait WaitActivity;
@@ -311,6 +312,8 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 
 	// Step 1: spawn the chains
 
+	//`CI_Log("Beginning PostEndOfMonth Processing!");
+
 	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
 	{
 		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
@@ -319,13 +322,23 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		// Chosen-initiated DEs cannot be countered
 		if (DarkEventState.bChosenActionEvent) continue;
 
-		ChainObjectRefs.Length = 0;
-		ChainObjectRefs.AddItem(DarkEventRef);
+		// Is there a spare region in which to spawn this chain
+		GetUniqueContactedRegion(NewGameState, 'ActivityChain_CounterDarkEvent', PrimaryRegionRef, SecondaryRegionRef);
 
-		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
-		ChainState.StartNextStage(NewGameState);
+		if (PrimaryRegionRef.ObjectID > 0 && SecondaryRegionRef.ObjectID > 0)
+		{
+			//`CI_Log("Spawning CDE Chain!");
 
-		SpawnedChains.AddItem(ChainState);
+			ChainObjectRefs.Length = 0;
+			ChainObjectRefs.AddItem(DarkEventRef);
+			
+			ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
+			ChainState.PrimaryRegionRef = PrimaryRegionRef;
+			ChainState.SecondaryRegionRef = SecondaryRegionRef;
+			ChainState.StartNextStage(NewGameState);
+
+			SpawnedChains.AddItem(ChainState);
+		}
 	}
 
 	// If we didn't manage to make any chains, don't bother with the timing
@@ -453,4 +466,63 @@ static function PrintDebugInfo()
 	`CI_Trace("Next spawn at" @ Spawner.NextSpawnAt);
 	`CI_Trace("Cached work rate - " $ Spawner.CachedWorkRate);
 	`CI_Trace("Current work rate - " $ Spawner.GetCurrentWorkRate());
+}
+
+//////////////////////
+/// Region Helpers ///
+//////////////////////
+
+static function GetUniqueContactedRegion (XComGameState NewGameState, name ChainName, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef)
+{
+	local array<StateObjectReference> RegionRefs;
+	local XComGameState_WorldRegion RegionState;
+	local StateObjectReference SelectedRegion;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_WorldRegion', RegionState)
+	{
+		if (RegionState.HaveMadeContact())
+		{
+			if (RegionHasDuplicateChain(NewGameState, ChainName, RegionState) == false)
+			{
+				//`CI_Log("Adding Region: " $ RegionState.GetMyTemplateName());
+				RegionRefs.AddItem(RegionState.GetReference());
+			}
+		}
+	}
+	
+	if (RegionRefs.Length == 0)
+	{
+		//`CI_Log("No valid regions for Counter Dark Event chain!");
+		RegionState = none;
+		PrimaryRegionRef = RegionState.GetReference();
+		SecondaryRegionRef = RegionState.GetReference();
+		return;
+	}
+
+	SelectedRegion = RegionRefs[`SYNC_RAND_STATIC(RegionRefs.Length)];
+
+	PrimaryRegionRef = SelectedRegion;
+	SecondaryRegionRef = SelectedRegion;
+}
+
+static function bool RegionHasDuplicateChain (XComGameState NewGameState, name ChainName, XComGameState_WorldRegion RegionState)
+{
+	local XComGameState_ActivityChain OtherChainState;
+	local XComGameState_WorldRegion OtherRegionState;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', OtherChainState)
+	{
+		if (OtherChainState.GetMyTemplateName() == ChainName && OtherChainState.bEnded == false)
+		{
+			OtherRegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(OtherChainState.PrimaryRegionRef.ObjectID));
+			//`CI_Log("Comparing: " $ OtherRegionState.GetMyTemplateName() $ " vs " $ RegionState.GetMyTemplateName());
+			if (OtherRegionState.GetMyTemplateName() == RegionState.GetMyTemplateName())
+			{
+				//`CI_Log("Region" @ RegionState.ObjectID @ "already has" @ ChainName);
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
