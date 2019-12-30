@@ -41,7 +41,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_CounterDarkEvent');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseRandomContactedRegion;
+	// Region is chosen in the ActivityChainSpawner
 	
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;

@@ -295,7 +295,8 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	
 	local array<StateObjectReference> ChainObjectRefs;
 	local XComGameState_DarkEvent DarkEventState;
-	local StateObjectReference DarkEventRef;
+	local StateObjectReference DarkEventRef, SelectedRegion;
+	local array<StateObjectReference> DarkEventRefs, RegionRefs;
 	
 	local array<XComGameState_ActivityChain> SpawnedChains;
 	local XComGameState_ActivityChain ChainState;
@@ -311,8 +312,23 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 
 	// Step 1: spawn the chains
 
-	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
+	RegionRefs = GetContactedRegions();
+	DarkEventRefs = AlienHQ.ChosenDarkEvents;
+
+	for (i = 0; i < DarkEventRefs.Length; i++)
 	{
+		// No regions left to assign DEs, skip the rest of them
+		if (RegionRefs.Length == 0) break;
+		
+		if (DarkEventRefs.Length == 0)
+		{
+			`RedScreen("CI: Dark Events array empty when it should be filled");
+			break;
+		}
+
+		DarkEventRef = DarkEventRefs[`SYNC_RAND_STATIC(DarkEventRefs.Length)];
+		DarkEventRefs.RemoveItem(DarkEventRef);
+
 		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
 		if (DarkEventState == none) continue;
 
@@ -322,7 +338,12 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		ChainObjectRefs.Length = 0;
 		ChainObjectRefs.AddItem(DarkEventRef);
 
+		SelectedRegion = RegionRefs[`SYNC_RAND_STATIC(RegionRefs.Length)];
+		RegionRefs.RemoveItem(SelectedRegion);
+
 		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
+		ChainState.PrimaryRegionRef = SelectedRegion;
+		ChainState.SecondaryRegionRef = SelectedRegion;
 		ChainState.StartNextStage(NewGameState);
 
 		SpawnedChains.AddItem(ChainState);
@@ -453,4 +474,24 @@ static function PrintDebugInfo()
 	`CI_Trace("Next spawn at" @ Spawner.NextSpawnAt);
 	`CI_Trace("Cached work rate - " $ Spawner.CachedWorkRate);
 	`CI_Trace("Current work rate - " $ Spawner.GetCurrentWorkRate());
+}
+
+//////////////////////
+/// Region Helpers ///
+//////////////////////
+
+static function array<StateObjectReference> GetContactedRegions ()
+{
+	local array<StateObjectReference> RegionRefs;
+	local XComGameState_WorldRegion RegionState;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_WorldRegion', RegionState)
+	{
+		if (RegionState.HaveMadeContact())
+		{
+			RegionRefs.AddItem(RegionState.GetReference());
+		}
+	}
+	
+	return RegionRefs;
 }
