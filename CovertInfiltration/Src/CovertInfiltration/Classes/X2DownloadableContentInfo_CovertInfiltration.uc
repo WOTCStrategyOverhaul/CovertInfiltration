@@ -20,6 +20,10 @@ var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
+// Cheats
+
+var name ForcedNextEnviromentalSitrep;
+
 //////////////////////////////////
 /// Vanilla DLCInfo misc hooks ///
 //////////////////////////////////
@@ -1014,4 +1018,18 @@ exec function SetRiskOccurance (name RiskName, bool bOccurs)
 	ActionState = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionState.ObjectID));
 	ActionState.Risks[i].bOccurs = bOccurs;
 	`SubmitGameState(NewGameState);
+}
+
+exec function ForceNextEnviromentalSitrep(name SitRep)
+{
+	ForcedNextEnviromentalSitrep = SitRep;
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+static function X2DownloadableContentInfo_CovertInfiltration GetCDO()
+{
+	return X2DownloadableContentInfo_CovertInfiltration(class'XComEngine'.static.GetClassDefaultObjectByName(default.Class.Name));
 }

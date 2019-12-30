@@ -759,6 +759,7 @@ static function array<name> GetAllEnviromentalSitreps ()
 // Note that we add directly to state instead of returning the array so that the MeetsRequirements call later accounts for this sitrep
 static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionState)
 {
+	local X2DownloadableContentInfo_CovertInfiltration DLCInfo;
 	local X2SitRepTemplateManager SitRepMgr;
 	local X2SitRepTemplate SitRepTemplate;
 	local array<name> EnviromentalSitreps;
@@ -770,6 +771,15 @@ static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionStat
 
 	// Check if enviromental sitreps are disabled
 	if (`SecondWaveEnabled('NoEnviromentalSitreps')) return;
+
+	// Check cheats
+	DLCInfo = class'X2DownloadableContentInfo_CovertInfiltration'.static.GetCDO();
+	if (DLCInfo.ForcedNextEnviromentalSitrep != '')
+	{
+		MissionState.GeneratedMission.SitReps.AddItem(DLCInfo.ForcedNextEnviromentalSitrep);
+		DLCInfo.ForcedNextEnviromentalSitrep = '';
+		return;
+	}
 
 	// Get how many we want to pick
 	// If we ever decide to have more than 1, this would be the place to change
