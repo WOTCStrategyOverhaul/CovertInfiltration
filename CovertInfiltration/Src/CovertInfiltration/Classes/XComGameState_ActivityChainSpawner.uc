@@ -295,13 +295,12 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	
 	local array<StateObjectReference> ChainObjectRefs;
 	local XComGameState_DarkEvent DarkEventState;
-	local StateObjectReference DarkEventRef;
+	local StateObjectReference DarkEventRef, SelectedRegion;
+	local array<StateObjectReference> DarkEventRefs, RegionRefs;
 	
 	local array<XComGameState_ActivityChain> SpawnedChains;
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
-	local StateObjectReference SelectedRegion;
-	local array<StateObjectReference> RegionRefs;
 
 	local int SecondsDelay, SecondsDuration, WindowDuration, SecondsChainDelay;
 	local XComGameState_Activity_Wait WaitActivity;
@@ -314,31 +313,40 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	// Step 1: spawn the chains
 
 	RegionRefs = GetContactedRegions();
+	DarkEventRefs = AlienHQ.ChosenDarkEvents;
 
-	foreach AlienHQ.ChosenDarkEvents(DarkEventRef)
+	for (i = 0; i < DarkEventRefs.Length; i++)
 	{
-		// If there is a spare region in which to spawn this chain
-		if (RegionRefs.Length > 0)
+		// No regions left to assign DEs, skip the rest of them
+		if (RegionRefs.Length == 0) break;
+		
+		if (DarkEventRefs.Length == 0)
 		{
-			DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
-			if (DarkEventState == none) continue;
-
-			// Chosen-initiated DEs cannot be countered
-			if (DarkEventState.bChosenActionEvent) continue;
-
-			ChainObjectRefs.Length = 0;
-			ChainObjectRefs.AddItem(DarkEventRef);
-
-			SelectedRegion = RegionRefs[`SYNC_RAND_STATIC(RegionRefs.Length)];
-			RegionRefs.RemoveItem(SelectedRegion);
-
-			ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
-			ChainState.PrimaryRegionRef = SelectedRegion;
-			ChainState.SecondaryRegionRef = SelectedRegion;
-			ChainState.StartNextStage(NewGameState);
-
-			SpawnedChains.AddItem(ChainState);
+			`RedScreen("CI: Dark Events array empty when it should be filled");
+			break;
 		}
+
+		DarkEventRef = DarkEventRefs[`SYNC_RAND_STATIC(DarkEventRefs.Length)];
+		DarkEventRefs.RemoveItem(DarkEventRef);
+
+		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
+		if (DarkEventState == none) continue;
+
+		// Chosen-initiated DEs cannot be countered
+		if (DarkEventState.bChosenActionEvent) continue;
+
+		ChainObjectRefs.Length = 0;
+		ChainObjectRefs.AddItem(DarkEventRef);
+
+		SelectedRegion = RegionRefs[`SYNC_RAND_STATIC(RegionRefs.Length)];
+		RegionRefs.RemoveItem(SelectedRegion);
+
+		ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState, ChainObjectRefs);
+		ChainState.PrimaryRegionRef = SelectedRegion;
+		ChainState.SecondaryRegionRef = SelectedRegion;
+		ChainState.StartNextStage(NewGameState);
+
+		SpawnedChains.AddItem(ChainState);
 	}
 
 	// If we didn't manage to make any chains, don't bother with the timing
