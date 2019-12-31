@@ -1,3 +1,3 @@
 [NoEnviromentalSitreps SecondWaveOptionObject]
-Tooltip="When enabled, missions will aquire SitReps only from plot/mission type and infiltration risks. Can be changed mid-campaign, but will not affect existing missions"
+Tooltip="When enabled, missions will no longer receive environmental or third-party faction SitReps by random roll. This will effectively disable all environmental SitReps and third-party factions except for when the mission or map requires it. Since these SitReps are beneficial to neither XCOM nor ADVENT, the tactical difficulty of the game is unchanged. The positive and negative SitReps that appear randomly or from infiltration are not affected by this option. Can be changed mid-campaign, but will not affect existing missions"
 Description="Controlled Environment: No enviromental SitReps on missions"
