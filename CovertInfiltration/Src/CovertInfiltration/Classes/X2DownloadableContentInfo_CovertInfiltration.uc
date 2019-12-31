@@ -408,36 +408,28 @@ static event OnExitPostMissionSequence ()
 static function PostMissionUpgradeItems ()
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
-	local XComGameState_Unit OwnerUnitState;
-	local XComGameState_Item ItemState;
-	local StateObjectReference ItemRef;
+	local XComGameState_Unit UnitState;
+	local StateObjectReference UnitRef;
 	local XComGameStateHistory History;
 	local XComGameState NewGameState;
 
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
-	if (CIInfo.ItemsToConsiderUpgradingOnMissionExit.Length == 0) return;
+	if (CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length == 0) return;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionUpgradeItems");
 	History = `XCOMHISTORY;
 	
 	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
 
-	foreach CIInfo.ItemsToConsiderUpgradingOnMissionExit(ItemRef)
+	foreach CIInfo.UnitsToConsiderUpgradingGearOnMissionExit(UnitRef)
 	{
-		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
-		if (ItemState == none || ItemState.bRemoved) continue;
+		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+		if (UnitState == none) continue;
 
-		OwnerUnitState = XComGameState_Unit(History.GetGameStateForObjectID(ItemState.OwnerStateObject.ObjectID));
-		if (OwnerUnitState == none)
-		{
-			`CI_Log("PostMissionUpgradeItems encountered item" @ ItemState.GetMyTemplateName() @ ItemState.ObjectID @ "and has no idea where it's located. Skipping");
-			continue;
-		}
-		
-		class'X2Helper_Infiltration'.static.TryUpgradeInventoryItem(NewGameState, ItemState);
+		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
 	}
 
-	CIInfo.ItemsToConsiderUpgradingOnMissionExit.Length = 0;
+	CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length = 0;
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 

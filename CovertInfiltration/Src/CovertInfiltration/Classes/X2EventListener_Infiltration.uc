@@ -663,8 +663,6 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
 	local XComGameState_CovertInfiltrationInfo CIInfo;
-	local array<XComGameState_Item> AllEquippedItems;
-	local XComGameState_Item ItemState;
 	local XComGameState_Unit UnitState;
 
 	InfiltrationState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
@@ -675,26 +673,19 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 	// This is required as EventData/EventSource inside ELD_Immediate are from last submitted state, not the pending one
 	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
 
-	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
-	AllEquippedItems = UnitState.GetAllInventoryItems(NewGameState, true);
+	// Captured soldiers are handeled when they are rescued
+	if (UnitState.bCaptured) return ELR_NoInterrupt;
 
-	foreach AllEquippedItems(ItemState)
+	if (!UnitState.IsDead())
 	{
-		if (ItemState != none)
-		{
-			// TODO: Handle captured soldiers differently
-			
-			if (!UnitState.IsDead())
-			{
-				// If we upgrade here, soldiers will have magically upgraded gear when exiting the skyranger, so defer it
-				CIInfo.ItemsToConsiderUpgradingOnMissionExit.AddItem(ItemState.GetReference());
-			}
-			else
-			{
-				// Upgrade here so that it's stripped/added to hq inventory correctly
-				class'X2Helper_Infiltration'.static.TryUpgradeInventoryItem(NewGameState, ItemState);
-			}
-		}
+		// If we upgrade here, soldiers will have magically upgraded gear when exiting the skyranger, so defer it
+		CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+		CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.AddItem(UnitState.GetReference());
+	}
+	else
+	{
+		// Upgrade here so that it's stripped/added to hq inventory correctly
+		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
 	}
 
 	return ELR_NoInterrupt;
