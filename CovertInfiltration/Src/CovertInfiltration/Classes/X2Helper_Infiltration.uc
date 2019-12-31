@@ -55,6 +55,7 @@ var config(MissionSources) array<ActivityMissionFamilyMapping> ActivityMissionFa
 var config int ASSAULT_MISSION_SITREPS_CHANCE;
 var config name ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE;
 var config int ENVIROMENTAL_SITREP_CHANCE;
+var config(GameData) array<name> ENVIROMENTAL_SITREPS_EXCLUDE;
 
 var config int STARTING_CREW_LIMIT;
 var config int CREW_LIMIT_INCREASE_I;
@@ -726,15 +727,30 @@ static function array<name> GetAllEnviromentalSitreps ()
 	local X2SitRepTemplateManager SitRepTemplateManager;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
+	local X2SitRepTemplate SitRepTemplate;
 	local X2DataTemplate DataTemplate;
 	local array<name> SitReps;
+	local name SitRep;
 
 	StrategyTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	SitRepTemplateManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
 
 	// Get all sitreps
-	// TODO: filter SitRep.bExcludeFromStrategy
-	SitRepTemplateManager.GetTemplateNames(SitReps);
+	foreach SitRepTemplateManager.IterateTemplates(DataTemplate)
+	{
+		SitRepTemplate = X2SitRepTemplate(DataTemplate);
+		
+		if (SitRepTemplate == none) continue;
+		if (SitRepTemplate.bExcludeFromStrategy) continue;
+
+		SitReps.AddItem(SitRepTemplate.DataName);
+	}
+
+	// Remove explictly disabled
+	foreach default.ENVIROMENTAL_SITREPS_EXCLUDE(SitRep)
+	{
+		SitReps.RemoveItem(SitRep);
+	}
 
 	// Remove risks
 	foreach default.FlatRiskSitReps(FlatRiskSitRep)
@@ -760,9 +776,9 @@ static function array<name> GetAllEnviromentalSitreps ()
 static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionState)
 {
 	local X2DownloadableContentInfo_CovertInfiltration DLCInfo;
+	local array<name> EnviromentalSitreps, AllSitReps;
 	local X2SitRepTemplateManager SitRepMgr;
 	local X2SitRepTemplate SitRepTemplate;
-	local array<name> EnviromentalSitreps;
 	local int MaxNumSitReps, NumSelected;
 	local array<string> SitRepCards;
 	local X2CardManager CardMgr;
@@ -802,11 +818,21 @@ static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionStat
 		CardMgr.AddCardToDeck('SitReps', string(nSitRep));
 	}
 
+	// Get all of the currently existing sitreps
+	// This is used to prevent redscreens from FindSitRepTemplate due to old cards in the deck
+	SitRepMgr.GetTemplateNames(AllSitReps);
+
 	// Select the sitreps until we fill out the array (or run out of candidates)
 	CardMgr.GetAllCardsInDeck('SitReps', SitRepCards);
 	foreach SitRepCards(sSitRep)
 	{
-		SitRepTemplate = SitRepMgr.FindSitRepTemplate(name(sSitRep));
+		nSitRep = name(sSitRep);
+		
+		// Redscreen prevention
+		if (AllSitReps.Find(nSitRep) == INDEX_NONE) continue;
+
+		// Actual fetch
+		SitRepTemplate = SitRepMgr.FindSitRepTemplate(nSitRep);
 
 		if (
 			SitRepTemplate != none &&
