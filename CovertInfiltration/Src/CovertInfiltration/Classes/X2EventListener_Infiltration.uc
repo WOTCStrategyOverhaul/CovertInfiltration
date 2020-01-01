@@ -673,7 +673,7 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 	// This is required as EventData/EventSource inside ELD_Immediate are from last submitted state, not the pending one
 	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
 
-	// Captured soldiers are handeled when they are rescued
+	// Captured soldiers are handeled when they are rescued - see #407 for more details
 	if (UnitState.bCaptured) return ELR_NoInterrupt;
 
 	if (!UnitState.IsDead())
