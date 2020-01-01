@@ -29,6 +29,10 @@ var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
 var config(GameBoard) array<name> CovertActionsPreventRandomSpawn;
 
+var config(GameData) int NumDarkEventsFirstMonth;
+var config(GameData) int NumDarkEventsSecondMonth;
+var config(GameData) int NumDarkEventsThirdMonth;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -66,6 +70,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
+	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -688,6 +693,34 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
 	}
 
+static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+	local XComGameState_HeadquartersResistance ResistanceHQ;
+	
+	Tuple = XComLWTuple(EventData);
+	ResistanceHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
+
+	if (Tuple == none || Tuple.Id != 'OverrideDarkEventCount') return ELR_NoInterrupt;
+	
+	if (ResistanceHQ.NumMonths == 0)
+	{
+		Tuple.Data[0].i = default.NumDarkEventsFirstMonth;
+	}
+	else if (ResistanceHQ.NumMonths == 1)
+	{
+		Tuple.Data[0].i = default.NumDarkEventsSecondMonth;
+	}
+	else
+	{
+		Tuple.Data[0].i = default.NumDarkEventsThirdMonth;
+	}
+	
+	if (Tuple.Data[1].b)
+	{
+		Tuple.Data[0].i += 1;
+	}
+	
 	return ELR_NoInterrupt;
 }
 

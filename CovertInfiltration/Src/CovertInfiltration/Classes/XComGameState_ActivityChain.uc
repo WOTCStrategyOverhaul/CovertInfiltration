@@ -105,7 +105,7 @@ function SetupChain (XComGameState NewGameState)
 
 	`CI_Trace("Selected faction and regions, spawning stages");
 
-	// Craete the stages
+	// Create the stages
 	StageRefs.Length = m_Template.Stages.Length;
 
 	foreach m_Template.Stages(ActivityTemplateName, i)
