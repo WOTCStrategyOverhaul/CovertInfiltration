@@ -28,6 +28,10 @@ var array<StateObjectReference> CovertActionsToRemove; // Used to mark outdated 
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
 var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is built and we are waiting for Geoscape control to return to the player to show the tutorial
 
+// Stores the references to soldiers that are coming back from an infiltration.
+// This way we can upgrade their gear when exiting from post mission sequence, ensuring that soldiers don't have magically upgraded items when exiting the skyranger
+var array<StateObjectReference> UnitsToConsiderUpgradingGearOnMissionExit;
+
 /////////////////////
 /// Tactical vars ///
 /////////////////////

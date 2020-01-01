@@ -400,6 +400,39 @@ static protected function TriggerMissionExitEvents ()
 	}
 }
 
+static event OnExitPostMissionSequence ()
+{
+	PostMissionUpgradeItems();
+}
+
+static function PostMissionUpgradeItems ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Unit UnitState;
+	local StateObjectReference UnitRef;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	if (CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length == 0) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionUpgradeItems");
+	History = `XCOMHISTORY;
+	
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+
+	foreach CIInfo.UnitsToConsiderUpgradingGearOnMissionExit(UnitRef)
+	{
+		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+		if (UnitState == none) continue;
+
+		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
+	}
+
+	CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length = 0;
+	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
 /// ////////////// ///
 /// DLC (HL) HOOKS ///
 /// ////////////// ///

@@ -69,6 +69,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
+	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
@@ -660,6 +661,37 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 
 	return ELR_NoInterrupt;
 }
+
+// Note that we cannot use DLCInfo::OnPostMission as the gear of dead soldiers is stripped by that point
+// This otoh is called right before the gear is stripped
+static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgradeGear (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Unit UnitState;
+
+	InfiltrationState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
+	UnitState = XComGameState_Unit(EventSource);
+
+	if (InfiltrationState == none || UnitState == none) return ELR_NoInterrupt;
+
+	// This is required as EventData/EventSource inside ELD_Immediate are from last submitted state, not the pending one
+	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
+
+	// Captured soldiers are handeled when they are rescued - see #407 for more details
+	if (UnitState.bCaptured) return ELR_NoInterrupt;
+
+	if (!UnitState.IsDead())
+	{
+		// If we upgrade here, soldiers will have magically upgraded gear when exiting the skyranger, so defer it
+		CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+		CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.AddItem(UnitState.GetReference());
+	}
+	else
+	{
+		// Upgrade here so that it's stripped/added to hq inventory correctly
+		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
+	}
 
 static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
