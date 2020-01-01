@@ -14,6 +14,18 @@ struct CharacterGroupKillCount
 	var int KillCount;
 };
 
+// Encoding scheme: 00000000
+//                  0        - beta (0) or workshop (1)
+//                   00      - release number (eg. beta **2**)
+//                     00000 - patch number
+//
+// This allows to easy compare the saved version with integer comparison, eg.
+// if (CurrentVersion > CIInfo.ModVersion) 
+var int ModVersion;
+
+// The mod version feature lands in beta 2, so put that as reference for now
+const CURRENT_MOD_VERSION = 00200000;
+
 /////////////////////
 /// Strategy vars ///
 /////////////////////
@@ -136,6 +148,7 @@ static function CreateInfo(optional XComGameState StartState)
 	{
 		Info = XComGameState_CovertInfiltrationInfo(StartState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
 		Info.CurrentCrewLimit = class'X2Helper_Infiltration'.default.STARTING_CREW_LIMIT;
+		Info.ModVersion = CURRENT_MOD_VERSION;
 		return;
 	}
 
@@ -145,6 +158,7 @@ static function CreateInfo(optional XComGameState StartState)
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Creating CI Info Singleton");
 	
 	Info = XComGameState_CovertInfiltrationInfo(NewGameState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
+	Info.ModVersion = CURRENT_MOD_VERSION;
 	Info.InitExistingCampaign();
 		
 	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
@@ -163,4 +177,5 @@ protected function InitExistingCampaign()
 defaultproperties
 {
 	NumEnemiesAtMissionStart = -1;
+	ModVersion = 0; // Loading from a save without ModVersion feature
 }
