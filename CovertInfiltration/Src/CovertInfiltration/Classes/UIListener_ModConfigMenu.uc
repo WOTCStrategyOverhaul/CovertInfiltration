@@ -18,6 +18,7 @@ var config bool ENABLE_TUTORIAL;
 var config bool REMOVE_NICKNAMED_UPGRADES;
 var config bool WARN_BEFORE_EXPIRATION;
 var config int HOURS_BEFORE_WARNING;
+var config bool LOW_SOLDIERS_WARNING;
 
 // localized strings
 var localized string PageTitle;
@@ -34,6 +35,8 @@ var localized string WarnBeforeExpirationDesc;
 var localized string WarnBeforeExpirationTooltip;
 var localized string HoursBeforeWarningDesc;
 var localized string HoursBeforeWarningTooltip;
+var localized string LowSoldiersWarningDesc;
+var localized string LowSoldiersWarningTooltip;
 
 event OnInit(UIScreen Screen)
 {
@@ -62,6 +65,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Group.AddCheckBox('RemoveNicknamedUpgrades', RemoveNicknamedUpgradesDesc, RemoveNicknamedUpgradesTooltip, REMOVE_NICKNAMED_UPGRADES, RemoveNicknamedUpgradesSaveHandler);
 	Group.AddCheckBox('WarnBeforeExpiration', WarnBeforeExpirationDesc, WarnBeforeExpirationTooltip, WARN_BEFORE_EXPIRATION, WarnBeforeExpirationSaveHandler);
 	Group.AddSlider('HoursBeforeWarningTooltip', HoursBeforeWarningDesc, HoursBeforeWarningTooltip, 1, 4, 1, HOURS_BEFORE_WARNING, HoursBeforeWarningSaveHandler);
+	Group.AddCheckBox('LowSoldiersWarning', LowSoldiersWarningDesc, LowSoldiersWarningTooltip, LOW_SOLDIERS_WARNING, LowSoldiersWarningSaveHandler);
 
 	Page.ShowSettings();
 }
@@ -76,6 +80,7 @@ simulated function LoadSavedSettings()
 	REMOVE_NICKNAMED_UPGRADES = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, REMOVE_NICKNAMED_UPGRADES);
 	WARN_BEFORE_EXPIRATION = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, WARN_BEFORE_EXPIRATION);
 	HOURS_BEFORE_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, HOURS_BEFORE_WARNING);
+	LOW_SOLDIERS_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, LOW_SOLDIERS_WARNING);
 }
 
 `MCM_API_BasicCheckboxSaveHandler(DaysToHoursSaveHandler, DAYS_TO_HOURS)
@@ -84,6 +89,7 @@ simulated function LoadSavedSettings()
 `MCM_API_BasicCheckboxSaveHandler(RemoveNicknamedUpgradesSaveHandler, REMOVE_NICKNAMED_UPGRADES)
 `MCM_API_BasicCheckboxSaveHandler(WarnBeforeExpirationSaveHandler, WARN_BEFORE_EXPIRATION)
 `MCM_API_BasicSliderSaveHandler(HoursBeforeWarningSaveHandler, HOURS_BEFORE_WARNING)
+`MCM_API_BasicCheckboxSaveHandler(LowSoldiersWarningSaveHandler, LOW_SOLDIERS_WARNING)
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {

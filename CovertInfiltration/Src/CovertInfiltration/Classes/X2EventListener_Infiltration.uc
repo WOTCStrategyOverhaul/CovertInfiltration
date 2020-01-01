@@ -29,6 +29,9 @@ var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
 var config(GameBoard) array<name> CovertActionsPreventRandomSpawn;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -65,6 +68,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
+	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_Immediate, 100);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -652,6 +656,16 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 	if (Tuple == none || Tuple.Id != 'WillRecoveryTimeModifier') return ELR_NoInterrupt;
 
 	Tuple.Data[0].f = class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION))
+	{
+		return ELR_InterruptListeners;
+	}
 
 	return ELR_NoInterrupt;
 }
