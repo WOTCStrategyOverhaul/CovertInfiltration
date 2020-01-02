@@ -840,6 +840,31 @@ static function BarracksStatusReport GetBarracksStatusReport()
 	return CurrentBarracksStatus;
 }
 
+static function string GetPostMissionText (XComGameState_Activity ActivityState, bool bVictory)
+{
+	local XComGameState_ActivityChain ChainState;
+	local string ChainName;
+
+	ChainState = ActivityState.GetActivityChain();
+	ChainName = ChainState.GetMyTemplate().strTitle;
+
+	if (bVictory)
+	{
+		if (ChainState.GetLastActivity().GetMyTemplate() == ActivityState.GetMyTemplate())
+		{
+			return "'" $ ChainName $ "' Chain Completed";
+		}
+		else
+		{
+			return "'" $ ChainName $ "' Chain Progressed";
+		}
+	}
+	else
+	{
+		return "'" $ ChainName $ "' Chain Failed";
+	}
+}
+
 ///////////////
 /// Kill XP ///
 ///////////////
