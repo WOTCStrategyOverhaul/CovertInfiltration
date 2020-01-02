@@ -926,7 +926,6 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 				if (iCurrentHoursRemaining < 0)
 				{
 					Message = class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_Powercore'.default.m_strStalledResearch, eUIState_Warning);
-					break;
 				}
 				else if (iLowestHoursRemaining == 0 || iCurrentHoursRemaining < iLowestHoursRemaining)
 				{
