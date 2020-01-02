@@ -908,10 +908,11 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
 	local XComGameState_FacilityXCom FacilityState;
 	local XComGameState_StaffSlot StaffSlot;
-	local string strStatus, Message;
-	local int i;
+	local string strSoldierClass, Message;
+	local int i, iCurrentHoursRemaining, iLowestHoursRemaining;
 
 	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
+	iLowestHoursRemaining = 0;
 
 	for (i = 0; i < FacilityState.StaffSlots.Length; i++)
 	{
@@ -921,17 +922,24 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
 			if (AcademyProject != none)
 			{
-				if (AcademyProject.GetCurrentNumHoursRemaining() < 0)
+				iCurrentHoursRemaining = AcademyProject.GetCurrentNumHoursRemaining();
+				if (iCurrentHoursRemaining < 0)
+				{
 					Message = class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_Powercore'.default.m_strStalledResearch, eUIState_Warning);
-				else
-					Message = class'UIUtilities_Text'.static.GetTimeRemainingString(AcademyProject.GetCurrentNumHoursRemaining());
-
-				strStatus = StaffSlot.GetBonusDisplayString() $ ":" @ Message;
-				break;
+					break;
+				}
+				else if (iLowestHoursRemaining == 0 || iCurrentHoursRemaining < iLowestHoursRemaining)
+				{
+					iLowestHoursRemaining = iCurrentHoursRemaining;
+					strSoldierClass = StaffSlot.GetBonusDisplayString();
+				}
 			}
+			
+			Message = class'UIUtilities_Text'.static.GetTimeRemainingString(iLowestHoursRemaining);
 		}
 	}
-	return strStatus;
+
+	return strSoldierClass $ ":" @ Message;
 }
 
 static function PatchLivingQuarters()
