@@ -68,7 +68,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate);
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
-	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_Immediate, 100);
+	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 100);
 	Template.RegisterInStrategy = true;
 
 	return Template;
