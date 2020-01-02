@@ -734,6 +734,7 @@ static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(
 	{
 		return ELR_InterruptListeners;
 	}
+
 	return ELR_NoInterrupt;
 }
 
