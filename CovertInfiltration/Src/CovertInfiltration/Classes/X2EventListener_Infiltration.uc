@@ -662,7 +662,7 @@ static protected function EventListenerReturn WillRecoveryTimeModifier(Object Ev
 
 static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION))
+	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.LOW_SOLDIERS_WARNING))
 	{
 		return ELR_InterruptListeners;
 	}
