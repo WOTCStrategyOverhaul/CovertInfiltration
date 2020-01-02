@@ -75,6 +75,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_Immediate, 100);
+	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 100);
 	Template.RegisterInStrategy = true;
 
 	return Template;
