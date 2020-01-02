@@ -130,10 +130,24 @@ simulated protected function BuildConfiguration()
 		Configuration.EnableLaunchLabelReplacement(class'UICovertActions'.default.CovertActions_LaunchAction, "");
 	}
 	
+	Configuration.SetAugmentFakeMissionSiteFn(AugmentFakeMissionSite);
 	Configuration.SetPreventOnSizeLimitedEvent(true);
 	Configuration.SetPreventOnSuperSizeEvent(true);
 
 	Configuration.SetFrozen();
+}
+
+simulated protected function AugmentFakeMissionSite (XComGameState_MissionSite FakeMissionSite)
+{
+	local XComGameState_CovertAction CovertAction;
+
+	CovertAction = GetAction();
+
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertAction))
+	{
+		// Show the enviromental sitreps on loadout
+		FakeMissionSite.GeneratedMission.SitReps = class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(CovertAction).GeneratedMission.SitReps;
+	}
 }
 
 ///////////////////
