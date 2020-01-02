@@ -926,15 +926,16 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 				if (iCurrentHoursRemaining < 0)
 				{
 					Message = class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_Powercore'.default.m_strStalledResearch, eUIState_Warning);
+					strSoldierClass = StaffSlot.GetBonusDisplayString();
+					break;
 				}
 				else if (iLowestHoursRemaining == 0 || iCurrentHoursRemaining < iLowestHoursRemaining)
 				{
 					iLowestHoursRemaining = iCurrentHoursRemaining;
 					strSoldierClass = StaffSlot.GetBonusDisplayString();
+					Message = class'UIUtilities_Text'.static.GetTimeRemainingString(iLowestHoursRemaining);
 				}
 			}
-			
-			Message = class'UIUtilities_Text'.static.GetTimeRemainingString(iLowestHoursRemaining);
 		}
 	}
 
