@@ -860,6 +860,9 @@ static function PatchGuerillaTacticsSchool()
 		return;
 	}
 	
+	GTSTemplate.IsFacilityProjectActiveFn = IsAcademyProjectActive;
+	GTSTemplate.GetQueueMessageFn = GetAcademyQueueMessage;
+
 	// Add 2nd training slot
 	StaffSlotDef.StaffSlotTemplateName = 'OTSStaffSlot';
 	GTSTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
@@ -874,6 +877,69 @@ static function PatchGuerillaTacticsSchool()
 
 	// Add training target rank unlock
 	GTSTemplate.SoldierUnlockTemplates.AddItem('AcademyTrainingRankUnlock');
+}
+
+static function bool IsAcademyProjectActive(StateObjectReference FacilityRef)
+{
+	local XComGameState_FacilityXCom FacilityState;
+	local XComGameState_StaffSlot StaffSlot;
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local int idx;
+
+	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
+
+	for (idx = 0; idx < FacilityState.StaffSlots.Length; idx++)
+	{
+		StaffSlot = FacilityState.GetStaffSlot(idx);
+		if (StaffSlot.IsSlotFilled())
+		{
+			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
+			if (AcademyProject != none)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
+{
+	local XComGameState_HeadquartersProjectTrainAcademy AcademyProject;
+	local XComGameState_FacilityXCom FacilityState;
+	local XComGameState_StaffSlot StaffSlot;
+	local string strSoldierClass, Message;
+	local int i, iCurrentHoursRemaining, iLowestHoursRemaining;
+
+	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
+	iLowestHoursRemaining = 0;
+
+	for (i = 0; i < FacilityState.StaffSlots.Length; i++)
+	{
+		StaffSlot = FacilityState.GetStaffSlot(i);
+		if (StaffSlot.IsSlotFilled())
+		{
+			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
+			if (AcademyProject != none)
+			{
+				iCurrentHoursRemaining = AcademyProject.GetCurrentNumHoursRemaining();
+				if (iCurrentHoursRemaining < 0)
+				{
+					Message = class'UIUtilities_Text'.static.GetColoredText(class'UIFacility_Powercore'.default.m_strStalledResearch, eUIState_Warning);
+					strSoldierClass = StaffSlot.GetBonusDisplayString();
+					break;
+				}
+				else if (iLowestHoursRemaining == 0 || iCurrentHoursRemaining < iLowestHoursRemaining)
+				{
+					iLowestHoursRemaining = iCurrentHoursRemaining;
+					strSoldierClass = StaffSlot.GetBonusDisplayString();
+					Message = class'UIUtilities_Text'.static.GetTimeRemainingString(iLowestHoursRemaining);
+				}
+			}
+		}
+	}
+
+	return strSoldierClass $ ":" @ Message;
 }
 
 static function PatchLivingQuarters()
