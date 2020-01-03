@@ -547,6 +547,8 @@ static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity 
 
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
+
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 
 static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activity ActivityState)
@@ -561,6 +563,11 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
 	MissionState.RemoveEntity(NewGameState);
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
+	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkSuccess(NewGameState);
+
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 
 static function X2CovertActionTemplate CreateStandardActivityCA (string ActivityName, string MeshPath)

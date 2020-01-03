@@ -79,6 +79,11 @@ var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS;
 // Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
 var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
+// Messages displayed in mission debrief under "Global Effects" header
+var localized string strChainEffect_Finished;
+var localized string strChainEffect_InProgress;
+var localized string strChainEffect_Halted;
+
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
 {
@@ -970,6 +975,33 @@ static function BarracksStatusReport GetBarracksStatusReport()
 	}
 
 	return CurrentBarracksStatus;
+}
+
+static function string GetPostMissionText (XComGameState_Activity ActivityState, bool bVictory)
+{
+	local XComGameState_ActivityChain ChainState;
+	local XGParamTag ParamTag;
+	local string ChainName;
+
+	ChainState = ActivityState.GetActivityChain();
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = ChainState.GetMyTemplate().strTitle;
+
+	if (bVictory)
+	{
+		if (ChainState.GetLastActivity().ObjectID == ActivityState.ObjectID)
+		{
+			return `XEXPAND.ExpandString(default.strChainEffect_Finished);
+		}
+		else
+		{
+			return `XEXPAND.ExpandString(default.strChainEffect_InProgress);
+		}
+	}
+	else
+	{
+		return `XEXPAND.ExpandString(default.strChainEffect_Halted);
+	}
 }
 
 ///////////////
