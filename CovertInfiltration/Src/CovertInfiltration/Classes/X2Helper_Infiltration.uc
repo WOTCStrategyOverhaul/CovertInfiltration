@@ -848,25 +848,27 @@ static function BarracksStatusReport GetBarracksStatusReport()
 static function string GetPostMissionText (XComGameState_Activity ActivityState, bool bVictory)
 {
 	local XComGameState_ActivityChain ChainState;
+	local XGParamTag ParamTag;
 	local string ChainName;
 
 	ChainState = ActivityState.GetActivityChain();
-	ChainName = ChainState.GetMyTemplate().strTitle;
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = ChainState.GetMyTemplate().strTitle;
 
 	if (bVictory)
 	{
 		if (ChainState.GetLastActivity().ObjectID == ActivityState.ObjectID)
 		{
-			return "'" $ ChainName $ "' " $ default.strChainEffect_Finished;
+			return `XEXPAND.ExpandString(default.strChainEffect_Finished);
 		}
 		else
 		{
-			return "'" $ ChainName $ "' " $ default.strChainEffect_InProgress;
+			return `XEXPAND.ExpandString(default.strChainEffect_InProgress);
 		}
 	}
 	else
 	{
-		return "'" $ ChainName $ "' " $ default.strChainEffect_Halted;
+		return `XEXPAND.ExpandString(default.strChainEffect_Halted);
 	}
 }
 

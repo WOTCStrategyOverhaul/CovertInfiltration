@@ -57,9 +57,9 @@ strReinforcementDelayBannerSubtitle="ADVENT Reinforcements Delayed:"
 strReinforcementDelayBannerValue="1 Turn"
 
 [X2Helper_Infiltration]
-strChainEffect_Finished="Chain Complete"
-strChainEffect_InProgress="Chain Progressed"
-strChainEffect_Halted="Chain Failed"
+strChainEffect_Finished="'<XGParam:StrValue0>' Chain Complete"
+strChainEffect_InProgress="'<XGParam:StrValue0>' Chain Progressed"
+strChainEffect_Halted="'<XGParam:StrValue0>' Chain Failed"
 
 [X2Helper_Infiltration_TemplateMod]
 strSoldiers=Soldiers
