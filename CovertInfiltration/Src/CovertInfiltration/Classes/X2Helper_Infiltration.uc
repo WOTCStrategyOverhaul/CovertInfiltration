@@ -77,6 +77,11 @@ var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS;
 // Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
 var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
+// Messages displayed in mission debrief under "Global Effects" header
+var localized string strChainEffect_Finished;
+var localized string strChainEffect_InProgress;
+var localized string strChainEffect_Halted;
+
 // useful when squad is not in HQ
 static function array<StateObjectReference> GetCovertActionSquad(XComGameState_CovertAction CovertAction)
 {
@@ -850,18 +855,18 @@ static function string GetPostMissionText (XComGameState_Activity ActivityState,
 
 	if (bVictory)
 	{
-		if (ChainState.GetLastActivity().GetMyTemplate() == ActivityState.GetMyTemplate())
+		if (ChainState.GetLastActivity().ObjectID == ActivityState.ObjectID)
 		{
-			return "'" $ ChainName $ "' Chain Completed";
+			return "'" $ ChainName $ "' " $ default.strChainEffect_Finished;
 		}
 		else
 		{
-			return "'" $ ChainName $ "' Chain Progressed";
+			return "'" $ ChainName $ "' " $ default.strChainEffect_InProgress;
 		}
 	}
 	else
 	{
-		return "'" $ ChainName $ "' Chain Failed";
+		return "'" $ ChainName $ "' " $ default.strChainEffect_Halted;
 	}
 }
 
