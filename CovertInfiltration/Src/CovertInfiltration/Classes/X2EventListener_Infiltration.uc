@@ -33,6 +33,9 @@ var config(GameData) int NumDarkEventsFirstMonth;
 var config(GameData) int NumDarkEventsSecondMonth;
 var config(GameData) int NumDarkEventsThirdMonth;
 
+var config(GameBoard) float RiskChancePercentMultiplier;
+var config(GameBoard) float RiskChancePercentPerForceLevel;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -192,6 +195,8 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	local array<StateObjectReference> ActionSquad;
 	local XComGameState_CovertAction Action;
 	local XComLWTuple Tuple;
+	local int ForceLevel;
+	local float MultiplierForceLevel;
 
 	Action = XComGameState_CovertAction(EventSource);
 	Tuple = XComLWTuple(EventData);
@@ -199,9 +204,15 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionRisk_AlterChanceModifier') return ELR_NoInterrupt;
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action)) return ELR_NoInterrupt;
 
+	Tuple.Data[4].i += ((Tuple.Data[1].i * default.RiskChancePercentMultiplier) - Tuple.Data[1].i);
+	
+	ForceLevel = class'UIUtilities_Strategy'.static.GetAlienHQ().GetForceLevel();
+	MultiplierForceLevel = 1 + (default.RiskChancePercentPerForceLevel * ForceLevel);
+	Tuple.Data[4].i += ((Tuple.Data[1].i * MultiplierForceLevel) - Tuple.Data[1].i);
+	
 	ActionSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
 	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadDeterrence(ActionSquad);
-	`log("Risk modifier for" @ Tuple.Data[0].n @ "is" @ Tuple.Data[4].i $ ", base chance is" @ Tuple.Data[1].i,, 'CI');
+	`CI_Log("Risk modifier for" @ Tuple.Data[0].n @ "is" @ Tuple.Data[4].i $ ", base chance is" @ Tuple.Data[1].i);
 
 	return ELR_NoInterrupt;
 }
