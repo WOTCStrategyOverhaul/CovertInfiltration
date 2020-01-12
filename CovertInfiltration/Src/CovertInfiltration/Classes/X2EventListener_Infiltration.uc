@@ -196,7 +196,7 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	local XComGameState_CovertAction Action;
 	local XComLWTuple Tuple;
 	local int ForceLevel;
-	local float MultiplierForceLevel;
+	local float ModifierForceLevel;
 
 	Action = XComGameState_CovertAction(EventSource);
 	Tuple = XComLWTuple(EventData);
@@ -207,11 +207,12 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	Tuple.Data[4].i += ((Tuple.Data[1].i * default.RiskChancePercentMultiplier) - Tuple.Data[1].i);
 	
 	ForceLevel = class'UIUtilities_Strategy'.static.GetAlienHQ().GetForceLevel();
-	MultiplierForceLevel = 1 + (default.RiskChancePercentPerForceLevel * ForceLevel);
-	Tuple.Data[4].i += ((Tuple.Data[1].i * MultiplierForceLevel) - Tuple.Data[1].i);
+	ModifierForceLevel = default.RiskChancePercentPerForceLevel * ForceLevel;
+	Tuple.Data[4].i += ModifierForceLevel;
 	
 	ActionSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
 	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadDeterrence(ActionSquad);
+	
 	`CI_Log("Risk modifier for" @ Tuple.Data[0].n @ "is" @ Tuple.Data[4].i $ ", base chance is" @ Tuple.Data[1].i);
 
 	return ELR_NoInterrupt;
