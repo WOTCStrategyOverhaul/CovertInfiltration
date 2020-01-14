@@ -93,6 +93,8 @@ WarnBeforeExpirationDesc="Warn Before Expiration"
 WarnBeforeExpirationTooltip="Show a warning before an activity is about to expire"
 HoursBeforeWarningDesc="Hours Before Warning"
 HoursBeforeWarningTooltip="The warning will appear this many hours before expiry"
+LowSoldiersWarningDesc="Enable Low Soldiers Warning"
+LowSoldiersWarningTooltip="Play Central's warning when commiting too many soldiers to covert ops"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE
