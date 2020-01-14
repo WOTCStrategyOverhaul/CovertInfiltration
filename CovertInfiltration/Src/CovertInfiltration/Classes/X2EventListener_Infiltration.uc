@@ -204,7 +204,7 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	if (Action == none || Tuple == none || Tuple.Id != 'CovertActionRisk_AlterChanceModifier') return ELR_NoInterrupt;
 	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(Action)) return ELR_NoInterrupt;
 
-	Tuple.Data[4].i += ((Tuple.Data[1].i * default.RiskChancePercentMultiplier) - Tuple.Data[1].i);
+	Tuple.Data[4].i += Tuple.Data[1].i * (default.RiskChancePercentMultiplier - 1);
 	
 	ForceLevel = class'UIUtilities_Strategy'.static.GetAlienHQ().GetForceLevel();
 	ModifierForceLevel = default.RiskChancePercentPerForceLevel * ForceLevel;
