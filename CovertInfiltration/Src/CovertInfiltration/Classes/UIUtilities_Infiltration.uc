@@ -419,9 +419,28 @@ static function string GetAcademyTargetRank (optional XComGameState_Unit UnitSta
 	return class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '');
 }
 
-static function bool ShouldPauseGeoscape ()
+static function bool ShouldPauseGeoscape (int MilestoneReached)
 {
-	return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE));
+	switch (MilestoneReached)
+	{
+		case 125:
+			return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_125_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_125));
+			break;
+		case 150:
+			return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_150_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_150));
+			break;
+		case 175:
+			return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_175_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_175));
+			break;
+		case 200:
+			return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_200_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_200));
+			break;
+		case 225:
+			return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_225_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_225));
+			break;
+		default:
+			return `GAME.GetGeoscape().IsScanning();
+	}
 }
 
 ////////////////////////////////

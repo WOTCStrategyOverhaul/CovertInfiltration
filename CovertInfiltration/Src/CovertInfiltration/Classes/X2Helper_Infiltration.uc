@@ -981,7 +981,6 @@ static function string GetPostMissionText (XComGameState_Activity ActivityState,
 {
 	local XComGameState_ActivityChain ChainState;
 	local XGParamTag ParamTag;
-	local string ChainName;
 
 	ChainState = ActivityState.GetActivityChain();
 	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));

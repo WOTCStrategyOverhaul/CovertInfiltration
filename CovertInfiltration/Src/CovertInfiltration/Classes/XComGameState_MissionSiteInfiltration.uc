@@ -363,6 +363,7 @@ function UpdateGameBoard()
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local XComHQPresentationLayer HQPres;
+	local int TargetMilestone;
 
 	// Do not do anything if we didn't transition to the mission stage yet
 	if (!Available) return;
@@ -371,8 +372,9 @@ function UpdateGameBoard()
 	// Do this before showing the screen to support max infil rewards
 
 	BonusTemplate = GetNextOverInfiltrationBonus();
-
-	if (BonusTemplate != none && GetCurrentInfilInt() >= GetNextThreshold())
+	TargetMilestone = GetNextThreshold();
+	
+	if (BonusTemplate != none && GetCurrentInfilInt() >= TargetMilestone)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Give over infiltartion bonus");
 		NewMissionState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
@@ -388,7 +390,7 @@ function UpdateGameBoard()
 		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
 		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
-		if (class'UIUtilities_Infiltration'.static.ShouldPauseGeoscape())
+		if (class'UIUtilities_Infiltration'.static.ShouldPauseGeoscape(TargetMilestone))
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
 		}
