@@ -19,5 +19,7 @@ var config int HOURS_BEFORE_WARNING_DEFAULT;
 
 var config bool LOW_SOLDIERS_WARNING_DEFAULT;
 
+var config bool PAUSE_ON_MILESTONE_DEFAULT;
+
 // "i" added to prevent case warnings
 var config int iVERSION;

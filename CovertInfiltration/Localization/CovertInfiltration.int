@@ -95,6 +95,8 @@ HoursBeforeWarningDesc="Hours Before Warning"
 HoursBeforeWarningTooltip="The warning will appear this many hours before expiry"
 LowSoldiersWarningDesc="Enable Low Soldiers Warning"
 LowSoldiersWarningTooltip="Play Central's warning when commiting too many soldiers to covert ops"
+PauseOnMilestoneDesc="Pause at infiltration checkpoints"
+PauseOnMilestoneTooltip="If enabled, any geoscape scans will pause when an infiltration reaches a checkpoint"
 
 [UIUtilities_Infiltration]
 strDropUpgrade=REMOVE UPGRADE

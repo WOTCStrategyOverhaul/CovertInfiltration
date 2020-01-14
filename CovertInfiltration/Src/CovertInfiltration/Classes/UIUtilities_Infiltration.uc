@@ -419,6 +419,11 @@ static function string GetAcademyTargetRank (optional XComGameState_Unit UnitSta
 	return class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '');
 }
 
+static function bool ShouldPauseGeoscape ()
+{
+	return (`GAME.GetGeoscape().IsScanning() && `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE));
+}
+
 ////////////////////////////////
 /// Removing weapon upgrades ///
 ////////////////////////////////

@@ -156,7 +156,6 @@ static function X2CovertActionTemplate CreateInfiltrationTemplate(name CovertAct
 	local ActionFlatRiskSitRep FlatRiskSitRep;
 
 	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, CovertActionName);
-	Template.bCanNeverBeRookie = true;
 
 	foreach class'X2Helper_Infiltration'.default.FlatRiskSitReps(FlatRiskSitRep)
 	{
