@@ -486,11 +486,11 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		CurrentCrewSize = class'X2Helper_Infiltration'.static.GetCurrentCrewSize();
 		CurrentCrewLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentCrewLimit;
 
-		if (CurrentCrewSize < CurrentCrewLimit)
+		if (CurrentCrewSize <= CurrentCrewLimit)
 		{
 			MessageColor = eUIState_Cash;
 		}
-		else if (CurrentCrewSize < CurrentCrewLimit + default.MaxOverCrewLimitTillRed)
+		else if (CurrentCrewSize <= CurrentCrewLimit + default.MaxOverCrewLimitTillRed)
 		{
 			MessageColor = eUIState_Warning;
 		}
