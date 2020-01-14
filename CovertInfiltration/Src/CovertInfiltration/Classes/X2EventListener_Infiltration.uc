@@ -36,6 +36,9 @@ var config(GameData) int NumDarkEventsThirdMonth;
 var config(GameBoard) float RiskChancePercentMultiplier;
 var config(GameBoard) float RiskChancePercentPerForceLevel;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -74,6 +77,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate);
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
+	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 100);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -733,7 +737,17 @@ static protected function EventListenerReturn OverrideDarkEventCount(Object Even
 	{
 		Tuple.Data[0].i += 1;
 	}
+
+	return ELR_NoInterrupt;
+}
 	
+static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.LOW_SOLDIERS_WARNING))
+	{
+		return ELR_InterruptListeners;
+	}
+
 	return ELR_NoInterrupt;
 }
 
