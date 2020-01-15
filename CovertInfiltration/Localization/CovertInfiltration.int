@@ -95,6 +95,8 @@ HoursBeforeWarningDesc="Hours Before Warning"
 HoursBeforeWarningTooltip="The warning will appear this many hours before expiry"
 LowSoldiersWarningDesc="Enable Low Soldiers Warning"
 LowSoldiersWarningTooltip="Play Central's warning when commiting too many soldiers to covert ops"
+PauseOnMilestone125Desc="Pause at 100% infil"
+PauseOnMilestone125Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 100%"
 PauseOnMilestone125Desc="Pause at 125% infil"
 PauseOnMilestone125Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 125%"
 PauseOnMilestone150Desc="Pause at 150% infil"
@@ -383,7 +385,7 @@ strCovertActionLoadoutHeader=Covert Actions
 strCovertActionLoadoutBody=Traditional Covert Actions still involve you sending out soldiers into the unknown, but there are a few major changes. First, the time to complete them is now dependent on your soldiers' gear. A lightly equipped squad will complete them more quickly. In addition, you also have to watch out for the squad's deterrence, which affects the trigger chance of risks. A squad that is equipped with heavier or higher-tier items will be more likely to come home safe. Balance out infiltration and deterrence to complete Covert Actions successfully!
 
 strInfiltrationLoadoutHeader=Infiltration Missions
-strInfiltrationLoadoutBody=Infiltration missions have you equipping a full squad in preparation for tactical combat. Once deployed, the squad will infiltrate the mission site for a duration that depends on the number of soldiers and their gear. Adding additional soldiers over the minimum squad size will incur major penalties to the duration. Risks can be reduced through deterrence, just like Covert Actions. To start tactical combat, the squad must prepare for at least the listed infiltration duration.
+strInfiltrationLoadoutBody=Infiltration missions have you equipping a full squad in preparation for tactical combat. Once deployed, the squad will infiltrate the mission site for a duration that depends on the number of soldiers and their gear. Adding additional soldiers over the minimum squad size will incur major penalties to the duration. Risks can NOT be reduced through deterrence, unlike Covert Actions. To start tactical combat, the squad must prepare for at least the listed infiltration duration.
 
 strOverInfiltrationHeader=Overinfiltration
 strOverInfiltrationBody=The infiltrating squad has prepared enough to launch the mission now. However, you are also able to overinfiltrate a mission, editing the mission's SITREPs after each additional 25% of infiltration up to 250%. A variety of tactical bonuses can be gained, and tactical penalties can be negated. Overinfiltration is recommended for difficult missions or inexperienced squads but isn't necessary to complete every mission.

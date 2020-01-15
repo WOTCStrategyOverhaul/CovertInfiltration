@@ -245,7 +245,7 @@ static protected function EventListenerReturn CovertActionCompleted(Object Event
 		HQPres.NotifyBanner(default.strInfiltrationReady, MissionState.GetUIButtonIcon(), MissionState.GetMissionObjectiveText(), default.strCanWaitForBonusOrLaunch, eUIState_Good);
 		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(Activity.GetMyTemplate()).MissionReadySound);
 
-		if (`GAME.GetGeoscape().IsScanning())
+		if (class'UIUtilities_Infiltration'.static.ShouldPauseGeoscape(100))
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
 		}
