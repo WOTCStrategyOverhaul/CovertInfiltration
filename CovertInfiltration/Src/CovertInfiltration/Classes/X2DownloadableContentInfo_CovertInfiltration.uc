@@ -226,6 +226,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPWeapons();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchWeaponTechs();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGoldenPath();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchChosenObjectives();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemoveSabotages();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemovePointsOfInterest();

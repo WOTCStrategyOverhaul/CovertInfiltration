@@ -78,6 +78,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate);
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 100);
+	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -749,6 +750,157 @@ static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(
 	}
 
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMission (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_AdventChosen ChosenState, LocalChosenState;
+	local array<XComGameState_AdventChosen> AllChosen;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_MissionSite MissionState;
+	local bool bForce, bGuaranteed, bSpawn;
+	local float AppearChanceScalar;
+	local name ChosenSpawningTag;
+	local int AppearanceChance;
+	local XComLWTuple Tuple;
+
+	MissionState = XComGameState_MissionSite(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (MissionState == none || Tuple == none || NewGameState == none) return ELR_NoInterrupt;
+	
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	AllChosen = AlienHQ.GetAllChosen(NewGameState);
+
+	// Get the actual pending mission state
+	MissionState = XComGameState_MissionSite(NewGameState.GetGameStateForObjectID(MissionState.ObjectID));
+
+	// If another mod already did something, skip our logic
+	if (Tuple.Data[0].b) return ELR_NoInterrupt;
+
+	// Do not mess with the golden path missions
+	if (MissionState.GetMissionSource().bGoldenPath) return ELR_NoInterrupt;
+
+	// Do not mess with missions that disallow chosen
+	if (class'XComGameState_HeadquartersAlien'.default.ExcludeChosenMissionSources.Find(MissionState.Source) != INDEX_NONE) return ELR_NoInterrupt;
+
+	// Do not mess with the chosen base defense
+	if (MissionState.IsA(class'XComGameState_MissionSiteChosenAssault'.Name)) return ELR_NoInterrupt;
+
+	// Do not mess with the chosen stronghold assault
+	foreach AllChosen(ChosenState)
+	{
+		if (ChosenState.StrongholdMission.ObjectID == MissionState.ObjectID) return ELR_NoInterrupt;
+	}
+
+	// Infiltrations handle chosen internally
+	if (MissionState.IsA(class'XComGameState_MissionSiteInfiltration'.Name))
+	{
+		Tuple.Data[0].b = true;
+		return ELR_NoInterrupt;
+	}
+
+	// Ok, simple assault mission that allows chosen so we replace the logic
+	Tuple.Data[0].b = true;	
+
+	// First, remove tags of dead chosen and find the one that controls our region
+	foreach AllChosen(ChosenState)
+	{
+		if (ChosenState.bDefeated)
+		{
+			ChosenState.PurgeMissionOfTags(MissionState);
+		}
+		else if (ChosenState.ChosenControlsRegion(MissionState.Region))
+		{
+			LocalChosenState = ChosenState;
+		}
+	}
+
+	// Check if we found someone who can appear here
+	if (LocalChosenState == none) return ELR_NoInterrupt;
+	
+	ChosenSpawningTag = LocalChosenState.GetMyTemplate().GetSpawningTag(LocalChosenState.Level);
+
+	// Check if the chosen is already scheduled to spawn
+	if (MissionState.TacticalGameplayTags.Find(ChosenSpawningTag) != INDEX_NONE) return ELR_NoInterrupt;
+
+	// Then see if the chosen is forced to show up (used to spawn chosen on specific missions when the global active flag is disabled)
+	// The current use case for this is the "introduction retaliation" - if we active the chosen when the retal spawns and then launch an infil, the chosen will appear on the infil
+	// This could be expanded in future if we choose to completely override chosen spawning handling
+	if (MissionState.Source == 'MissionSource_Retaliation' && class'XComGameState_HeadquartersXCom'.static.GetObjectiveStatus('CI_CompleteFirstRetal') == eObjectiveState_InProgress)
+	{
+		bForce = true;
+	}
+
+	// If chosen are not forced to showup and they are not active, bail
+	if (!bForce && !AlienHQ.bChosenActive) return ELR_NoInterrupt;
+
+	// Now check for the guranteed spawn
+	if (bForce)
+	{
+		bGuaranteed = true;
+	}
+	else if (LocalChosenState.NumEncounters == 0)
+	{
+		bGuaranteed = true;
+	}
+
+	// If we are checking only for the guranteed spawns and there isn't one, bail
+	if (!bGuaranteed && Tuple.Data[1].b) return ELR_NoInterrupt;
+
+	// See if the chosen should actually spawn or not (either guranteed or by a roll)
+	if (bGuaranteed)
+	{
+		bSpawn = true;
+	}
+	else if (CanChosenAppear(NewGameState))
+	{
+		AppearanceChance = ChosenState.GetChosenAppearChance();
+		
+		AppearChanceScalar = AlienHQ.ChosenAppearChanceScalar;
+		if (AppearChanceScalar <= 0) AppearChanceScalar = 1.0f;
+
+		if(ChosenState.CurrentAppearanceRoll < Round(float(AppearanceChance) * AppearChanceScalar))
+		{
+			bSpawn = true;
+		}
+	}
+
+	// Add the tag to mission if the chosen is to show up
+	if (bSpawn)
+	{
+		MissionState.TacticalGameplayTags.AddItem(ChosenSpawningTag);
+	}
+
+	// We are finally done
+	return ELR_NoInterrupt;
+}
+
+// Copy paste from XComGameState_HeadquartersAlien
+static protected function bool CanChosenAppear (XComGameState NewGameState)
+{
+	local array<XComGameState_AdventChosen> ActiveChosen;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local int MinNumMissions, NumActiveChosen;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	ActiveChosen = AlienHQ.GetAllChosen(NewGameState);
+	NumActiveChosen = ActiveChosen.Length; // Can't inline ActiveChosen cuz unrealscript
+
+	if(NumActiveChosen < 0)
+	{
+		MinNumMissions = class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances[0];
+	}
+	else if(NumActiveChosen >= class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances.Length)
+	{
+		MinNumMissions = class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances[class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances.Length - 1];
+	}
+	else
+	{
+		MinNumMissions = class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances[NumActiveChosen];
+	}
+
+	return AlienHQ.MissionsSinceChosen >= MinNumMissions;
 }
 
 ////////////////

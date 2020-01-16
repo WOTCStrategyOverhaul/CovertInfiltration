@@ -484,7 +484,6 @@ static function PatchRetailationMissionSource()
 
 static protected function SpawnRetaliationMission(XComGameState NewGameState, int MissionMonthIndex)
 {
-	local XComGameState_Objective ObjectiveState; // Added
 	local XComGameState_MissionSite MissionState;
 	local XComGameState_WorldRegion RegionState;
 	local XComGameState_Reward RewardState;
@@ -523,18 +522,10 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), MissionState.Region);
 	}
 
-	// Changed: If first on non-narrative
-	if(!(XComGameState_CampaignSettings(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_CampaignSettings')).bXPackNarrativeEnabled) &&
-	   !CalendarState.HasCreatedMissionOfSource('MissionSource_Retaliation'))
+	// Changed: If first one (this used to check for non-narrative, but narrative is forbidden now)
+	if(!CalendarState.HasCreatedMissionOfSource('MissionSource_Retaliation'))
 	{
-		// Change 1: force chosen even if no ResistanceOps were completed yet
-		ObjectiveState = class'XComGameState_HeadquartersXCom'.static.GetObjective('XP1_M0_ActivateChosen');
-		if (ObjectiveState != none && ObjectiveState.GetStateOfObjective() == eObjectiveState_InProgress)
-		{
-			ObjectiveState.CompleteObjective(NewGameState);
-		}
-
-		// Change 2: force the xpack retal instead of vanilla one
+		// Force the xpack retal instead of vanilla one
 		// xymanek - I want the first retal not to be so penalizing (first chosen is very hard)
 		MissionState.ExcludeMissionFamilies.AddItem("Terror");
 	}
@@ -774,6 +765,24 @@ static protected function RemoveNarrativeTriggerByEvent (X2ObjectiveTemplate Obj
 			ObjectiveTemplate.NarrativeTriggers.Remove(i, 1);
 			i--;
 		}
+	}
+}
+
+static function PatchChosenObjectives ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ObjectiveTemplate ObjectiveTemplate;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	ObjectiveTemplate = X2ObjectiveTemplate(TemplateManager.FindStrategyElementTemplate('XP3_M0_NonLostAndAbandoned'));
+	if (ObjectiveTemplate == none)
+	{
+		`REDSCREEN("CI: Failed to find XP3_M0_NonLostAndAbandoned template");
+	}
+	else
+	{
+		ObjectiveTemplate.NextObjectives.RemoveItem('XP1_M0_ActivateChosen');
 	}
 }
 
