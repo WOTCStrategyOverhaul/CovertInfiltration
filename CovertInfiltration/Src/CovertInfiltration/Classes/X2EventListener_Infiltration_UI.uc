@@ -150,7 +150,7 @@ static protected function EventListenerReturn CovertAction_ModifyNarrativeParamT
 
 	if (
 		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_PrepareCounterDE' &&
-		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_CounterDarkEventInfil'
+		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_RecoverDarkEventInfil'
 	)
 	{
 		return ELR_NoInterrupt;

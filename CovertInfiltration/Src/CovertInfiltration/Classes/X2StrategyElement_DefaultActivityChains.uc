@@ -47,7 +47,8 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.CleanupChain = CleanupDarkEventChain;
 
 	Template.Stages.AddItem('Activity_WaitDE');
-	Template.Stages.AddItem('Activity_PrepareCounterDE');
+	//Template.Stages.AddItem('Activity_PrepareCounterDE');
+	Template.Stages.AddItem('Activity_RecoverDarkEvent');
 	Template.Stages.AddItem('Activity_CounterDarkEvent');
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
@@ -136,8 +137,9 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-
-	Template.Stages.AddItem('Activity_RecoverPersonnel');
+	
+	//Template.Stages.AddItem('Activity_RecoverPersonnel');
+	Template.Stages.AddItem('Activity_PreparePersonnel');
 	Template.Stages.AddItem('Activity_RescueScientist');
 
 	return Template;
@@ -154,7 +156,8 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	Template.Stages.AddItem('Activity_RecoverPersonnel');
+	//Template.Stages.AddItem('Activity_RecoverPersonnel');
+	Template.Stages.AddItem('Activity_PreparePersonnel');
 	Template.Stages.AddItem('Activity_RescueEngineer');
 
 	return Template;
