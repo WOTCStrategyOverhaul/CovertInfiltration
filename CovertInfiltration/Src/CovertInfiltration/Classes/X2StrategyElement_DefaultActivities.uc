@@ -257,7 +257,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
-	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear"
+	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
 	Activity.Difficulty = 2;
 	
 	Activity.OnSuccess = OnSuccessPOI;

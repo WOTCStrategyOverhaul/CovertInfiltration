@@ -240,6 +240,34 @@ static function string GetContainerString(XComGameState_Reward RewardState)
 	return Result;
 }
 
+static function X2DataTemplate CreateDarkEventRewardTemplate()
+{
+	local X2RewardTemplate Template;
+	
+	// This is a dummy reward, does nothing
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_DarkEvent');
+	
+	Template.SetRewardFn = SetDarkEventReward;
+	Template.GetRewardStringFn = GetDarkEventRewardString;
+	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
+
+	return Template;
+}
+
+static function SetDarkEventReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.RewardObjectReference = RewardObjectRef;
+}
+
+static function string GetDarkEventRewardString(XComGameState_Reward RewardState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	
+	return "Counter Dark Event:" @ DarkEventState.GetDisplayName();
+}
+
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
 {
 	local X2RewardTemplate Template;
@@ -276,60 +304,6 @@ static function X2ActivityTemplate_Infiltration GetInfiltrationTemplateFromRewar
 	Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
 
 	return X2ActivityTemplate_Infiltration(Activity.GetMyTemplate());
-}
-
-static function X2DataTemplate CreateDarkEventRewardTemplate()
-{
-	local X2RewardTemplate Template;
-	
-	// This is a dummy reward, does nothing
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_DarkEvent');
-	
-	Template.SetRewardFn = SetDarkEventReward;
-	Template.GenerateRewardFn = GenerateDarkEventReward;
-	Template.GetRewardStringFn = GetDarkEventRewardString;
-	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
-
-	return Template;
-}
-
-static function SetDarkEventReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
-{
-	RewardState.RewardObjectReference = RewardObjectRef;
-}
-
-static function GenerateDarkEventReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
-{
-	local XComGameState_ActivityChain ChainState;
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_DarkEvent DarkEventState;
-	local XComGameStateHistory History;
-
-	History = `XCOMHISTORY;
-
-	foreach NewGameState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
-	{
-		if (MissionState != none) break;
-	}
-	
-//[0480.70] ScriptWarning: Accessed None 'StateObjectID'
-	ChainState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(MissionState.ObjectID).GetActivityChain();
-
-//[0480.70] ScriptWarning: Accessed None 'ChainState'
-	DarkEventState = ChainState.GetChainDarkEvent();
-	
-//[0480.75] ScriptWarning: Accessed None 'DarkEventState'
-	RewardState.SetReward(DarkEventState.GetReference());
-}
-
-static function string GetDarkEventRewardString(XComGameState_Reward RewardState)
-{
-	local XComGameState_DarkEvent DarkEventState;
-
-	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-	
-	//return "Counter Dark Event:" @ DarkEventState.GetDisplayName();
-	return "Counter Dark Event";
 }
 
 /////////////////////
