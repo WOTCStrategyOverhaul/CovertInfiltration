@@ -54,8 +54,6 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	local XComGameState_MissionSite MissionState;
 	local X2MissionSourceTemplate MissionSource;
 	local XComGameState_WorldRegion Region;
-	local XComGameState_Reward RewardState;
-	local StateObjectReference RewardRef;
 
 	AssaultActivityState = XComGameState_Activity_Assault(ActivityState);
 	ActivityTemplate = X2ActivityTemplate_Assault(ActivityState.GetMyTemplate());
@@ -77,21 +75,6 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 		false /* bExpiring */, -1 /* iHours */, -1 /* iSeconds */,
 		/* bUseSpecifiedLevelSeed */, /* LevelSeedOverride */, false /* bSetMissionData */
 	);
-
-	// If the chain has a dark event attached, and this mission has a dark event reward, connect the two
-	if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
-	{
-		`CI_Log("mission found");
-		foreach MissionState.Rewards(RewardRef)
-		{
-			RewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(RewardRef.ObjectID));
-			if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
-			{
-				`CI_Log("reward found");
-				RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
-			}
-		}
-	}
 
 	// Do not expire the mission site, as that causes a bunch of behaviour we don't want
 	// Instead, the expiry is handled by the activiy itself

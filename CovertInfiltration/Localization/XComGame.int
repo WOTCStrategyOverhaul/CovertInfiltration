@@ -307,8 +307,7 @@ DisplayName="Advance Chain"
 RewardDetails="Unlock the next mission in the chain"
 
 [Reward_DarkEvent X2RewardTemplate]
-DisplayName="Counter Dark Event"
-RewardDetails="Counter the Dark Event associated with this chain"
+DisplayName="Counter Dark Event: <XGParam:StrValue0/>"
 
 [OTSStaffSlot X2StaffSlotTemplate]
 BonusEmptyText="Trains Soldiers as Specific Class"

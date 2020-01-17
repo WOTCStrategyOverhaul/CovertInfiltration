@@ -11,6 +11,8 @@ class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Gam
 var config array<int> SmallIntelRewardMin;
 var config array<int> SmallIntelRewardMax;
 
+var localized string strDarkEventReward;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -256,16 +258,31 @@ static function X2DataTemplate CreateDarkEventRewardTemplate()
 
 static function SetDarkEventReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
-	RewardState.RewardObjectReference = RewardObjectRef;
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID));
+	
+	if (DarkEventState == none)
+	{
+		`Redscreen("Invalid DarkEventState passed to SetDarkEventReward!");
+	}
+	else
+	{
+		RewardState.RewardObjectReference = RewardObjectRef;
+	}
 }
 
 static function string GetDarkEventRewardString(XComGameState_Reward RewardState)
 {
 	local XComGameState_DarkEvent DarkEventState;
-
-	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	local XGParamTag ParamTag;
 	
-	return "Counter Dark Event:" @ DarkEventState.GetDisplayName();
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = DarkEventState.GetDisplayName();
+
+	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().DisplayName);
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
