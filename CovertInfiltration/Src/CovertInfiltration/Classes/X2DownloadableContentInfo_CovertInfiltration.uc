@@ -110,6 +110,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
+	class'X2Helper_Infiltration'.static.GrantBonusStartUpStaff(StartState);
 
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
