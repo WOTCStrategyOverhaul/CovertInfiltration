@@ -84,6 +84,11 @@ ActionName="Identify Critical Project Data"
 ActionPreNarrative="We know the aliens are working on their <font color='#E52E11'><XGParam:StrValue4/></font> project, and there must be a vulnerability somewhere. All we need to do is find it."
 ActionPostNarrative="Our operatives managed to get a fix on the location of a vulnerability in the ADVENT network. If we strike now, we may be able to stop the <font color='#E52E11'><XGParam:StrValue4/></font>."
 
+[CovertActionNarrative_RecoverDarkEventInfil X2CovertActionNarrativeTemplate]
+ActionName="Recover Alien Project Data"
+ActionPreNarrative="We know the aliens are working on their <font color='#E52E11'><XGParam:StrValue4/></font> project, and there must be a vulnerability somewhere. If we hit this data vault, we can find it."
+ActionPostNarrative=""
+
 [CovertActionNarrative_CounterDarkEventInfil X2CovertActionNarrativeTemplate]
 ActionName="Eliminate Critical Datalink"
 ActionPreNarrative="We've found a weakspot in the aliens' plans to implement their <font color='#E52E11'><XGParam:StrValue4/></font> project. If we collapse this data relay, we can stop their progress."
@@ -94,14 +99,19 @@ ActionName="Breach ADVENT Arrest Database"
 ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the <font color='#33AB13'>academic community</font> in this region. If we hit this data vault, we can find out where they went."
 ActionPostNarrative=""
 
+[CovertActionNarrative_PreparePersonnel X2CovertActionNarrativeTemplate]
+ActionName="Breach ADVENT Arrest Database"
+ActionPreNarrative="Word from our informants is that ADVENT's put a dent into the <font color='#33AB13'>academic community</font> in this region. We could send a team to sniff around, try and find where ADVENT's keeping them."
+ActionPostNarrative="Our operatives managed to find a high-profile prisoner held in a blind spot of the ADVENT network. We could strike now and potentially free them!"
+
 [CovertActionNarrative_RescueScientistInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Scientist"
-ActionPreNarrative="The breach of the data vault has revealed that one of ADVENT's recent arrests posesses <font color='#33AB13'>high scientific knowledge</font> and is currently underdefended. It would be foolish to refuse this invitation."
+ActionPreNarrative="Our investigation has revealed that one of ADVENT's recent arrests possesses <font color='#33AB13'>high scientific knowledge</font> and is currently underdefended. It seems like a good time to come knocking."
 ActionPostNarrative=""
 
 [CovertActionNarrative_RescueEngineerInfil X2CovertActionNarrativeTemplate]
 ActionName="Rescue Engineer"
-ActionPreNarrative="Our newfound access to the ADVENT database shows that a recent detainee has extensive <font color='#33AB13'>experience in the technical arts</font>. Not to mention they're sitting in a blindspot of ADVENT's security grid. Let's go get 'em."
+ActionPreNarrative="The scouting party has found a recent detainee who has extensive <font color='#33AB13'>experience in the technical arts</font>. Not to mention they're sitting in a blindspot of ADVENT's security grid. Let's go get 'em."
 ActionPostNarrative=""
 
 [CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
@@ -295,6 +305,9 @@ RewardDetails="Recover alien materials and supplies"
 [Reward_Progress X2RewardTemplate]
 DisplayName="Advance Chain"
 RewardDetails="Unlock the next mission in the chain"
+
+[Reward_DarkEvent X2RewardTemplate]
+DisplayName="Counter Dark Event: <XGParam:StrValue0/>"
 
 [OTSStaffSlot X2StaffSlotTemplate]
 BonusEmptyText="Trains Soldiers as Specific Class"

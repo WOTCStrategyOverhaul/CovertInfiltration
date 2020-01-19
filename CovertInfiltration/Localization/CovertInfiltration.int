@@ -237,9 +237,10 @@ strOverviewDescription=Neutralize ADVENT General
 ActionRewardDisplayName=Logistics Report
 ActionRewardDetails=Using this, we can pinpoint the most vulnerable ADVENT <font color='#CBB11F'>supply convoy</font> for a smash and grab
 
-[Activity_CounterDarkEvent X2ActivityTemplate_Infiltration]
-strOverviewDescription=Destroy ADVENT Infrastructure
-ActionRewardDisplayName=<font color='#E52E11'>Counter Dark Event</font>
+[Activity_RecoverDarkEvent X2ActivityTemplate_Infiltration]
+strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
+ActionRewardDisplayName=Infrastructure Data
+ActionRewardDetails=Using this, we will be able to strike against an alien <font color='#E52E11'>Dark Event</font> and neutralize it
 
 [Activity_SupplyRaid X2ActivityTemplate_Infiltration]
 strOverviewDescription=Raid ADVENT Supply Convoy
@@ -274,6 +275,13 @@ MissionPinLabel=Supplies Extraction
 [Activity_LandedUFO X2ActivityTemplate_Assault]
 strOverviewDescription=Secure the UFO
 MissionPinLabel="Landed UFO"
+
+[Activity_CounterDarkEvent X2ActivityTemplate_Assault]
+strOverviewDescription=Destroy ADVENT Infrastructure
+MissionPinLabel=Counter Dark Event
+
+[Activity_PreparePersonnel X2ActivityTemplate_CovertAction]
+strOverviewDescription=Find Missing Academics
 
 [Activity_PrepareCounterDE X2ActivityTemplate_CovertAction]
 strOverviewDescription=Investigate Dark Event
@@ -348,8 +356,8 @@ strTitle="Save Intercepted Intel"
 strDescription="Protect a crucial Resistance courier who has been cornered by ADVENT troops."
 
 [X2StrategyElement_DefaultActivityChains]
-strCounterDarkEventDescription="Resistance heard about ADVENT's <font color='#E52E11'>'<XGParam:StrValue0/>'</font> project. If you think it necessary, Commander, we can send a team to disrupt it."
-strCounterHiddenDarkEventDescription="Resistance heard about a <font color='#E52E11'>top-secret ADVENT project</font>. We don't know the details, but if ADVENT wants it hidden, it can't be anything good."
+strCounterDarkEventDescription="The Resistance heard about ADVENT's <font color='#E52E11'>'<XGParam:StrValue0/>'</font> project. If you think it necessary, Commander, we can send a team to disrupt it."
+strCounterHiddenDarkEventDescription="The Resistance heard about a <font color='#E52E11'>top-secret ADVENT project</font>. We don't know the details, but if ADVENT wants it hidden, it can't be anything good."
 
 [UIViewChainButton]
 strLabel=View Chain

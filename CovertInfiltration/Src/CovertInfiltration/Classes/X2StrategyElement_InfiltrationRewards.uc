@@ -25,6 +25,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateSmallIntelRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
+	Rewards.AddItem(CreateDarkEventRewardTemplate());
 
 	// POI rewards
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT2', 'PrototypeT2'));
@@ -237,6 +238,49 @@ static function string GetContainerString(XComGameState_Reward RewardState)
 		`CI_Log("Something went wrong in reward string!");
 
 	return Result;
+}
+
+static function X2DataTemplate CreateDarkEventRewardTemplate()
+{
+	local X2RewardTemplate Template;
+	
+	// This is a dummy reward, does nothing
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_DarkEvent');
+	
+	Template.SetRewardFn = SetDarkEventReward;
+	Template.GetRewardStringFn = GetDarkEventRewardString;
+	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
+
+	return Template;
+}
+
+static function SetDarkEventReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	local XComGameState_DarkEvent DarkEventState;
+
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardObjectRef.ObjectID));
+	
+	if (DarkEventState == none)
+	{
+		`Redscreen("Invalid DarkEventState passed to SetDarkEventReward!");
+	}
+	else
+	{
+		RewardState.RewardObjectReference = RewardObjectRef;
+	}
+}
+
+static function string GetDarkEventRewardString(XComGameState_Reward RewardState)
+{
+	local XComGameState_DarkEvent DarkEventState;
+	local XGParamTag ParamTag;
+	
+	DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = DarkEventState.GetDisplayName();
+
+	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().DisplayName);
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
