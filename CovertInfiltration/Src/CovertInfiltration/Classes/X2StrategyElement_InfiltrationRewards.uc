@@ -11,8 +11,6 @@ class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Gam
 var config array<int> SmallIntelRewardMin;
 var config array<int> SmallIntelRewardMax;
 
-var localized string strDarkEventReward;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
