@@ -876,6 +876,7 @@ static function bool ShouldPauseGeoscapeAtMilestone (name MilestoneReached)
 			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_225_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_225);
 			break;
 		default:
+			`RedScreen("XCGS_MissionSiteInfiltration::ShouldPauseGeoscapeAtMilestone was passed an invalid milestone name!");
 			return true;
 	}
 }
