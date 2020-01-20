@@ -110,11 +110,11 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_CovertInfiltrationInfo'.static.CreateInfo(StartState);
 	class'XComGameState_ActivityChainSpawner'.static.CreateSpawner(StartState);
 	class'XComGameState_CovertActionExpirationManager'.static.CreateExpirationManager(StartState);
-	class'X2Helper_Infiltration'.static.GrantBonusStartUpStaff(StartState);
-
+	
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	ForceLockAndLoad(StartState);
+	GrantBonusStartUpStaff(StartState);
 }
 
 static event OnLoadedSavedGame()
@@ -195,6 +195,34 @@ static protected function ForceLockAndLoad(XComGameState NewGameState)
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 }
+
+static function GrantBonusStartUpStaff (XComGameState StartState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_Unit EngineerState, ScientistState;
+
+	XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	
+	if (XComHQ == none)
+	{
+		return;
+	}
+
+	EngineerState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Engineer');
+	ScientistState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Scientist');
+
+	// this is the default skill level
+	EngineerState.SetSkillLevel(5);
+	ScientistState.SetSkillLevel(5);
+
+	XComHQ = XComGameState_HeadquartersXCom(StartState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+
+	XComHQ.AddToCrew(StartState, EngineerState);
+	XComHQ.AddToCrew(StartState, ScientistState);
+
+	XComHQ.HandlePowerOrStaffingChange(StartState);
+}
+
 
 /////////////////
 /// Templates ///

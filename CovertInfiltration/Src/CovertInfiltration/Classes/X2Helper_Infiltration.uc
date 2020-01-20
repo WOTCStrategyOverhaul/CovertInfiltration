@@ -1097,38 +1097,6 @@ static function ValidateXpMultiplers ()
 	}
 }
 
-static function GrantBonusStartUpStaff (XComGameState StartState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_Unit EngineerState, ScientistState;
-
-	XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	
-	if (XComHQ == none)
-	{
-		return;
-	}
-
-	EngineerState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Engineer');
-	ScientistState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Scientist');
-
-	EngineerState.SetSkillLevel(5);
-	ScientistState.SetSkillLevel(5);
-
-	StartState.AddStateObject(EngineerState);
-	StartState.AddStateObject(ScientistState);
-
-	XComHQ = XComGameState_HeadquartersXCom(StartState.CreateStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-	StartState.AddStateObject(XComHQ);
-
-	XComHQ.AddToCrew(StartState, EngineerState);
-	XComHQ.AddToCrew(StartState, ScientistState);
-
-	XComHQ.HandlePowerOrStaffingChange(StartState);
-
-	`XCOMGAME.GameRuleset.SubmitGameState(StartState);
-}
-
 ///////////////////////
 /// Multi step lerp ///
 ///////////////////////
