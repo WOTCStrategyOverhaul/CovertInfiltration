@@ -211,10 +211,6 @@ static function GrantBonusStartUpStaff (XComGameState StartState)
 	EngineerState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Engineer');
 	ScientistState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Scientist');
 
-	// this is the default skill level
-	EngineerState.SetSkillLevel(5);
-	ScientistState.SetSkillLevel(5);
-
 	XComHQ = XComGameState_HeadquartersXCom(StartState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
 
 	XComHQ.AddToCrew(StartState, EngineerState);
