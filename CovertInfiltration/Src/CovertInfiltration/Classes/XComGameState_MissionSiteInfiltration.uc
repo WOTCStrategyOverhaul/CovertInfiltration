@@ -29,6 +29,9 @@ var config float ChosenRollInfilInterval;
 
 var localized string strBannerBonusGained;
 
+`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
+`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 /////////////
 /// Setup ///
 /////////////
@@ -371,7 +374,7 @@ function UpdateGameBoard()
 	// Do this before showing the screen to support max infil rewards
 
 	BonusTemplate = GetNextOverInfiltrationBonus();
-
+	
 	if (BonusTemplate != none && GetCurrentInfilInt() >= GetNextThreshold())
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Give over infiltartion bonus");
@@ -388,7 +391,8 @@ function UpdateGameBoard()
 		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
 		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
-		if (`GAME.GetGeoscape().IsScanning())
+		`CI_Log("Checking if should pause at: " $ BonusTemplate.Milestone);
+		if (ShouldPauseGeoscapeAtMilestone(BonusTemplate.Milestone))
 		{
 			`HQPRES.StrategyMap2D.ToggleScan();
 		}
@@ -845,6 +849,36 @@ function XComGameState_Activity GetActivity ()
 function XComGameState_CovertAction GetSpawningAction ()
 {
 	return XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(GetActivity().SecondaryObjectRef.ObjectID));
+}
+
+static function bool ShouldPauseGeoscapeAtMilestone (name MilestoneReached)
+{
+	if (!`GAME.GetGeoscape().IsScanning()) return false;
+	
+	switch (MilestoneReached)
+	{
+		case 'MissionReady':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_100_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_100);
+			break;
+		case 'GenericBuff1':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_125_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_125);
+			break;
+		case 'SitRep1':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_150_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_150);
+			break;
+		case 'RiskRemoval':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_175_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_175);
+			break;
+		case 'SitRep2':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_200_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_200);
+			break;
+		case 'GenericBuff2':
+			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_225_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_225);
+			break;
+		default:
+			`RedScreen("XCGS_MissionSiteInfiltration::ShouldPauseGeoscapeAtMilestone was passed an invalid milestone name!");
+			return true;
+	}
 }
 
 ////////////////////////
