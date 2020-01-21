@@ -473,7 +473,7 @@ function PreventChainDarkEventFromCompleting (XComGameState NewGameState)
 	
 	DarkEventState = GetChainDarkEvent();
 	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
-	DarkEventState.bTemporaryPreventCompletion = true;
+	DarkEventState.bTemporarilyBlockActivation = true;
 }
 
 function RestoreChainDarkEventCompleting (XComGameState NewGameState)
@@ -482,7 +482,7 @@ function RestoreChainDarkEventCompleting (XComGameState NewGameState)
 	
 	DarkEventState = GetChainDarkEvent();
 	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
-	DarkEventState.bTemporaryPreventCompletion = false;
+	DarkEventState.bTemporarilyBlockActivation = false;
 }
 
 ///////////////
