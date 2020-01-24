@@ -53,7 +53,8 @@ static function Update()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Covert Action Expirations");
 	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
 
-	AEMTempList = GetExpirationManager(true);
+	AEMTempList = ActionExpirationManager;
+
 	foreach AEMTempList.ActionExpirationInfoList(ExpirationInfo)
 	{
 		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ExpirationInfo.ActionRef.ObjectID));
