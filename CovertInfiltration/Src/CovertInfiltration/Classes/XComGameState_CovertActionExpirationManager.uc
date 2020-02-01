@@ -34,6 +34,7 @@ static function CreateExpirationManager(optional XComGameState StartState)
 static function Update()
 {
 	local XComGameState_CovertActionExpirationManager ActionExpirationManager;
+	local array<ActionExpirationInfo> LocalActionExpirationInfoList;
 	local array<XComGameState_CovertAction> ExpiringActions;
 	local XComGameState_CovertAction CovertAction;
 	local XComGameState NewGameState;
@@ -53,7 +54,9 @@ static function Update()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating Covert Action Expirations");
 	ActionExpirationManager = XComGameState_CovertActionExpirationManager(NewGameState.ModifyStateObject(class'XComGameState_CovertActionExpirationManager', ActionExpirationManager.ObjectID));
 
-	foreach ActionExpirationManager.ActionExpirationInfoList(ExpirationInfo)
+	// Duplicate array to a local variable so that we can remove from ActionExpirationInfoList as we are iterating
+	LocalActionExpirationInfoList = ActionExpirationManager.ActionExpirationInfoList;
+	foreach LocalActionExpirationInfoList(ExpirationInfo)
 	{
 		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ExpirationInfo.ActionRef.ObjectID));
 		WarnBeforeExpiration = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION);
