@@ -24,6 +24,7 @@ struct SitRepMissionPair
 var config int MIN_WILL_LOSS;
 var config int MAX_WILL_LOSS;
 
+var config(GameData) bool ALLOW_SQUAD_SIZE_SITREPS_ON_INFILS;
 var config(GameData) array<SitRepsArray> SITREPS_EXCLUSIVE_BUCKETS;
 var config(GameData) array<SitRepMissionPair> SITREPS_MISSION_BLACKLIST;
 
@@ -373,6 +374,7 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local X2StrategyElementTemplateManager StratMgr;
 	local SitRepMissionPair SitRepMissionExclusion;
+	local X2SitRepEffect_SquadSize SquadSizeEffect;
 	local XComGameState_MissionSite MissionState;
 	local X2SitRepTemplate TestedSitRepTemplate;
 	local SitRepsArray ExclusivityBucket;
@@ -391,6 +393,25 @@ static protected function EventListenerReturn SitRepCheckAdditionalRequirements 
 
 	MissionState = XComGameState_MissionSite(Tuple.Data[1].o);
 	InfiltrationState = XComGameState_MissionSiteInfiltration(MissionState);
+
+	// Block squad-size-modifying sitreps from infil
+
+	if (InfiltrationState != none && !default.ALLOW_SQUAD_SIZE_SITREPS_ON_INFILS)
+	{
+		CurrentSitReps.Length = 1;
+		CurrentSitReps[0] = TestedSitRepTemplate.DataName;
+
+		foreach class'X2SitreptemplateManager'.static.IterateEffects(class'X2SitRepEffect_SquadSize', SquadSizeEffect, CurrentSitReps)
+		{
+			// If we reached this code then, there is at least one X2SitRepEffect_SquadSize attached to this sitrep
+			// Block and exit early
+			Tuple.Data[0].b = false;
+			return ELR_NoInterrupt;
+		}
+
+		// If we didn't return above, then there are no X2SitRepEffect_SquadSize - keep going
+		CurrentSitReps.Length = 0;
+	}
 
 	// Check mission blacklist
 
