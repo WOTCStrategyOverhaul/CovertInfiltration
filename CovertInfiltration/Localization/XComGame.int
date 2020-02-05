@@ -16,18 +16,6 @@ FriendlyNamePlural="Holographic Disguises"
 BriefSummary="Utilizing advanced holographic technology, this new disguise will provide unmatched stealth capability to our operatives without compromising on survivability or mobility."
 TacticalText="<Bullet/> The Holographic Disguise makes a soldier nearly impossible to detect by enemy forces and shortens infiltration time.\n<Bullet/> This disguise also contains ADVENT transponders, allowing the soldier passage underneath ADVENT security towers.\n<Bullet/> The nanoweave outer shell of the Holographic disguise grants protection superior to the ADVENT disguise, while retaining the mobility of the Civilian Disguise."
 
-[HoloProjector X2EquipmentTemplate]
-FriendlyName="Holoprojector"
-FriendlyNamePlural="Holoprojectors"
-BriefSummary="Derived from the Faceless biology, the Holoprojector generates a holographic sheath for the soldier's weapon, reducing its impact on covertness."
-TacticalText="<Bullet/> The Holoprojector reduces the impact of the soldier's primary weapon on infiltration time." 
-
-[AdaptiveCamo X2EquipmentTemplate]
-FriendlyName="Adaptive Camo"
-FriendlyNamePlural="Adaptive Camo"
-BriefSummary="Based on patterns observed in the Spectre, the Adaptive Camo can be applied to armor to actively reflect enemy security sweeps, reducing the suit's impact on covertness."
-TacticalText="<Bullet/> Adaptive Camo reduces the impact of the soldier's armor on infiltration time." 
-
 [TLE_KevlarArmor X2ArmorTemplate]
 FriendlyName="Scavenged Field Armor"
 FriendlyNamePlural="Scavenged Field Armor"
