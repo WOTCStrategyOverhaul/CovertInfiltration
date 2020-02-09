@@ -80,9 +80,9 @@ strCovertInfiltration=Covert Infiltration
 
 [UIListener_ModConfigMenu]
 PageTitle="Covert Infiltration"
-Group1Title="Various Settings"
-Group2Title="Tips and Explanations"
-Group3Title="Over Infiltration"
+VariousSettingsTitle="Various Settings"
+TipsTitle="Tips and Explanations"
+OverInfiltrationTitle="Over Infiltration"
 DaysToHoursDesc="Hours instead of days"
 DaysToHoursTooltip="Display hours instead of days in the EventQueue"
 DaysBeforeHoursDesc="Days before hours"

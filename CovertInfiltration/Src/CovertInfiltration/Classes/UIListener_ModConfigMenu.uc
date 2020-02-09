@@ -28,23 +28,26 @@ var config bool PAUSE_ON_MILESTONE_225;
 
 // localized strings
 var localized string PageTitle;
-var localized string Group1Title;
-var localized string Group2Title;
-var localized string Group3Title;
+var localized string VariousSettingsTitle;
+var localized string TipsTitle;
+var localized string OverInfiltrationTitle;
+
 var localized string DaysToHoursDesc;
 var localized string DaysToHoursTooltip;
 var localized string DaysBeforeHoursDesc;
 var localized string DaysBeforeHoursTooltip;
-var localized string EnableTutorialDesc;
-var localized string EnableTutorialTooltip;
 var localized string RemoveNicknamedUpgradesDesc;
 var localized string RemoveNicknamedUpgradesTooltip;
+
+var localized string EnableTutorialDesc;
+var localized string EnableTutorialTooltip;
+var localized string LowSoldiersWarningDesc;
+var localized string LowSoldiersWarningTooltip;
 var localized string WarnBeforeExpirationDesc;
 var localized string WarnBeforeExpirationTooltip;
 var localized string HoursBeforeWarningDesc;
 var localized string HoursBeforeWarningTooltip;
-var localized string LowSoldiersWarningDesc;
-var localized string LowSoldiersWarningTooltip;
+
 var localized string PauseOnMilestone100Desc;
 var localized string PauseOnMilestone100Tooltip;
 var localized string PauseOnMilestone125Desc;
@@ -69,7 +72,7 @@ event OnInit(UIScreen Screen)
 simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 {
 	local MCM_API_SettingsPage Page;
-	local MCM_API_SettingsGroup Group1, Group2, Group3;
+	local MCM_API_SettingsGroup VariousSettingsGroup, TipsGroup, OverInfiltrationGroup;
 
 	LoadSavedSettings();
 
@@ -77,27 +80,27 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Page.SetPageTitle(PageTitle);
 	Page.SetSaveHandler(SaveButtonClicked);
 
-	Group1 = Page.AddGroup('Group1', Group1Title);
+	VariousSettingsGroup = Page.AddGroup('VariousSettingsGroup', VariousSettingsTitle);
 
-	Group1.AddCheckBox('DaysToHours', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, DaysToHoursSaveHandler);
-	Group1.AddSlider('DaysBeforeHours', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, DaysBeforeHoursSaveHandler);
-	Group1.AddCheckBox('RemoveNicknamedUpgrades', RemoveNicknamedUpgradesDesc, RemoveNicknamedUpgradesTooltip, REMOVE_NICKNAMED_UPGRADES, RemoveNicknamedUpgradesSaveHandler);
-	Group1.AddCheckBox('WarnBeforeExpiration', WarnBeforeExpirationDesc, WarnBeforeExpirationTooltip, WARN_BEFORE_EXPIRATION, WarnBeforeExpirationSaveHandler);
-	Group1.AddSlider('HoursBeforeWarningTooltip', HoursBeforeWarningDesc, HoursBeforeWarningTooltip, 1, 4, 1, HOURS_BEFORE_WARNING, HoursBeforeWarningSaveHandler);
+	VariousSettingsGroup.AddCheckBox('DaysToHours', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, DaysToHoursSaveHandler);
+	VariousSettingsGroup.AddSlider('DaysBeforeHours', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, DaysBeforeHoursSaveHandler);
+	VariousSettingsGroup.AddCheckBox('RemoveNicknamedUpgrades', RemoveNicknamedUpgradesDesc, RemoveNicknamedUpgradesTooltip, REMOVE_NICKNAMED_UPGRADES, RemoveNicknamedUpgradesSaveHandler);
 	
-	Group2 = Page.AddGroup('Group2', Group2Title);
+	TipsGroup = Page.AddGroup('TipsGroup', TipsTitle);
 	
-	Group2.AddCheckBox('EnableTutorial', EnableTutorialDesc, EnableTutorialTooltip, ENABLE_TUTORIAL, EnableTutorialSaveHandler);
-	Group2.AddCheckBox('LowSoldiersWarning', LowSoldiersWarningDesc, LowSoldiersWarningTooltip, LOW_SOLDIERS_WARNING, LowSoldiersWarningSaveHandler);
+	TipsGroup.AddCheckBox('EnableTutorial', EnableTutorialDesc, EnableTutorialTooltip, ENABLE_TUTORIAL, EnableTutorialSaveHandler);
+	TipsGroup.AddCheckBox('LowSoldiersWarning', LowSoldiersWarningDesc, LowSoldiersWarningTooltip, LOW_SOLDIERS_WARNING, LowSoldiersWarningSaveHandler);
+	TipsGroup.AddCheckBox('WarnBeforeExpiration', WarnBeforeExpirationDesc, WarnBeforeExpirationTooltip, WARN_BEFORE_EXPIRATION, WarnBeforeExpirationSaveHandler);
+	TipsGroup.AddSlider('HoursBeforeWarningTooltip', HoursBeforeWarningDesc, HoursBeforeWarningTooltip, 1, 4, 1, HOURS_BEFORE_WARNING, HoursBeforeWarningSaveHandler);
 	
-	Group3 = Page.AddGroup('Group3', Group3Title);
+	OverInfiltrationGroup = Page.AddGroup('OverInfiltrationGroup', OverInfiltrationTitle);
 
-	Group3.AddCheckBox('PauseOnMilestone100', PauseOnMilestone100Desc, PauseOnMilestone100Tooltip, PAUSE_ON_MILESTONE_100, PauseOnMilestone100SaveHandler);
-	Group3.AddCheckBox('PauseOnMilestone125', PauseOnMilestone125Desc, PauseOnMilestone125Tooltip, PAUSE_ON_MILESTONE_125, PauseOnMilestone125SaveHandler);
-	Group3.AddCheckBox('PauseOnMilestone150', PauseOnMilestone150Desc, PauseOnMilestone150Tooltip, PAUSE_ON_MILESTONE_150, PauseOnMilestone150SaveHandler);
-	Group3.AddCheckBox('PauseOnMilestone175', PauseOnMilestone175Desc, PauseOnMilestone175Tooltip, PAUSE_ON_MILESTONE_175, PauseOnMilestone175SaveHandler);
-	Group3.AddCheckBox('PauseOnMilestone200', PauseOnMilestone200Desc, PauseOnMilestone200Tooltip, PAUSE_ON_MILESTONE_200, PauseOnMilestone200SaveHandler);
-	Group3.AddCheckBox('PauseOnMilestone225', PauseOnMilestone225Desc, PauseOnMilestone225Tooltip, PAUSE_ON_MILESTONE_225, PauseOnMilestone225SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone100', PauseOnMilestone100Desc, PauseOnMilestone100Tooltip, PAUSE_ON_MILESTONE_100, PauseOnMilestone100SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone125', PauseOnMilestone125Desc, PauseOnMilestone125Tooltip, PAUSE_ON_MILESTONE_125, PauseOnMilestone125SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone150', PauseOnMilestone150Desc, PauseOnMilestone150Tooltip, PAUSE_ON_MILESTONE_150, PauseOnMilestone150SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone175', PauseOnMilestone175Desc, PauseOnMilestone175Tooltip, PAUSE_ON_MILESTONE_175, PauseOnMilestone175SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone200', PauseOnMilestone200Desc, PauseOnMilestone200Tooltip, PAUSE_ON_MILESTONE_200, PauseOnMilestone200SaveHandler);
+	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone225', PauseOnMilestone225Desc, PauseOnMilestone225Tooltip, PAUSE_ON_MILESTONE_225, PauseOnMilestone225SaveHandler);
 
 	Page.ShowSettings();
 }
@@ -109,11 +112,11 @@ simulated function LoadSavedSettings()
 	DAYS_TO_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, DAYS_TO_HOURS);
 	DAYS_BEFORE_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, DAYS_BEFORE_HOURS);
 	REMOVE_NICKNAMED_UPGRADES = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, REMOVE_NICKNAMED_UPGRADES);
-	WARN_BEFORE_EXPIRATION = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, WARN_BEFORE_EXPIRATION);
-	HOURS_BEFORE_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, HOURS_BEFORE_WARNING);
 	
 	ENABLE_TUTORIAL = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, ENABLE_TUTORIAL);
 	LOW_SOLDIERS_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, LOW_SOLDIERS_WARNING);
+	WARN_BEFORE_EXPIRATION = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, WARN_BEFORE_EXPIRATION);
+	HOURS_BEFORE_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, HOURS_BEFORE_WARNING);
 	
 	PAUSE_ON_MILESTONE_100 = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_100_DEFAULT, PAUSE_ON_MILESTONE_100);
 	PAUSE_ON_MILESTONE_125 = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_125_DEFAULT, PAUSE_ON_MILESTONE_125);
@@ -126,11 +129,11 @@ simulated function LoadSavedSettings()
 `MCM_API_BasicCheckboxSaveHandler(DaysToHoursSaveHandler, DAYS_TO_HOURS)
 `MCM_API_BasicSliderSaveHandler(DaysBeforeHoursSaveHandler, DAYS_BEFORE_HOURS)
 `MCM_API_BasicCheckboxSaveHandler(RemoveNicknamedUpgradesSaveHandler, REMOVE_NICKNAMED_UPGRADES)
-`MCM_API_BasicCheckboxSaveHandler(WarnBeforeExpirationSaveHandler, WARN_BEFORE_EXPIRATION)
-`MCM_API_BasicSliderSaveHandler(HoursBeforeWarningSaveHandler, HOURS_BEFORE_WARNING)
 
 `MCM_API_BasicCheckboxSaveHandler(EnableTutorialSaveHandler, ENABLE_TUTORIAL)
 `MCM_API_BasicCheckboxSaveHandler(LowSoldiersWarningSaveHandler, LOW_SOLDIERS_WARNING)
+`MCM_API_BasicCheckboxSaveHandler(WarnBeforeExpirationSaveHandler, WARN_BEFORE_EXPIRATION)
+`MCM_API_BasicSliderSaveHandler(HoursBeforeWarningSaveHandler, HOURS_BEFORE_WARNING)
 
 `MCM_API_BasicCheckboxSaveHandler(PauseOnMilestone100SaveHandler, PAUSE_ON_MILESTONE_100)
 `MCM_API_BasicCheckboxSaveHandler(PauseOnMilestone125SaveHandler, PAUSE_ON_MILESTONE_125)
