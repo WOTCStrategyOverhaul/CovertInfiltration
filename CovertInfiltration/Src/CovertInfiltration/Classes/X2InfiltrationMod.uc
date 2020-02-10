@@ -9,20 +9,6 @@ class X2InfiltrationMod extends X2DataSet config(Infiltration);
 
 var const name INFILPREFIX;
 
-struct InfiltrationModifier
-{
-	var name Item;
-	var int HoursAdded;
-	var float RiskReductionPercent;
-	var name MultiplierCategory;
-	var float InfilMultiplier;
-
-	structdefaultproperties
-    {
-        InfilMultiplier=1.0
-    }
-};
-
 var config array<InfiltrationModifier> InfilModifiers;
 
 static function name GetInfilName(name ItemName)

@@ -38,6 +38,9 @@ var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 
+var config(GameData) bool SHOW_INFILTRATION_STATS;
+var config(GameData) bool SHOW_DETERRENCE_STATS;
+
 var localized string strSoldiers;
 var localized string strReady;
 var localized string strTired;
@@ -45,6 +48,9 @@ var localized string strWounded;
 var localized string strInfiltrating;
 var localized string strOnCovertAction;
 var localized string strUnavailable;
+
+var localized string strInfilLabel;
+var localized string strDeterLabel;
 
 /////////////
 /// Items ///
@@ -347,6 +353,35 @@ static function PatchUtilityItems ()
 			{
 				`CI_Trace(ItemTemplate.DataName $ " on difficulty " $ TemplateDifficulty $ " has had its cost overridden");
 				ItemTemplate.Cost = ItemCostOverrideEntry.NewCost;
+			}
+		}
+	}
+}
+
+static function PatchItemStats()
+{
+	local X2ItemTemplateManager			TemplateManager;
+	local X2EquipmentTemplate			Template;
+	local InfiltrationModifier			InfilMod;
+	local name							ItemName;
+	
+	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	foreach class'X2InfiltrationMod'.default.InfilModifiers(InfilMod)
+	{
+		ItemName = InfilMod.Item;
+		Template = X2EquipmentTemplate(TemplateManager.FindItemTemplate(ItemName));
+
+		// TODO: Localize strings
+		if (Template != none)
+		{
+			if (default.SHOW_INFILTRATION_STATS)
+			{
+				Template.SetUIStatMarkup(default.strInfilLabel, , InfilMod.HoursAdded);
+			}
+			if (default.SHOW_DETERRENCE_STATS)
+			{
+				Template.SetUIStatMarkup(default.strDeterLabel, , InfilMod.RiskReductionPercent);
 			}
 		}
 	}
