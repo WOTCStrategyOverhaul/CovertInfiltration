@@ -38,8 +38,8 @@ var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 
-var config(GameData) bool SHOW_INFILTRATION_STATS;
-var config(GameData) bool SHOW_DETERRENCE_STATS;
+var config(UI) bool SHOW_INFILTRATION_STATS;
+var config(UI) bool SHOW_DETERRENCE_STATS;
 
 var localized string strSoldiers;
 var localized string strReady;
@@ -360,10 +360,10 @@ static function PatchUtilityItems ()
 
 static function PatchItemStats()
 {
-	local X2ItemTemplateManager			TemplateManager;
-	local X2EquipmentTemplate			Template;
-	local InfiltrationModifier			InfilMod;
-	local name							ItemName;
+	local X2ItemTemplateManager		TemplateManager;
+	local X2EquipmentTemplate		Template;
+	local InfiltrationModifier		InfilMod;
+	local name						ItemName;
 	
 	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 
@@ -372,7 +372,6 @@ static function PatchItemStats()
 		ItemName = InfilMod.Item;
 		Template = X2EquipmentTemplate(TemplateManager.FindItemTemplate(ItemName));
 
-		// TODO: Localize strings
 		if (Template != none)
 		{
 			if (default.SHOW_INFILTRATION_STATS)
