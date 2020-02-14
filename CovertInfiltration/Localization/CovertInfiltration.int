@@ -70,6 +70,9 @@ strInfiltrating=Infiltrating
 strOnCovertAction=On Covert Actions
 strUnavailable=Unavailable
 
+strInfilLabel=INFILTRATION HOURS
+strDeterLabel=DETERRENCE PERCENT
+
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign Orders
 
