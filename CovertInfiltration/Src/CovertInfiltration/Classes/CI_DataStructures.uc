@@ -7,6 +7,20 @@
 //---------------------------------------------------------------------------------------
 class CI_DataStructures extends Object;
 
+struct InfiltrationModifier
+{
+	var name Item;
+	var int HoursAdded;
+	var float RiskReductionPercent;
+	var name MultiplierCategory;
+	var float InfilMultiplier;
+
+	structdefaultproperties
+    {
+        InfilMultiplier=1.0
+    }
+};
+
 struct ActionExpirationInfo
 {
 	var StateObjectReference ActionRef;
