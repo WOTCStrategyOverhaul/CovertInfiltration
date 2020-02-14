@@ -360,10 +360,10 @@ static function PatchUtilityItems ()
 
 static function PatchItemStats()
 {
-	local X2ItemTemplateManager		TemplateManager;
-	local X2EquipmentTemplate		Template;
-	local InfiltrationModifier		InfilMod;
-	local name						ItemName;
+	local X2ItemTemplateManager TemplateManager;
+	local X2EquipmentTemplate   Template;
+	local InfiltrationModifier  InfilMod;
+	local name                  ItemName;
 	
 	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 
