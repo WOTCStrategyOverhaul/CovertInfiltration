@@ -55,6 +55,20 @@ function SetupComplication (XComGameState NewGameState)
 }
 
 ///////////////
+/// Removal ///
+///////////////
+
+function RemoveComplication (XComGameState NewGameState)
+{
+	`CI_Trace("Removing" @ m_TemplateName);
+
+	GetMyTemplate();
+	if (m_Template.OnComplicationRemoval != none) m_Template.OnComplicationRemoval(NewGameState, self);
+
+	NewGameState.RemoveStateObject(ObjectID);
+}
+
+///////////////
 /// Helpers ///
 ///////////////
 

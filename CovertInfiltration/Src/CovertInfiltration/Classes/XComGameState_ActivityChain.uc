@@ -7,7 +7,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class XComGameState_ActivityChain extends XComGameState_BaseObject;
+class XComGameState_ActivityChain extends XComGameState_BaseObject config(Infiltration);
 
 enum EActivityChainEndReason
 {	
@@ -40,6 +40,12 @@ var StateObjectReference SecondaryRegionRef;
 var protectedwrite int iCurrentStage;
 var protectedwrite bool bEnded;
 var protectedwrite EActivityChainEndReason EndReason;
+
+var protectedwrite TDateTime StartedAt; // Only meaningful if iCurrentStage > -1
+var protectedwrite TDateTime EndedAt; // Only meaningful if bEnded == true
+
+// Cleanup logic
+var config int NumMonthsToRetainAfterEnded;
 
 ////////////////
 /// Template ///
@@ -149,6 +155,12 @@ function HACK_SetCurrentStage (int CurrentStage)
 	iCurrentStage = CurrentStage;
 }
 
+function HACK_SetStartedAt (TDateTime InStartedAt)
+{
+	//StartedAt = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	StartedAt = InStartedAt;
+}
+
 ////////////////
 /// Progress ///
 ////////////////
@@ -166,6 +178,11 @@ function StartNextStage (XComGameState NewGameState)
 	iCurrentStage++;
 
 	`CI_Trace("Starting stage" @ iCurrentStage @ "of" @ m_TemplateName);
+
+	if (iCurrentStage == 0)
+	{
+		StartedAt = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
+	}
 
 	ActivityState = GetCurrentActivity();
 	ActivityState.SetupStage(NewGameState);
@@ -224,6 +241,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	if (bEnded)
 	{
 		`CI_Trace("Chain ended, calling lifecycle callbacks");
+
+		EndedAt = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 
 		// First call callbacks on the stages
 		foreach StageRefs(ActivityRef)
@@ -564,6 +583,75 @@ function string GetOverviewDescription ()
 	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
 
 	return strReturn;
+}
+
+/////////////////////////////
+/// Cleanup of old chains ///
+/////////////////////////////
+
+static function RemoveEndedChains (optional bool bForceAll = false)
+{
+	local XComGameState_ActivityChain ChainState;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
+	{
+		if (!ChainState.bEnded) continue;
+
+		if (bForceAll) ChainState.DoRemove();
+		else ChainState.RemoveIfNeeded();
+	}
+}
+
+protected function RemoveIfNeeded ()
+{
+	if (
+		class'X2StrategyGameRulesetDataStructures'.static.DifferenceInMonths(
+			class'XComGameState_GeoscapeEntity'.static.GetCurrentTime(),
+			EndedAt
+		) > default.NumMonthsToRetainAfterEnded
+	)
+	{
+		DoRemove();
+	}
+}
+
+protected function DoRemove ()
+{
+	local StateObjectReference ActivityRef, ComplicationRef;
+	local XComGameState_Complication ComplicationState;
+	local XComGameState_ActivityChain NewChainState;
+	local XComGameState_Activity ActivityState;
+	local XComGameState NewGameState;
+
+	`CI_Trace("Starting removal of" @ m_TemplateName);
+
+	GetMyTemplate();
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI Removing" @ m_TemplateName);
+	NewChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ObjectID));
+
+	if (m_Template.RemoveChain != none) m_Template.RemoveChain(NewGameState, NewChainState);
+
+	`CI_Trace("Removal of" @ m_TemplateName @ "- processing activities");
+	foreach StageRefs(ActivityRef)
+	{
+		ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityRef.ObjectID));
+		ActivityState.RemoveEntity(NewGameState);
+	}
+
+	`CI_Trace("Removal of" @ m_TemplateName @ "- processing complications");
+	foreach ComplicationRefs(ComplicationRef)
+	{
+		ComplicationState = XComGameState_Complication(NewGameState.ModifyStateObject(class'XComGameState_Complication', ComplicationRef.ObjectID));
+		ComplicationState.RemoveComplication(NewGameState);
+	}
+
+	if (m_Template.RemoveChainLate != none) m_Template.RemoveChainLate(NewGameState, NewChainState);
+
+	NewGameState.RemoveStateObject(ObjectID);
+	`SubmitGameState(NewGameState);
+
+	`CI_Trace("Completed removal of" @ m_TemplateName);
 }
 
 defaultproperties

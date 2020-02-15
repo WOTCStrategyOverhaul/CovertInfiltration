@@ -312,6 +312,11 @@ function bool ShouldBeVisible ()
 
 function RemoveEntity (XComGameState NewGameState)
 {
+	`CI_Trace("Removing" @ m_TemplateName);
+
+	GetMyTemplate();
+	if (m_Template.RemoveStage != none) m_Template.RemoveStage(NewGameState, self);
+
 	NewGameState.RemoveStateObject(ObjectID);
 }
 

@@ -35,6 +35,8 @@ delegate bool CanBeChosen(XComGameState NewGameState, XComGameState_ActivityChai
 delegate OnChainComplete(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 delegate OnChainBlocked(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 
+delegate OnComplicationRemoval(XComGameState NewGameState, XComGameState_Complication ComplicationState);
+
 function bool ValidateTemplate (out string strError)
 {
 	if (MinChance > MaxChance)
