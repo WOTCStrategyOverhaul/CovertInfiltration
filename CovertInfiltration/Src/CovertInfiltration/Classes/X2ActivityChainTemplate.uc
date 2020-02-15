@@ -28,6 +28,9 @@ delegate string GetOverviewDescription (XComGameState_ActivityChain ChainState);
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
 
+delegate RemoveChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
+delegate RemoveChainLate(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
+
 delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);

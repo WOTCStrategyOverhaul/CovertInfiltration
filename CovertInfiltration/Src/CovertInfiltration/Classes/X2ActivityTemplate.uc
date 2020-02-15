@@ -55,6 +55,9 @@ delegate CleanupChain(XComGameState NewGameState, XComGameState_Activity Activit
 // If not set, true is assumed
 delegate bool ShouldProgressChain(XComGameState_Activity ActivityState);
 
+// Called before XComGameState_Activity is deleted
+delegate RemoveStage(XComGameState NewGameState, XComGameState_Activity ActivityState);
+
 ////////////////
 /// Defaults ///
 ////////////////

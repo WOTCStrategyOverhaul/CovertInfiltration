@@ -368,6 +368,8 @@ static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();
 	TriggerMissionExitEvents();
+
+	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
 }
 
 static protected function ResetInfiltrationChosenRoll ()
@@ -809,6 +811,7 @@ exec function SpawnActivityChain (name ChainTemplateName, int StartAtStage = 0)
 
 	ChainState = ChainTemplate.CreateInstanceFromTemplate(NewGameState);
 	ChainState.HACK_SetCurrentStage(StartAtStage - 1);
+	ChainState.HACK_SetStartedAt(class'XComGameState_GeoscapeEntity'.static.GetCurrentTime());
 	ChainState.StartNextStage(NewGameState);
 
 	`SubmitGameState(NewGameState);
@@ -1082,6 +1085,16 @@ exec function SetRiskOccurance (name RiskName, bool bOccurs)
 exec function ForceNextEnviromentalSitrep(name SitRep)
 {
 	ForcedNextEnviromentalSitrep = SitRep;
+}
+
+exec function ForceRemoveEndedChains ()
+{
+	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
+}
+
+exec function ForceRemoveEndedChainsAll ()
+{
+	class'XComGameState_ActivityChain'.static.RemoveEndedChains(true);
 }
 
 ///////////////

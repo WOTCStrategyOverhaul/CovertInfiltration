@@ -1,5 +1,8 @@
 class UIChainsOverview extends UIScreen;
 
+// TODO: Add a note that only last 2 (pull from config) months of chains are shown
+// TODO: Improve when there are no chains
+
 var UIList ChainsList;
 
 var UIPanel ChainPanel;
