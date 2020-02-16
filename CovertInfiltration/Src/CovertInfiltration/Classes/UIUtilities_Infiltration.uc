@@ -135,7 +135,10 @@ static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_Co
 	local X2CovertActionRiskTemplate RiskTemplate;
 	local int RiskChance;
 	local ActionRiskDisplayInfo DisplayInfo, EmptyDisplayInfo;
+	local X2ActionRiskDescriptionTemplateManager RiskDescriptionManager;
+	local X2ActionRiskDescriptionTemplate RiskDescriptionTemplate;
 
+	RiskDescriptionManager = class'X2ActionRiskDescriptionTemplateManager'.static.GetActionRiskDescriptionTemplateManager();
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	Risks = CovertAction.Risks;
@@ -155,6 +158,9 @@ static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_Co
 		DisplayInfo = EmptyDisplayInfo;
 		DisplayInfo.ChanceText = GetRiskDifficultyColouredString(ConvertChanceToRiskLevel(RiskChance));
 		DisplayInfo.RiskName = RiskTemplate.RiskName;
+
+		RiskDescriptionTemplate = RiskDescriptionManager.FindDescriptionTemplate(Risk.RiskTemplateName, false);
+		if (RiskDescriptionTemplate != none) DisplayInfo.Description = RiskDescriptionTemplate.GetDescriptionText(RiskDescriptionTemplate);
 
 		Result.AddItem(DisplayInfo);
 	}
