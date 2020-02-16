@@ -16,15 +16,25 @@ simulated function InitRisk (float InitWidth)
 	Description = Spawn(class'UIScrollingText', self);
 	Description.bAnimateOnInit = false;
 	Description.InitScrollingText('Description');
-	Description.SetWidth(Width);
+	Description.SetPosition(10, 28);
+	Description.SetWidth(Width - Description.X);
 }
 
 simulated function UpdateFromInfo (ActionRiskDisplayInfo DisplayInfo)
 {
-	// TODO: Description
-
 	ChanceAndName.SetText(DisplayInfo.ChanceText  $ " - " $ DisplayInfo.RiskName);
-	Height = ChanceAndName.Height;
+
+	if (DisplayInfo.Description == "")
+	{
+		Description.Hide();
+		Height = ChanceAndName.Height;
+	}
+	else
+	{
+		Description.Show();
+		Description.SetText(DisplayInfo.Description);
+		Height = Description.Y + Description.Height;
+	}
 }
 
 defaultproperties

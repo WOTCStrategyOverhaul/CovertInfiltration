@@ -275,6 +275,15 @@
     <Content Include="Src\CovertInfiltration\Classes\X2AcademyTrainingRankUnlockTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionSet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionTemplateManager.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
       <SubType>Content</SubType>
     </Content>
