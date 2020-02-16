@@ -45,6 +45,9 @@ protected function UpdateActivity ()
 		NewMissionState.RemoveEntity(NewGameState);
 
 		`SubmitGameState(NewGameState);
+
+		// Remove the expired mission from geoscape HUD
+		`HQPRES.StrategyMap2D.UpdateMissions();
 	}
 	else if (WarnBeforeExpiration && bExpiring && !bAlreadyWarnedOfExpiration)
 	{
