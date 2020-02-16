@@ -115,6 +115,9 @@ static event InstallNewCampaign(XComGameState StartState)
 	ForceObjectivesCompleted(StartState);
 	ForceLockAndLoad(StartState);
 	GrantBonusStartUpStaff(StartState);
+
+	// This causes a crash when the loading screen drops
+	PatchDebugStart(StartState);
 }
 
 static event OnLoadedSavedGame()
@@ -219,6 +222,33 @@ static function GrantBonusStartUpStaff (XComGameState StartState)
 	XComHQ.HandlePowerOrStaffingChange(StartState);
 }
 
+static protected function PatchDebugStart (XComGameState StartState)
+{
+	local UIShellStrategy DevStrategyShell;
+
+	// We can't check XComGameState_CampaignSettings as we are called before the values there are set
+	DevStrategyShell = UIShellStrategy(`SCREENSTACK.GetFirstInstanceOf(class'UIShellStrategy'));
+	if (DevStrategyShell == none) return;
+
+	if (DevStrategyShell.m_bCheatStart)
+	{
+		ForceAllFactionsMet(StartState);
+	}
+}
+
+static protected function ForceAllFactionsMet (XComGameState StartState)
+{
+	local XComGameState_ResistanceFaction FactionState;
+	
+	foreach StartState.IterateByClassType(class'XComGameState_ResistanceFaction', FactionState)
+	{
+		if (!FactionState.bMetXCom)
+		{
+			FactionState.MeetXCom(StartState);
+			FactionState.bSeenFactionHQReveal = true;
+		}
+	}
+}
 
 /////////////////
 /// Templates ///
