@@ -75,7 +75,7 @@ var UIPanel ActionRisksContainer;
 var UIImage ActionRisksHeaderBG;
 var UIText ActionRisksHeader;
 var UIPanel ActionRisksTextBG;
-var UIText ActionRisksText;
+var UIList ActionRisksList;
 
 // Data
 var StateObjectReference ActionRef;
@@ -559,11 +559,12 @@ simulated protected function BuildRisks()
 	ActionRisksHeader.SetSize(ActionRisksContainer.Width, 55);
 	ActionRisksHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRisksHeader, bIsIn3D, true));
 
-	ActionRisksText = Spawn(class'UIText', ActionRisksContainer);
-	ActionRisksText.bAnimateOnInit = false;
-	ActionRisksText.InitText('ActionRisksText');
-	ActionRisksText.SetPosition(0, 50);
-	ActionRisksText.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionRisksText.Y);
+	ActionRisksList = Spawn(class'UIList', ActionRisksContainer);
+	ActionRisksList.bAnimateOnInit = false;
+	ActionRisksList.bIsNavigable = false;
+	ActionRisksList.InitList('ActionRisksList');
+	ActionRisksList.SetPosition(0, 50);
+	ActionRisksList.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionRisksList.Y);
 }
 
 //////////////////
@@ -996,20 +997,46 @@ simulated protected function PrepareSlotsInfo()
 simulated protected function UpdateRisks()
 {
 	local XComGameState_CovertAction CurrentAction;
-	local array<string> RiskStrings;
-	local string strRisks;
 	local int idx;
+
+	local array<ActionRiskDisplayInfo> RisksForDisplay;
+	local UICovertActionsGeoscape_Risk RiskElement;
 	
 	CurrentAction = GetAction();
-	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
+	RisksForDisplay = class'UIUtilities_Infiltration'.static.GetRisksForDisplay(CurrentAction);
 
-	for (idx = 0; idx < RiskStrings.Length; idx++)
+	if (RisksForDisplay.Length == 0)
 	{
-		strRisks $= "<p>" $ class'UIUtilities_Text'.static.AddFontInfo(RiskStrings[idx], bIsIn3D) $ "</p>";
+		ActionRisksContainer.Hide();
+		return;
 	}
 
-	ActionRisksText.SetHtmlText(strRisks);
-	ActionRisksContainer.SetVisible(RiskStrings.Length > 0);
+	// Create/update risks for showing
+	for (idx = 0; idx < RisksForDisplay.Length; idx++)
+	{
+		if (idx == ActionRisksList.GetItemCount())
+		{
+			RiskElement = Spawn(class'UICovertActionsGeoscape_Risk', ActionRisksList.ItemContainer);
+			RiskElement.InitRisk(ActionRisksList.Width);
+		}
+		else
+		{
+			RiskElement = UICovertActionsGeoscape_Risk(ActionRisksList.GetItem(idx));
+			RiskElement.Show();
+		}
+		
+		RiskElement.UpdateFromInfo(RisksForDisplay[idx]);
+	}
+
+	// Hide extra rows
+	for (idx = idx; idx < ActionRisksList.GetItemCount(); idx++)
+	{
+		ActionRisksList.GetItem(idx).Hide();
+	}
+
+	ActionRisksList.RealizeItems();
+	ActionRisksList.RealizeList();
+	ActionRisksContainer.Show();
 }
 
 simulated protected function UpdateProgressBar()

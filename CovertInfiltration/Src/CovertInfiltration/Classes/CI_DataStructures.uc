@@ -119,3 +119,10 @@ struct BarracksStatusReport
 	var int OnCovertAction;
 	var int Unavailable;
 };
+
+struct ActionRiskDisplayInfo
+{
+	var string ChanceText;
+	var string RiskName;
+	var string Description;
+};

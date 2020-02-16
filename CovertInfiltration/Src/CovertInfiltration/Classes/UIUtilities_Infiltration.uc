@@ -126,6 +126,42 @@ static function string MakeFirstCharCapOnly(string strValue)
 	return Caps(Left(strValue, 1)) $ Locs(Right(strValue, Len(strValue) - 1));
 }
 
+static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_CovertAction CovertAction)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local array<ActionRiskDisplayInfo> Result;
+	local array<CovertActionRisk> Risks;
+	local CovertActionRisk Risk;
+	local X2CovertActionRiskTemplate RiskTemplate;
+	local int RiskChance;
+	local ActionRiskDisplayInfo DisplayInfo, EmptyDisplayInfo;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Risks = CovertAction.Risks;
+	Risks.Sort(SortRisksByDifficulty);
+
+	foreach Risks(Risk)
+	{
+		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
+
+		if (RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
+		{
+			continue;
+		}
+		
+		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
+
+		DisplayInfo = EmptyDisplayInfo;
+		DisplayInfo.ChanceText = GetRiskDifficultyColouredString(ConvertChanceToRiskLevel(RiskChance));
+		DisplayInfo.RiskName = RiskTemplate.RiskName;
+
+		Result.AddItem(DisplayInfo);
+	}
+
+	return Result;
+}
+
 static function array<string> GetRisksStringsFor(XComGameState_CovertAction CovertAction)
 {
 	local X2StrategyElementTemplateManager StratMgr;
