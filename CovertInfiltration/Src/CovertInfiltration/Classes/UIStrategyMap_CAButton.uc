@@ -20,6 +20,12 @@ var UIPanel BG;
 var UIText Label;
 var UIImage ControllerIcon;
 
+var protected float TimeSinceLastColourSwitch;
+var protected bool bCurrentlyAttention;
+var protected bool bFlashing;
+
+const NEW_ACTION_FLASH_DURATION = 1;
+
 var localized string strLabel;
 
 simulated function InitCAButton()
@@ -73,14 +79,20 @@ simulated protected function RealizeLayout()
 
 simulated protected function UpdateLabel()
 {
-	if (bIsFocused)
-	{
-		Label.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strLabel, Screen.bIsIn3D,,, 26));
-	}
-	else
-	{
-		Label.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strLabel, Screen.bIsIn3D,,, 24));
-	}
+	local EUIState Colour;
+	local int FontSize;
+
+	Colour = bCurrentlyAttention ? eUIState_Bad : eUIState_Normal;
+	FontSize = bIsFocused ? 26 : 24;
+
+	Label.SetCenteredText(
+		class'UIUtilities_Text'.static.GetColoredText(
+			class'UIUtilities_Text'.static.AddFontInfo(
+				strLabel, Screen.bIsIn3D,,, FontSize
+			),
+			Colour
+		)
+	);
 }
 
 simulated protected function OnLabelSizeRealized()
@@ -129,6 +141,63 @@ simulated event Removed()
 	super.Removed();
 
 	UnsubscribeFromAllEvents();
+}
+
+//////////////////////////////////
+/// Flashing about new actions ///
+//////////////////////////////////
+
+event Tick (float DeltaTime)
+{
+	local bool bNewFlashing;
+	local bool bUpdate;
+
+	// Don't update if we aren't visible
+	if (!bIsVisible || !StrategyMap.bIsVisible || !StrategyMap.bIsFocused) return;
+
+	bNewFlashing = AnyNewActions();
+
+	if (bNewFlashing != bFlashing)
+	{
+		if (!bNewFlashing)
+		{
+			if (bCurrentlyAttention) bUpdate = true;
+			
+			bCurrentlyAttention = false;
+			TimeSinceLastColourSwitch = 0;
+		}
+
+		bFlashing = bNewFlashing;
+	}
+
+	if (bFlashing)
+	{
+		TimeSinceLastColourSwitch += DeltaTime;
+
+		if (TimeSinceLastColourSwitch > NEW_ACTION_FLASH_DURATION)
+		{
+			TimeSinceLastColourSwitch = 0;
+			bCurrentlyAttention = !bCurrentlyAttention;
+
+			bUpdate = true;
+		}
+	}
+
+	if (bUpdate) UpdateLabel();
+}
+
+protected function bool AnyNewActions ()
+{
+	local XComGameState_CovertAction ActionState;
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_CovertAction', ActionState)
+	{
+		if (!class'UIUtilities_Infiltration'.static.ShouldShowCovertAction(ActionState)) continue;		
+
+		if (ActionState.bNewAction) return true;
+	}
+
+	return false;
 }
 
 /////////////////////////////
