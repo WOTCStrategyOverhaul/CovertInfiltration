@@ -374,7 +374,7 @@ simulated protected function SubscribeToEvents()
 	EventManager = `XEVENTMGR;
     ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'rjSquadSelect_UpdateData', OnSquadSelectUpdate);
+	EventManager.RegisterForEvent(ThisObj, 'rjSquadSelect_UpdateData', OnSquadSelectUpdate,, 99);
 }
 
 simulated function UnsubscribeFromAllEvents()

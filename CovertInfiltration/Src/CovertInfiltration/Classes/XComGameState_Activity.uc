@@ -63,7 +63,7 @@ event OnCreation (optional X2DataTemplate Template)
 	EventManager = `XEVENTMGR;
 	SelfObj = self;
 	
-	EventManager.RegisterForEvent(SelfObj, 'ActivitySetupComplete', OnSetupCompleteSubmitted, ELD_OnStateSubmitted,, SelfObj, true);
+	EventManager.RegisterForEvent(SelfObj, 'ActivitySetupComplete', OnSetupCompleteSubmitted, ELD_OnStateSubmitted, 99, SelfObj, true);
 }
 
 /////////////////
