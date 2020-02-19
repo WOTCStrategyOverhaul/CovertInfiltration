@@ -28,7 +28,7 @@ static function CreateReinforcementsManager()
 
 	PlayerState = class'XComGameState_Player'.static.GetPlayerState(eTeam_XCom);
 	ThisObj = GetReinforcementsManager();
-	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnPlayerTurnBegun, ELD_OnStateSubmitted, , PlayerState);
+	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnPlayerTurnBegun, ELD_OnStateSubmitted, 99, PlayerState);
 }
 
 function EventListenerReturn OnPlayerTurnBegun(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)

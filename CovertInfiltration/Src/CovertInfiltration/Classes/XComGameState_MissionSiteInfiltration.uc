@@ -755,7 +755,7 @@ protected function RemoveChosenTags ()
 	local XComGameState_AdventChosen ChosenState;
 	local XComGameState_MissionSite MissionState;
 
-	// Because PurgeMissionOfTags's argument is marked as "out" ¯\_(?)_/¯
+	// Because PurgeMissionOfTags's argument is marked as "out" ï¿½\_(?)_/ï¿½
 	MissionState = self;
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_AdventChosen', ChosenState)
@@ -893,7 +893,7 @@ protected function InitRegisterEvents ()
 	EventManager = `XEVENTMGR;
 	ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,,, GetSpawningAction(), true);
+	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,, 99, GetSpawningAction(), true);
 }
 
 protected function EnablePreventTick()

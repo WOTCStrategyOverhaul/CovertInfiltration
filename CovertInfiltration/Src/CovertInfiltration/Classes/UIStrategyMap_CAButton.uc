@@ -143,7 +143,7 @@ simulated protected function SubscribeToEvents()
 	EventManager = `XEVENTMGR;
     ThisObj = self;
 
-	EventManager.RegisterForEvent(ThisObj, 'GeoscapeFlightModeUpdate', OnGeoscapeFlightModeUpdate); // Relies on CHL #358, will be avaliable in v1.17
+	EventManager.RegisterForEvent(ThisObj, 'GeoscapeFlightModeUpdate', OnGeoscapeFlightModeUpdate,, 99);
 }
 
 simulated protected function UnsubscribeFromAllEvents()

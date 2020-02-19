@@ -47,22 +47,22 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Geoscape');
-	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', GeoscapeResistanceButtonVisible, ELD_Immediate);
-	Template.AddCHEvent('CovertAction_CanInteract', CovertAction_CanInteract, ELD_Immediate);
-	Template.AddCHEvent('CovertAction_ShouldBeVisible', CovertAction_ShouldBeVisible, ELD_Immediate);
-	Template.AddCHEvent('CovertAction_ActionSelectedOverride', CovertAction_ActionSelectedOverride, ELD_Immediate);
-	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate);
-	Template.AddCHEvent('OnGeoscapeEntry', OnGeoscapeEntry);
-	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted); // On submitted as we are going to pause geoscape which will cause a gamestate
-	Template.AddCHEvent('OverrideMissionSiteIconImage', OverrideMissionSiteIconImage, ELD_Immediate);
-	Template.AddCHEvent('StrategyMapMissionSiteSelected', StrategyMapMissionSiteSelected, ELD_Immediate);
-	Template.AddCHEvent('OverrideMissionSiteTooltip', OverrideMissionSiteTooltip, ELD_Immediate);
-	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate);
-	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate);
-	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate);
-	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate);
-	Template.AddCHEvent('UIResistanceReport_ShowCouncil', UIResistanceReport_ShowCouncil, ELD_Immediate);
-	Template.AddCHEvent('OverrideNextRetaliationDisplay', OverrideNextRetaliationDisplay, ELD_Immediate);
+	Template.AddCHEvent('Geoscape_ResInfoButtonVisible', GeoscapeResistanceButtonVisible, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertAction_CanInteract', CovertAction_CanInteract, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertAction_ShouldBeVisible', CovertAction_ShouldBeVisible, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertAction_ActionSelectedOverride', CovertAction_ActionSelectedOverride, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertAction_ModifyNarrativeParamTag', CovertAction_ModifyNarrativeParamTag, ELD_Immediate, 99);
+	Template.AddCHEvent('OnGeoscapeEntry', OnGeoscapeEntry, ELD_OnStateSubmitted, 99);
+	Template.AddCHEvent('CovertActionCompleted', CovertActionCompleted, ELD_OnStateSubmitted, 99); // On submitted as we are going to pause geoscape which will cause a gamestate
+	Template.AddCHEvent('OverrideMissionSiteIconImage', OverrideMissionSiteIconImage, ELD_Immediate, 99);
+	Template.AddCHEvent('StrategyMapMissionSiteSelected', StrategyMapMissionSiteSelected, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideMissionSiteTooltip', OverrideMissionSiteTooltip, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate, 99);
+	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate, 99);
+	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate, 99);
+	Template.AddCHEvent('UIResistanceReport_ShowCouncil', UIResistanceReport_ShowCouncil, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideNextRetaliationDisplay', OverrideNextRetaliationDisplay, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -438,8 +438,8 @@ static function CHEventListenerTemplate CreateAvengerHUDListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_AvengerHUD');
-	Template.AddCHEvent('UIAvengerShortcuts_ShowCQResistanceOrders', ShortcutsResistanceButtonVisible, ELD_Immediate);
-	Template.AddCHEvent('UpdateResources', UpdateResources, ELD_Immediate);
+	Template.AddCHEvent('UIAvengerShortcuts_ShowCQResistanceOrders', ShortcutsResistanceButtonVisible, ELD_Immediate, 99);
+	Template.AddCHEvent('UpdateResources', UpdateResources, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -572,8 +572,8 @@ static function CHEventListenerTemplate CreateEventQueueListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_EventQueue');
-	Template.AddCHEvent('GetCovertActionEvents_Settings', GetCovertActionEvents_Settings, ELD_Immediate); // Relies on CHL #391, will be avaliable in v1.18
-	Template.AddCHEvent('OverrideNoCaEventMinMonths', OverrideNoCaEventMinMonths, ELD_Immediate);
+	Template.AddCHEvent('GetCovertActionEvents_Settings', GetCovertActionEvents_Settings, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideNoCaEventMinMonths', OverrideNoCaEventMinMonths, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -616,10 +616,10 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
-	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate);
-	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate);
-	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate);
-	Template.AddCHEvent('SoldierListItem_ShouldDisplayMentalStatus', SoldierListItem_ShouldDisplayMentalStatus, ELD_Immediate);
+	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate, 99);
+	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate, 99);
+	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate, 99);
+	Template.AddCHEvent('SoldierListItem_ShouldDisplayMentalStatus', SoldierListItem_ShouldDisplayMentalStatus, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -816,7 +816,7 @@ static function CHEventListenerTemplate CreateSquadSelectListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_SquadSelect');
-	Template.AddCHEvent('UISquadSelect_NavHelpUpdate', SSNavHelpUpdate, ELD_Immediate);
+	Template.AddCHEvent('UISquadSelect_NavHelpUpdate', SSNavHelpUpdate, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -851,8 +851,8 @@ static function CHEventListenerTemplate CreateStrategyPolicyListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_StrategyPolicy');
-	Template.AddCHEvent('UIStrategyPolicy_ScreenInit', StrategyPolicyInit, ELD_Immediate);
-	Template.AddCHEvent('UIStrategyPolicy_ShowCovertActionsOnClose', StrategyPolicy_ShowCovertActionsOnClose, ELD_Immediate);
+	Template.AddCHEvent('UIStrategyPolicy_ScreenInit', StrategyPolicyInit, ELD_Immediate, 99);
+	Template.AddCHEvent('UIStrategyPolicy_ShowCovertActionsOnClose', StrategyPolicy_ShowCovertActionsOnClose, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -918,7 +918,7 @@ static function CHEventListenerTemplate CreateTacticalHUDListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_TacticalHUD');
-	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate);
+	Template.AddCHEvent('OverrideReinforcementsAlert', IncomingReinforcementsDisplay, ELD_Immediate, 99);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -980,7 +980,7 @@ static function CHEventListenerTemplate CreateAlertListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Alerts');
-	Template.AddCHEvent('OverrideImageForItemAvaliable', OverrideImageForItemAvaliable, ELD_Immediate);
+	Template.AddCHEvent('OverrideImageForItemAvaliable', OverrideImageForItemAvaliable, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;

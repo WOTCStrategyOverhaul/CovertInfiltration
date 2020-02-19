@@ -31,7 +31,7 @@ static function X2SitRepEventListenerTemplate CreateAdventAirPatrolListeners ()
 	local X2SitRepEventListenerTemplate Template;
 
 	Template = CreateForSitRep('AdventAirPatrols');
-	Template.AddEvent('ScamperEnd', AdventAirPatrol_ScamperEnd);
+	Template.AddCHEvent('ScamperEnd', AdventAirPatrol_ScamperEnd, ELD_OnStateSubmitted, 99);
 
 	return Template;
 }
@@ -100,7 +100,7 @@ static function CHEventListenerTemplate CreateCommsJammingListeners()
 	local X2SitrepEventListenerTemplate Template;
 
 	Template = CreateForSitRep('CommsJamming');
-	Template.AddEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay);
+	Template.AddCHEvent('ReinforcementSpawnerCreated', CommsJamming_ReinforcementDelay, ELD_OnStateSubmitted, 99);
 
 	return Template;
 }
@@ -157,7 +157,7 @@ static function CHEventListenerTemplate CreateUpdatedFirewallsListeners ()
 	local X2SitrepEventListenerTemplate Template;
 
 	Template = CreateForSitRep('UpdatedFirewalls');
-	Template.AddCHEvent('AllowInteractHack', UpdatedFirewalls_AllowInteractHack, ELD_Immediate);
+	Template.AddCHEvent('AllowInteractHack', UpdatedFirewalls_AllowInteractHack, ELD_Immediate, 99);
 
 	return Template;
 }
