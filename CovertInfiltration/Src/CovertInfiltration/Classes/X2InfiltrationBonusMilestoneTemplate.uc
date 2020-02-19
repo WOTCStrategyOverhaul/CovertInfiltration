@@ -1,4 +1,4 @@
-class X2InfiltrationBonusMilestoneTemplate extends X2StrategyElementTemplate;
+class X2InfiltrationBonusMilestoneTemplate extends X2DataTemplate;
 
 var int ActivateAtProgress;
 
