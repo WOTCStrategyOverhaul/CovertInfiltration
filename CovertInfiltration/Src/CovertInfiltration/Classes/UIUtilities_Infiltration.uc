@@ -126,15 +126,19 @@ static function string MakeFirstCharCapOnly(string strValue)
 	return Caps(Left(strValue, 1)) $ Locs(Right(strValue, Len(strValue) - 1));
 }
 
-static function array<string> GetRisksStringsFor(XComGameState_CovertAction CovertAction)
+static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_CovertAction CovertAction)
 {
 	local X2StrategyElementTemplateManager StratMgr;
-	local array<string> RiskStrings;
+	local array<ActionRiskDisplayInfo> Result;
 	local array<CovertActionRisk> Risks;
 	local CovertActionRisk Risk;
 	local X2CovertActionRiskTemplate RiskTemplate;
 	local int RiskChance;
+	local ActionRiskDisplayInfo DisplayInfo, EmptyDisplayInfo;
+	local X2ActionRiskDescriptionTemplateManager RiskDescriptionManager;
+	local X2ActionRiskDescriptionTemplate RiskDescriptionTemplate;
 
+	RiskDescriptionManager = class'X2ActionRiskDescriptionTemplateManager'.static.GetActionRiskDescriptionTemplateManager();
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	Risks = CovertAction.Risks;
@@ -143,17 +147,25 @@ static function array<string> GetRisksStringsFor(XComGameState_CovertAction Cove
 	foreach Risks(Risk)
 	{
 		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
-		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
 
 		if (RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
 		{
 			continue;
 		}
+		
+		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
 
-		RiskStrings.AddItem(GetRiskDifficultyColouredString(ConvertChanceToRiskLevel(RiskChance)) $ " - " $ RiskTemplate.RiskName);
+		DisplayInfo = EmptyDisplayInfo;
+		DisplayInfo.ChanceText = GetRiskDifficultyColouredString(ConvertChanceToRiskLevel(RiskChance));
+		DisplayInfo.RiskName = RiskTemplate.RiskName;
+
+		RiskDescriptionTemplate = RiskDescriptionManager.FindDescriptionTemplate(Risk.RiskTemplateName, false);
+		if (RiskDescriptionTemplate != none) DisplayInfo.Description = RiskDescriptionTemplate.GetDescriptionText(RiskDescriptionTemplate);
+
+		Result.AddItem(DisplayInfo);
 	}
 
-	return RiskStrings;
+	return Result;
 }
 
 static function string GetRiskDifficultyColouredString(int RiskLevel)

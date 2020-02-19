@@ -169,17 +169,17 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 {
-	local UISS_InfiltrationItem Item;
-	local array<string> RiskStrings;
+	local array<ActionRiskDisplayInfo> RisksForDisplay;
+	local UISS_Risk Item;
 	local int idx;
 
-	RiskStrings = class'UIUtilities_Infiltration'.static.GetRisksStringsFor(CurrentAction);
-	RisksLabel.SetVisible(RiskStrings.Length > 0);
+	RisksForDisplay = class'UIUtilities_Infiltration'.static.GetRisksForDisplay(CurrentAction);
+	RisksLabel.SetVisible(RisksForDisplay.Length > 0);
 
-	for (idx = 0; idx < RiskStrings.Length; idx++)
+	for (idx = 0; idx < RisksForDisplay.Length; idx++)
 	{
 		Item = GetRiskLabel(idx);
-		Item.SetText(RiskStrings[idx]);
+		Item.UpdateFromInfo(RisksForDisplay[idx]);
 		Item.Show();
 	}
 
@@ -187,6 +187,9 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 	{
 		GetRiskLabel(idx).Hide();
 	}
+
+	RiskEntries.RealizeItems();
+	RiskEntries.RealizeList();
 }
 
 static function string GetDaysAndHoursString(int iHours, optional string locString)
@@ -219,21 +222,17 @@ static function string GetMaxAllowedInfilString (int Value)
 	return `XEXPAND.ExpandString(default.strMaxAllowedInfil);
 }
 
-simulated function UISS_InfiltrationItem GetRiskLabel(int Index)
+simulated function UISS_Risk GetRiskLabel(int Index)
 {
-	local UISS_InfiltrationItem NewEntry;
+	local UISS_Risk NewEntry;
 
 	if (Index < RiskEntries.GetItemCount())
 	{
-		return UISS_InfiltrationItem(RiskEntries.GetItem(Index));
+		return UISS_Risk(RiskEntries.GetItem(Index));
 	}
 
-	NewEntry = Spawn(class'UISS_InfiltrationItem', RiskEntries.ItemContainer);
-	NewEntry.InitObjectiveListItem();
-
-	// For reasons unknown this doesn't happen automatically
-	RiskEntries.RealizeItems(RiskEntries.ItemCount - 1);
-	RiskEntries.RealizeList();
+	NewEntry = Spawn(class'UISS_Risk', RiskEntries.ItemContainer);
+	NewEntry.InitRisk();
 
 	return NewEntry;
 }

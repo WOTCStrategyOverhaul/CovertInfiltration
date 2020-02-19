@@ -119,6 +119,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview_ListSectionHeader.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_Risk.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
       <SubType>Content</SubType>
     </Content>
@@ -138,6 +141,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_SquadSelect.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_Risk.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
@@ -270,6 +276,15 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2AcademyTrainingRankUnlockTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionSet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2ActionRiskDescriptionTemplateManager.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityTemplate_Mission.uc">
