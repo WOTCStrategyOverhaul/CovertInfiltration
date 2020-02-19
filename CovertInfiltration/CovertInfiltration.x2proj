@@ -143,6 +143,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_SquadSelect.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UISS_Risk.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMapItem_CovertAction_CI.uc">
       <SubType>Content</SubType>
     </Content>
