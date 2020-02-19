@@ -168,36 +168,6 @@ static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_Co
 	return Result;
 }
 
-static function array<string> GetRisksStringsFor(XComGameState_CovertAction CovertAction)
-{
-	local X2StrategyElementTemplateManager StratMgr;
-	local array<string> RiskStrings;
-	local array<CovertActionRisk> Risks;
-	local CovertActionRisk Risk;
-	local X2CovertActionRiskTemplate RiskTemplate;
-	local int RiskChance;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	Risks = CovertAction.Risks;
-	Risks.Sort(SortRisksByDifficulty);
-
-	foreach Risks(Risk)
-	{
-		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
-		RiskChance = Risk.ChanceToOccur + Risk.ChanceToOccurModifier;
-
-		if (RiskTemplate == none || CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) != INDEX_NONE)
-		{
-			continue;
-		}
-
-		RiskStrings.AddItem(GetRiskDifficultyColouredString(ConvertChanceToRiskLevel(RiskChance)) $ " - " $ RiskTemplate.RiskName);
-	}
-
-	return RiskStrings;
-}
-
 static function string GetRiskDifficultyColouredString(int RiskLevel)
 {
 	local string Text, TextColor;
