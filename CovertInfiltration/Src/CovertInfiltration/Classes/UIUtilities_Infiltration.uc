@@ -283,6 +283,31 @@ static function CamRingView(float InterpTime)
 	`HQPRES.CAMLookAtRoom(FacilityState.GetRoom(), InterpTime);
 }
 
+static function BuildUIAlert_CovertInfiltration (
+	out DynamicPropertySet PropertySet,
+	Name AlertName,
+	delegate<X2StrategyGameRulesetDataStructures.AlertCallback> CallbackFunction,
+	Name EventToTrigger,
+	string SoundToPlay,
+	bool bImmediateDisplay = true
+)
+{
+	class'X2StrategyGameRulesetDataStructures'.static.BuildDynamicPropertySet(PropertySet, 'UIAlert_CovertInfiltration', AlertName, CallbackFunction, bImmediateDisplay, true, true, false);
+	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicNameProperty(PropertySet, 'EventToTrigger', EventToTrigger);
+	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicStringProperty(PropertySet, 'SoundToPlay', SoundToPlay);
+}
+
+static function ShowCrewOverflowPopup ()
+{
+	local XComHQPresentationLayer HQPres;
+	local DynamicPropertySet PropertySet;
+
+	HQPres = `HQPRES;
+
+	BuildUIAlert_CovertInfiltration(PropertySet, 'eAlert_CrewOverflow', none, '', "Geoscape_DoomIncrease");
+	HQPres.QueueDynamicPopup(PropertySet);
+}
+
 static function InfiltrationActionAvaliable(optional StateObjectReference ActionRef, optional XComGameState NewGameState)
 {
 	local XComHQPresentationLayer HQPres;

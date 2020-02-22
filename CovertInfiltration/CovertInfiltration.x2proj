@@ -104,6 +104,9 @@
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIAlert_CovertInfiltration.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIBetterSitRepDetails.uc">
       <SubType>Content</SubType>
     </Content>
