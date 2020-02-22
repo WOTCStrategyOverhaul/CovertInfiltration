@@ -20,6 +20,9 @@ var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
+// How many missions to wait before showing the warning again
+var config(UI) int CREW_WARNING_GAP;
+
 // Cheats
 
 var name ForcedNextEnviromentalSitrep;
@@ -466,6 +469,7 @@ static protected function TriggerMissionExitEvents ()
 static event OnExitPostMissionSequence ()
 {
 	PostMissionUpgradeItems();
+	TriggerCrewOverLimitWarning();
 }
 
 static function PostMissionUpgradeItems ()
@@ -494,6 +498,80 @@ static function PostMissionUpgradeItems ()
 
 	CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length = 0;
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+static protected function TriggerCrewOverLimitWarning ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+	local int CurrentCrewSize;
+	local bool bShow;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	CurrentCrewSize = class'X2Helper_Infiltration'.static.GetCurrentCrewSize();
+
+	if (CurrentCrewSize <= CIInfo.CurrentCrewLimit)
+	{
+		if (CIInfo.MissionsSinceCrewOverflowShown != 0)
+		{
+			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Clear MissionsSinceCrewOverflowShown");
+			CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+			CIInfo.MissionsSinceCrewOverflowShown = 0;
+			`SubmitGameState(NewGameState);
+		}
+
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Process MissionsSinceCrewOverflowShown");
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+	
+	if (CIInfo.MissionsSinceCrewOverflowShown == 0)
+	{
+		CIInfo.MissionsSinceCrewOverflowShown++;
+		bShow = true;
+	}
+	else if (CIInfo.MissionsSinceCrewOverflowShown > default.CREW_WARNING_GAP)
+	{
+		CIInfo.MissionsSinceCrewOverflowShown = 0;
+		bShow = true;
+	}
+	else
+	{
+		CIInfo.MissionsSinceCrewOverflowShown++;
+	}
+
+	`SubmitGameState(NewGameState);
+
+	if (bShow)
+	{
+		class'UIUtilities_Infiltration'.static.ShowCrewOverflowPopup();
+	}
+}
+
+static function bool DisplayQueuedDynamicPopup (DynamicPropertySet PropertySet)
+{
+	if (PropertySet.PrimaryRoutingKey == 'UIAlert_CovertInfiltration')
+	{
+		CallUIAlert_CovertInfiltration(PropertySet);
+		return true;
+	}
+
+	return false;
+}
+
+static protected function CallUIAlert_CovertInfiltration (const out DynamicPropertySet PropertySet)
+{
+	local UIAlert_CovertInfiltration Alert;
+	local XComPresentationLayerBase Pres;
+
+	Pres = `PRESBASE;
+
+	Alert = Pres.Spawn(class'UIAlert_CovertInfiltration', Pres);
+	Alert.DisplayPropertySet = PropertySet;
+	Alert.eAlertName = PropertySet.SecondaryRoutingKey;
+
+	Pres.ScreenStack.Push(Alert);
 }
 
 /// ////////////// ///
@@ -1126,6 +1204,17 @@ exec function ForceRemoveEndedChains ()
 exec function ForceRemoveEndedChainsAll ()
 {
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains(true);
+}
+
+exec function SetCurrentCrewLimit (int NewCurrentCrewLimit)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: SetCurrentCrewLimit");
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.CurrentCrewLimit = NewCurrentCrewLimit;
+	`SubmitGameState(NewGameState);
 }
 
 ///////////////
