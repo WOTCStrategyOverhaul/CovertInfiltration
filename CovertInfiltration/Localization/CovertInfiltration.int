@@ -444,3 +444,8 @@ m_strStopTrainRookieDialogTitle=STOP GTS TRAINING?
 m_strStopTrainRookieDialogText=Do you want to stop %UNITNAME from training at the GTS?\n\nWARNING: All training progress will be lost.
 m_strNoSoldiersTooltip=There are no soldiers available for Guerrilla Tactics School training. 
 m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (if training is upgraded) a higher ranked soldier to gain promotions.
+
+[UIAlert_CovertInfiltration]
+strCrewOverflowTitle=Crew over capacity
+strCrewOverflowHeader=Living quaters
+strCrewOverflowDescription=Onboard the Avenger, space is precious and currently we are over the number of people that we can support.<br/>You should consider improving living quaters to improve capacity or letting go of non-essential personnel
