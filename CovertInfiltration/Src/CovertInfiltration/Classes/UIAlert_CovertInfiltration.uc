@@ -1,5 +1,9 @@
 class UIAlert_CovertInfiltration extends UIAlert;
 
+var localized string strCrewOverflowTitle;
+var localized string strCrewOverflowHeader;
+var localized string strCrewOverflowDescription;
+
 simulated function BuildAlert ()
 {
 	BindLibraryItem();
@@ -44,10 +48,10 @@ simulated protected function BuildCrewOverflow ()
 {
 	local TAlertHelpInfo Info;
 
-	Info.strTitle = "Crew overflow title";
-	Info.strHeader = "Crew overflow header";
-	Info.strDescription = "Crew overflow description";
-	Info.strImage = m_strLowScientistsImage;
+	Info.strTitle = strCrewOverflowTitle;
+	Info.strHeader = strCrewOverflowHeader;
+	Info.strDescription = strCrewOverflowDescription;
+	Info.strImage = "img:///UILibrary_XPACK_StrategyImages.Alert_Avenger_Attacked";
 	Info.strConfirm = m_strOK;
 
 	BuildHelpAlert(Info);
