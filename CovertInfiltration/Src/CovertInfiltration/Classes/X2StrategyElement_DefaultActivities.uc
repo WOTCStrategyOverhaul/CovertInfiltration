@@ -726,13 +726,39 @@ static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Ac
 }
 
 static function string GetUnitDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
-{;
+{
+	local XComGameStateHistory History;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_Reward MissionRewardState;
 	local XComGameState_Unit UnitState;
 	local XGParamTag kTag;
 	local string UnitString;
 	
-	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-	
+	`CI_Log("GetUnitDetails called!");
+
+	History = `XCOMHISTORY;
+
+	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+	MissionRewardState = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
+
+	if(MissionRewardState != none)
+	{
+		`CI_Log("Name: " $ string(MissionRewardState.GetMyTemplateName()));
+		if(MissionRewardState.RewardObjectReference.ObjectID > 0)
+		{
+			`CI_Log("ID: " $ string(MissionRewardState.RewardObjectReference.ObjectID));
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(MissionRewardState.RewardObjectReference.ObjectID));
+		}
+		else
+		{
+			`CI_Log("REFERENCE NOT FOUND");
+		}
+	}
+	else
+	{
+		`CI_Log("REWARD NOT FOUND");
+	}
+
 	if(UnitState != none)
 	{
 		if(UnitState.IsSoldier())
@@ -748,7 +774,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 		}
 		else
 		{
-			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ RewardState.GetMyTemplate().DisplayName;
+			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ MissionRewardState.GetMyTemplate().DisplayName;
 		}
 	}
 	else
