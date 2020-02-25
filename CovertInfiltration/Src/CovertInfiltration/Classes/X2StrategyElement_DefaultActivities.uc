@@ -734,8 +734,6 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 	local XGParamTag kTag;
 	local string UnitString;
 	
-	`CI_Log("GetUnitDetails called!");
-
 	History = `XCOMHISTORY;
 
 	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
@@ -743,20 +741,18 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 
 	if(MissionRewardState != none)
 	{
-		`CI_Log("Name: " $ string(MissionRewardState.GetMyTemplateName()));
 		if(MissionRewardState.RewardObjectReference.ObjectID > 0)
 		{
-			`CI_Log("ID: " $ string(MissionRewardState.RewardObjectReference.ObjectID));
 			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(MissionRewardState.RewardObjectReference.ObjectID));
 		}
 		else
 		{
-			`CI_Log("REFERENCE NOT FOUND");
+			`Redscreen("GetUnitDetails: mission reward has a null RewardObjectReference!");
 		}
 	}
 	else
 	{
-		`CI_Log("REWARD NOT FOUND");
+		`Redscreen("GetUnitDetails: activity has no mission rewards!");
 	}
 
 	if(UnitState != none)
@@ -779,6 +775,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 	}
 	else
 	{
+		`Redscreen("GetUnitDetails: mission reward does not contain a UnitState!");
 		UnitString = "UNITNOTFOUND";
 	}
 
