@@ -726,13 +726,35 @@ static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Ac
 }
 
 static function string GetUnitDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
-{;
+{
+	local XComGameStateHistory History;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_Reward MissionRewardState;
 	local XComGameState_Unit UnitState;
 	local XGParamTag kTag;
 	local string UnitString;
 	
-	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-	
+	History = `XCOMHISTORY;
+
+	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+	MissionRewardState = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
+
+	if(MissionRewardState != none)
+	{
+		if(MissionRewardState.RewardObjectReference.ObjectID > 0)
+		{
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(MissionRewardState.RewardObjectReference.ObjectID));
+		}
+		else
+		{
+			`Redscreen("GetUnitDetails: mission reward has a null RewardObjectReference!");
+		}
+	}
+	else
+	{
+		`Redscreen("GetUnitDetails: activity has no mission rewards!");
+	}
+
 	if(UnitState != none)
 	{
 		if(UnitState.IsSoldier())
@@ -748,11 +770,12 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 		}
 		else
 		{
-			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ RewardState.GetMyTemplate().DisplayName;
+			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ MissionRewardState.GetMyTemplate().DisplayName;
 		}
 	}
 	else
 	{
+		`Redscreen("GetUnitDetails: mission reward does not contain a UnitState!");
 		UnitString = "UNITNOTFOUND";
 	}
 
