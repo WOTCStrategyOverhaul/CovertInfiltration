@@ -12,6 +12,9 @@ var UIList MilestonesList;
 // Even if currently the infil state is not supposed to change while this screen is up, store it like this just in case
 var StateObjectReference InfiltrationRef;
 
+// TODO: Investigate applying this margin on everything, not only the list  (also header and the separator)
+const MILESTONES_MARGIN = 10;
+
 simulated function InitScreen (XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
 	super.InitScreen(InitController, InitMovie, InitName);
@@ -56,8 +59,8 @@ simulated protected function BuildScreen ()
 	MilestonesList.bAnimateOnInit = false;
 	MilestonesList.ItemPadding = 10;
 	MilestonesList.InitList('MilestonesList');
-	MilestonesList.SetPosition(HeaderMilestonesSeparator.X, HeaderMilestonesSeparator.Y + 10);
-	MilestonesList.SetWidth(HeaderMilestonesSeparator.Width);
+	MilestonesList.SetWidth(HeaderMilestonesSeparator.Width - MILESTONES_MARGIN * 2);
+	MilestonesList.SetPosition(HeaderMilestonesSeparator.X + MILESTONES_MARGIN, HeaderMilestonesSeparator.Y + 10);
 }
 
 simulated protected function PopulateMilestones ()
@@ -72,12 +75,12 @@ simulated protected function PopulateMilestones ()
 	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
 	Milestone.InitMilestone();
 	Milestone.SetProgressInfo(151, 200, 178);
-	Milestone.SetInProgress("Almost there", "All enemies die when you look at them");
+	Milestone.SetInProgress("Almost there", "All enemies die when you look at them sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
 
 	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
 	Milestone.InitMilestone();
 	Milestone.SetProgressInfo(100, 150, 150);
-	Milestone.SetUnlocked("Unlocked milestone", "+30 player damage output");
+	Milestone.SetUnlocked("Unlocked milestone", "+30 player damage output dsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
 }
 
 /////////////

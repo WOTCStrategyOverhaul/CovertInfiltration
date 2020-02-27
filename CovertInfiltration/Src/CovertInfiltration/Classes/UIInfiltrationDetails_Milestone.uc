@@ -9,7 +9,7 @@ var UIScrollingText NameLabel;
 var UIScrollingText DescriptionLabel;
 
 var UIText HiddenLabel;
-// TODO: dags for Hidden 
+var UIDags HiddenDags;
 
 //////////////////////
 /// Initialization /// 
@@ -52,10 +52,20 @@ simulated function InitMilestone ()
 	DescriptionLabel.SetWidth(NameLabel.Width);
 	DescriptionLabel.SetY(NameLabel.Y + NameLabel.Height);
 
+	HiddenDags = Spawn(class'UIDags', self);
+	HiddenDags.bAnimateOnInit = false;
+	HiddenDags.InitPanel('HiddenDags');
+	HiddenDags.SetPosition(DescriptionLabel.X, DescriptionLabel.Y + 7);
+	HiddenDags.SetHeight(15);
+	HiddenDags.SetColor(class'UIUtilities_Colors'.const.HEADER_HTML_COLOR);
+	HiddenDags.SetAlpha(30);
+	HiddenDags.SetDagsScaleX(40);
+
 	HiddenLabel = Spawn(class'UIText', self);
 	HiddenLabel.bAnimateOnInit = false;
 	HiddenLabel.InitText('HiddenLabel');
 	HiddenLabel.OnTextSizeRealized = OnHiddenLabelSizeRealized;
+	HiddenLabel.SetAlpha(50);
 	HiddenLabel.SetText(class'UIUtilities_Text'.static.GetColoredText("HIDDEN", eUIState_Header)); // TODO: Localize
 	HiddenLabel.SetY(DescriptionLabel.Y);
 }
@@ -63,6 +73,7 @@ simulated function InitMilestone ()
 simulated protected function OnHiddenLabelSizeRealized ()
 {
 	HiddenLabel.SetX(DescriptionLabel.X + DescriptionLabel.Width - HiddenLabel.Width);
+	HiddenDags.SetWidth(HiddenLabel.X - DescriptionLabel.X - 7);
 }
 
 /////////////////////
@@ -72,11 +83,11 @@ simulated protected function OnHiddenLabelSizeRealized ()
 simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgress)
 {
 	local int Duration, ProgressPercentPoints;
-
-	ActivateAtLabel.SetText(EndsAt $ "%"); // TODO: Localize
-
+	local bool bActivateAtFaded;
+	
 	if (CurrentProgress < StartsAt)
 	{
+		bActivateAtFaded = true;
 		FillBar.Hide();
 	}
 	else if (CurrentProgress > EndsAt)
@@ -87,12 +98,30 @@ simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgres
 	}
 	else
 	{
+		bActivateAtFaded = true;
+
 		Duration = EndsAt - StartsAt;
 		ProgressPercentPoints = CurrentProgress - StartsAt;
 
 		FillBar.Show();
 		FillBar.SetHeight(BGBar.Height * (float(ProgressPercentPoints) / float(Duration)));
 		FillBar.SetY(BGBar.Y + (BGBar.Height - FillBar.Height));
+	}
+
+	// TODO: The colouring breaks for some reason (all are coloured the same)
+
+	ActivateAtLabel.SetText(EndsAt $ "%"); // TODO: Localize
+	//ActivateAtLabel.SetAlpha(bActivateAtFaded ? 70: 100);
+
+	return;
+
+	if (bActivateAtFaded)
+	{
+		ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", eUIState_Faded)); // TODO: Localize
+	}
+	else
+	{
+		
 	}
 }
 
@@ -107,6 +136,7 @@ simulated function SetUnlocked (string strName, string strDescription)
 	DescriptionLabel.Show();
 
 	HiddenLabel.Hide();
+	HiddenDags.Hide();
 }
 
 simulated function SetInProgress (string strName, string strDescription)
@@ -121,6 +151,7 @@ simulated function SetInProgress (string strName, string strDescription)
 	DescriptionLabel.Show();
 
 	HiddenLabel.Hide();
+	HiddenDags.Hide();
 }
 
 simulated function SetLocked (string strName)
@@ -131,6 +162,7 @@ simulated function SetLocked (string strName)
 
 	DescriptionLabel.Hide();
 	HiddenLabel.Show();
+	HiddenDags.Show();
 }
 
 defaultproperties
