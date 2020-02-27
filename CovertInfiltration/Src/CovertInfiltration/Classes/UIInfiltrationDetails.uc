@@ -18,6 +18,9 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 
 	BuildScreen();
 	PopulateMilestones();
+
+	// TODO: Navbar
+	// TODO: Animate in
 }
 
 simulated protected function BuildScreen ()
@@ -51,7 +54,7 @@ simulated protected function BuildScreen ()
 
 	MilestonesList = Spawn(class'UIList', MainGroupContainer);
 	MilestonesList.bAnimateOnInit = false;
-	MilestonesList.ItemPadding = 5;
+	MilestonesList.ItemPadding = 10;
 	MilestonesList.InitList('MilestonesList');
 	MilestonesList.SetPosition(HeaderMilestonesSeparator.X, HeaderMilestonesSeparator.Y + 10);
 	MilestonesList.SetWidth(HeaderMilestonesSeparator.Width);
@@ -63,9 +66,18 @@ simulated protected function PopulateMilestones ()
 
 	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
 	Milestone.InitMilestone();
+	Milestone.SetProgressInfo(201, 300, 200);
+	Milestone.SetLocked("So far away");
 
 	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
 	Milestone.InitMilestone();
+	Milestone.SetProgressInfo(151, 200, 178);
+	Milestone.SetInProgress("Almost there", "All enemies die when you look at them");
+
+	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
+	Milestone.InitMilestone();
+	Milestone.SetProgressInfo(100, 150, 150);
+	Milestone.SetUnlocked("Unlocked milestone", "+30 player damage output");
 }
 
 /////////////
