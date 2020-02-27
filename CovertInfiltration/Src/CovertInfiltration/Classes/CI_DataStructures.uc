@@ -9,16 +9,25 @@ class CI_DataStructures extends Object;
 
 struct InfiltrationModifier
 {
-	var name Item;
-	var int HoursAdded;
+	var name DataName;
+	var int InfilHoursAdded;
 	var float RiskReductionPercent;
-	var name MultiplierCategory;
-	var float InfilMultiplier;
+	var EInfilModifierType ModifyType;
 
 	structdefaultproperties
     {
-        InfilMultiplier=1.0
+		InfilHoursAdded = 0;
+		RiskReductionPercent = 0;
+        ModifyType = eIMT_Item;
     }
+};
+
+enum EInfilModifierType
+{
+	eIMT_Item,
+	eIMT_Category,
+	eIMT_Ability,
+	eIMT_Character
 };
 
 struct ActionExpirationInfo

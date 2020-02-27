@@ -135,7 +135,7 @@ static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
+		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
 
 		if (Template == none)
 			continue;
@@ -161,7 +161,7 @@ static function float GetUnitInfiltrationMultiplierForCategory(XComGameState_Uni
 	CurrentInventory = Unit.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		Template = InfiltrationManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
+		Template = InfiltrationManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
 
 		if (Template == none)
 			continue;
@@ -213,9 +213,9 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
+		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate()) != none)
 		{
-			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).Deterrence;
+			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate()).Deterrence;
 		}
 	}
 

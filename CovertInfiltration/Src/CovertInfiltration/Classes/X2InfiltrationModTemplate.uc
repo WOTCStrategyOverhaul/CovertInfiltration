@@ -11,23 +11,19 @@ class X2InfiltrationModTemplate extends X2DataTemplate;
 
 var int HoursAdded; // to the covert infiltration time
 var int Deterrence; // how much this item reduces the risk of injury/capture on non-Infil CAs
-var name MultCategory; // other equipped items with a ItemCat matching this have their HoursAdded multiplied by this item's InfilMultiplier
-var float InfilMultiplier;
+var EInfilModifierType ModifyType;
 
 function bool ValidateTemplate(out string strError)
 {
-	if (MultCategory == '' && InfilMultiplier != 1)
+	if (ModifyType != none)
 	{
-		strError = "CI: Error in templates, InfilMultiplier has been set but MultiplierCategory is blank.";
+		return true;
+	}
+	else
+	{
+		strError = "CI: Error in templates, an X2InfiltrationModTemplate does not have a ModifyType which should not be possible!";
 		return false;
 	}
-	else if (MultCategory != '' && InfilMultiplier == 1)
-	{
-		strError = "CI: Error in templates, MultiplierCategory has been set but InfilMultiplier remains default.";
-		return false;
-	}
-
-	return true;
 }
 
 defaultproperties
