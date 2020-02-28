@@ -90,7 +90,7 @@ simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgres
 		bActivateAtFaded = true;
 		FillBar.Hide();
 	}
-	else if (CurrentProgress > EndsAt)
+	else if (CurrentProgress >= EndsAt)
 	{
 		FillBar.Show();
 		FillBar.SetHeight(BGBar.Height);
@@ -108,21 +108,7 @@ simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgres
 		FillBar.SetY(BGBar.Y + (BGBar.Height - FillBar.Height));
 	}
 
-	// TODO: The colouring breaks for some reason (all are coloured the same)
-
-	ActivateAtLabel.SetText(EndsAt $ "%"); // TODO: Localize
-	//ActivateAtLabel.SetAlpha(bActivateAtFaded ? 70: 100);
-
-	return;
-
-	if (bActivateAtFaded)
-	{
-		ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", eUIState_Faded)); // TODO: Localize
-	}
-	else
-	{
-		
-	}
+	ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", bActivateAtFaded ? eUIState_Header : eUIState_Normal)); // TODO: Localize
 }
 
 simulated function SetUnlocked (string strName, string strDescription)

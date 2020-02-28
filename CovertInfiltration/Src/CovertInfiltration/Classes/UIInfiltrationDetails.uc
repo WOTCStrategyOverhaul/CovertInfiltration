@@ -12,7 +12,6 @@ var UIList MilestonesList;
 // Even if currently the infil state is not supposed to change while this screen is up, store it like this just in case
 var StateObjectReference InfiltrationRef;
 
-// TODO: Investigate applying this margin on everything, not only the list  (also header and the separator)
 const MILESTONES_MARGIN = 10;
 
 simulated function InitScreen (XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
