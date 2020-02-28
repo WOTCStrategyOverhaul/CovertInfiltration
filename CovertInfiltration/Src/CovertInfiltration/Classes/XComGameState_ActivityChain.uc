@@ -331,10 +331,17 @@ function SetupComplications (XComGameState NewGameState)
 					}
 				}
 
-				`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ ComplicationRoll $ "%");
+				if (ComplicationRoll > 0)
+				{
+					`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ ComplicationRoll $ "%");
 				
-				ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
-				ComplicationRefs.AddItem(ComplicationState.GetReference());
+					ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
+					ComplicationRefs.AddItem(ComplicationState.GetReference());
+				}
+				else
+				{
+					`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "but roll failed");
+				}
 			}
 		}
 	}
