@@ -118,23 +118,3 @@ simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)
 		}
 	}
 }
-
-event OnRemoved (UIScreen Screen)
-{
-	local UIMission MissionScreen;
-
-	MissionScreen = UIMission(Screen);
-	if (MissionScreen == none) return;
-
-	// DLC2's ruler tracking system assumes that the flow of the game is
-	// mission generated -> player goes on mission -> mission generated -> player goes -> etc.
-	// While there are a few safeguards that prevent complete mess on missions such as strongholds,
-	// these are not enough to gurantee reliable behaviour when there are multiple missions in progress
-	// or there are multiple assault missions (**which can have rulers**) avaliable at the same time.
-	// As such, we simply clear the tracker when existing mission blades
-	// TODO: How does this behave with assualt missions?
-	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
-	{
-		class'X2Helper_Infiltration_DLC2'.static.ClearRulerOnCurrentMission();
-	}
-}

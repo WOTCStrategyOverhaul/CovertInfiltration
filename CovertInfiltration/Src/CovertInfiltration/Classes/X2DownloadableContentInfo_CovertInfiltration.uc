@@ -37,6 +37,7 @@ static event UpdateDLC ()
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 	UpdateRemoveCovertActions();
 	UpdateShowTutorial();
+	TryClearRulerOnCurrentMission();
 }
 
 static function UpdateRemoveCovertActions ()
@@ -101,6 +102,22 @@ static protected function UpdateShowTutorial ()
 		`SubmitGameState(NewGameState);
 
 		class'UIUtilities_InfiltrationTutorial'.static.AlienFacilityBuilt();
+	}
+}
+
+static protected function TryClearRulerOnCurrentMission ()
+{
+	// DLC2's ruler tracking system assumes that the flow of the game is
+	// mission generated -> player goes on mission -> mission generated -> player goes -> etc.
+	// While there are a few safeguards that prevent complete mess on missions such as strongholds,
+	// these are not enough to gurantee reliable behaviour when there are multiple missions in progress
+	// or there are multiple assault missions (**which can have rulers**) avaliable at the same time.
+	// As such, we simply clear the tracker when the player returns to the geoscape (not flying to a mission)
+	// Note that the call is no-op if no RulerOnCurrentMission is set, so it's safe to call every frame
+	// TODO: How does this behave with assualt missions?
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2') && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
+	{
+		class'X2Helper_Infiltration_DLC2'.static.ClearRulerOnCurrentMission();
 	}
 }
 
