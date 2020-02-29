@@ -26,6 +26,9 @@ var config bool PAUSE_ON_MILESTONE_175;
 var config bool PAUSE_ON_MILESTONE_200;
 var config bool PAUSE_ON_MILESTONE_225;
 
+// Development tools
+var config bool ENABLE_TRACE_STARTUP; // False is the default value, so there is no corresponding field in defaults
+
 // localized strings
 var localized string PageTitle;
 var localized string VariousSettingsTitle;
@@ -72,7 +75,7 @@ event OnInit(UIScreen Screen)
 simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 {
 	local MCM_API_SettingsPage Page;
-	local MCM_API_SettingsGroup VariousSettingsGroup, TipsGroup, OverInfiltrationGroup;
+	local MCM_API_SettingsGroup VariousSettingsGroup, TipsGroup, OverInfiltrationGroup, DeveloperToolsGroup;
 
 	LoadSavedSettings();
 
@@ -101,6 +104,10 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone175', PauseOnMilestone175Desc, PauseOnMilestone175Tooltip, PAUSE_ON_MILESTONE_175, PauseOnMilestone175SaveHandler);
 	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone200', PauseOnMilestone200Desc, PauseOnMilestone200Tooltip, PAUSE_ON_MILESTONE_200, PauseOnMilestone200SaveHandler);
 	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone225', PauseOnMilestone225Desc, PauseOnMilestone225Tooltip, PAUSE_ON_MILESTONE_225, PauseOnMilestone225SaveHandler);
+
+	// Not localized on purpose
+	DeveloperToolsGroup = Page.AddGroup('DeveloperToolsGroup', "Developer tools");
+	DeveloperToolsGroup.AddCheckBox('EnableTraceStartup', "Enable trace on startup", "WARNING: Can flood logs with internal info. WILL reveal things that player is not supposed to be aware of", ENABLE_TRACE_STARTUP, EnableTraceStartupSaveHandler);
 
 	Page.ShowSettings();
 }
@@ -141,6 +148,8 @@ simulated function LoadSavedSettings()
 `MCM_API_BasicCheckboxSaveHandler(PauseOnMilestone175SaveHandler, PAUSE_ON_MILESTONE_175)
 `MCM_API_BasicCheckboxSaveHandler(PauseOnMilestone200SaveHandler, PAUSE_ON_MILESTONE_200)
 `MCM_API_BasicCheckboxSaveHandler(PauseOnMilestone225SaveHandler, PAUSE_ON_MILESTONE_225)
+
+`MCM_API_BasicCheckboxSaveHandler(EnableTraceStartupSaveHandler, ENABLE_TRACE_STARTUP)
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
 {

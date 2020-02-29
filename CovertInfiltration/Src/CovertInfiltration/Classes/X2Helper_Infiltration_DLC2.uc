@@ -51,6 +51,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
         // Check that the ruler is not waiting on another mission
         if (RulerManager.AlienRulerLocations.Find('RulerRef', Candidate) == INDEX_NONE)
         {
+			// TODO: XComGameState_AlienRulerManager::UpdateActiveAlienRulers
             // If we have DLC integration enabled, check that the ruler was seen once
             // We cannot rely on AlienRulerLocations here since the ruler might be waiting for a facility to be built
             if (class'X2Helpers_DLC_Day60'.static.IsXPackIntegrationEnabled())
@@ -124,5 +125,7 @@ static function ClearRulerOnCurrentMission ()
 		RulerManager.RulerOnCurrentMission = EmptyRef;
 
 		`GAMERULES.SubmitGameState(NewGameState);
+
+		`CI_Trace("Cleared RulerOnCurrentMission and ruler tags from xcom hq");
 	}
 }

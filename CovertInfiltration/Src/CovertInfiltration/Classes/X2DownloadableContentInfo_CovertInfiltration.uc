@@ -258,6 +258,11 @@ static protected function ForceAllFactionsMet (XComGameState StartState)
 
 static function OnPreCreateTemplates()
 {
+	if (class'UIListener_ModConfigMenu'.default.ENABLE_TRACE_STARTUP)
+	{
+		GetCDO().SuppressTraceLogs = false;
+	}
+
 	class'X2Helper_Infiltration_TemplateMod'.static.ForceDifficultyVariants();
 
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
