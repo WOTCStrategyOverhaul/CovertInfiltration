@@ -104,3 +104,25 @@ static function RemoveRulerFromInfiltration (XComGameState NewGameState, XComGam
         RulerManager.AlienRulerLocations.Remove(i, 1);
     }
 }
+
+static function ClearRulerOnCurrentMission ()
+{
+	local XComGameState_AlienRulerManager RulerManager;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local StateObjectReference EmptyRef;
+	local XComGameState NewGameState;
+
+	RulerManager = XComGameState_AlienRulerManager(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_AlienRulerManager'));
+
+	if (RulerManager != none && RulerManager.RulerOnCurrentMission.ObjectID > 0)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Clear RulerOnCurrentMission");
+		RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+
+		RulerManager.ClearActiveRulerTags(XComHQ);
+		RulerManager.RulerOnCurrentMission = EmptyRef;
+
+		`GAMERULES.SubmitGameState(NewGameState);
+	}
+}
