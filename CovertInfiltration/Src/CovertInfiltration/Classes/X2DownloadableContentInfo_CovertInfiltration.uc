@@ -121,6 +121,13 @@ static protected function TryClearRulerOnCurrentMission ()
 	}
 }
 
+static function bool ShouldUpdateMissionSpawningInfo (StateObjectReference MissionRef)
+{
+	// This is a very ugly hack, but it helps with many issues that arise due to difference in behaviour
+	// between having the shadow chamber and not (WHY FXS?????). Particularly related to DLC2
+	return true;
+}
+
 ///////////////////////
 /// Loaded/new game ///
 ///////////////////////

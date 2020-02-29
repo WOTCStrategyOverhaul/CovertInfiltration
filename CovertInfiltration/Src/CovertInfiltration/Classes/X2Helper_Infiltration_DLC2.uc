@@ -44,29 +44,19 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
     }
 
     History = `XCOMHISTORY;
+
     RulerManager = XComGameState_AlienRulerManager(History.GetSingleGameStateObjectForClass(class'XComGameState_AlienRulerManager'));
+	RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
+	RulerManager.UpdateActiveAlienRulers();
 
     foreach RulerManager.ActiveAlienRulers(Candidate)
     {
         // Check that the ruler is not waiting on another mission
         if (RulerManager.AlienRulerLocations.Find('RulerRef', Candidate) == INDEX_NONE)
         {
-			// TODO: XComGameState_AlienRulerManager::UpdateActiveAlienRulers
-            // If we have DLC integration enabled, check that the ruler was seen once
-            // We cannot rely on AlienRulerLocations here since the ruler might be waiting for a facility to be built
-            if (class'X2Helpers_DLC_Day60'.static.IsXPackIntegrationEnabled())
-            {
-                RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
-                
-                if (class'X2Helpers_DLC_Day60'.static.GetRulerNumAppearances(RulerState) > 0)
-                {
-                    Candidates.AddItem(Candidate);
-                }
-            }
-            else
-            {
-                Candidates.AddItem(Candidate);
-            }
+			// This is safe to do even with integrated DLC even if the ruler is waiting for a facility to be built
+			// since those rulers do not get added to the ActiveAlienRulers array
+            Candidates.AddItem(Candidate);
         }
     }
 
