@@ -5,7 +5,7 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2Helper_Infiltration extends Object config(Infiltration);
+class X2Helper_Infiltration extends Object config(Infiltration) abstract;
 
 struct TrainingTimeModByRank
 {
@@ -1034,9 +1034,13 @@ static function string GetPostMissionText (XComGameState_Activity ActivityState,
 	}
 }
 
-static function bool IsDLCLoaded (name DLCName)
+static function bool IsDLCLoaded (coerce string DLCName)
 {
-	// TODO
+	local array<string> DLCs;
+  
+	DLCs = class'Helpers'.static.GetInstalledDLCNames();
+
+	return DLCs.Find(DLCName) != INDEX_NONE;
 }
 
 ///////////////

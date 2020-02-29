@@ -6,7 +6,9 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2Helper_Infiltration_DLC2 extends Object;
+class X2Helper_Infiltration_DLC2 extends Object config(Infiltration) abstract;
+
+var config int RULER_APPEAR_CHANCE;
 
 static function StateObjectReference GetRulerOnInfiltration (StateObjectReference InfiltrationRef)
 {
@@ -26,7 +28,6 @@ static function bool InfiltrationHasRuler (StateObjectReference InfiltrationRef)
     return GetRulerOnInfiltration(InfiltrationRef).ObjectID != 0;
 }
 
-// TODO: AlienRulerLocations is not checked if class'X2Helpers_DLC_Day60'.static.IsXPackIntegrationEnabled() == false
 static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameState_MissionSiteInfiltration InfiltrationState)
 {
     local XComGameState_AlienRulerManager RulerManager;
@@ -72,7 +73,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
     {
         RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
 
-        if (RulerManager.RulerAppearRoll < RulerManager.GetRulerAppearChance(RulerState)) // TODO: Unprivate in CHL
+        if (RulerManager.RulerAppearRoll < default.RULER_APPEAR_CHANCE)
         {
             RulerLocation.RulerRef = Candidate;
             RulerLocation.MissionRef = InfiltrationState.GetReference();
@@ -83,6 +84,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
             RulerManager.AlienRulerLocations.AddItem(RulerLocation);
 
             // The ruler is ready and waiting bwahahaha
+			`CI_Trace(RulerState.GetMyTemplateName() @ "is waiting on infiltration" @ InfiltrationState.ObjectID @ "-" @ InfiltrationState.GeneratedMission.BattleOpName);
             return;
         }
     }

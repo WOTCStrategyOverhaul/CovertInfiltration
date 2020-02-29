@@ -641,12 +641,18 @@ function int GetChosenAppereanceChance()
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
 
-	if (CurrentChosen == none || !AlienHQ.bChosenActive) {
+	if (CurrentChosen == none || !AlienHQ.bChosenActive)
+	{
+		`CI_Trace("GetChosenAppereanceChance - returning -1 as there is no chosen to spawn or chosen are not activated");
 		return -1;
 	}
 
 	// Chosen cannot spawn if ruler is waiting on this mission
-	if (IsRulerPresent()) return 0;
+	if (IsRulerPresent())
+	{
+		`CI_Trace("GetChosenAppereanceChance - returning 0 as there is a ruler on this mission");
+		return 0;
+	}
 
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
