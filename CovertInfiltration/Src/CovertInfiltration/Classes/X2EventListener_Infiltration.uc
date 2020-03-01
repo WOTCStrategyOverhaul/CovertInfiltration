@@ -702,7 +702,11 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	}
 	else 
 	{
-		`CI_Trace("No interceptable loot for the complication - rescue mission will spawn empty unless there is interceptable rewards!");
+		if (!ComplicationState.RewardStateIntercepted)
+		{
+			`REDSCREEN("No interceptable loot for the complication - rescue mission will spawn empty!");
+		}
+
 		History.CleanupPendingGameState(NewGameState);
 	}
 
@@ -997,7 +1001,6 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 		`CI_Trace(RewardState.GetMyTemplateName() @ "is intercepted");
 		bDirty = true;
 		
-		
 		// Reduce the quantity
 		RewardState = XComGameState_Reward(NewGameState.ModifyStateObject(class'XComGameState_Reward', RewardState.ObjectID));
 		InterceptedQuantity = RewardState.Quantity * class'X2StrategyElement_DefaultComplications'.default.REWARD_INTERCEPTION_TAKENLOOT;
@@ -1012,11 +1015,12 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	// Save the changes, if there was any intercepted items
 	if (bDirty)	
 	{
+		ComplicationState = XComGameState_Complication_RewardInterception(NewGameState.ModifyStateObject(class'XComGameState_Complication_RewardInterception', ComplicationState.ObjectID));
+		ComplicationState.RewardStateIntercepted = true;
 		`SubmitGameState(NewGameState);
 	}
 	else 
 	{
-		`CI_Trace("No interceptable rewards for the complication - rescue mission will spawn empty unless there is interceptable loot!");
 		History.CleanupPendingGameState(NewGameState);
 	}
 

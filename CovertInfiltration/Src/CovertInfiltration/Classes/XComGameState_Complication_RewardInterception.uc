@@ -1,6 +1,7 @@
 class XComGameState_Complication_RewardInterception extends XComGameState_Complication;
 
 var StateObjectReference ResourceContainerRef;
+var bool RewardStateIntercepted;
 
 function SetupComplication (XComGameState NewGameState)
 {
