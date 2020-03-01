@@ -203,7 +203,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 	local X2ComplicationTemplate ComplicationTemplate;
 	local XComGameState_Complication ComplicationState;
 	local XComGameStateHistory History;
-	local int ComplicationRoll, i;
+	local int i;
 
 	History = `XCOMHISTORY;
 
@@ -266,11 +266,8 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			for (i = 0; i < ComplicationRefs.Length; i++)
 			{
 				ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRefs[i].ObjectID));
-				ComplicationRoll = `SYNC_RAND_STATIC(100);
-				
-				`CI_Log("Complication Roll: " $ ComplicationRoll $ " to " $ ComplicationState.TriggerChance);
 
-				if (ComplicationRoll < ComplicationState.TriggerChance)
+				if (ComplicationState.ComplicationTriggered)
 				{
 					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
@@ -292,7 +289,8 @@ function SetupComplications (XComGameState NewGameState)
 	local XComGameState_Complication ComplicationState;
 	local X2ComplicationTemplate ComplicationTemplate;
 	local X2DataTemplate DataTemplate;
-	local int ComplicationRoll;
+	local int AttachmentRoll, ActivationRoll;
+	local bool bActivated;
 
 	if (m_Template.bAllowComplications)
 	{
@@ -306,36 +304,42 @@ function SetupComplications (XComGameState NewGameState)
 
 			if (CanComplicationBeSelected(NewGameState, ComplicationTemplate))
 			{
-				ComplicationRoll = `SYNC_RAND_STATIC(100) + 1;
+				AttachmentRoll = `SYNC_RAND_STATIC(100) + 1;
 
-				if (ComplicationRoll < ComplicationTemplate.MinChance)
+				if (AttachmentRoll < ComplicationTemplate.MinChance)
 				{
 					if (ComplicationTemplate.AlwaysSelect)
 					{
-						ComplicationRoll = ComplicationTemplate.MinChance;
+						AttachmentRoll = ComplicationTemplate.MinChance;
 					}
 					else
 					{
-						ComplicationRoll = 0;
+						AttachmentRoll = 0;
 					}
 				}
-				else if (ComplicationRoll > ComplicationTemplate.MaxChance)
+				else if (AttachmentRoll > ComplicationTemplate.MaxChance)
 				{
 					if (ComplicationTemplate.AlwaysSelect)
 					{
-						ComplicationRoll = ComplicationTemplate.MaxChance;
+						AttachmentRoll = ComplicationTemplate.MaxChance;
 					}
 					else
 					{
-						ComplicationRoll = 0;
+						AttachmentRoll = 0;
 					}
 				}
 
-				if (ComplicationRoll > 0)
+				if (AttachmentRoll > 0)
 				{
-					`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ ComplicationRoll $ "%");
+					`CI_Log("Adding Complication" @ ComplicationTemplate.DataName @ "at" @ AttachmentRoll $ "%");
+
+					ActivationRoll = `SYNC_RAND_STATIC(100);
 				
-					ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, ComplicationRoll);
+					`CI_Log("Complication Activation Roll: " $ ActivationRoll $ " < " $ AttachmentRoll);
+
+					bActivated = ActivationRoll < AttachmentRoll;
+
+					ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, self, AttachmentRoll, bActivated);
 					ComplicationRefs.AddItem(ComplicationState.GetReference());
 				}
 				else

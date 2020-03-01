@@ -48,7 +48,7 @@ function bool ValidateTemplate (out string strError)
 	return true;
 }
 
-function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, XComGameState_ActivityChain ChainState, optional int TriggerChance = 0)
+function XComGameState_Complication CreateInstanceFromTemplate (XComGameState NewGameState, XComGameState_ActivityChain ChainState, optional int TriggerChance = 0, optional bool bActivated = false)
 {
 	local XComGameState_Complication ComplicationState;
 
@@ -57,6 +57,8 @@ function XComGameState_Complication CreateInstanceFromTemplate (XComGameState Ne
 	{
 		ComplicationState.TriggerChance = TriggerChance;
 	}
+
+	ComplicationState.ComplicationTriggered = bActivated;
 	
 	if (ChainState != none)
 	{

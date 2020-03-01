@@ -661,6 +661,8 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	
 	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
 	if (ComplicationState == none) return ELR_NoInterrupt;
+	
+	if (!ComplicationState.ComplicationTriggered) return ELR_NoInterrupt;
 
 	// All checks have passed, we are good to do our magic
 	`CI_Log("Processing Reward Interception");
@@ -977,6 +979,8 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	
 	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
 	if (ComplicationState == none) return ELR_NoInterrupt;
+
+	if (!ComplicationState.ComplicationTriggered) return ELR_NoInterrupt;
 
 	// All checks have passed, we are good to do our magic
 	`CI_Log("Processing Reward Interception");
