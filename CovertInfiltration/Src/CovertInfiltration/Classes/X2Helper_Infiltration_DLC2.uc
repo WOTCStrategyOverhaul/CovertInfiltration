@@ -76,6 +76,10 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 
             // The ruler is ready and waiting bwahahaha
 			`CI_Trace(RulerState.GetMyTemplateName() @ "is waiting on infiltration" @ InfiltrationState.ObjectID @ "-" @ InfiltrationState.GeneratedMission.BattleOpName);
+
+			// Prevent constant adding of rulers if multiple rulers are avaliable and several infils are generated in one strategy session
+			RulerManager.RulerAppearRoll = `SYNC_RAND_STATIC(100);
+
             return;
         }
     }
