@@ -81,6 +81,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate, 99);
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
+	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -660,6 +661,8 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	
 	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
 	if (ComplicationState == none) return ELR_NoInterrupt;
+	
+	if (!ComplicationState.bTriggered) return ELR_NoInterrupt;
 
 	// All checks have passed, we are good to do our magic
 	`CI_Log("Processing Reward Interception");
@@ -674,7 +677,7 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
 		if (ItemState == none) continue;
 
-		if (!class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplate()))
+		if (!class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(ItemState.GetMyTemplateName()))
 		{
 			`CI_Trace(ItemState.GetMyTemplateName() @ "is not interceptable - skipping");
 			continue;
@@ -701,7 +704,11 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 	}
 	else 
 	{
-		`Redscreen("No interceptable items for the complication - rescue mission will spawn empty!!!");
+		if (!ComplicationState.RewardStateIntercepted)
+		{
+			`REDSCREEN("No interceptable loot for the complication - rescue mission will spawn empty!");
+		}
+
 		History.CleanupPendingGameState(NewGameState);
 	}
 
@@ -943,6 +950,85 @@ static protected function bool CanChosenAppear (XComGameState NewGameState)
 	}
 
 	return AlienHQ.MissionsSinceChosen >= MinNumMissions;
+}
+
+static protected function EventListenerReturn PreCompleteStrategyFromTacticalTransfer (Object EventData, Object EventSource, XComGameState NullGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Activity ActivityState;
+	
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local bool bDirty;
+
+	local XComGameState_Complication_RewardInterception ComplicationState;
+	local XComGameState_ResourceContainer ResContainer;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_MissionSite MissionState;
+	local StateObjectReference RewardRef;
+	local XComGameState_Reward RewardState;
+	local ResourcePackage Package;
+	local int InterceptedQuantity;
+	
+	XComHQ = `XCOMHQ;
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(XComHQ.MissionRef.ObjectID);
+	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	ChainState = ActivityState.GetActivityChain();
+	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return ELR_NoInterrupt;
+	
+	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
+	if (ComplicationState == none) return ELR_NoInterrupt;
+
+	if (!ComplicationState.bTriggered) return ELR_NoInterrupt;
+
+	// All checks have passed, we are good to do our magic
+	`CI_Log("Processing Reward Interception");
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Apply reward interception");
+	ResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ComplicationState.ResourceContainerRef.ObjectID));
+	History = `XCOMHISTORY;
+	
+	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(XComHQ.MissionRef.ObjectID));
+
+	foreach MissionState.Rewards(RewardRef)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+		if (RewardState == none) continue;
+
+		if (!class'X2StrategyElement_DefaultComplications'.static.IsInterceptableItem(RewardState.GetMyTemplate().rewardObjectTemplateName))
+		{
+			`CI_Trace(RewardState.GetMyTemplateName() @ "is not interceptable - skipping");
+			continue;
+		}
+		
+		`CI_Trace(RewardState.GetMyTemplateName() @ "is intercepted");
+		bDirty = true;
+		
+		// Reduce the quantity
+		RewardState = XComGameState_Reward(NewGameState.ModifyStateObject(class'XComGameState_Reward', RewardState.ObjectID));
+		InterceptedQuantity = RewardState.Quantity * class'X2StrategyElement_DefaultComplications'.default.REWARD_INTERCEPTION_TAKENLOOT;
+		RewardState.Quantity -= InterceptedQuantity;
+
+		// Store the quantity to give later
+		Package.ItemType = RewardState.GetMyTemplate().rewardObjectTemplateName;
+		Package.ItemAmount = InterceptedQuantity;
+		ResContainer.Packages.AddItem(Package);
+	}
+
+	// Save the changes, if there was any intercepted items
+	if (bDirty)	
+	{
+		ComplicationState = XComGameState_Complication_RewardInterception(NewGameState.ModifyStateObject(class'XComGameState_Complication_RewardInterception', ComplicationState.ObjectID));
+		ComplicationState.RewardStateIntercepted = true;
+		`SubmitGameState(NewGameState);
+	}
+	else 
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
+
+	return ELR_NoInterrupt;
 }
 
 ////////////////

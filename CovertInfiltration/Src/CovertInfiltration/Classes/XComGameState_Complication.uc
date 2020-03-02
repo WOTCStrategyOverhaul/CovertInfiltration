@@ -11,6 +11,7 @@ var protected name m_TemplateName;
 var protected X2ComplicationTemplate m_Template;
 
 var int TriggerChance;
+var bool bTriggered;
 var StateObjectReference ChainRef;
 
 static function X2StrategyElementTemplateManager GetMyTemplateManager()

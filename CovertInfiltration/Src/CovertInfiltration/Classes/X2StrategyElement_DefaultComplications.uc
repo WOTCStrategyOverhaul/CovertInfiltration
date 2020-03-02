@@ -114,9 +114,9 @@ static function bool IsLootcrateActivity(X2ActivityTemplate Template)
 	return default.LootcrateMissions.Find(Template.DataName) > -1;
 }
 
-static function bool IsInterceptableItem(X2ItemTemplate Template)
+static function bool IsInterceptableItem(name TemplateName)
 {
-	return default.InterceptableItems.Find(Template.DataName) > -1;
+	return default.InterceptableItems.Find(TemplateName) > -1;
 }
 
 static function X2DataTemplate CreateChosenSurveillanceTemplate()
