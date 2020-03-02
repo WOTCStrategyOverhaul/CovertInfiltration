@@ -758,6 +758,8 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 		// Upgrade here so that it's stripped/added to hq inventory correctly
 		class'X2StrategyElement_XpackStaffSlots'.static.CheckToUpgradeItems(NewGameState, UnitState);
 	}
+	
+	return ELR_NoInterrupt;	
 }
 
 static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
