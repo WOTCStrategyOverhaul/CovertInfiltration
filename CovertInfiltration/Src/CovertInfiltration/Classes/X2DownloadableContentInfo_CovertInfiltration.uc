@@ -119,7 +119,6 @@ static event InstallNewCampaign(XComGameState StartState)
 	ForceLockAndLoad(StartState);
 	GrantBonusStartUpStaff(StartState);
 
-	// This causes a crash when the loading screen drops
 	PatchDebugStart(StartState);
 }
 
