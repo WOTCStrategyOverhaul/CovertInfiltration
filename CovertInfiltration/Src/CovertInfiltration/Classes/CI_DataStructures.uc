@@ -7,6 +7,14 @@
 //---------------------------------------------------------------------------------------
 class CI_DataStructures extends Object;
 
+enum EInfilModifierType
+{
+	eIMT_Item,
+	eIMT_Category,
+	eIMT_Ability,
+	eIMT_Character
+};
+
 struct InfiltrationModifier
 {
 	var name DataName;
@@ -20,14 +28,6 @@ struct InfiltrationModifier
 		RiskReductionPercent = 0;
         ModifyType = eIMT_Item;
     }
-};
-
-enum EInfilModifierType
-{
-	eIMT_Item,
-	eIMT_Category,
-	eIMT_Ability,
-	eIMT_Character
 };
 
 struct ActionExpirationInfo

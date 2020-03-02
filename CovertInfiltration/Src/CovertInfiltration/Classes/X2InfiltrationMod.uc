@@ -17,27 +17,28 @@ var config array<InfiltrationModifier> InfilModifiers;
 
 static function name GetInfilName(name ElementName, EInfilModifierType ElementType)
 {
-	local string TypeName;
+	local name TypeName;
 
 	switch (ElementType)
 	{
 		case eIMT_Item:
-			TypeName = ITEMPREFIX;
+			TypeName = default.ITEMPREFIX;
 			break;
 		case eIMT_Category:
-			TypeName = CATEGORYPREFIX;
+			TypeName = default.CATEGORYPREFIX;
 			break;
 		case eIMT_Ability:
-			TypeName = ABILITYPREFIX;
+			TypeName = default.ABILITYPREFIX;
 			break;
 		case eIMT_Character:
-			TypeName = CHARACTERPREFIX;
+			TypeName = default.CHARACTERPREFIX;
 			break;
 		default:
-			return none;
+			`CI_Log("X2InfiltrationMod failed to grab type for " $ string(ElementName));
+			return '';
 	}
 
-	return name(default.INFILPREFIX $ TypeName $ ElementName);
+	return name(string(default.INFILPREFIX) $ string(TypeName) $ string(ElementName));
 }
 
 static function array<X2DataTemplate> CreateTemplates()
@@ -48,11 +49,12 @@ static function array<X2DataTemplate> CreateTemplates()
 	
 	foreach default.InfilModifiers(Modifier)
 	{
-		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(Modifier.DataName));
+		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(Modifier.DataName, Modifier.ModifyType));
 		
 		Template.HoursAdded = Modifier.InfilHoursAdded;
 		Template.Deterrence = Modifier.RiskReductionPercent;
 		Template.ModifyType = Modifier.ModifyType;
+		Template.ElementName = Modifier.DataName;
 
 		Templates.AddItem(Template);
 	}

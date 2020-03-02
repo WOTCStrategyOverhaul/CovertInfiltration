@@ -107,17 +107,20 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 
 static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 {
-	local XComGameStateHistory			History;
-	local XComGameState_Unit			UnitState;
-	local array<XComGameState_Item>		CurrentInventory;
-	local XComGameState_Item			InventoryItem;
-	local array<StateObjectReference>	AbilityRefs;
-	local StateObjectReference			AbilityRef;
-	local XComGameState_Ability			AbilityState;
-	local X2InfiltrationModTemplate		Template;
-	local int							UnitInfiltration;
+	local XComGameStateHistory				History;
+	local XComGameState_Unit				UnitState;
+	local array<XComGameState_Item>			CurrentInventory;
+	local XComGameState_Item				InventoryItem;
+	local X2WeaponTemplate					WeaponTemplate;
+	local array<X2WeaponUpgradeTemplate>	EquippedUpgrades;
+	local X2WeaponUpgradeTemplate			UpgradeTemplate;
+	local array<StateObjectReference>		AbilityRefs;
+	local StateObjectReference				AbilityRef;
+	local XComGameState_Ability				AbilityState;
+	local X2InfiltrationModTemplate			Template;
+	local int								UnitInfiltration;
+	local X2InfiltrationModTemplateManager	InfilMgr;
 
-	local X2InfiltrationModTemplateManager InfilMgr;
 	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
 	History = `XCOMHISTORY;
@@ -173,6 +176,27 @@ static function int GetSoldierInfiltration(StateObjectReference UnitRef)
 				UnitInfiltration += Template.HoursAdded;
 			}
 		}
+		
+		// check if item supports upgrades
+		WeaponTemplate = X2WeaponTemplate(InventoryItem.GetMyTemplate());
+
+		if (WeaponTemplate != none && InventoryItem.GetMyTemplate().iItemSize > 0 && 
+			WeaponTemplate.NumUpgradeSlots > 0 && InventoryItem.HasBeenModified())
+		{
+			EquippedUpgrades = InventoryItem.GetMyWeaponUpgradeTemplates();
+			
+			// loop through weapon upgrades
+			foreach EquippedUpgrades(UpgradeTemplate)
+			{
+				// check weapon upgrade
+				Template = InfilMgr.GetInfilTemplateFromItem(UpgradeTemplate);
+					
+				if (Template != none)
+				{
+					UnitInfiltration += Template.HoursAdded;
+				}
+			}
+		}
 	}
 
 	return UnitInfiltration;
@@ -194,17 +218,20 @@ static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
 
 static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
 {
-	local XComGameStateHistory			History;
-	local XComGameState_Unit			UnitState;
-	local array<XComGameState_Item>		CurrentInventory;
-	local XComGameState_Item			InventoryItem;
-	local array<StateObjectReference>	AbilityRefs;
-	local StateObjectReference			AbilityRef;
-	local XComGameState_Ability			AbilityState;
-	local X2InfiltrationModTemplate		Template;
-	local int							UnitDeterrence;
+	local XComGameStateHistory				History;
+	local XComGameState_Unit				UnitState;
+	local array<XComGameState_Item>			CurrentInventory;
+	local XComGameState_Item				InventoryItem;
+	local X2WeaponTemplate					WeaponTemplate;
+	local array<X2WeaponUpgradeTemplate>	EquippedUpgrades;
+	local X2WeaponUpgradeTemplate			UpgradeTemplate;
+	local array<StateObjectReference>		AbilityRefs;
+	local StateObjectReference				AbilityRef;
+	local XComGameState_Ability				AbilityState;
+	local X2InfiltrationModTemplate			Template;
+	local int								UnitDeterrence;
+	local X2InfiltrationModTemplateManager	InfilMgr;
 
-	local X2InfiltrationModTemplateManager InfilMgr;
 	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
 	History = `XCOMHISTORY;
@@ -258,6 +285,27 @@ static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, S
 			if (Template != none)
 			{
 				UnitDeterrence += Template.Deterrence;
+			}
+		}
+
+		// check if item supports upgrades
+		WeaponTemplate = X2WeaponTemplate(InventoryItem.GetMyTemplate());
+
+		if (WeaponTemplate != none && InventoryItem.GetMyTemplate().iItemSize > 0 && 
+			WeaponTemplate.NumUpgradeSlots > 0 && InventoryItem.HasBeenModified())
+		{
+			EquippedUpgrades = InventoryItem.GetMyWeaponUpgradeTemplates();
+			
+			// loop through weapon upgrades
+			foreach EquippedUpgrades(UpgradeTemplate)
+			{
+				// check weapon upgrade
+				Template = InfilMgr.GetInfilTemplateFromItem(UpgradeTemplate);
+					
+				if (Template != none)
+				{
+					UnitDeterrence += Template.Deterrence;
+				}
 			}
 		}
 	}

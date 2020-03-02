@@ -360,27 +360,55 @@ static function PatchUtilityItems ()
 
 static function PatchItemStats()
 {
-	local X2ItemTemplateManager TemplateManager;
-	local X2EquipmentTemplate   Template;
-	local InfiltrationModifier  InfilMod;
-	local name                  ItemName;
+	local X2DataTemplate					DataTemplate;
+	local X2InfiltrationModTemplateManager	InfilTemplateManager;
+	local X2InfiltrationModTemplate			InfilTemplate;
+	local X2ItemTemplateManager				ItemTemplateManager;
+	local X2EquipmentTemplate				ItemTemplate;
 	
-	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
-	foreach class'X2InfiltrationMod'.default.InfilModifiers(InfilMod)
+	foreach InfilTemplateManager.IterateTemplates(DataTemplate)
 	{
-		ItemName = InfilMod.Item;
-		Template = X2EquipmentTemplate(TemplateManager.FindItemTemplate(ItemName));
-
-		if (Template != none)
+		InfilTemplate = X2InfiltrationModTemplate(DataTemplate);
+		
+		if (InfilTemplate != none)
 		{
-			if (default.SHOW_INFILTRATION_STATS)
+			if (InfilTemplate.ModifyType == eIMT_Item)
 			{
-				Template.SetUIStatMarkup(default.strInfilLabel, , InfilMod.HoursAdded);
+				ItemTemplate = X2EquipmentTemplate(ItemTemplateManager.FindItemTemplate(InfilTemplate.ElementName));
+
+				if (ItemTemplate != none)
+				{
+					if (default.SHOW_INFILTRATION_STATS)
+					{
+						ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+					}
+					if (default.SHOW_DETERRENCE_STATS)
+					{
+						ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+					}
+				}
 			}
-			if (default.SHOW_DETERRENCE_STATS)
+			else if (InfilTemplate.ModifyType == eIMT_Category)
 			{
-				Template.SetUIStatMarkup(default.strDeterLabel, , InfilMod.RiskReductionPercent);
+				foreach ItemTemplateManager.IterateTemplates(DataTemplate)
+				{
+					ItemTemplate = X2EquipmentTemplate(DataTemplate);
+
+					if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName)
+					{
+						if (default.SHOW_INFILTRATION_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+						}
+						if (default.SHOW_DETERRENCE_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+						}
+					}
+				}
 			}
 		}
 	}
