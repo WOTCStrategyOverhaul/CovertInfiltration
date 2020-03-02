@@ -58,7 +58,7 @@ function XComGameState_Complication CreateInstanceFromTemplate (XComGameState Ne
 		ComplicationState.TriggerChance = TriggerChance;
 	}
 
-	ComplicationState.ComplicationTriggered = bActivated;
+	ComplicationState.bTriggered = bActivated;
 	
 	if (ChainState != none)
 	{

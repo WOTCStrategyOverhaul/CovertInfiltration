@@ -267,7 +267,7 @@ function CurrentStageHasCompleted (XComGameState NewGameState)
 			{
 				ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRefs[i].ObjectID));
 
-				if (ComplicationState.ComplicationTriggered)
+				if (ComplicationState.bTriggered)
 				{
 					ComplicationTemplate = ComplicationState.GetMyTemplate();
 
