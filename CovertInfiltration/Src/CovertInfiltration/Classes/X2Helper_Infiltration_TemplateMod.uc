@@ -361,6 +361,7 @@ static function PatchUtilityItems ()
 static function PatchItemStats()
 {
 	local X2DataTemplate                   DataTemplate;
+	local array<X2DataTemplate>            DiffTemplates;
 	local X2InfiltrationModTemplateManager InfilTemplateManager;
 	local X2InfiltrationModTemplate        InfilTemplate;
 	local X2ItemTemplateManager            ItemTemplateManager;
@@ -378,20 +379,25 @@ static function PatchItemStats()
 		{
 			if (InfilTemplate.ModifyType == eIMT_Item)
 			{
-				ItemTemplate = X2EquipmentTemplate(ItemTemplateManager.FindItemTemplate(InfilTemplate.ElementName));
+				ItemTemplateManager.FindDataTemplateAllDifficulties(InfilTemplate.ElementName, DiffTemplates);
 
-				if (ItemTemplate != none)
+				foreach DiffTemplates(DataTemplate)
 				{
-					if (default.SHOW_INFILTRATION_STATS)
-					{
-						ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
-					}
-					if (default.SHOW_DETERRENCE_STATS)
-					{
-						ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
-					}
+					ItemTemplate = X2EquipmentTemplate(DataTemplate);
 
-					EditTemplates.AddItem(ItemTemplate);
+					if (ItemTemplate != none)
+					{
+						if (default.SHOW_INFILTRATION_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+						}
+						if (default.SHOW_DETERRENCE_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+						}
+
+						EditTemplates.AddItem(ItemTemplate);
+					}
 				}
 			}
 		}
@@ -408,16 +414,21 @@ static function PatchItemStats()
 				foreach ItemTemplateManager.IterateTemplates(DataTemplate)
 				{
 					ItemTemplate = X2EquipmentTemplate(DataTemplate);
+					
+					ItemTemplateManager.FindDataTemplateAllDifficulties(ItemTemplate.DataName, DiffTemplates);
 
-					if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == -1)
+					foreach DiffTemplates(DataTemplate)
 					{
-						if (default.SHOW_INFILTRATION_STATS)
+						if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == INDEX_NONE)
 						{
-							ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
-						}
-						if (default.SHOW_DETERRENCE_STATS)
-						{
-							ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+							if (default.SHOW_INFILTRATION_STATS)
+							{
+								ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+							}
+							if (default.SHOW_DETERRENCE_STATS)
+							{
+								ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+							}
 						}
 					}
 				}

@@ -47,14 +47,10 @@ function bool ValidateTemplate(out string strError)
 	if (ModifyType == eIMT_Category)
 	{
 		ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-		foreach ItemTemplateManager.IterateTemplates(DataTemplate)
-		{
-			ItemTemplate = X2ItemTemplate(DataTemplate);
-			if (ItemTemplate != none && ItemTemplate.ItemCat == ElementName) return true;
-		}
+		return ItemTemplateManager.ItemCategoryIsValid(ElementName);
 	}
 
-	strError = "has no ModifyType!";
+	strError = "has an invalid or missing ModifyType!";
 
 	return false;
 }
