@@ -360,15 +360,16 @@ static function PatchUtilityItems ()
 
 static function PatchItemStats()
 {
-	local X2DataTemplate					DataTemplate;
-	local X2InfiltrationModTemplateManager	InfilTemplateManager;
-	local X2InfiltrationModTemplate			InfilTemplate;
-	local X2ItemTemplateManager				ItemTemplateManager;
-	local X2EquipmentTemplate				ItemTemplate;
+	local X2DataTemplate                   DataTemplate;
+	local X2InfiltrationModTemplateManager InfilTemplateManager;
+	local X2InfiltrationModTemplate        InfilTemplate;
+	local X2ItemTemplateManager            ItemTemplateManager;
+	local X2EquipmentTemplate              ItemTemplate;
+	local array<X2EquipmentTemplate>       EditTemplates;
 	
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
-
+	
 	foreach InfilTemplateManager.IterateTemplates(DataTemplate)
 	{
 		InfilTemplate = X2InfiltrationModTemplate(DataTemplate);
@@ -389,15 +390,26 @@ static function PatchItemStats()
 					{
 						ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
 					}
+
+					EditTemplates.AddItem(ItemTemplate);
 				}
 			}
-			else if (InfilTemplate.ModifyType == eIMT_Category)
+		}
+	}
+
+	foreach InfilTemplateManager.IterateTemplates(DataTemplate)
+	{
+		InfilTemplate = X2InfiltrationModTemplate(DataTemplate);
+		
+		if (InfilTemplate != none)
+		{
+			if (InfilTemplate.ModifyType == eIMT_Category)
 			{
 				foreach ItemTemplateManager.IterateTemplates(DataTemplate)
 				{
 					ItemTemplate = X2EquipmentTemplate(DataTemplate);
 
-					if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName)
+					if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == -1)
 					{
 						if (default.SHOW_INFILTRATION_STATS)
 						{

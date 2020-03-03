@@ -218,7 +218,7 @@ static protected function EventListenerReturn AlterRiskChanceModifier(Object Eve
 	Tuple.Data[4].i += ModifierForceLevel;
 	
 	ActionSquad = class'X2Helper_Infiltration'.static.GetCovertActionSquad(Action);
-	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadDeterrence(ActionSquad);
+	Tuple.Data[4].i -= class'X2Helper_Infiltration'.static.GetSquadRiskReduction(ActionSquad);
 	
 	`CI_Log("Risk modifier for" @ Tuple.Data[0].n @ "is" @ Tuple.Data[4].i $ ", base chance is" @ Tuple.Data[1].i);
 

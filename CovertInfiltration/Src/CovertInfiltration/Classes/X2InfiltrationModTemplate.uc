@@ -16,17 +16,47 @@ var name ElementName; // the name of the game element this template modifies
 
 function bool ValidateTemplate(out string strError)
 {
-	switch (ModifyType)
+	local X2DataTemplate             DataTemplate;
+	local X2ItemTemplateManager      ItemTemplateManager;
+	local X2ItemTemplate             ItemTemplate;
+	local X2CharacterTemplateManager CharacterTemplateManager;
+	local X2CharacterTemplate        CharacterTemplate;
+	local X2AbilityTemplateManager   AbilityTemplateManager;
+	local X2AbilityTemplate          AbilityTemplate;
+	
+	strError = "element does not exist!";
+	
+	if (ModifyType == eIMT_Item)
 	{
-		case eIMT_Item:
-		case eIMT_Category:
-		case eIMT_Ability:
-		case eIMT_Character:
-			return true;
-		default:
-			strError = "CI: Error in templates, an X2InfiltrationModTemplate does not have a ModifyType which should not be possible!";
-			return false;
+		ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+		ItemTemplate = ItemTemplateManager.FindItemTemplate(ElementName);
+		return ItemTemplate != none;
 	}
+	if (ModifyType == eIMT_Ability)
+	{
+		AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+		AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate(ElementName);
+		return AbilityTemplate != none;
+	}
+	if (ModifyType == eIMT_Character)
+	{
+		CharacterTemplateManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
+		CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(ElementName);
+		return CharacterTemplate != none;
+	}
+	if (ModifyType == eIMT_Category)
+	{
+		ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+		foreach ItemTemplateManager.IterateTemplates(DataTemplate)
+		{
+			ItemTemplate = X2ItemTemplate(DataTemplate);
+			if (ItemTemplate != none && ItemTemplate.ItemCat == ElementName) return true;
+		}
+	}
+
+	strError = "has no ModifyType!";
+
+	return false;
 }
 
 defaultproperties

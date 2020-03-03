@@ -26,7 +26,7 @@ struct InfiltrationModifier
     {
 		InfilHoursAdded = 0;
 		RiskReductionPercent = 0;
-        ModifyType = eIMT_Item;
+		ModifyType = eIMT_Item;
     }
 };
 

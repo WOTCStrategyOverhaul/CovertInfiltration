@@ -7,7 +7,6 @@
 
 class X2InfiltrationMod extends X2DataSet config(Infiltration);
 
-var const name INFILPREFIX;
 var const name ITEMPREFIX;
 var const name CATEGORYPREFIX;
 var const name ABILITYPREFIX;
@@ -34,11 +33,11 @@ static function name GetInfilName(name ElementName, EInfilModifierType ElementTy
 			TypeName = default.CHARACTERPREFIX;
 			break;
 		default:
-			`CI_Log("X2InfiltrationMod failed to grab type for " $ string(ElementName));
+			`CI_Warn("X2InfiltrationMod failed to grab type for " $ string(ElementName));
 			return '';
 	}
 
-	return name(string(default.INFILPREFIX) $ string(TypeName) $ string(ElementName));
+	return name(string(TypeName) $ string(ElementName));
 }
 
 static function array<X2DataTemplate> CreateTemplates()
@@ -64,7 +63,6 @@ static function array<X2DataTemplate> CreateTemplates()
 
 defaultproperties
 {
-	INFILPREFIX = "InfilMod_"
 	ITEMPREFIX = "Item_"
 	CATEGORYPREFIX = "Attachment_"
 	ABILITYPREFIX = "Ability_"
