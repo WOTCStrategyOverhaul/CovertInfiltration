@@ -36,9 +36,6 @@ struct XpMultiplerEntry
 	var float XpMultipler;
 };
 
-var config int PERSONNEL_INFIL;
-var config int PERSONNEL_DETER;
-
 var config int EXFIL_INTEL_COST_BASEAMOUNT;
 var config int EXFIL_INTEL_COST_MULTIPLIER;
 
@@ -108,120 +105,154 @@ static function array<StateObjectReference> GetCovertActionSquad(XComGameState_C
 	return CurrentSquad;
 }
 
-static function int GetSoldierInfiltration(StateObjectReference UnitRef)
+static function array<X2InfiltrationModTemplate> GetUnitInfilModifiers(StateObjectReference UnitRef)
 {
-	local XComGameStateHistory		History;
-	local XComGameState_Unit		UnitState;
-	local array<XComGameState_Item>	CurrentInventory;
-	local XComGameState_Item		InventoryItem;
-	local X2InfiltrationModTemplate Template;
-	local float						UnitInfiltration; // using float until value is returned to prevent casting inaccuracy
+	local XComGameStateHistory             History;
+	local XComGameState_Unit               UnitState;
+	local array<XComGameState_Item>        CurrentInventory;
+	local XComGameState_Item               InventoryItem;
+	local X2WeaponTemplate                 WeaponTemplate;
+	local array<X2WeaponUpgradeTemplate>   EquippedUpgrades;
+	local X2WeaponUpgradeTemplate          UpgradeTemplate;
+	local X2AbilityTemplateManager         AbilityTemplateManager;
+	local X2AbilityTemplate                AbilityTemplate;
+	local SoldierClassAbilityType          SoldierAbility;
+	local array<SoldierClassAbilityType>   SoldierAbilities;
+	local X2InfiltrationModTemplateManager InfilTemplateManager;
+	local X2InfiltrationModTemplate        InfilTemplate;
+	local array<X2InfiltrationModTemplate> UnitModifiers;
 
-	local X2InfiltrationModTemplateManager InfilMgr;
-	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
-
+	if(UnitRef.ObjectID <= 0) return UnitModifiers;
+	
 	History = `XCOMHISTORY;
-
-	if(UnitRef.ObjectID <= 0)
-		return 0;
-
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+	AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 
-	if(!UnitState.IsSoldier())
-		return default.PERSONNEL_INFIL;
+	// check character
+	InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCharacter(UnitState.GetMyTemplate());
 
-	UnitInfiltration = 0;
-
-	CurrentInventory = UnitState.GetAllInventoryItems();
-	foreach CurrentInventory(InventoryItem)
+	if (InfilTemplate != none)
 	{
-		Template = InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
-
-		if (Template == none)
-			continue;
-
-		UnitInfiltration += (float(Template.HoursAdded) * GetUnitInfiltrationMultiplierForCategory(UnitState, InventoryItem.GetMyTemplate().ItemCat));
+		UnitModifiers.AddItem(InfilTemplate);
 	}
 
-	return int(UnitInfiltration);
-}
-
-static function float GetUnitInfiltrationMultiplierForCategory(XComGameState_Unit Unit, name category)
-{
-	local float InfiltrationMultiplier;
-	local array<XComGameState_Item>	CurrentInventory;
-	local XComGameState_Item InventoryItem;
-	local X2InfiltrationModTemplate Template;
-	local X2InfiltrationModTemplateManager InfiltrationManager;
-
-	InfiltrationManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
-
-	InfiltrationMultiplier = 1.0;
-
-	CurrentInventory = Unit.GetAllInventoryItems();
-	foreach CurrentInventory(InventoryItem)
+	// loop through abilities
+	SoldierAbilities = UnitState.GetEarnedSoldierAbilities();
+	foreach SoldierAbilities(SoldierAbility)
 	{
-		Template = InfiltrationManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName());
+		AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate(SoldierAbility.AbilityName);
 
-		if (Template == none)
-			continue;
-
-		if (Template.MultCategory == category)
-			InfiltrationMultiplier *= Template.InfilMultiplier;
-	}
-
-	return InfiltrationMultiplier;
-}
-
-static function int GetSquadDeterrence(array<StateObjectReference> Soldiers)
-{
-	local StateObjectReference	UnitRef;
-	local int					TotalDeterrence;
-
-	TotalDeterrence = 0;
-	foreach Soldiers(UnitRef)
-	{
-		TotalDeterrence += GetSoldierDeterrence(Soldiers, UnitRef);
-	}
-
-	return TotalDeterrence;
-}
-
-static function int GetSoldierDeterrence(array<StateObjectReference> Soldiers, StateObjectReference UnitRef)
-{
-	local XComGameStateHistory		History;
-	local XComGameState_Unit		UnitState;
-	local array<XComGameState_Item>	CurrentInventory;
-	local XComGameState_Item		InventoryItem;
-	local int						UnitDeterrence;
-
-	local X2InfiltrationModTemplateManager InfilMgr;
-	InfilMgr = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
-
-	History = `XCOMHISTORY;
-
-	if(UnitRef.ObjectID <= 0)
-		return 0;
-
-	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
-
-	if(!UnitState.IsSoldier())
-		return default.PERSONNEL_DETER;
-
-	UnitDeterrence = 0;
-
-	CurrentInventory = UnitState.GetAllInventoryItems();
-	foreach CurrentInventory(InventoryItem)
-	{
-		if(InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()) != none)
+		// check ability
+		InfilTemplate = InfilTemplateManager.GetInfilTemplateFromAbility(AbilityTemplate);
+		
+		if (InfilTemplate != none)
 		{
-			UnitDeterrence += InfilMgr.GetInfilTemplateFromItem(InventoryItem.GetMyTemplateName()).Deterrence;
+			UnitModifiers.AddItem(InfilTemplate);
 		}
 	}
 
-	UnitDeterrence += default.RANKS_DETER[UnitState.GetSoldierRank()];
+	// loop through items
+	CurrentInventory = UnitState.GetAllInventoryItems();
+	foreach CurrentInventory(InventoryItem)
+	{
+		// check item
+		InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
 
-	return UnitDeterrence;
+		if (InfilTemplate != none)
+		{
+			UnitModifiers.AddItem(InfilTemplate);
+		}
+		else
+		{
+			// check category
+			InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCategory(InventoryItem.GetMyTemplate());
+			
+			if (InfilTemplate != none)
+			{
+				UnitModifiers.AddItem(InfilTemplate);
+			}
+		}
+		
+		// check if item supports upgrades
+		WeaponTemplate = X2WeaponTemplate(InventoryItem.GetMyTemplate());
+
+		if (WeaponTemplate != none && InventoryItem.GetMyTemplate().iItemSize > 0 && 
+			WeaponTemplate.NumUpgradeSlots > 0 && InventoryItem.HasBeenModified())
+		{
+			EquippedUpgrades = InventoryItem.GetMyWeaponUpgradeTemplates();
+			
+			// loop through weapon upgrades
+			foreach EquippedUpgrades(UpgradeTemplate)
+			{
+				// check weapon upgrade
+				InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(UpgradeTemplate);
+					
+				if (InfilTemplate != none)
+				{
+					UnitModifiers.AddItem(InfilTemplate);
+				}
+			}
+		}
+	}
+	
+	return UnitModifiers;
+}
+
+static function int GetUnitInfilHours(StateObjectReference UnitRef)
+{
+	local int UnitInfilHours;
+	local X2InfiltrationModTemplate Modifier;
+	local array<X2InfiltrationModTemplate> UnitModifiers;
+
+	UnitInfilHours = 0;
+	UnitModifiers = GetUnitInfilModifiers(UnitRef);
+	
+	foreach UnitModifiers(Modifier)
+	{
+		UnitInfilHours += Modifier.HoursAdded;
+	}
+
+	return UnitInfilHours;
+}
+
+static function int GetUnitRiskReduction(StateObjectReference UnitRef)
+{
+	local int UnitRiskReduction;
+	local X2InfiltrationModTemplate Modifier;
+	local array<X2InfiltrationModTemplate> UnitModifiers;
+	local XComGameState_Unit UnitState;
+
+	UnitRiskReduction = 0;
+	UnitModifiers = GetUnitInfilModifiers(UnitRef);
+	
+	foreach UnitModifiers(Modifier)
+	{
+		UnitRiskReduction += Modifier.Deterrence;
+	}
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
+	if (UnitState.IsSoldier())
+	{
+		// check soldier ranks
+		UnitRiskReduction += default.RANKS_DETER[UnitState.GetSoldierRank()];
+	}
+
+	return UnitRiskReduction;
+}
+
+static function int GetSquadRiskReduction(array<StateObjectReference> Soldiers)
+{
+	local StateObjectReference	UnitRef;
+	local int					TotalRiskReduction;
+
+	TotalRiskReduction = 0;
+	foreach Soldiers(UnitRef)
+	{
+		TotalRiskReduction += GetUnitRiskReduction(UnitRef);
+	}
+
+	return TotalRiskReduction;
 }
 
 static function float GetSquadBondingPercentReduction(array<StateObjectReference> Soldiers)
@@ -361,15 +392,15 @@ static function int GetRequiredStaffSlots(XComGameState_CovertAction CovertActio
 
 static function int GetSquadInfiltration(array<StateObjectReference> Soldiers, XComGameState_CovertAction CovertAction)
 {
-	local int BaseDuartion, Result;
+	local int BaseDuration, Result;
 	
-	BaseDuartion = GetSquadInfilWithoutPenalty(Soldiers);
-	Result = BaseDuartion;
+	BaseDuration = GetSquadInfilWithoutPenalty(Soldiers);
+	Result = BaseDuration;
 	
 	if (IsInfiltrationAction(CovertAction))
 	{
 		Result *= float(1) - GetSquadBondingPercentReduction(Soldiers);
-		Result += GetSquadOverloadPenalty(Soldiers, CovertAction, BaseDuartion);
+		Result += GetSquadOverloadPenalty(Soldiers, CovertAction, BaseDuration);
 	}
 
 	return Result;
@@ -384,7 +415,7 @@ static function int GetSquadInfilWithoutPenalty(array<StateObjectReference> Sold
 
 	foreach Soldiers(UnitRef)
 	{
-		TotalInfiltration += GetSoldierInfiltration(UnitRef);
+		TotalInfiltration += GetUnitInfilHours(UnitRef);
 	}
 
 	return TotalInfiltration;

@@ -360,27 +360,83 @@ static function PatchUtilityItems ()
 
 static function PatchItemStats()
 {
-	local X2ItemTemplateManager TemplateManager;
-	local X2EquipmentTemplate   Template;
-	local InfiltrationModifier  InfilMod;
-	local name                  ItemName;
+	local X2DataTemplate                   DataTemplate;
+	local array<X2DataTemplate>            DiffTemplates;
+	local X2InfiltrationModTemplateManager InfilTemplateManager;
+	local X2InfiltrationModTemplate        InfilTemplate;
+	local X2ItemTemplateManager            ItemTemplateManager;
+	local X2EquipmentTemplate              ItemTemplate;
+	local array<X2EquipmentTemplate>       EditTemplates;
 	
-	TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-
-	foreach class'X2InfiltrationMod'.default.InfilModifiers(InfilMod)
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+	
+	foreach InfilTemplateManager.IterateTemplates(DataTemplate)
 	{
-		ItemName = InfilMod.Item;
-		Template = X2EquipmentTemplate(TemplateManager.FindItemTemplate(ItemName));
-
-		if (Template != none)
+		InfilTemplate = X2InfiltrationModTemplate(DataTemplate);
+		
+		if (InfilTemplate != none)
 		{
-			if (default.SHOW_INFILTRATION_STATS)
+			if (InfilTemplate.ModifyType == eIMT_Item)
 			{
-				Template.SetUIStatMarkup(default.strInfilLabel, , InfilMod.HoursAdded);
+				ItemTemplateManager.FindDataTemplateAllDifficulties(InfilTemplate.ElementName, DiffTemplates);
+
+				foreach DiffTemplates(DataTemplate)
+				{
+					ItemTemplate = X2EquipmentTemplate(DataTemplate);
+
+					if (ItemTemplate != none)
+					{
+						if (default.SHOW_INFILTRATION_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+						}
+						if (default.SHOW_DETERRENCE_STATS)
+						{
+							ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+						}
+
+						EditTemplates.AddItem(ItemTemplate);
+					}
+				}
 			}
-			if (default.SHOW_DETERRENCE_STATS)
+		}
+	}
+
+	foreach InfilTemplateManager.IterateTemplates(DataTemplate)
+	{
+		InfilTemplate = X2InfiltrationModTemplate(DataTemplate);
+		
+		if (InfilTemplate != none)
+		{
+			if (InfilTemplate.ModifyType == eIMT_Category)
 			{
-				Template.SetUIStatMarkup(default.strDeterLabel, , InfilMod.RiskReductionPercent);
+				foreach ItemTemplateManager.IterateTemplates(DataTemplate)
+				{
+					ItemTemplate = X2EquipmentTemplate(DataTemplate);
+					
+					if (ItemTemplate != none)
+					{
+						ItemTemplateManager.FindDataTemplateAllDifficulties(ItemTemplate.DataName, DiffTemplates);
+
+						foreach DiffTemplates(DataTemplate)
+						{
+							ItemTemplate = X2EquipmentTemplate(DataTemplate);
+
+							if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == INDEX_NONE)
+							{
+								if (default.SHOW_INFILTRATION_STATS)
+								{
+									ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+								}
+								if (default.SHOW_DETERRENCE_STATS)
+								{
+									ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
