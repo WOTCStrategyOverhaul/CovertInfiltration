@@ -37,6 +37,7 @@ static event UpdateDLC ()
 	class'XComGameState_CovertActionExpirationManager'.static.Update();
 	UpdateRemoveCovertActions();
 	UpdateShowTutorial();
+	TryClearRulerOnCurrentMission();
 }
 
 static function UpdateRemoveCovertActions ()
@@ -102,6 +103,28 @@ static protected function UpdateShowTutorial ()
 
 		class'UIUtilities_InfiltrationTutorial'.static.AlienFacilityBuilt();
 	}
+}
+
+static protected function TryClearRulerOnCurrentMission ()
+{
+	// DLC2's ruler tracking system assumes that the flow of the game is
+	// mission generated -> player goes on mission -> mission generated -> player goes -> etc.
+	// While there are a few safeguards that prevent complete mess on missions such as strongholds,
+	// these are not enough to gurantee reliable behaviour when there are multiple missions in progress
+	// or there are multiple assault missions (**which can have rulers**) avaliable at the same time.
+	// As such, we simply clear the tracker when the player returns to the geoscape (not flying to a mission)
+	// Note that the call is no-op if no RulerOnCurrentMission is set, so it's safe to call every frame
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2') && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
+	{
+		class'X2Helper_Infiltration_DLC2'.static.ClearRulerOnCurrentMission();
+	}
+}
+
+static function bool ShouldUpdateMissionSpawningInfo (StateObjectReference MissionRef)
+{
+	// This is a very ugly hack, but it helps with many issues that arise due to difference in behaviour
+	// between having the shadow chamber and not (WHY FXS?????). Particularly related to DLC2
+	return true;
 }
 
 ///////////////////////
@@ -258,6 +281,11 @@ static protected function ForceAllFactionsMet (XComGameState StartState)
 
 static function OnPreCreateTemplates()
 {
+	if (class'UIListener_ModConfigMenu'.default.ENABLE_TRACE_STARTUP)
+	{
+		GetCDO().SuppressTraceLogs = false;
+	}
+
 	class'X2Helper_Infiltration_TemplateMod'.static.ForceDifficultyVariants();
 
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();

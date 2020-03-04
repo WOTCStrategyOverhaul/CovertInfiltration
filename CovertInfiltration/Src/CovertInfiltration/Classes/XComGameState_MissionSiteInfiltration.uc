@@ -66,6 +66,7 @@ function InitializeFromActivity (XComGameState NewGameState)
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(GetActivity()); // This also selects sitreps from plot type
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout. This also selects sitreps from plot type
 	class'X2Helper_Infiltration'.static.SelectEnviromentalSitreps(self);
+	PlaceRuler(NewGameState);
 
 	// Invoke the CHL sitrep hook here, before we do any of our own sitrep messing
 	// This should ensure compatibility with mods like LSC
@@ -640,8 +641,17 @@ function int GetChosenAppereanceChance()
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	CurrentChosen = GetCurrentChosen();
 
-	if (CurrentChosen == none || !AlienHQ.bChosenActive) {
+	if (CurrentChosen == none || !AlienHQ.bChosenActive)
+	{
+		`CI_Trace("GetChosenAppereanceChance - returning -1 as there is no chosen to spawn or chosen are not activated");
 		return -1;
+	}
+
+	// Chosen cannot spawn if ruler is waiting on this mission
+	if (IsRulerPresent())
+	{
+		`CI_Trace("GetChosenAppereanceChance - returning 0 as there is a ruler on this mission");
+		return 0;
 	}
 
 	BaseChance = CurrentChosen.GetChosenAppearChance();
@@ -833,6 +843,8 @@ function StartMission()
 function RemoveEntity(XComGameState NewGameState)
 {
 	super.RemoveEntity(NewGameState);
+
+	RemoveRuler(NewGameState);
 	UnRegisterFromEvents();
 }
 
@@ -881,6 +893,49 @@ static function bool ShouldPauseGeoscapeAtMilestone (name MilestoneReached)
 	}
 }
 
+////////////
+/// DLC2 ///
+////////////
+
+function bool IsRulerPresent ()
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		return class'X2Helper_Infiltration_DLC2'.static.InfiltrationHasRuler(GetReference());
+	}
+
+	return false;
+}
+
+protected function PlaceRuler (XComGameState NewGameState)
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		class'X2Helper_Infiltration_DLC2'.static.PlaceRulerOnInfiltration(NewGameState, self);
+	}
+}
+
+protected function RemoveRuler (XComGameState NewGameState)
+{
+	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2'))
+	{
+		class'X2Helper_Infiltration_DLC2'.static.RemoveRulerFromInfiltration(NewGameState, self);
+	}
+}
+
+protected function EventListenerReturn AllowRulerOnMission (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none) return ELR_NoInterrupt;
+
+	// If the ruler wasn't placed on this infil (via PlaceRuler/AlienRulerLocations), then disallow random spawning of rulers
+	Tuple.Data[0].b = false;
+
+	return ELR_NoInterrupt;
+}
+
 ////////////////////////
 /// Event management ///
 ////////////////////////
@@ -894,6 +949,7 @@ protected function InitRegisterEvents ()
 	ThisObj = self;
 
 	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,, 99, GetSpawningAction(), true);
+	EventManager.RegisterForEvent(ThisObj, 'AllowRulerOnMission', AllowRulerOnMission,, 99, self, true);
 }
 
 protected function EnablePreventTick()
