@@ -114,7 +114,6 @@ static protected function TryClearRulerOnCurrentMission ()
 	// or there are multiple assault missions (**which can have rulers**) avaliable at the same time.
 	// As such, we simply clear the tracker when the player returns to the geoscape (not flying to a mission)
 	// Note that the call is no-op if no RulerOnCurrentMission is set, so it's safe to call every frame
-	// TODO: How does this behave with assualt missions?
 	if (class'X2Helper_Infiltration'.static.IsDLCLoaded('DLC_2') && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
 	{
 		class'X2Helper_Infiltration_DLC2'.static.ClearRulerOnCurrentMission();
