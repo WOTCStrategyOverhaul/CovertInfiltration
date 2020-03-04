@@ -415,19 +415,24 @@ static function PatchItemStats()
 				{
 					ItemTemplate = X2EquipmentTemplate(DataTemplate);
 					
-					ItemTemplateManager.FindDataTemplateAllDifficulties(ItemTemplate.DataName, DiffTemplates);
-
-					foreach DiffTemplates(DataTemplate)
+					if (ItemTemplate != none)
 					{
-						if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == INDEX_NONE)
+						ItemTemplateManager.FindDataTemplateAllDifficulties(ItemTemplate.DataName, DiffTemplates);
+
+						foreach DiffTemplates(DataTemplate)
 						{
-							if (default.SHOW_INFILTRATION_STATS)
+							ItemTemplate = X2EquipmentTemplate(DataTemplate);
+
+							if (ItemTemplate != none && ItemTemplate.ItemCat == InfilTemplate.ElementName && EditTemplates.Find(ItemTemplate) == INDEX_NONE)
 							{
-								ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
-							}
-							if (default.SHOW_DETERRENCE_STATS)
-							{
-								ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+								if (default.SHOW_INFILTRATION_STATS)
+								{
+									ItemTemplate.SetUIStatMarkup(default.strInfilLabel, , InfilTemplate.HoursAdded);
+								}
+								if (default.SHOW_DETERRENCE_STATS)
+								{
+									ItemTemplate.SetUIStatMarkup(default.strDeterLabel, , InfilTemplate.Deterrence);
+								}
 							}
 						}
 					}
