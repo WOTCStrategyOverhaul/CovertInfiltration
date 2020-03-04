@@ -8,7 +8,7 @@
 
 class X2Helper_Infiltration_DLC2 extends Object config(Infiltration) abstract;
 
-var config int RULER_APPEAR_CHANCE;
+var config int RULER_ON_INFIL_CHANCE;
 
 static function StateObjectReference GetRulerOnInfiltration (StateObjectReference InfiltrationRef)
 {
@@ -60,29 +60,25 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
         }
     }
 
-    foreach Candidates(Candidate)
-    {
-        RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
+	// Don't bother to do anything if there are no rulers to place
+	if (Candidates.Length == 0) return;
+	
+	// Roll to place a ruler
+	if (!class'X2StrategyGameRulesetDataStructures'.static.Roll(default.RULER_ON_INFIL_CHANCE)) return;
 
-        if (RulerManager.RulerAppearRoll < default.RULER_APPEAR_CHANCE)
-        {
-            RulerLocation.RulerRef = Candidate;
-            RulerLocation.MissionRef = InfiltrationState.GetReference();
-            RulerLocation.bActivated = true;
-            RulerLocation.bNeedsPopup = false;
+	// Roll to select which ruler to spawn
+	Candidate = Candidates[`SYNC_RAND_STATIC(Candidates.Length)];
 
-            RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
-            RulerManager.AlienRulerLocations.AddItem(RulerLocation);
+	// Place the ruler
+    RulerLocation.RulerRef = Candidate;
+    RulerLocation.MissionRef = InfiltrationState.GetReference();
+    RulerLocation.bActivated = true;
+    RulerLocation.bNeedsPopup = false;
+    RulerManager.AlienRulerLocations.AddItem(RulerLocation);
 
-            // The ruler is ready and waiting bwahahaha
-			`CI_Trace(RulerState.GetMyTemplateName() @ "is waiting on infiltration" @ InfiltrationState.ObjectID @ "-" @ InfiltrationState.GeneratedMission.BattleOpName);
-
-			// Prevent constant adding of rulers if multiple rulers are avaliable and several infils are generated in one strategy session
-			RulerManager.RulerAppearRoll = `SYNC_RAND_STATIC(100);
-
-            return;
-        }
-    }
+    // The ruler is ready and waiting bwahahaha
+    RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
+	`CI_Trace(RulerState.GetMyTemplateName() @ "is waiting on infiltration" @ InfiltrationState.ObjectID @ "-" @ InfiltrationState.GeneratedMission.BattleOpName);
 }
 
 static function RemoveRulerFromInfiltration (XComGameState NewGameState, XComGameState_MissionSiteInfiltration InfiltrationState)
