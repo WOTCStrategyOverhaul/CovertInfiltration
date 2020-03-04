@@ -923,6 +923,19 @@ protected function RemoveRuler (XComGameState NewGameState)
 	}
 }
 
+protected function EventListenerReturn AllowRulerOnMission (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+	if (Tuple == none) return ELR_NoInterrupt;
+
+	// If the ruler wasn't placed on this infil (via PlaceRuler/AlienRulerLocations), then disallow random spawning of rulers
+	Tuple.Data[0].b = false;
+
+	return ELR_NoInterrupt;
+}
+
 ////////////////////////
 /// Event management ///
 ////////////////////////
@@ -936,6 +949,7 @@ protected function InitRegisterEvents ()
 	ThisObj = self;
 
 	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,, 99, GetSpawningAction(), true);
+	EventManager.RegisterForEvent(ThisObj, 'AllowRulerOnMission', AllowRulerOnMission,, 99, self, true);
 }
 
 protected function EnablePreventTick()
