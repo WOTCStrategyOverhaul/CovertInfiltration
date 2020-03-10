@@ -602,8 +602,17 @@ static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
 
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
-	MissionState.POIToSpawn = ResHQ.ChoosePOI(NewGameState);
+	if (MissionState.POIToSpawn.ObjectID <= 0)
+	{
+		ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+		MissionState.POIToSpawn = ResHQ.ChoosePOI(NewGameState);
+		`CI_Log("UH OH NO POI");
+	}
+	else
+	{
+		`CI_Log("EXISTING POI");
+	}
+
 	class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
 	MissionState.RemoveEntity(NewGameState);
 
@@ -628,7 +637,8 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
-
+	
+	class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 

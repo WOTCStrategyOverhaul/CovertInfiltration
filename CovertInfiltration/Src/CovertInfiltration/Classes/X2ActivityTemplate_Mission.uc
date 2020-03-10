@@ -104,6 +104,7 @@ static function GenericOnSuccess (XComGameState NewGameState, XComGameState_Acti
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
 	
+	class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 
@@ -117,6 +118,7 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkFailed(NewGameState);
 	
+	class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
 }
 

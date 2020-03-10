@@ -569,7 +569,7 @@ static function bool GeoscapeReadyForUpdate ()
 		StrategyMap.Movie.Pres.ScreenStack.GetCurrentScreen() == StrategyMap;
 }
 
-static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity ActivityState)
+static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local XComGameState_MissionSite MissionState;
 	local XComTacticalMissionManager MissionMgr;
@@ -600,6 +600,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 	}
 
 	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
+	MissionState.PickPOI(NewGameState);
 
 	// Cosmetic stuff
 
