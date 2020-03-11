@@ -11,6 +11,8 @@ var UIScrollingText DescriptionLabel;
 var UIText HiddenLabel;
 var UIDags HiddenDags;
 
+var localized string strHidden;
+
 //////////////////////
 /// Initialization /// 
 //////////////////////
@@ -66,7 +68,7 @@ simulated function InitMilestone ()
 	HiddenLabel.InitText('HiddenLabel');
 	HiddenLabel.OnTextSizeRealized = OnHiddenLabelSizeRealized;
 	HiddenLabel.SetAlpha(50);
-	HiddenLabel.SetText(class'UIUtilities_Text'.static.GetColoredText("HIDDEN", eUIState_Header)); // TODO: Localize
+	HiddenLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(strHidden, eUIState_Header));
 	HiddenLabel.SetY(DescriptionLabel.Y);
 }
 
@@ -108,7 +110,7 @@ simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgres
 		FillBar.SetY(BGBar.Y + (BGBar.Height - FillBar.Height));
 	}
 
-	ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", bActivateAtFaded ? eUIState_Header : eUIState_Normal)); // TODO: Localize
+	ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", bActivateAtFaded ? eUIState_Header : eUIState_Normal));
 }
 
 simulated function SetUnlocked (string strName, string strDescription)

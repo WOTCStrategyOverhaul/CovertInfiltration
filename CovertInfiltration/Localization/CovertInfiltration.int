@@ -449,3 +449,13 @@ m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (
 strCrewOverflowTitle=Crew over capacity
 strCrewOverflowHeader=Living quaters
 strCrewOverflowDescription=Onboard the Avenger, space is precious and currently we are over the number of people that we can support.<br/>You should consider improving living quaters to improve capacity or letting go of non-essential personnel
+
+[UIInfiltrationDetails]
+strHeader=OVER INFILTRATION
+strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
+
+strChosenProgressLeftLabel=infil
+strChosenModifierLeftLabel=modifier
+
+[UIInfiltrationDetails_Milestone]
+strHidden=HIDDEN

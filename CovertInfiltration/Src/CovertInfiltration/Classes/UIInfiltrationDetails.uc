@@ -29,6 +29,12 @@ var array<ChosenModifierDisplay> ChosenMods;
 // Even if currently the infil state is not supposed to change while this screen is up, store it like this just in case
 var StateObjectReference InfiltrationRef;
 
+var localized string strHeader;
+var localized string strChosenHelpText;
+
+var localized string strChosenProgressLeftLabel;
+var localized string strChosenModifierLeftLabel;
+
 const MILESTONES_MARGIN = 10;
 
 simulated function InitScreen (XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
@@ -59,7 +65,7 @@ simulated protected function BuildScreen ()
 
 	ScreenHeader = Spawn(class'UIX2PanelHeader', MainGroupContainer);
 	ScreenHeader.bAnimateOnInit = false;
-	ScreenHeader.InitPanelHeader('ScreenHeader', "OVER INFILTRATION", "Operation Bang Boom (123%)");
+	ScreenHeader.InitPanelHeader('ScreenHeader', strHeader, "Operation Bang Boom (123%)");
 	ScreenHeader.SetHeaderWidth(MainGroupBG.Width - 20);
 	ScreenHeader.SetPosition(MainGroupBG.X + 10, MainGroupBG.Y + 10);
 
@@ -103,7 +109,7 @@ simulated protected function BuildScreen ()
 	ChosenHelpText.InitText('ChosenHelpText');
 	ChosenHelpText.SetX(ChosenLogo.X + ChosenLogo.Width + 5);
 	ChosenHelpText.SetWidth(ChosenSectionContainer.Width - ChosenHelpText.X);
-	ChosenHelpText.SetCenteredText("The amount you infil will modify how likely the chosen is to appear"); // TODO: Loc
+	ChosenHelpText.SetCenteredText(strChosenHelpText);
 
 	ChosenInfilBGBar = Spawn(class'UIBGBox', ChosenSectionContainer);
 	ChosenInfilBGBar.bAnimateOnInit = false;
@@ -126,7 +132,7 @@ simulated protected function BuildScreen ()
 	ChosenLeftLabels.bAnimateOnInit = false;
 	ChosenLeftLabels.InitText('ChosenLeftLabels');
 	ChosenLeftLabels.SetY(ChosenInfilBGBar.Y + ChosenInfilBGBar.Height + 3);
-	ChosenLeftLabels.SetText("infil<br/>modifier"); // TODO: Loc
+	ChosenLeftLabels.SetText(strChosenProgressLeftLabel $ "<br/>" $ strChosenModifierLeftLabel);
 }
 
 simulated protected function PopulateMilestones ()
