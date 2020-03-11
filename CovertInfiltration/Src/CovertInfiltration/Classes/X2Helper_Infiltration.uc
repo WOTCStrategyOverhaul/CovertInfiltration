@@ -600,7 +600,11 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameStat
 	}
 
 	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
-	MissionState.PickPOI(NewGameState);
+	
+	if (X2ActivityTemplate_Mission(ActivityState.GetMyTemplate()).bNeedsPOI)
+	{
+		MissionState.PickPOI(NewGameState);
+	}
 
 	// Cosmetic stuff
 
