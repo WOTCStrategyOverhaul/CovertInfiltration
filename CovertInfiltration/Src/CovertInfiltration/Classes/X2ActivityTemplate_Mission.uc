@@ -100,6 +100,7 @@ static function GenericOnSuccess (XComGameState NewGameState, XComGameState_Acti
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, MissionState, true);
 	MissionState.RemoveEntity(NewGameState);
 
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
@@ -114,6 +115,7 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	local XComGameState_MissionSite MissionState;
 	
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, MissionState, false);
 	MissionState.RemoveEntity(NewGameState);
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
@@ -165,7 +167,6 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 defaultproperties
 {
 	bAssignFactionToMissionSite = true
-	bNeedsPOI = false
 
 	InitializeMissionRewards = GenericInitializeMissionRewards
 	GetOverworldMeshPath = GenericGetOverworldMeshPath
