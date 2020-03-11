@@ -13,6 +13,8 @@ var UIPanel OverInfiltrationPanel;
 var UIBGBox OverInfiltrationBG;
 var UIX2PanelHeader OverInfiltrationHeader;
 
+var UIButton DetailsButton;
+
 var localized string strOverInfiltrationHeader;
 var localized string strOverInfiltrationNextBonus;
 var localized string strMissionReady;
@@ -250,6 +252,13 @@ simulated function BuildOptionsPanel()
 		Button1.Show();
 		Button2.Show();
 	}
+
+	DetailsButton = Spawn(class'UIButton', ButtonGroup);
+	DetailsButton.LibID = 'X2InfoButton';
+	DetailsButton.InitButton('DetailsButton');
+	DetailsButton.OnClickedDelegate = OnDetailsButtonClicked;
+	DetailsButton.SetPosition(190, -75);
+	// TODO: Controller
 }
 
 static function string GetButtonBladeTitle (int CurrentInfil, int MaxInfil)
@@ -375,6 +384,13 @@ simulated function CloseScreenOnly ()
 simulated protected function OnViewSquad(UIButton Button)
 {
 	class'UIUtilities_Infiltration'.static.UIPersonnel_PreSetList(GetInfiltration().SoldiersOnMission, "DEPLOYED SQUAD");
+}
+
+simulated function OnDetailsButtonClicked (UIButton Button)
+{
+	//bHideOnLoseFocus = false;
+	class'UIUtilities_Infiltration'.static.UIInfiltrationDetails(MissionRef);
+	//bHideOnLoseFocus = true;
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------

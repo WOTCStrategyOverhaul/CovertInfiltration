@@ -1,5 +1,3 @@
-// TODO: Localise all strings!!!
-
 class UIInfiltrationDetails extends UIScreen;
 
 struct ChosenModifierDisplay
@@ -8,6 +6,8 @@ struct ChosenModifierDisplay
 	var UIText Text;
 	var bool bPositioned;
 };
+
+var UIPanel ModalBackdrop;
 
 var UIPanel MainGroupContainer;
 var UIBGBox MainGroupBG;
@@ -30,6 +30,7 @@ var array<ChosenModifierDisplay> ChosenMods;
 var StateObjectReference InfiltrationRef;
 
 var localized string strHeader;
+var localized string strOperationText;
 var localized string strChosenHelpText;
 
 var localized string strChosenProgressLeftLabel;
@@ -44,6 +45,7 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 	BuildScreen();
 	PopulateMilestones();
 	CreateChosenMods();
+	UpdateNavHelp();
 
 	// TODO: Navbar
 	// TODO: Animate in
@@ -51,12 +53,20 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 
 simulated protected function BuildScreen ()
 {
+	ModalBackdrop = Spawn(class'UIPanel', self);
+	ModalBackdrop.bAnimateOnInit = false;
+	ModalBackdrop.InitPanel('ModalBackdrop', class'UIUtilities_Controls'.const.MC_GenericPixel);
+	ModalBackdrop.SetPosition(0, 0);
+	ModalBackdrop.SetSize(Movie.UI_RES_X, Movie.UI_RES_Y);
+	ModalBackdrop.SetColor(class'UIUtilities_Colors'.const.BLACK_HTML_COLOR);
+	ModalBackdrop.SetAlpha(30);
+
 	// TODO: Try anchoring mid-center
 	MainGroupContainer = Spawn(class'UIPanel', self);
 	MainGroupContainer.bAnimateOnInit = false;
 	MainGroupContainer.InitPanel('MainGroupContainer');
-	MainGroupContainer.SetPosition(670, 185);
-	MainGroupContainer.SetSize(550, 720);
+	MainGroupContainer.SetPosition(670, 150);
+	MainGroupContainer.SetSize(550, 820);
 
 	MainGroupBG = Spawn(class'UIBGBox', MainGroupContainer);
 	MainGroupBG.bAnimateOnInit = false;
@@ -65,7 +75,7 @@ simulated protected function BuildScreen ()
 
 	ScreenHeader = Spawn(class'UIX2PanelHeader', MainGroupContainer);
 	ScreenHeader.bAnimateOnInit = false;
-	ScreenHeader.InitPanelHeader('ScreenHeader', strHeader, "Operation Bang Boom (123%)");
+	ScreenHeader.InitPanelHeader('ScreenHeader', strHeader, GetOperationText());
 	ScreenHeader.SetHeaderWidth(MainGroupBG.Width - 20);
 	ScreenHeader.SetPosition(MainGroupBG.X + 10, MainGroupBG.Y + 10);
 
@@ -80,6 +90,7 @@ simulated protected function BuildScreen ()
 
 	MilestonesList = Spawn(class'UIList', MainGroupContainer);
 	MilestonesList.bAnimateOnInit = false;
+	MilestonesList.bShrinkToFit = true;
 	MilestonesList.ItemPadding = 10;
 	MilestonesList.InitList('MilestonesList');
 	MilestonesList.SetWidth(HeaderMilestonesSeparator.Width - MILESTONES_MARGIN * 2);
@@ -135,40 +146,18 @@ simulated protected function BuildScreen ()
 	ChosenLeftLabels.SetText(strChosenProgressLeftLabel $ "<br/>" $ strChosenModifierLeftLabel);
 }
 
-simulated protected function PopulateMilestones ()
+simulated protected function string GetOperationText()
 {
-	local UIInfiltrationDetails_Milestone Milestone;
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XGParamTag ParamTag;
 
-	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
-	Milestone.InitMilestone();
-	Milestone.SetProgressInfo(201, 300, 200);
-	Milestone.SetLocked("So far away");
-
-	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
-	Milestone.InitMilestone();
-	Milestone.SetProgressInfo(151, 200, 178);
-	Milestone.SetInProgress("Almost there", "All enemies die when you look at them sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-
-	Milestone = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
-	Milestone.InitMilestone();
-	Milestone.SetProgressInfo(100, 150, 150);
-	Milestone.SetUnlocked("Unlocked milestone", "+30 player damage output dsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-
-	MilestonesList.RealizeItems();
-	MilestonesList.RealizeList();
-
-	MilestonesChosenSeparator.SetY(MilestonesList.Y + /*MilestonesList.GetTotalHeight()*/ 250 + 5); // TODO
-	ChosenSectionContainer.SetY(MilestonesChosenSeparator.Y + 5);
-}
-
-simulated protected function CreateChosenMods ()
-{
-	local InfilChosenModifer ModDef;
-
-	foreach class'XComGameState_MissionSiteInfiltration'.default.ChosenAppearenceMods(ModDef)
-	{
-		ChosenMods.AddItem(SpawnChosenMod(ModDef.Progress, ModDef.Multiplier));
-	}
+	InfiltrationState = GetInfiltration();
+	
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = InfiltrationState.GeneratedMission.BattleOpName;
+	ParamTag.IntValue0 = InfiltrationState.GetCurrentInfilInt();
+	
+	return `XEXPAND.ExpandString(strOperationText);
 }
 
 simulated protected function OnChosenLeftLabelsRealized ()
@@ -232,7 +221,7 @@ simulated protected function PositionChosenMod (ChosenModifierDisplay ChosenMod)
 		return;
 	}
 
-	RelativeX = (ChosenInfilBGBar.Width / 150) * (ChosenMod.Progress - 100);
+	RelativeX = (ChosenInfilBGBar.Width / 150) * (ChosenMod.Progress - 100); // TODO: Cap to max infil
 	RelativeX -= ChosenMod.Text.Width / 2;
 
 	ChosenMod.Text.SetX(FClamp(
@@ -243,6 +232,99 @@ simulated protected function PositionChosenMod (ChosenModifierDisplay ChosenMod)
 
 	i = ChosenMods.Find('Text', ChosenMod.Text);
 	ChosenMods[i].bPositioned = true;
+}
+
+///////////////
+/// Navhelp ///
+///////////////
+
+simulated protected function UpdateNavHelp ()
+{
+	local UINavigationHelp NavHelp;
+
+	NavHelp = `HQPRES.m_kAvengerHUD.NavHelp;
+
+	NavHelp.ClearButtonHelp();
+	NavHelp.AddBackButton(CloseScreen);
+}
+
+///////////////////////
+/// Populating data ///
+///////////////////////
+
+simulated protected function PopulateMilestones ()
+{
+	local X2InfiltrationBonusMilestoneTemplateManager MilestoneTemplateManager;
+	local X2StrategyElementTemplateManager StrategyTemplateManager;
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local X2InfiltrationBonusMilestoneTemplate MilestoneTemplate;
+	local array<InfilBonusMilestoneSelection> SelectedBonuses;
+	local X2OverInfiltrationBonusTemplate BonusTemplate;
+	local UIInfiltrationDetails_Milestone MilestoneUI;
+	local int i, CurrentProgress, MilestoneStartAt;
+
+	MilestoneTemplateManager = class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager();
+	StrategyTemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	InfiltrationState = GetInfiltration();
+	CurrentProgress = InfiltrationState.GetCurrentInfilInt();
+	SelectedBonuses = InfiltrationState.GetSortedBonusSelection();
+
+	// Need to iterate backwards so that last milestone ends up on top (first in list)
+	for (i = SelectedBonuses.Length - 1; i >= 0; i--)
+	{
+		// Do not show if there is nothing to be granted here
+		if (SelectedBonuses[i].BonusName == '') continue;
+
+		if (i == 0)
+		{
+			MilestoneStartAt = 101;
+		}
+		else
+		{
+			MilestoneTemplate = MilestoneTemplateManager.GetMilestoneTemplate(SelectedBonuses[i - 1].MilestoneName);
+			MilestoneStartAt = MilestoneTemplate.ActivateAtProgress + 1;
+		}
+
+		BonusTemplate = X2OverInfiltrationBonusTemplate(StrategyTemplateManager.FindStrategyElementTemplate(SelectedBonuses[i].BonusName));
+		MilestoneTemplate = MilestoneTemplateManager.GetMilestoneTemplate(SelectedBonuses[i].MilestoneName);
+
+		// Do not show the row if the player cannot attain it
+		if (MilestoneTemplate.ActivateAtProgress > InfiltrationState.MaxAllowedInfil) continue;
+
+		MilestoneUI = Spawn(class'UIInfiltrationDetails_Milestone', MilestonesList.ItemContainer);
+		MilestoneUI.InitMilestone();
+		MilestoneUI.SetProgressInfo(MilestoneStartAt, MilestoneTemplate.ActivateAtProgress, CurrentProgress);
+
+		if (SelectedBonuses[i].bGranted)
+		{
+			MilestoneUI.SetUnlocked(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription());
+		}
+		else if (InfiltrationState.GetNextOverInfiltrationBonus() == BonusTemplate)
+		{
+			MilestoneUI.SetInProgress(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription());
+		}
+		else
+		{
+			MilestoneUI.SetLocked(MilestoneTemplate.strName);
+		}
+	}
+
+	MilestonesList.RealizeItems();
+	MilestonesList.RealizeList();
+
+	MilestonesChosenSeparator.SetY(MilestonesList.Y + MilestonesList.TotalItemSize + 10);
+	ChosenSectionContainer.SetY(MilestonesChosenSeparator.Y + 5);
+}
+
+simulated protected function CreateChosenMods ()
+{
+	local InfilChosenModifer ModDef;
+
+	foreach class'XComGameState_MissionSiteInfiltration'.default.ChosenAppearenceMods(ModDef)
+	{
+		ChosenMods.AddItem(SpawnChosenMod(ModDef.Progress, ModDef.Multiplier));
+	}
 }
 
 /////////////
@@ -266,7 +348,17 @@ simulated function bool OnUnrealCommand (int cmd, int arg)
 	return super.OnUnrealCommand(cmd, arg);
 }
 
+///////////////
+/// Helpers ///
+///////////////
+
+simulated function XComGameState_MissionSiteInfiltration GetInfiltration()
+{
+	return XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectId(InfiltrationRef.ObjectID));
+}
+
 defaultproperties
 {
 	InputState = eInputState_Consume
+	bConsumeMouseEvents = true;
 }

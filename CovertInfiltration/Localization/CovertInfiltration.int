@@ -452,6 +452,7 @@ strCrewOverflowDescription=Onboard the Avenger, space is precious and currently 
 
 [UIInfiltrationDetails]
 strHeader=OVER INFILTRATION
+strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
 strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
 
 strChosenProgressLeftLabel=infil
@@ -459,3 +460,18 @@ strChosenModifierLeftLabel=modifier
 
 [UIInfiltrationDetails_Milestone]
 strHidden=HIDDEN
+
+[SitRep1 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 1
+
+[RiskRemoval X2InfiltrationBonusMilestoneTemplate]
+strName=Risk Removal
+
+[SitRep2 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 2
+
+[GenericBuff2 X2InfiltrationBonusMilestoneTemplate]
+strName=Opportune Moment II
+
+[SitRep3 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 3
