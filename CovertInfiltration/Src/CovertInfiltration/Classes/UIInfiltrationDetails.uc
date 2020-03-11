@@ -21,7 +21,8 @@ var UIPanel MilestonesChosenSeparator;
 var UIPanel ChosenSectionContainer;
 var UIImage ChosenLogo;
 var UIText ChosenHelpText;
-var UIProgressBar ChosenInfilProgress;
+var UIBGBox ChosenInfilBGBar;
+var UIBGBox ChosenInfilFillBar;
 var UIText ChosenLeftLabels;
 var array<ChosenModifierDisplay> ChosenMods;
 
@@ -104,19 +105,28 @@ simulated protected function BuildScreen ()
 	ChosenHelpText.SetWidth(ChosenSectionContainer.Width - ChosenHelpText.X);
 	ChosenHelpText.SetCenteredText("The amount you infil will modify how likely the chosen is to appear"); // TODO: Loc
 
-	ChosenInfilProgress = Spawn(class'UIProgressBar', ChosenSectionContainer);
-	ChosenInfilProgress.bAnimateOnInit = false;
-	ChosenInfilProgress.InitProgressBar('ChosenInfilProgress');
-	ChosenInfilProgress.SetY(ChosenLogo.Height + 10);
-	ChosenInfilProgress.SetSize(ChosenSectionContainer.Width, 20);
-	ChosenInfilProgress.SetPercent(0.53);
+	ChosenInfilBGBar = Spawn(class'UIBGBox', ChosenSectionContainer);
+	ChosenInfilBGBar.bAnimateOnInit = false;
+	ChosenInfilBGBar.InitBG('ChosenInfilBGBar');
+	ChosenInfilBGBar.SetBGColor("cyan");
+	ChosenInfilBGBar.SetY(ChosenLogo.Height + 10);
+	ChosenInfilBGBar.SetSize(ChosenSectionContainer.Width, 20);
+
+	ChosenInfilFillBar = Spawn(class'UIBGBox', ChosenSectionContainer);
+	ChosenInfilFillBar.bAnimateOnInit = false;
+	ChosenInfilFillBar.InitBG('ChosenInfilFillBar');
+	ChosenInfilFillBar.SetY(ChosenInfilBGBar.Y);
+	ChosenInfilFillBar.SetBGColor("cyan_highlight");
+	ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
+	ChosenInfilFillBar.SetWidth(150); //
+	ChosenInfilFillBar.SetHeight(ChosenInfilBGBar.Height);
 
 	ChosenLeftLabels = Spawn(class'UIText', ChosenSectionContainer);
 	ChosenLeftLabels.OnTextSizeRealized = OnChosenLeftLabelsRealized;
 	ChosenLeftLabels.bAnimateOnInit = false;
 	ChosenLeftLabels.InitText('ChosenLeftLabels');
-	ChosenLeftLabels.SetY(ChosenInfilProgress.Y + ChosenInfilProgress.Height + 3);
-	ChosenLeftLabels.SetCenteredText("infil<br/>modifier"); // TODO: Loc
+	ChosenLeftLabels.SetY(ChosenInfilBGBar.Y + ChosenInfilBGBar.Height + 3);
+	ChosenLeftLabels.SetText("infil<br/>modifier"); // TODO: Loc
 }
 
 simulated protected function PopulateMilestones ()
@@ -159,8 +169,11 @@ simulated protected function OnChosenLeftLabelsRealized ()
 {
 	local ChosenModifierDisplay ChosenMod;
 
-	ChosenInfilProgress.SetX(ChosenLeftLabels.X + ChosenLeftLabels.Width + 5);
-	ChosenInfilProgress.SetWidth(ChosenSectionContainer.Width - ChosenInfilProgress.X);
+	ChosenInfilBGBar.SetX(ChosenLeftLabels.X + ChosenLeftLabels.Width + 5);
+	ChosenInfilBGBar.SetWidth(ChosenSectionContainer.Width - ChosenInfilBGBar.X);
+
+	ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
+	// TODO: Update ChosenInfilFillBar.Width
 
 	foreach ChosenMods(ChosenMod)
 	{
@@ -181,7 +194,7 @@ simulated protected function ChosenModifierDisplay SpawnChosenMod (int Progress,
 	ChosenMod.Text.bAnimateOnInit = false;
 	ChosenMod.Text.InitText();
 	ChosenMod.Text.SetY(ChosenLeftLabels.Y);
-	ChosenMod.Text.SetCenteredText(Progress $ "%<br/>" $ string(Round(Multiplier * 100)) $ "%");
+	ChosenMod.Text.SetText(Progress $ "%<br/>" $ string(Round(Multiplier * 100)) $ "%");
 
 	return ChosenMod;
 }
@@ -213,10 +226,14 @@ simulated protected function PositionChosenMod (ChosenModifierDisplay ChosenMod)
 		return;
 	}
 
-	RelativeX = (ChosenInfilProgress.Width / 150) * (ChosenMod.Progress - 100);
+	RelativeX = (ChosenInfilBGBar.Width / 150) * (ChosenMod.Progress - 100);
 	RelativeX -= ChosenMod.Text.Width / 2;
 
-	ChosenMod.Text.SetX(FClamp(ChosenInfilProgress.X + RelativeX, 0, ChosenInfilProgress.Width - ChosenMod.Text.Width));
+	ChosenMod.Text.SetX(FClamp(
+		ChosenInfilBGBar.X + RelativeX,
+		ChosenInfilBGBar.X,
+		ChosenInfilBGBar.X + ChosenInfilBGBar.Width - ChosenMod.Text.Width
+	));
 
 	i = ChosenMods.Find('Text', ChosenMod.Text);
 	ChosenMods[i].bPositioned = true;
