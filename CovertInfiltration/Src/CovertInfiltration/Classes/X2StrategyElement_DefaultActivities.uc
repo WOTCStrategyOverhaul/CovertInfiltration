@@ -59,7 +59,8 @@ static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverPersonnelInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverPersonnel", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
-	Activity.OnSuccess = OnSuccessPOI;
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -135,8 +136,9 @@ static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverInformantInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverInformant", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -219,8 +221,9 @@ static function CreateRecoverDarkEvent (out array<X2DataTemplate> Templates)
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverDarkEventInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverDarkEvent", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -238,8 +241,9 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_CounterDarkEventInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CounterDarkEvent", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
-
-	Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -260,7 +264,8 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
 	Activity.Difficulty = 2;
 	
-	Activity.OnSuccess = OnSuccessPOI;
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_DarkEvent');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -352,8 +357,9 @@ static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverUFOInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverUFO", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -415,8 +421,9 @@ static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_CommanderSupplyInfil"), true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CommanderSupply", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
-
-	Activity.OnSuccess = OnSuccessPOI;
+	
+	Activity.bNeedsPOI = true;
+	
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
@@ -594,25 +601,6 @@ static function X2ActivityTemplate_Infiltration CreateStandardInfilActivity (X2C
 	return Activity;
 }
 
-static function OnSuccessPOI(XComGameState NewGameState, XComGameState_Activity ActivityState)
-{
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_HeadquartersResistance ResHQ;
-
-	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
-	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
-
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
-	MissionState.POIToSpawn = ResHQ.ChoosePOI(NewGameState);
-	class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
-	MissionState.RemoveEntity(NewGameState);
-
-	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
-	ActivityState.MarkSuccess(NewGameState);
-
-	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
-}
-
 static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local array<int> ExcludeIndices;
@@ -623,12 +611,14 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 
 	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
 	MissionState.RemoveEntity(NewGameState);
+
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
-
+	
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 
