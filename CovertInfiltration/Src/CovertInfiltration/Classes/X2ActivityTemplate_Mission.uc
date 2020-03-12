@@ -20,6 +20,7 @@ var string OverworldMeshPath;
 var string UIButtonIcon;
 var string MissionImage;
 var bool bAssignFactionToMissionSite;
+var bool bNeedsPOI;
 
 delegate array<StateObjectReference> InitializeMissionRewards (XComGameState NewGameState, XComGameState_Activity ActivityState);
 delegate PreMissionSetup (XComGameState NewGameState, XComGameState_Activity ActivityState);
@@ -99,6 +100,7 @@ static function GenericOnSuccess (XComGameState NewGameState, XComGameState_Acti
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
 	MissionState.RemoveEntity(NewGameState);
 
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
@@ -112,6 +114,7 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	local XComGameState_MissionSite MissionState;
 	
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
 	MissionState.RemoveEntity(NewGameState);
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
