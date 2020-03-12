@@ -56,7 +56,7 @@ static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverPersonnelInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverPersonnelInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverPersonnel", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.bNeedsPOI = true;
@@ -76,7 +76,7 @@ static function CreatePreparePersonnel (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PreparePersonnel"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PreparePersonnel');
 	CovertAction = CreateStandardActivityCA("PreparePersonnel", "CovertAction");
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
@@ -98,7 +98,7 @@ static function CreateRescueEngineer (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RescueEngineerInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RescueEngineerInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RescueEngineer", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 
 	Activity.MissionRewards.AddItem('Reward_Engineer');
@@ -116,7 +116,7 @@ static function CreateRescueScientist (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RescueScientistInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RescueScientistInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RescueScientist", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 
 	Activity.MissionRewards.AddItem('Reward_Scientist');
@@ -134,7 +134,7 @@ static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverInformantInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverInformantInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverInformant", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 	
 	Activity.bNeedsPOI = true;
@@ -154,7 +154,7 @@ static function CreateCaptureInformant (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_CaptureInformantInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureInformantInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CaptureInformant", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
 	Activity.MissionRewards.AddItem('Reward_Datapad');
@@ -197,7 +197,7 @@ static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareCounterDE"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareCounterDE');
 	CovertAction = CreateStandardActivityCA("PrepareCounterDE", "CovertAction");
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
@@ -219,7 +219,7 @@ static function CreateRecoverDarkEvent (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverDarkEventInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverDarkEventInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverDarkEvent", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 	
 	Activity.bNeedsPOI = true;
@@ -239,7 +239,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_CounterDarkEventInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CounterDarkEventInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CounterDarkEvent", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
 	
 	Activity.bNeedsPOI = true;
@@ -257,7 +257,7 @@ static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_CounterDarkEvent"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_CounterDarkEvent');
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
@@ -279,7 +279,7 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareFactionJB"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareFactionJB');
 	CovertAction = CreateStandardActivityCA("PrepareFactionJB", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
@@ -301,7 +301,7 @@ static function CreateJailbreakSoldier (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_JailbreakSoldierInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakSoldierInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
 
 	Activity.MissionRewards.AddItem('Reward_SoldierCaptured');
@@ -319,7 +319,7 @@ static function CreateJailbreakChosenSoldier (out array<X2DataTemplate> Template
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_JailbreakChosenSoldierInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakChosenSoldierInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakChosenSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
 
 	Activity.MissionRewards.AddItem('Reward_ChosenSoldierCaptured');
@@ -337,7 +337,7 @@ static function CreateJailbreakFactionSoldier (out array<X2DataTemplate> Templat
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_JailbreakFactionSoldierInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakFactionSoldierInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakFactionSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
 
 	Activity.MissionRewards.AddItem('Reward_ExtraFactionSoldier');
@@ -355,7 +355,7 @@ static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_RecoverUFOInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverUFOInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "RecoverUFO", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 	
 	Activity.bNeedsPOI = true;
@@ -375,7 +375,7 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareUFO"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareUFO');
 	CovertAction = CreateStandardActivityCA("PrepareUFO", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
@@ -398,7 +398,7 @@ static function CreateLandedUFO (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_LandedUFO"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_LandedUFO');
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Landed_UFO";
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
@@ -419,7 +419,7 @@ static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_CommanderSupplyInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CommanderSupplyInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CommanderSupply", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
 	
 	Activity.bNeedsPOI = true;
@@ -439,7 +439,7 @@ static function CreateSupplyRaid (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_SupplyRaidInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SupplyRaidInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "SupplyRaid", "SupplyRaid_AdvConvoy", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid");
 
 	Activity.MissionRewards.AddItem('Reward_Materiel');
@@ -456,7 +456,7 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_CovertAction Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, name("Activity_PrepareFacility"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareFacility');
 	CovertAction = CreateStandardActivityCA("PrepareFacility", "CovertAction");
 
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
@@ -479,7 +479,7 @@ static function CreateFacilityInformant (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_FacilityInformantInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_FacilityInformantInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "FacilityInformant", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
 	Activity.MissionRewards.AddItem('Reward_Datapad');
@@ -498,7 +498,7 @@ static function CreateGatherIntel (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_GatherIntel"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_GatherIntel');
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.RadioTower";
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
@@ -517,7 +517,7 @@ static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault Activity;
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, name("Activity_GatherSupplies"));
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_GatherSupplies');
 	
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyExtraction";
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
@@ -549,7 +549,7 @@ static function CreateIntelRescue (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_IntelRescueInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelRescueInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "IntelRescue", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.MissionRewards.AddItem('Reward_Container');
@@ -566,7 +566,7 @@ static function CreateSupplyRescue (out array<X2DataTemplate> Templates)
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate(name("CovertAction_SupplyRescueInfil"), true);
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SupplyRescueInfil', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "SupplyRescue", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
 
 	Activity.MissionRewards.AddItem('Reward_Container');
