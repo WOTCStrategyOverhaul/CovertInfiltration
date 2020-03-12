@@ -1164,11 +1164,11 @@ static protected function int SortMultiStepLerpSteps (MultiStepLerpStep A, Multi
 
 static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_Activity ActivityState, bool bSuccess)
 {
-	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_MissionSite MissionState;
 	local X2ActivityTemplate_Mission Template;
 
 	MissionState = GetMissionStateFromActivity(ActivityState);
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
 	Template = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
 	if (Template != none && Template.bNeedsPOI)
@@ -1177,9 +1177,8 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 		{
 			if (MissionState.POIToSpawn.ObjectID <= 0)
 			{
-				ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 				MissionState.PickPOI(NewGameState);
-				`CI_Trace(ActivityState.GetMyTemplateName() $ " has no POI, creating a replacement");
+				`CI_Warn(ActivityState.GetMyTemplateName() $ " has no POI and is marked as requiring one! Spawning replacement");
 			}
 		
 			class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
