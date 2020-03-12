@@ -1162,11 +1162,13 @@ static protected function int SortMultiStepLerpSteps (MultiStepLerpStep A, Multi
 	return A.X < B.X ? 1 : -1;
 }
 
-static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_MissionSite MissionState, bool bSuccess)
+static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_Activity ActivityState, bool bSuccess)
 {
 	local XComGameState_HeadquartersResistance ResHQ;
+	local XComGameState_MissionSite MissionState;
 	local X2ActivityTemplate_Mission Template;
 
+	MissionState = GetMissionStateFromActivity(ActivityState);
 	Template = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 
 	if (Template != none && Template.bNeedsPOI)
@@ -1176,13 +1178,18 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 			if (MissionState.POIToSpawn.ObjectID <= 0)
 			{
 				ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
-				MissionState.POIToSpawn = ResHQ.ChoosePOI(NewGameState);
+				MissionState.PickPOI(NewGameState);
 				`CI_Trace(ActivityState.GetMyTemplateName() $ " has no POI, creating a replacement");
 			}
 		
 			class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
 		}
-		
-		class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
+		else
+		{
+			if (MissionState.POIToSpawn.ObjectID > 0)
+			{
+				class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
+			}
+		}
 	}
 }

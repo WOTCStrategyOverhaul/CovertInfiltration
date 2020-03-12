@@ -611,7 +611,7 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 
 	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
-	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, MissionState, true);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
 	MissionState.RemoveEntity(NewGameState);
 
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_CouncilMissionsCompleted');

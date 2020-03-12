@@ -100,13 +100,12 @@ static function GenericOnSuccess (XComGameState NewGameState, XComGameState_Acti
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState);
-	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, MissionState, true);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
 	MissionState.RemoveEntity(NewGameState);
 
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkSuccess(NewGameState);
 	
-	class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
 }
 
@@ -115,13 +114,12 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	local XComGameState_MissionSite MissionState;
 	
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
-	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, MissionState, false);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
 	MissionState.RemoveEntity(NewGameState);
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
 	ActivityState.MarkFailed(NewGameState);
 	
-	class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
 }
 
