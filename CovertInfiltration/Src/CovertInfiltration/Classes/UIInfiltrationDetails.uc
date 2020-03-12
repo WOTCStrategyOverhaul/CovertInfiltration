@@ -72,6 +72,7 @@ simulated protected function BuildScreen ()
 	MainGroupBG.bAnimateOnInit = false;
 	MainGroupBG.LibID = class'UIUtilities_Controls'.const.MC_X2Background;
 	MainGroupBG.InitBG('MainGroupBG', 0, 0, MainGroupContainer.Width, MainGroupContainer.Height);
+	MainGroupBG.MC.ChildSetNum("bgFill", "_alpha", 100);
 
 	ScreenHeader = Spawn(class'UIX2PanelHeader', MainGroupContainer);
 	ScreenHeader.bAnimateOnInit = false;

@@ -14,6 +14,7 @@ var UIBGBox OverInfiltrationBG;
 var UIX2PanelHeader OverInfiltrationHeader;
 
 var UIButton DetailsButton;
+var UIGamepadIcons DetailsControllerHint;
 
 var localized string strOverInfiltrationHeader;
 var localized string strOverInfiltrationNextBonus;
@@ -258,7 +259,13 @@ simulated function BuildOptionsPanel()
 	DetailsButton.InitButton('DetailsButton');
 	DetailsButton.OnClickedDelegate = OnDetailsButtonClicked;
 	DetailsButton.SetPosition(190, -75);
-	// TODO: Controller
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		DetailsControllerHint = Spawn(class'UIGamepadIcons', ButtonGroup);
+		DetailsControllerHint.InitGamepadIcon('DetailsControllerHint', class'UIUtilities_Input'.static.GetGamepadIconPrefix() $class'UIUtilities_Input'.const.ICON_RSCLICK_R3, 28);
+		DetailsControllerHint.SetPosition(185, -45);
+	}
 }
 
 static function string GetButtonBladeTitle (int CurrentInfil, int MaxInfil)
@@ -338,6 +345,10 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.const.FXS_BUTTON_X:
 		ViewSquadButton.Click();
 		return true;
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_R3:
+		DetailsButton.Click();
+		return true;
 	}
 
 	return super.OnUnrealCommand(cmd, arg);
@@ -388,9 +399,9 @@ simulated protected function OnViewSquad(UIButton Button)
 
 simulated function OnDetailsButtonClicked (UIButton Button)
 {
-	//bHideOnLoseFocus = false;
+	bHideOnLoseFocus = false;
 	class'UIUtilities_Infiltration'.static.UIInfiltrationDetails(MissionRef);
-	//bHideOnLoseFocus = true;
+	bHideOnLoseFocus = true;
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------

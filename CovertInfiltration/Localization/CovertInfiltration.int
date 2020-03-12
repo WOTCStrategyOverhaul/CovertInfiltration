@@ -451,7 +451,7 @@ strCrewOverflowHeader=Living quaters
 strCrewOverflowDescription=Onboard the Avenger, space is precious and currently we are over the number of people that we can support.<br/>You should consider improving living quaters to improve capacity or letting go of non-essential personnel
 
 [UIInfiltrationDetails]
-strHeader=OVER INFILTRATION
+strHeader=INFILTRATION
 strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
 strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
 
