@@ -140,7 +140,7 @@ simulated protected function BuildChosenSection ()
 	ChosenInfilLabel.bAnimateOnInit = false;
 	ChosenInfilLabel.InitText('ChosenInfilLabel');
 	ChosenInfilLabel.SetPosition(0, ChosenLogo.Height + 10);
-	ChosenInfilLabel.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(strChosenProgressLeftLabel, bIsIn3D, true, true));
+	ChosenInfilLabel.SetHtmlText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(strChosenProgressLeftLabel, bIsIn3D, true, true), eUIState_Header));
 
 	ChosenInfilBGBar = Spawn(class'UIBGBox', ChosenSectionContainer);
 	ChosenInfilBGBar.bAnimateOnInit = false;
@@ -161,7 +161,7 @@ simulated protected function BuildChosenSection ()
 	ChosenModifierLabel.bAnimateOnInit = false;
 	ChosenModifierLabel.InitText('ChosenModifierLabel');
 	ChosenModifierLabel.SetY(ChosenInfilBGBar.Y + ChosenInfilBGBar.Height + 3);
-	ChosenModifierLabel.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(strChosenModifierLeftLabel, bIsIn3D, true, true));
+	ChosenModifierLabel.SetHtmlText(class'UIUtilities_Text'.static.GetColoredText(class'UIUtilities_Text'.static.AddFontInfo(strChosenModifierLeftLabel, bIsIn3D, true, true), eUIState_Header));
 }
 
 simulated protected function string GetOperationText()
@@ -181,17 +181,16 @@ simulated protected function string GetOperationText()
 simulated protected function OnAnyChosenLeftLabelRealized ()
 {
 	local ChosenModifierDisplay ChosenMod;
+	local float OverInfilStartX, OverInfilPercentToMax;
 	local int i;
 
 	// Wait for the other one
 	if (!ChosenInfilLabel.TextSizeRealized || !ChosenModifierLabel.TextSizeRealized) return;
 
-	//ChosenInfilBGBar.SetX(ChosenLeftLabels.X + ChosenLeftLabels.Width + 5);
-	//ChosenInfilBGBar.SetWidth(ChosenSectionContainer.Width - ChosenInfilBGBar.X);
-
-	//ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
-	ChosenInfilFillBar.SetWidth(GetChosenModsX());
-	// TODO: Update ChosenInfilFillBar.Width
+	OverInfilStartX = GetChosenModsX();
+	//OverInfilPercentToMax = GetInfiltration().GetCurrentOverInfilPercentToMax(); // This is broken
+	//ChosenInfilFillBar.SetWidth(OverInfilStartX + ((ChosenInfilBGBar.Width - OverInfilStartX) * OverInfilPercentToMax));
+	ChosenInfilFillBar.SetWidth(OverInfilStartX);
 
 	for (i = 0; i < ChosenMods.Length; i++)
 	{
@@ -275,8 +274,7 @@ simulated protected function PositionChosenModModifer (out ChosenModifierDisplay
 
 simulated protected function bool PositionChosenModText (int AtProgress, UIText Text, bool bPositioned)
 {
-	local float RelativeX, StartX;
-	local int i;
+	local float RelativeX, StartX, MaxOverInfil;
 
 	if (bPositioned) return bPositioned;
 	
@@ -288,7 +286,8 @@ simulated protected function bool PositionChosenModText (int AtProgress, UIText 
 	}
 
 	StartX = GetChosenModsX();
-	RelativeX = (ChosenInfilBGBar.Width / 150) * (AtProgress - 100); // TODO: Cap to max infil
+	MaxOverInfil = GetInfiltration().MaxAllowedInfil - 100;
+	RelativeX = (ChosenInfilBGBar.Width / MaxOverInfil) * (AtProgress - 100);
 	RelativeX -= Text.Width / 2;
 
 	Text.SetX(FClamp(
@@ -396,6 +395,7 @@ simulated protected function PopulateMilestones ()
 simulated protected function CreateChosenMods ()
 {
 	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local ChosenModifierDisplay ChosenMod;
 	local InfilChosenModifer ModDef;
 
 	InfiltrationState = GetInfiltration();
@@ -406,6 +406,18 @@ simulated protected function CreateChosenMods ()
 
 		ChosenMods.AddItem(SpawnChosenMod(ModDef.Progress, ModDef.Multiplier));
 	}
+
+	// See if we have the final one
+	foreach ChosenMods(ChosenMod)
+	{
+		if (ChosenMod.Progress == InfiltrationState.MaxAllowedInfil) return;
+	}
+
+	// We don't have a final one, make it
+	ChosenMods.AddItem(SpawnChosenMod(
+		InfiltrationState.MaxAllowedInfil,
+		class'XComGameState_MissionSiteInfiltration'.static.GetChosenInfilScalarForInfilInt(InfiltrationState.MaxAllowedInfil)
+	));
 }
 
 /////////////

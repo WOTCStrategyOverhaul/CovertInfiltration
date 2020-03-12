@@ -414,6 +414,12 @@ function float GetCurrentOverInfil()
 	return SecondsSinceMission / SecondsForOnePercent / 100;
 }
 
+// TODO: This is broken
+function float GetCurrentOverInfilPercentToMax ()
+{
+	return ((float(MaxAllowedInfil) / 100) - 1) / GetCurrentOverInfil();
+}
+
 function float GetCurrentInfil()
 {
 	return 1 + GetCurrentOverInfil();
@@ -647,7 +653,7 @@ function int GetChosenAppereanceChance()
 	BaseChance = CurrentChosen.GetChosenAppearChance();
 	if (BaseChance == 0) return 0;
 
-	OverInfilScalar = class'X2Helper_Infiltration'.static.ExecuteMultiStepLerp(GetCurrentInfilInt(), GetChosenOverinfilLerpConfig());
+	OverInfilScalar = GetChosenInfilScalarForInfilInt(GetCurrentInfilInt());
 	if (OverInfilScalar <= 0)
 	{
 		`RedScreen("CI: GetChosenAppereanceChance: OverInfilScalar was calculated to be 0 or less. This is invalid and overinfil will be ignored for chosen appearence chance calculation");
@@ -660,6 +666,11 @@ function int GetChosenAppereanceChance()
 	`CI_Trace("ChosenAppereanceChance: BaseChance=" $ BaseChance $ ", OverInfilScalar=" $ OverInfilScalar $ ", AlienHQScalar=" $ AlienHQScalar);
 
 	return Round(BaseChance * OverInfilScalar * AlienHQScalar);
+}
+
+static function float GetChosenInfilScalarForInfilInt (int Progress)
+{
+	return class'X2Helper_Infiltration'.static.ExecuteMultiStepLerp(Progress, GetChosenOverinfilLerpConfig());
 }
 
 static protected function MultiStepLerpConfig GetChosenOverinfilLerpConfig ()
