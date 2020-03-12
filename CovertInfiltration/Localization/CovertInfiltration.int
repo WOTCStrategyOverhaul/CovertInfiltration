@@ -455,8 +455,8 @@ strHeader=INFILTRATION
 strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
 strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
 
-strChosenProgressLeftLabel=infil
-strChosenModifierLeftLabel=modifier
+strChosenProgressLeftLabel=Infil %
+strChosenModifierLeftLabel=Modifier
 
 [UIInfiltrationDetails_Milestone]
 strHidden=HIDDEN

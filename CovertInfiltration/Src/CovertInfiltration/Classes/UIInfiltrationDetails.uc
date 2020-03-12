@@ -3,8 +3,12 @@ class UIInfiltrationDetails extends UIScreen;
 struct ChosenModifierDisplay
 {
 	var int Progress;
-	var UIText Text;
-	var bool bPositioned;
+
+	var UIText ProgressText;
+	var bool bProgressPositioned;
+
+	var UIText ModifierText;
+	var bool bModifierPositioned;
 };
 
 var UIPanel ModalBackdrop;
@@ -21,9 +25,10 @@ var UIPanel MilestonesChosenSeparator;
 var UIPanel ChosenSectionContainer;
 var UIImage ChosenLogo;
 var UIText ChosenHelpText;
+var UIText ChosenInfilLabel;
 var UIBGBox ChosenInfilBGBar;
 var UIBGBox ChosenInfilFillBar;
-var UIText ChosenLeftLabels;
+var UIText ChosenModifierLabel;
 var array<ChosenModifierDisplay> ChosenMods;
 
 // Even if currently the infil state is not supposed to change while this screen is up, store it like this just in case
@@ -47,7 +52,6 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 	CreateChosenMods();
 	UpdateNavHelp();
 
-	// TODO: Navbar
 	// TODO: Animate in
 }
 
@@ -97,10 +101,18 @@ simulated protected function BuildScreen ()
 	MilestonesList.SetWidth(HeaderMilestonesSeparator.Width - MILESTONES_MARGIN * 2);
 	MilestonesList.SetPosition(HeaderMilestonesSeparator.X + MILESTONES_MARGIN, HeaderMilestonesSeparator.Y + 10);
 
+	BuildChosenSection();
+}
+
+simulated protected function BuildChosenSection ()
+{
+	// Do not show this section if there is no chosen theatening this mission
+	//if (GetInfiltration().GetCurrentChosen() == none || !class'UIUtilities_Strategy'.static.GetAlienHQ().bChosenActive) return;
+
 	MilestonesChosenSeparator = Spawn(class'UIPanel', MainGroupContainer);
 	MilestonesChosenSeparator.bAnimateOnInit = false;
 	MilestonesChosenSeparator.InitPanel('MilestonesChosenSeparator', class'UIUtilities_Controls'.const.MC_GenericPixel);
-	MilestonesChosenSeparator.SetX(HeaderMilestonesSeparator.X); // TODO: Y
+	MilestonesChosenSeparator.SetX(HeaderMilestonesSeparator.X);
 	MilestonesChosenSeparator.SetSize(HeaderMilestonesSeparator.Width, 2);
 	MilestonesChosenSeparator.SetColor(class'UIUtilities_Colors'.const.NORMAL_HTML_COLOR);
 	MilestonesChosenSeparator.SetAlpha(30);
@@ -108,7 +120,7 @@ simulated protected function BuildScreen ()
 	ChosenSectionContainer = Spawn(class'UIPanel', MainGroupContainer);
 	ChosenSectionContainer.bAnimateOnInit = false;
 	ChosenSectionContainer.InitPanel('ChosenSectionContainer');
-	ChosenSectionContainer.SetX(MilestonesList.X); // TODO: Y
+	ChosenSectionContainer.SetX(MilestonesList.X);
 	ChosenSectionContainer.SetWidth(MilestonesList.Width);
 
 	ChosenLogo = Spawn(class'UIImage', ChosenSectionContainer);
@@ -123,28 +135,33 @@ simulated protected function BuildScreen ()
 	ChosenHelpText.SetWidth(ChosenSectionContainer.Width - ChosenHelpText.X);
 	ChosenHelpText.SetCenteredText(strChosenHelpText);
 
+	ChosenInfilLabel = Spawn(class'UIText', ChosenSectionContainer);
+	ChosenInfilLabel.OnTextSizeRealized = OnAnyChosenLeftLabelRealized;
+	ChosenInfilLabel.bAnimateOnInit = false;
+	ChosenInfilLabel.InitText('ChosenInfilLabel');
+	ChosenInfilLabel.SetPosition(0, ChosenLogo.Height + 10);
+	ChosenInfilLabel.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(strChosenProgressLeftLabel, bIsIn3D, true, true));
+
 	ChosenInfilBGBar = Spawn(class'UIBGBox', ChosenSectionContainer);
 	ChosenInfilBGBar.bAnimateOnInit = false;
 	ChosenInfilBGBar.InitBG('ChosenInfilBGBar');
 	ChosenInfilBGBar.SetBGColor("cyan");
-	ChosenInfilBGBar.SetY(ChosenLogo.Height + 10);
+	ChosenInfilBGBar.SetPosition(0, ChosenInfilLabel.Y + 32);
 	ChosenInfilBGBar.SetSize(ChosenSectionContainer.Width, 20);
 
 	ChosenInfilFillBar = Spawn(class'UIBGBox', ChosenSectionContainer);
 	ChosenInfilFillBar.bAnimateOnInit = false;
 	ChosenInfilFillBar.InitBG('ChosenInfilFillBar');
-	ChosenInfilFillBar.SetY(ChosenInfilBGBar.Y);
+	ChosenInfilFillBar.SetPosition(ChosenInfilBGBar.X, ChosenInfilBGBar.Y);
 	ChosenInfilFillBar.SetBGColor("cyan_highlight");
-	ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
-	ChosenInfilFillBar.SetWidth(150); //
 	ChosenInfilFillBar.SetHeight(ChosenInfilBGBar.Height);
 
-	ChosenLeftLabels = Spawn(class'UIText', ChosenSectionContainer);
-	ChosenLeftLabels.OnTextSizeRealized = OnChosenLeftLabelsRealized;
-	ChosenLeftLabels.bAnimateOnInit = false;
-	ChosenLeftLabels.InitText('ChosenLeftLabels');
-	ChosenLeftLabels.SetY(ChosenInfilBGBar.Y + ChosenInfilBGBar.Height + 3);
-	ChosenLeftLabels.SetText(strChosenProgressLeftLabel $ "<br/>" $ strChosenModifierLeftLabel);
+	ChosenModifierLabel = Spawn(class'UIText', ChosenSectionContainer);
+	ChosenModifierLabel.OnTextSizeRealized = OnAnyChosenLeftLabelRealized;
+	ChosenModifierLabel.bAnimateOnInit = false;
+	ChosenModifierLabel.InitText('ChosenModifierLabel');
+	ChosenModifierLabel.SetY(ChosenInfilBGBar.Y + ChosenInfilBGBar.Height + 3);
+	ChosenModifierLabel.SetHtmlText(class'UIUtilities_Text'.static.AddFontInfo(strChosenModifierLeftLabel, bIsIn3D, true, true));
 }
 
 simulated protected function string GetOperationText()
@@ -161,22 +178,29 @@ simulated protected function string GetOperationText()
 	return `XEXPAND.ExpandString(strOperationText);
 }
 
-simulated protected function OnChosenLeftLabelsRealized ()
+simulated protected function OnAnyChosenLeftLabelRealized ()
 {
 	local ChosenModifierDisplay ChosenMod;
+	local int i;
 
-	ChosenInfilBGBar.SetX(ChosenLeftLabels.X + ChosenLeftLabels.Width + 5);
-	ChosenInfilBGBar.SetWidth(ChosenSectionContainer.Width - ChosenInfilBGBar.X);
+	// Wait for the other one
+	if (!ChosenInfilLabel.TextSizeRealized || !ChosenModifierLabel.TextSizeRealized) return;
 
-	ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
+	//ChosenInfilBGBar.SetX(ChosenLeftLabels.X + ChosenLeftLabels.Width + 5);
+	//ChosenInfilBGBar.SetWidth(ChosenSectionContainer.Width - ChosenInfilBGBar.X);
+
+	//ChosenInfilFillBar.SetX(ChosenInfilBGBar.X);
+	ChosenInfilFillBar.SetWidth(GetChosenModsX());
 	// TODO: Update ChosenInfilFillBar.Width
 
-	foreach ChosenMods(ChosenMod)
+	for (i = 0; i < ChosenMods.Length; i++)
 	{
-		if (ChosenMod.Text.TextSizeRealized)
-		{
-			PositionChosenMod(ChosenMod);
-		}
+		ChosenMod = ChosenMods[i];
+
+		if (ChosenMods[i].ProgressText.TextSizeRealized) PositionChosenModProgress(ChosenMod);
+		if (ChosenMods[i].ModifierText.TextSizeRealized) PositionChosenModModifer(ChosenMod);
+
+		ChosenMods[i] = ChosenMod;
 	}
 }
 
@@ -185,54 +209,105 @@ simulated protected function ChosenModifierDisplay SpawnChosenMod (int Progress,
 	local ChosenModifierDisplay ChosenMod;
 
 	ChosenMod.Progress = Progress;
-	ChosenMod.Text = Spawn(class'UIText', ChosenSectionContainer);
-	ChosenMod.Text.OnTextSizeRealized = ChosenModRealized;
-	ChosenMod.Text.bAnimateOnInit = false;
-	ChosenMod.Text.InitText();
-	ChosenMod.Text.SetY(ChosenLeftLabels.Y);
-	ChosenMod.Text.SetText(Progress $ "%<br/>" $ string(Round(Multiplier * 100)) $ "%");
+
+	ChosenMod.ProgressText = Spawn(class'UIText', ChosenSectionContainer);
+	ChosenMod.ProgressText.OnTextSizeRealized = AnyChosenModProgressRealized;
+	ChosenMod.ProgressText.bAnimateOnInit = false;
+	ChosenMod.ProgressText.InitText();
+	ChosenMod.ProgressText.SetY(ChosenInfilLabel.Y);
+	ChosenMod.ProgressText.SetText(Progress $ "%");
+
+	ChosenMod.ModifierText = Spawn(class'UIText', ChosenSectionContainer);
+	ChosenMod.ModifierText.OnTextSizeRealized = AnyChosenModModifierRealized;
+	ChosenMod.ModifierText.bAnimateOnInit = false;
+	ChosenMod.ModifierText.InitText();
+	ChosenMod.ModifierText.SetY(ChosenModifierLabel.Y);
+	ChosenMod.ModifierText.SetText(string(Round(Multiplier * 100)) $ "%");
 
 	return ChosenMod;
 }
 
-simulated protected function ChosenModRealized ()
+simulated protected function AnyChosenModProgressRealized ()
 {
 	local ChosenModifierDisplay ChosenMod;
+	local int i;
 	
-	if (!ChosenLeftLabels.TextSizeRealized) return;
+	if (!IsChosenBarReadyForPositioning()) return;
 
-	foreach ChosenMods(ChosenMod)
+	for (i = 0; i < ChosenMods.Length; i++)
 	{
-		if (!ChosenMod.bPositioned && ChosenMod.Text.TextSizeRealized)
+		if (!ChosenMods[i].bProgressPositioned && ChosenMods[i].ProgressText.TextSizeRealized)
 		{
-			PositionChosenMod(ChosenMod);
+			ChosenMod = ChosenMods[i];
+			PositionChosenModProgress(ChosenMod);
+			ChosenMods[i] = ChosenMod;
 		}
 	}
 }
 
-// Both ChosenMod.Text and ChosenLeftLabels must have been realized before calling this
-simulated protected function PositionChosenMod (ChosenModifierDisplay ChosenMod)
+simulated protected function AnyChosenModModifierRealized ()
 {
-	local float RelativeX;
+	local ChosenModifierDisplay ChosenMod;
 	local int i;
 	
-	if (!ChosenLeftLabels.TextSizeRealized || !ChosenMod.Text.TextSizeRealized)
+	if (!IsChosenBarReadyForPositioning()) return;
+
+	for (i = 0; i < ChosenMods.Length; i++)
 	{
-		`RedScreen(nameof(PositionChosenMod) @ "called before text was realized - bailing");
-		return;
+		if (!ChosenMods[i].bModifierPositioned && ChosenMods[i].ModifierText.TextSizeRealized)
+		{
+			ChosenMod = ChosenMods[i];
+			PositionChosenModProgress(ChosenMod);
+			ChosenMods[i] = ChosenMod;
+		}
+	}
+}
+
+simulated protected function PositionChosenModProgress (out ChosenModifierDisplay ChosenMod)
+{
+	ChosenMod.bProgressPositioned = PositionChosenModText(ChosenMod.Progress, ChosenMod.ProgressText, ChosenMod.bProgressPositioned);
+}
+
+simulated protected function PositionChosenModModifer (out ChosenModifierDisplay ChosenMod)
+{
+	ChosenMod.bModifierPositioned = PositionChosenModText(ChosenMod.Progress, ChosenMod.ModifierText, ChosenMod.bModifierPositioned);
+}
+
+simulated protected function bool PositionChosenModText (int AtProgress, UIText Text, bool bPositioned)
+{
+	local float RelativeX, StartX;
+	local int i;
+
+	if (bPositioned) return bPositioned;
+	
+	if (!IsChosenBarReadyForPositioning() || !Text.TextSizeRealized)
+	{
+		`RedScreen(nameof(PositionChosenModText) @ "called before text was realized - bailing");
+		`RedScreen(GetScriptTrace());
+		return bPositioned;
 	}
 
-	RelativeX = (ChosenInfilBGBar.Width / 150) * (ChosenMod.Progress - 100); // TODO: Cap to max infil
-	RelativeX -= ChosenMod.Text.Width / 2;
+	StartX = GetChosenModsX();
+	RelativeX = (ChosenInfilBGBar.Width / 150) * (AtProgress - 100); // TODO: Cap to max infil
+	RelativeX -= Text.Width / 2;
 
-	ChosenMod.Text.SetX(FClamp(
-		ChosenInfilBGBar.X + RelativeX,
-		ChosenInfilBGBar.X,
-		ChosenInfilBGBar.X + ChosenInfilBGBar.Width - ChosenMod.Text.Width
+	Text.SetX(FClamp(
+		StartX + RelativeX,
+		StartX,
+		ChosenInfilBGBar.X + ChosenInfilBGBar.Width - Text.Width
 	));
 
-	i = ChosenMods.Find('Text', ChosenMod.Text);
-	ChosenMods[i].bPositioned = true;
+	return true;
+}
+
+simulated protected function bool IsChosenBarReadyForPositioning ()
+{
+	return ChosenInfilLabel.TextSizeRealized && ChosenModifierLabel.TextSizeRealized;
+}
+
+simulated protected function float GetChosenModsX ()
+{
+	return FMax(ChosenInfilLabel.X + ChosenInfilLabel.Width, ChosenModifierLabel.X + ChosenModifierLabel.Width) + 3;
 }
 
 ///////////////
@@ -320,10 +395,15 @@ simulated protected function PopulateMilestones ()
 
 simulated protected function CreateChosenMods ()
 {
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
 	local InfilChosenModifer ModDef;
+
+	InfiltrationState = GetInfiltration();
 
 	foreach class'XComGameState_MissionSiteInfiltration'.default.ChosenAppearenceMods(ModDef)
 	{
+		if (ModDef.Progress > InfiltrationState.MaxAllowedInfil) continue;
+
 		ChosenMods.AddItem(SpawnChosenMod(ModDef.Progress, ModDef.Multiplier));
 	}
 }
