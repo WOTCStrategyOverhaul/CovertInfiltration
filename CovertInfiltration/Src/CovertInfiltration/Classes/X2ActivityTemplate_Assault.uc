@@ -80,7 +80,7 @@ static function CreateMission (XComGameState NewGameState, XComGameState_Activit
 	// Instead, the expiry is handled by the activiy itself
 	AssaultActivityState.SetupExpiry();
 
-	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(ActivityState);
+	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(NewGameState, ActivityState);
 	class'UIUtilities_Strategy'.static.GetAlienHQ().AddChosenTacticalTagsToMission(MissionState);
 	SelectSitrepsAndPlot(MissionState);
 }

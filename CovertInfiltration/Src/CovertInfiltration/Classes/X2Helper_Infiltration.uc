@@ -600,7 +600,7 @@ static function bool GeoscapeReadyForUpdate ()
 		StrategyMap.Movie.Pres.ScreenStack.GetCurrentScreen() == StrategyMap;
 }
 
-static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity ActivityState)
+static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local XComGameState_MissionSite MissionState;
 	local XComTacticalMissionManager MissionMgr;
@@ -631,6 +631,11 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState_Activity Ac
 	}
 
 	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
+	
+	if (X2ActivityTemplate_Mission(ActivityState.GetMyTemplate()).bNeedsPOI)
+	{
+		MissionState.PickPOI(NewGameState);
+	}
 
 	// Cosmetic stuff
 
@@ -1195,4 +1200,35 @@ static protected function int SortMultiStepLerpSteps (MultiStepLerpStep A, Multi
 	if (A.X == B.X) return 0;
 
 	return A.X < B.X ? 1 : -1;
+}
+
+static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_Activity ActivityState, bool bSuccess)
+{
+	local XComGameState_MissionSite MissionState;
+	local X2ActivityTemplate_Mission Template;
+
+	MissionState = GetMissionStateFromActivity(ActivityState);
+	MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
+	Template = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+
+	if (Template != none && Template.bNeedsPOI)
+	{
+		if (bSuccess)
+		{
+			if (MissionState.POIToSpawn.ObjectID <= 0)
+			{
+				MissionState.PickPOI(NewGameState);
+				`CI_Warn(ActivityState.GetMyTemplateName() $ " has no POI and is marked as requiring one! Spawning replacement");
+			}
+		
+			class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
+		}
+		else
+		{
+			if (MissionState.POIToSpawn.ObjectID > 0)
+			{
+				class'XComGameState_HeadquartersResistance'.static.DeactivatePOI(NewGameState, MissionState.POIToSpawn);
+			}
+		}
+	}
 }
