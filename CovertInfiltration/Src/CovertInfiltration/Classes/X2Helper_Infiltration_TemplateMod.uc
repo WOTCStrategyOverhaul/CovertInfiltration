@@ -1222,7 +1222,6 @@ static function PatchCovertActionPromotionRewards()
 				if (ActionTemplate.Slots[index].StaffSlot == 'CovertActionSoldierStaffSlot'
 				 && default.arrAllowPromotionReward.Find(ActionTemplate.DataName) == INDEX_NONE)
 				{
-					`CI_Log("Patching " $ ActionTemplate.DataName);
 					ActionTemplate.Slots[index].Rewards.RemoveItem('Reward_RankUp');
 				}
 			}
