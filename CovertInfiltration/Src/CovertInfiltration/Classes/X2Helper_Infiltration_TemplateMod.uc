@@ -1219,8 +1219,7 @@ static function PatchCovertActionPromotionRewards()
 			// Must be a for loop because a foreach loop is passed a copy of the array
 			for (index = 0; index < ActionTemplate.Slots.Length; index++)
 			{
-				if (ActionTemplate.Slots[index].StaffSlot == 'CovertActionSoldierStaffSlot'
-				 && default.arrAllowPromotionReward.Find(ActionTemplate.DataName) == INDEX_NONE)
+				if (default.arrAllowPromotionReward.Find(ActionTemplate.DataName) == INDEX_NONE)
 				{
 					ActionTemplate.Slots[index].Rewards.RemoveItem('Reward_RankUp');
 				}
