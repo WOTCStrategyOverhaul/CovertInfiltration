@@ -46,10 +46,10 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
-	Template.Stages.AddItem('Activity_WaitDE');
-	//Template.Stages.AddItem('Activity_PrepareCounterDE');
-	Template.Stages.AddItem('Activity_RecoverDarkEvent');
-	Template.Stages.AddItem('Activity_CounterDarkEvent');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDE'));
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareCounterDE'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverDarkEvent'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CounterDarkEvent'));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 
@@ -103,8 +103,8 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsAdvancedChainAvailable;
 	
-	Template.Stages.AddItem('Activity_CommanderSupply');
-	Template.Stages.AddItem('Activity_SupplyRaid');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CommanderSupply'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_SupplyRaid'));
 
 	return Template;
 }
@@ -121,8 +121,8 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsAdvancedChainAvailable;
 
-	Template.Stages.AddItem('Activity_RecoverInformant');
-	Template.Stages.AddItem('Activity_CaptureInformant');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverInformant'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureInformant'));
 
 	return Template;
 }
@@ -138,9 +138,9 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	
-	//Template.Stages.AddItem('Activity_RecoverPersonnel');
-	Template.Stages.AddItem('Activity_PreparePersonnel');
-	Template.Stages.AddItem('Activity_RescueScientist');
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverPersonnel'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RescueScientist'));
 
 	return Template;
 }
@@ -156,9 +156,9 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	//Template.Stages.AddItem('Activity_RecoverPersonnel');
-	Template.Stages.AddItem('Activity_PreparePersonnel');
-	Template.Stages.AddItem('Activity_RescueEngineer');
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverPersonnel'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RescueEngineer'));
 
 	return Template;
 }
@@ -175,8 +175,8 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsExtraSoldierChainAvailable;
 
-	Template.Stages.AddItem('Activity_PrepareFactionJB');
-	Template.Stages.AddItem('Activity_JailbreakFactionSoldier');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_JailbreakFactionSoldier'));
 
 	return Template;
 }
@@ -234,7 +234,7 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
 
-	Template.Stages.AddItem('Activity_JailbreakSoldier');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_JailbreakSoldier'));
 
 	return Template;
 }
@@ -256,7 +256,7 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
 
-	Template.Stages.AddItem('Activity_JailbreakChosenSoldier');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_JailbreakChosenSoldier'));
 
 	return Template;
 }
@@ -277,7 +277,7 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	Template.Stages.AddItem('Activity_GatherSupplies');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_GatherSupplies'));
 
 	return Template;
 }
@@ -293,7 +293,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	Template.Stages.AddItem('Activity_GatherIntel');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_GatherIntel'));
 
 	return Template;
 }
@@ -310,9 +310,9 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsUFOChainAvailable;
 	
-	Template.Stages.AddItem('Activity_RecoverUFO');
-	Template.Stages.AddItem('Activity_PrepareUFO');
-	Template.Stages.AddItem('Activity_LandedUFO');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverUFO'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareUFO'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_LandedUFO'));
 
 	return Template;
 }
@@ -341,10 +341,10 @@ static function X2DataTemplate CreateHuntChosenTemplate()
 	Template.ChooseFaction = ChooseMetFaction; // TODO: spawn immediately when contacting faction
 	Template.ChooseRegions = ChooseRandomContactedRegion; // TODO: choose region that the chosen is at
 	
-	Template.Stages.AddItem('Activity_PrepareChosen');
-	Template.Stages.AddItem('Activity_RecoverChosen');
-	Template.Stages.AddItem('Activity_CommanderChosen');
-	//Template.Stages.AddItem('Activity_ChosenBase');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareChosen'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_RecoverChosen'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CommanderChosen'));
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_ChosenBase'));
 	// TODO: when done, reveal chosen base
 
 	return Template;
@@ -362,9 +362,9 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsFacilityChainAvailable;
 	
-	Template.Stages.AddItem('Activity_PrepareFacility');
-	Template.Stages.AddItem('Activity_FacilityInformant');
-	//Template.Stages.AddItem('Activity_AvatarFacility');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFacility'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_FacilityInformant'));
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_AvatarFacility'));
 
 	// We can't really make the mission itself into an activity as the facility itself is THE mission
 	// As such, we workaround by rewarding 2nd stage with a facility lead, so that the player can unlock the mission
@@ -422,7 +422,7 @@ static function X2DataTemplate CreateIntelInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_IntelIntercept');
 	
-	Template.Stages.AddItem('Activity_IntelRescue');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_IntelRescue'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -435,7 +435,7 @@ static function X2DataTemplate CreateSupplyInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_SupplyIntercept');
 	
-	Template.Stages.AddItem('Activity_SupplyRescue');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_SupplyRescue'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -563,4 +563,32 @@ static function StateObjectReference FindRegionWithRelay ()
 	}
 
 	return SelectedRegion;
+}
+
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '')
+{
+	local ChainStage Stage;
+
+	Stage.ActivityType = Type;
+	Stage.ActivityTags.AddItem(Tag1);
+	
+	if (Tag2 != '')
+	{
+		Stage.ActivityTags.AddItem(Tag2);
+	}
+	if (Tag3 != '')
+	{
+		Stage.ActivityTags.AddItem(Tag3);
+	}
+
+	return Stage;
+}
+
+static function ChainStage ConstructPresetStage(name Activity)
+{
+	local ChainStage Stage;
+
+	Stage.PresetActivity = Activity;
+
+	return Stage;
 }

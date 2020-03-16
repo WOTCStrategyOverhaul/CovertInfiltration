@@ -1218,3 +1218,18 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 		}
 	}
 }
+
+static function bool ValidateActivityType(eActivityType Type)
+{
+	switch (Type)
+	{
+		case eActivityType_Assault:
+			return true;
+		case eActivityType_Action:
+			return true;
+		case eActivityType_Infiltration:
+			return true;
+	}
+
+	return false;
+}

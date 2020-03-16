@@ -13,7 +13,7 @@ var localized string strTitle;
 var localized string strDescription;
 
 // Names of X2ActivityTemplates that act as stages for this chain
-var array<name> Stages;
+var array<ChainStage> Stages;
 
 var bool SpawnInDeck; // If true, spawned automatically using the deck system
 var int NumInDeck; // The larger the number, the more common this chain is
@@ -58,7 +58,8 @@ function bool ValidateTemplate (out string strError)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate ActivityTemplate;
-	local name StageName;
+	local ChainStage Stage;
+	local int i;
 
 	if (Stages.Length == 0)
 	{
@@ -68,14 +69,25 @@ function bool ValidateTemplate (out string strError)
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-	foreach Stages(StageName)
+	foreach Stages(Stage, i)
 	{
-		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(StageName));
-
-		if (ActivityTemplate == none)
+		if (Stage.PresetActivity != '')
 		{
-			strError = "template for stage" @ StageName @ "not found";
-			return false;
+			ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(Stage.PresetActivity));
+
+			if (ActivityTemplate == none)
+			{
+				strError = "preset template for stage" @ i @ "not found";
+				return false;
+			}
+		}
+		else
+		{
+			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
+			{
+				strError = "stage" @ i @ "has no tags or no type";
+				return false;
+			}
 		}
 	}
 

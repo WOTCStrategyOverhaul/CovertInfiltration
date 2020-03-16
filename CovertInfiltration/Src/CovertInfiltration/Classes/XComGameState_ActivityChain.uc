@@ -90,6 +90,7 @@ function SetupChain (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
+	local ChainStage Stage;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
@@ -114,8 +115,22 @@ function SetupChain (XComGameState NewGameState)
 	// Create the stages
 	StageRefs.Length = m_Template.Stages.Length;
 
-	foreach m_Template.Stages(ActivityTemplateName, i)
+	foreach m_Template.Stages(Stage, i)
 	{
+		if (Stage.PresetActivity != '')
+		{
+			ActivityTemplateName = Stage.PresetActivity;
+		}
+		else
+		{
+			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
+			{
+				`CI_Warn("Stage definition is invalid! Cannot spawn activity!");
+			}
+
+			// from here, find the thing that matches the tags and type
+		}
+
 		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplateName));
 
 		if (ActivityTemplate != none)
@@ -125,6 +140,10 @@ function SetupChain (XComGameState NewGameState)
 			ActivityState.OnEarlySetup(NewGameState);
 
 			StageRefs[i] = ActivityState.GetReference();
+		}
+		else
+		{
+			`CI_Warn("Stage definition is invalid! Cannot spawn activity!");
 		}
 	}
 
