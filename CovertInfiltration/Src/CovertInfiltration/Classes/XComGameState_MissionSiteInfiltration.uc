@@ -414,10 +414,17 @@ function float GetCurrentOverInfil()
 	return SecondsSinceMission / SecondsForOnePercent / 100;
 }
 
-// TODO: This is broken
+// Returns 0-1
 function float GetCurrentOverInfilPercentToMax ()
 {
-	return ((float(MaxAllowedInfil) / 100) - 1) / GetCurrentOverInfil();
+	return GetOverInfilPercentToMaxAtOverInfil(GetCurrentOverInfil());
+}
+
+// Returns 0-1
+// OverInfil is also the same scale (250% infil = 1.5 OverInfil)
+function float GetOverInfilPercentToMaxAtOverInfil (float OverInfil)
+{
+	return OverInfil / ((float(MaxAllowedInfil) / 100) - 1);
 }
 
 function float GetCurrentInfil()

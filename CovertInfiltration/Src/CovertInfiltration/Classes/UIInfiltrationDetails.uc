@@ -180,17 +180,16 @@ simulated protected function string GetOperationText()
 
 simulated protected function OnAnyChosenLeftLabelRealized ()
 {
-	local ChosenModifierDisplay ChosenMod;
 	local float OverInfilStartX, OverInfilPercentToMax;
+	local ChosenModifierDisplay ChosenMod;
 	local int i;
 
 	// Wait for the other one
 	if (!ChosenInfilLabel.TextSizeRealized || !ChosenModifierLabel.TextSizeRealized) return;
 
 	OverInfilStartX = GetChosenModsX();
-	//OverInfilPercentToMax = GetInfiltration().GetCurrentOverInfilPercentToMax(); // This is broken
-	//ChosenInfilFillBar.SetWidth(OverInfilStartX + ((ChosenInfilBGBar.Width - OverInfilStartX) * OverInfilPercentToMax));
-	ChosenInfilFillBar.SetWidth(OverInfilStartX);
+	OverInfilPercentToMax = GetInfiltration().GetCurrentOverInfilPercentToMax();
+	ChosenInfilFillBar.SetWidth(OverInfilStartX + (GetChosenOverInfilWidth() * OverInfilPercentToMax));
 
 	for (i = 0; i < ChosenMods.Length; i++)
 	{
@@ -274,7 +273,7 @@ simulated protected function PositionChosenModModifer (out ChosenModifierDisplay
 
 simulated protected function bool PositionChosenModText (int AtProgress, UIText Text, bool bPositioned)
 {
-	local float RelativeX, StartX, MaxOverInfil;
+	local float RelativeX, StartX, OverInfilWdith;
 
 	if (bPositioned) return bPositioned;
 	
@@ -286,14 +285,14 @@ simulated protected function bool PositionChosenModText (int AtProgress, UIText 
 	}
 
 	StartX = GetChosenModsX();
-	MaxOverInfil = GetInfiltration().MaxAllowedInfil - 100;
-	RelativeX = (ChosenInfilBGBar.Width / MaxOverInfil) * (AtProgress - 100);
+	OverInfilWdith = GetChosenOverInfilWidth();
+	RelativeX = OverInfilWdith * GetInfiltration().GetOverInfilPercentToMaxAtOverInfil(float(AtProgress - 100) / 100);
 	RelativeX -= Text.Width / 2;
 
 	Text.SetX(FClamp(
-		StartX + RelativeX,
-		StartX,
-		ChosenInfilBGBar.X + ChosenInfilBGBar.Width - Text.Width
+		StartX + RelativeX, // Value
+		StartX, // From
+		ChosenInfilBGBar.X + ChosenInfilBGBar.Width - Text.Width // To
 	));
 
 	return true;
@@ -307,6 +306,12 @@ simulated protected function bool IsChosenBarReadyForPositioning ()
 simulated protected function float GetChosenModsX ()
 {
 	return FMax(ChosenInfilLabel.X + ChosenInfilLabel.Width, ChosenModifierLabel.X + ChosenModifierLabel.Width) + 3;
+}
+
+// Currently assumes that the X  of ChosenInfilBGBar and ChosenInfilFillBar are same
+simulated protected function float GetChosenOverInfilWidth ()
+{
+	return ChosenInfilBGBar.Width - GetChosenModsX();
 }
 
 ///////////////
