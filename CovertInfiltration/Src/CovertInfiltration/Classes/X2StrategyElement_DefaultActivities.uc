@@ -14,62 +14,306 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	CreateRecoverPersonnel(Templates);
+	CreateIntelligenceGeneric(Templates);
+	CreateInformantGeneric(Templates);
+	CreatePersonnelGeneric(Templates);
+	CreateDistractionGeneric(Templates);
+	CreateSabotageGeneric(Templates);
+	CreateGenericWaitActivity(Templates);
+	
+	CreateSupplyConvoy(Templates);
+	CreateSupplyExtract(Templates);
+	CreateSecureUFO(Templates);
+	CreateCaptureDVIP(Templates);
+	
 	CreatePreparePersonnel(Templates);
-	CreateRescueEngineer(Templates);
-	CreateRescueScientist(Templates);
-	
-	CreateRecoverInformant(Templates);
-	CreateCaptureInformant(Templates);
-
-	CreateDEWaitActivity(Templates);
 	CreatePrepareCounterDE(Templates);
-	CreateRecoverDarkEvent(Templates);
-	CreateCounterDarkEvent(Templates);
-	
 	CreatePrepareFactionJB(Templates);
-	CreateJailbreakSoldier(Templates);
-	CreateJailbreakChosenSoldier(Templates);
-	CreateJailbreakFactionSoldier(Templates);
-	
-	CreateRecoverUFO(Templates);
 	CreatePrepareUFO(Templates);
-	CreateLandedUFO(Templates);
-	
-	CreateCommanderSupply(Templates);
-	CreateSupplyRaid(Templates);
-	
 	CreatePrepareFacility(Templates);
-	CreateFacilityInformant(Templates);
-	
-	CreateGatherIntel(Templates);
-	CreateGatherSupplies(Templates);
-	
-	CreateIntelRescue(Templates);
-	CreateSupplyRescue(Templates);
-	
+
 	return Templates;
 }
 
-static function CreateRecoverPersonnel (out array<X2DataTemplate> Templates)
+
+
+/////////////////////////
+/// Random Activities ///
+/////////////////////////
+
+static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault ActivityAssault;
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_IntelligenceAssault');
+	
+	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.RadioTower";
+	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
+	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
+	ActivityAssault.Difficulty = 1;
+	
+	ActivityAssault.ActivityTags.AddItem('Tag_Intelligence');
+	ActivityAssault.bNeedsPOI = true;
+	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
+	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(ActivityAssault);
+
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelligenceInfiltrate', true);
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "IntelligenceInfiltrate", "RadioTower", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ");
+	
+	ActivityInfil.ActivityTags.AddItem('Tag_Intelligence');
+	ActivityInfil.bNeedsPOI = true;
+	ActivityInfil.MissionRewards.AddItem('Reward_Rumor');
+	ActivityInfil.MissionRewards.AddItem('Reward_SmallIntel');
+	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityInfil.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(ActivityInfil);
+}
+
+static function CreateInformantGeneric(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault ActivityAssault;
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_InformantAssault');
+	
+	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
+	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
+	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
+	ActivityAssault.Difficulty = 1;
+	
+	ActivityAssault.ActivityTags.AddItem('Tag_Informant');
+	ActivityAssault.bNeedsPOI = true;
+	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
+	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(ActivityAssault);
+
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_InformantInfiltrate', true);
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "InformantInfiltrate", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
+	
+	ActivityInfil.ActivityTags.AddItem('Tag_Informant');
+	ActivityInfil.bNeedsPOI = true;
+	ActivityInfil.MissionRewards.AddItem('Reward_Rumor');
+	ActivityInfil.MissionRewards.AddItem('Reward_SmallIntel');
+	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityInfil.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(ActivityInfil);
+}
+
+static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
+
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_PersonnelRescue', true);
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "PersonnelRescue", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
+	
+	ActivityInfil.ActivityTags.AddItem('Tag_Personnel');
+	// Requires reward override from the parent chain
+	ActivityInfil.MissionRewards.AddItem('Reward_None');
+	ActivityInfil.GetRewardDetailStringFn = GetUnitDetails;
+	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityInfil.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(ActivityInfil);
+}
+
+static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault ActivityAssault;
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_DistractionAssault');
+	
+	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
+	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
+	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
+	ActivityAssault.Difficulty = 1;
+	
+	ActivityAssault.ActivityTags.AddItem('Tag_Distraction');
+	ActivityAssault.MissionRewards.AddItem('Reward_RegionIncome');
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityAssault.AvailableSound = "GeoscapeFanfares_GuerillaOps";
+	
+	Templates.AddItem(ActivityAssault);
+
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_DistractionInfiltrate', true);
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
+	
+	ActivityInfil.ActivityTags.AddItem('Tag_Distraction');
+	ActivityInfil.MissionRewards.AddItem('Reward_RegionIncome');
+	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityInfil.AvailableSound = "GeoscapeFanfares_GuerillaOps";
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(ActivityInfil);
+}
+
+static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault ActivityAssault;
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_SabotageAssault');
+	
+	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
+	ActivityAssault.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
+	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress";
+	ActivityAssault.Difficulty = 1;
+	
+	ActivityAssault.ActivityTags.AddItem('Tag_Sabotage');
+	ActivityAssault.MissionRewards.AddItem('Reward_FacilityDelay');
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityAssault.AvailableSound = "GeoscapeFanfares_GuerillaOps";
+	
+	Templates.AddItem(ActivityAssault);
+
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SabotageInfiltrate', true);
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
+	
+	ActivityInfil.ActivityTags.AddItem('Tag_Sabotage');
+	ActivityInfil.MissionRewards.AddItem('Reward_FacilityDelay');
+	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityInfil.AvailableSound = "GeoscapeFanfares_GuerillaOps";
+	
+	Templates.AddItem(CovertAction);
+	Templates.AddItem(ActivityInfil);
+}
+
+static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate Activity;
+
+	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
+	
+	Activity.ActivityTags.AddItem('Tag_Wait');
+	Activity.StateClass = class'XComGameState_Activity_Wait';
+	Activity.GetOverviewStatus = WaitGetOverviewStatus;
+
+	Templates.AddItem(Activity);
+
+	// TODO: figure out a way to actually give this wait activity a timer
+}
+
+
+
+/////////////////////////
+/// Preset Activities ///
+/////////////////////////
+
+static function CreateSupplyConvoy(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault Activity;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_SupplyConvoy');
+	
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyRaid_AdvConvoy";
+	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid";
+	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Supply_Raid";
+	Activity.Difficulty = 3;
+	
+	Activity.ActivityTags.AddItem('Tag_Convoy');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
+	
+	Templates.AddItem(Activity);
+}
+
+static function CreateSupplyExtract(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault Activity;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_SupplyExtract');
+	
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyExtraction";
+	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
+	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
+	Activity.Difficulty = 2;
+	
+	Activity.ActivityTags.AddItem('Tag_Distraction');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
+
+	Templates.AddItem(Activity);
+}
+
+static function CreateSecureUFO(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault Activity;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_SecureUFO');
+	
+	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Landed_UFO";
+	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
+	Activity.ScreenClass = class'UIMission_LandedUFO';
+	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
+	Activity.Difficulty = 3;
+	
+	Activity.ActivityTags.AddItem('Tag_UFO');
+	Activity.MissionRewards.AddItem('Reward_Materiel');
+	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
+	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	Activity.AvailableSound = "Geoscape_UFO_Landed";
+
+	Templates.AddItem(Activity);
+}
+
+static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Infiltration Activity;
 	local X2CovertActionTemplate CovertAction;
 	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverPersonnelInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RecoverPersonnel", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.bNeedsPOI = true;
+	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureDVIP', true);
+	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.MissionRewards.AddItem('Reward_SmallIntel');
+	Activity.ActivityTags.AddItem('Tag_Distraction');
+	Activity.MissionRewards.AddItem('Reward_Datapad');
+	Activity.MissionRewards.AddItem('Reward_Intel');
+	Activity.OnSuccess = DarkVIPOnSuccess;
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
+	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
+
+
+
+//////////////////////
+/// Covert Actions ///
+//////////////////////
 
 static function CreatePreparePersonnel (out array<X2DataTemplate> Templates)
 {
@@ -91,105 +335,6 @@ static function CreatePreparePersonnel (out array<X2DataTemplate> Templates)
 
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
-}
-
-static function CreateRescueEngineer (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RescueEngineerInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RescueEngineer", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
-
-	Activity.MissionRewards.AddItem('Reward_Engineer');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.GetRewardDetailStringFn = GetUnitDetails;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateRescueScientist (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RescueScientistInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RescueScientist", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
-
-	Activity.MissionRewards.AddItem('Reward_Scientist');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.GetRewardDetailStringFn = GetUnitDetails;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateRecoverInformant (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverInformantInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RecoverInformant", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.MissionRewards.AddItem('Reward_SmallIntel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateCaptureInformant (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureInformantInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "CaptureInformant", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
-	
-	Activity.MissionRewards.AddItem('Reward_Datapad');
-	Activity.MissionRewards.AddItem('Reward_Intel');
-
-	Activity.OnSuccess = DarkVIPOnSuccess;
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateDEWaitActivity (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate Activity;
-
-	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitDE');
-	Activity.StateClass = class'XComGameState_Activity_Wait';
-	Activity.GetOverviewStatus = DEWaitGetOverviewStatus;
-
-	Templates.AddItem(Activity);
-}
-
-static function string DEWaitGetOverviewStatus (XComGameState_Activity ActivityState)
-{
-	if (ActivityState.IsOngoing())
-	{
-		return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Ongoing;
-	}
-
-	return class'X2ActivityTemplate'.static.DefaultGetOverviewStatus(ActivityState);
 }
 
 static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
@@ -214,66 +359,6 @@ static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
 	Templates.AddItem(Activity);
 }
 
-static function CreateRecoverDarkEvent (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverDarkEventInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RecoverDarkEvent", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.MissionRewards.AddItem('Reward_SmallIntel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-/*
-static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CounterDarkEventInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "CounterDarkEvent", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-*/
-static function CreateCounterDarkEvent (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Assault Activity;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_CounterDarkEvent');
-	
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
-	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
-	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
-	Activity.Difficulty = 2;
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_DarkEvent');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-
-	Templates.AddItem(Activity);
-}
-
 static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_CovertAction Activity;
@@ -292,80 +377,6 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 	Activity.CovertActionName = CovertAction.DataName;
 	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
 
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateJailbreakSoldier (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakSoldierInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
-
-	Activity.MissionRewards.AddItem('Reward_SoldierCaptured');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.GetRewardDetailStringFn = GetUnitDetails;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateJailbreakChosenSoldier (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakChosenSoldierInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakChosenSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
-
-	Activity.MissionRewards.AddItem('Reward_ChosenSoldierCaptured');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.GetRewardDetailStringFn = GetUnitDetails;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateJailbreakFactionSoldier (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_JailbreakFactionSoldierInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "JailbreakFactionSoldier", "RescueOps", "img:///UILibrary_XPACK_Common.MissionIcon_RescueSoldier");
-
-	Activity.MissionRewards.AddItem('Reward_ExtraFactionSoldier');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.GetRewardDetailStringFn = GetUnitDetails;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateRecoverUFO (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_RecoverUFOInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "RecoverUFO", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.MissionRewards.AddItem('Reward_SmallIntel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
@@ -394,63 +405,6 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	Templates.AddItem(Activity);
 }
 
-static function CreateLandedUFO (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Assault Activity;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_LandedUFO');
-	
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.Landed_UFO";
-	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
-	Activity.ScreenClass = class'UIMission_LandedUFO';
-	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
-	Activity.Difficulty = 3;
-	
-	Activity.MissionRewards.AddItem('Reward_Materiel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_UFO_Landed";
-
-	Templates.AddItem(Activity);
-}
-
-static function CreateCommanderSupply (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CommanderSupplyInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "CommanderSupply", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
-	
-	Activity.bNeedsPOI = true;
-	
-	Activity.MissionRewards.AddItem('Reward_Rumor');
-	Activity.MissionRewards.AddItem('Reward_SmallIntel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateSupplyRaid (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SupplyRaidInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "SupplyRaid", "SupplyRaid_AdvConvoy", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid");
-
-	Activity.MissionRewards.AddItem('Reward_Materiel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
 static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_CovertAction Activity;
@@ -474,109 +428,7 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	Templates.AddItem(Activity);
 }
 
-static function CreateFacilityInformant (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_FacilityInformantInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "FacilityInformant", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
-	
-	Activity.MissionRewards.AddItem('Reward_Datapad');
-	Activity.MissionRewards.AddItem('Reward_FacilityLead');
 
-	Activity.OnSuccess = DarkVIPOnSuccess;
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateGatherIntel (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Assault Activity;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_GatherIntel');
-	
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.RadioTower";
-	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
-	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
-	Activity.Difficulty = 2;
-	
-	Activity.MissionRewards.AddItem('Reward_Intel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-
-	Templates.AddItem(Activity);
-}
-
-static function CreateGatherSupplies (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Assault Activity;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', Activity, 'Activity_GatherSupplies');
-	
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyExtraction";
-	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
-	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
-	Activity.Difficulty = 2;
-	
-	Activity.MissionRewards.AddItem('Reward_Materiel');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "Geoscape_Supply_Raid_Popup";
-
-	Templates.AddItem(Activity);
-}
-
-static function CreateRescueWaitActivity (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate Activity;
-
-	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitRescue');
-	Activity.StateClass = class'XComGameState_Activity_Wait';
-
-	Templates.AddItem(Activity);
-}
-
-static function CreateIntelRescue (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelRescueInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "IntelRescue", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.MissionRewards.AddItem('Reward_Container');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreateSupplyRescue (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_Infiltration Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SupplyRescueInfil', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "SupplyRescue", "ResOps", "img:///UILibrary_XPACK_Common.MissionIcon_ResOps");
-
-	Activity.MissionRewards.AddItem('Reward_Container');
-	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
-	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
-	Activity.AvailableSound = "GeoscapeFanfares_GuerillaOps";
-	
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
 
 ///////////////
 /// Helpers ///
@@ -774,9 +626,17 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState, XCo
 	return `XEXPAND.ExpandString(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails);
 }
 
-//////////////////////////////////////////////////////////
-/// Copied from X2StrategyElement_DefaultCovertActions ///
-//////////////////////////////////////////////////////////
+static function string WaitGetOverviewStatus (XComGameState_Activity ActivityState)
+{
+	if (ActivityState.IsOngoing())
+	{
+		return class'UIUtilities_Infiltration'.default.strCompletionStatusLabel_Ongoing;
+	}
+
+	return class'X2ActivityTemplate'.static.DefaultGetOverviewStatus(ActivityState);
+}
+
+// Copied from X2StrategyElement_DefaultCovertActions
 
 static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed = false)
 {
