@@ -128,7 +128,7 @@ function SetupChain (XComGameState NewGameState)
 				`CI_Warn("Stage definition is invalid! Cannot spawn activity!");
 			}
 
-			// from here, find the thing that matches the tags and type
+			ActivityTemplateName = class'X2Helper_Infiltration'.static.GetActivityFromStage(Stage);
 		}
 
 		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplateName));

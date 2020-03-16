@@ -1233,3 +1233,42 @@ static function bool ValidateActivityType(eActivityType Type)
 
 	return false;
 }
+
+static function name GetActivityFromStage(ChainStage Stage)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityTemplate ActivityTemplate;
+	local X2DataTemplate DataTemplate;
+	local array<name> SelectedActivities;
+
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		ActivityTemplate = X2ActivityTemplate(DataTemplate);
+
+		if (ActivityTemplate != none)
+		{
+			if (Stage.ActivityType == ActivityTemplate.ActivityType && MatchActivityTags(Stage.ActivityTags, ActivityTemplate.ActivityTag))
+			{
+				`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
+				SelectedActivities.AddItem(ActivityTemplate.DataName);
+			}
+		}
+	}
+
+	return SelectedActivities[`SYNC_RAND_STATIC(0, SelectedActivities.Length)];
+}
+
+static function bool MatchActivityTags(array<name> StageTags, name ActivityTag)
+{
+	local name Tag;
+
+	foreach StageTags(Tag)
+	{
+		if (ActivityTag == Tag)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}

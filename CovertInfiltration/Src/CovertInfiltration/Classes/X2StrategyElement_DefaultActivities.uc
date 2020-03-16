@@ -54,7 +54,7 @@ static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
 	ActivityAssault.Difficulty = 1;
 	
-	ActivityAssault.ActivityTags.AddItem('Tag_Intelligence');
+	ActivityAssault.ActivityTag = 'Tag_Intelligence';
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
@@ -67,7 +67,7 @@ static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelligenceInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "IntelligenceInfiltrate", "RadioTower", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ");
 	
-	ActivityInfil.ActivityTags.AddItem('Tag_Intelligence');
+	ActivityInfil.ActivityTag = 'Tag_Intelligence';
 	ActivityInfil.bNeedsPOI = true;
 	ActivityInfil.MissionRewards.AddItem('Reward_Rumor');
 	ActivityInfil.MissionRewards.AddItem('Reward_SmallIntel');
@@ -92,7 +92,7 @@ static function CreateInformantGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
 	ActivityAssault.Difficulty = 1;
 	
-	ActivityAssault.ActivityTags.AddItem('Tag_Informant');
+	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
@@ -105,7 +105,7 @@ static function CreateInformantGeneric(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_InformantInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "InformantInfiltrate", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 	
-	ActivityInfil.ActivityTags.AddItem('Tag_Informant');
+	ActivityInfil.ActivityTag = 'Tag_Informant';
 	ActivityInfil.bNeedsPOI = true;
 	ActivityInfil.MissionRewards.AddItem('Reward_Rumor');
 	ActivityInfil.MissionRewards.AddItem('Reward_SmallIntel');
@@ -125,7 +125,7 @@ static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_PersonnelRescue', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "PersonnelRescue", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 	
-	ActivityInfil.ActivityTags.AddItem('Tag_Personnel');
+	ActivityInfil.ActivityTag = 'Tag_Personnel';
 	// Requires reward override from the parent chain
 	ActivityInfil.MissionRewards.AddItem('Reward_None');
 	ActivityInfil.GetRewardDetailStringFn = GetUnitDetails;
@@ -150,7 +150,7 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
 	ActivityAssault.Difficulty = 1;
 	
-	ActivityAssault.ActivityTags.AddItem('Tag_Distraction');
+	ActivityAssault.ActivityTag = 'Tag_Distraction';
 	ActivityAssault.MissionRewards.AddItem('Reward_RegionIncome');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -161,7 +161,7 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_DistractionInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
 	
-	ActivityInfil.ActivityTags.AddItem('Tag_Distraction');
+	ActivityInfil.ActivityTag = 'Tag_Distraction';
 	ActivityInfil.MissionRewards.AddItem('Reward_RegionIncome');
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -184,7 +184,7 @@ static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress";
 	ActivityAssault.Difficulty = 1;
 	
-	ActivityAssault.ActivityTags.AddItem('Tag_Sabotage');
+	ActivityAssault.ActivityTag = 'Tag_Sabotage';
 	ActivityAssault.MissionRewards.AddItem('Reward_FacilityDelay');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -195,7 +195,7 @@ static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SabotageInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
 	
-	ActivityInfil.ActivityTags.AddItem('Tag_Sabotage');
+	ActivityInfil.ActivityTag = 'Tag_Sabotage';
 	ActivityInfil.MissionRewards.AddItem('Reward_FacilityDelay');
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -213,7 +213,7 @@ static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
 	
-	Activity.ActivityTags.AddItem('Tag_Wait');
+	Activity.ActivityTag = 'Tag_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
 
@@ -239,7 +239,7 @@ static function CreateSupplyConvoy(out array<X2DataTemplate> Templates)
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Supply_Raid";
 	Activity.Difficulty = 3;
 	
-	Activity.ActivityTags.AddItem('Tag_Convoy');
+	Activity.ActivityTag = 'Tag_Convoy';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -259,7 +259,7 @@ static function CreateSupplyExtract(out array<X2DataTemplate> Templates)
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
 	Activity.Difficulty = 2;
 	
-	Activity.ActivityTags.AddItem('Tag_Distraction');
+	Activity.ActivityTag = 'Tag_Distraction';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -280,7 +280,7 @@ static function CreateSecureUFO(out array<X2DataTemplate> Templates)
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
 	Activity.Difficulty = 3;
 	
-	Activity.ActivityTags.AddItem('Tag_UFO');
+	Activity.ActivityTag = 'Tag_UFO';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -297,7 +297,7 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureDVIP', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
-	Activity.ActivityTags.AddItem('Tag_Distraction');
+	Activity.ActivityTag = 'Tag_Distraction';
 	Activity.MissionRewards.AddItem('Reward_Datapad');
 	Activity.MissionRewards.AddItem('Reward_Intel');
 	Activity.OnSuccess = DarkVIPOnSuccess;

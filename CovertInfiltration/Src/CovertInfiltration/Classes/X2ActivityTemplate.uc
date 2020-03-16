@@ -14,7 +14,7 @@ class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
 var EActivityType ActivityType;
-var array<name> ActivityTags;
+var name ActivityTag;
 
 ///////////
 /// Loc ///
