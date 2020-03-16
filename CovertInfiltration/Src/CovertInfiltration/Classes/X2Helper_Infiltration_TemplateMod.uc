@@ -37,6 +37,7 @@ var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
+var config(GameData) array<name> arrAllowPromotionReward;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -1028,7 +1029,7 @@ static function string GetPatchedHangarQueueMessage(StateObjectReference Facilit
 }
 
 ///////////////////
-/// Staff slots ///
+/// Staff Slots ///
 ///////////////////
 
 static function PatchAcademyStaffSlot ()
@@ -1142,6 +1143,33 @@ static protected function string GetAcademySlotBonusDisplayString (XComGameState
 	}
 
 	return class'X2StrategyElement_DefaultStaffSlots'.static.GetBonusDisplayString(SlotState, "%SKILL", Contribution);
+}
+
+static function PatchCovertActionPromotionRewards()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2DataTemplate DataTemplate;
+	local X2CovertActionTemplate ActionTemplate;
+	local int index;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		ActionTemplate = X2CovertActionTemplate(DataTemplate);
+
+		if (ActionTemplate != none)
+		{
+			if (default.arrAllowPromotionReward.Find(ActionTemplate.DataName) == INDEX_NONE)
+			{
+				// Must be a for loop because a foreach loop is passed a copy of the array
+				for (index = 0; index < ActionTemplate.Slots.Length; index++)
+				{
+					ActionTemplate.Slots[index].Rewards.RemoveItem('Reward_RankUp');
+				}
+			}
+		}
+	}
 }
 
 /////////////////////
