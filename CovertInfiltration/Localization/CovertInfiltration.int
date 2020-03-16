@@ -449,3 +449,29 @@ m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (
 strCrewOverflowTitle=Crew over capacity
 strCrewOverflowHeader=Living quaters
 strCrewOverflowDescription=Onboard the Avenger, space is precious and currently we are over the number of people that we can support.<br/>You should consider improving living quaters to improve capacity or letting go of non-essential personnel
+
+[UIInfiltrationDetails]
+strHeader=INFILTRATION
+strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
+strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
+
+strChosenProgressLeftLabel=Infil %
+strChosenModifierLeftLabel=Modifier
+
+[UIInfiltrationDetails_Milestone]
+strHidden=HIDDEN
+
+[SitRep1 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 1
+
+[RiskRemoval X2InfiltrationBonusMilestoneTemplate]
+strName=Risk Removal
+
+[SitRep2 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 2
+
+[GenericBuff2 X2InfiltrationBonusMilestoneTemplate]
+strName=Opportune Moment II
+
+[SitRep3 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP 3

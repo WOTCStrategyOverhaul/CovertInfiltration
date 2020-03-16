@@ -13,6 +13,9 @@ var UIPanel OverInfiltrationPanel;
 var UIBGBox OverInfiltrationBG;
 var UIX2PanelHeader OverInfiltrationHeader;
 
+var UIButton DetailsButton;
+var UIGamepadIcons DetailsControllerHint;
+
 var localized string strOverInfiltrationHeader;
 var localized string strOverInfiltrationNextBonus;
 var localized string strMissionReady;
@@ -250,6 +253,19 @@ simulated function BuildOptionsPanel()
 		Button1.Show();
 		Button2.Show();
 	}
+
+	DetailsButton = Spawn(class'UIButton', ButtonGroup);
+	DetailsButton.LibID = 'X2InfoButton';
+	DetailsButton.InitButton('DetailsButton');
+	DetailsButton.OnClickedDelegate = OnDetailsButtonClicked;
+	DetailsButton.SetPosition(190, -75);
+
+	if (`ISCONTROLLERACTIVE)
+	{
+		DetailsControllerHint = Spawn(class'UIGamepadIcons', ButtonGroup);
+		DetailsControllerHint.InitGamepadIcon('DetailsControllerHint', class'UIUtilities_Input'.static.GetGamepadIconPrefix() $class'UIUtilities_Input'.const.ICON_RSCLICK_R3, 28);
+		DetailsControllerHint.SetPosition(185, -45);
+	}
 }
 
 static function string GetButtonBladeTitle (int CurrentInfil, int MaxInfil)
@@ -329,6 +345,10 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.const.FXS_BUTTON_X:
 		ViewSquadButton.Click();
 		return true;
+
+	case class'UIUtilities_Input'.const.FXS_BUTTON_R3:
+		DetailsButton.Click();
+		return true;
 	}
 
 	return super.OnUnrealCommand(cmd, arg);
@@ -375,6 +395,13 @@ simulated function CloseScreenOnly ()
 simulated protected function OnViewSquad(UIButton Button)
 {
 	class'UIUtilities_Infiltration'.static.UIPersonnel_PreSetList(GetInfiltration().SoldiersOnMission, "DEPLOYED SQUAD");
+}
+
+simulated function OnDetailsButtonClicked (UIButton Button)
+{
+	bHideOnLoseFocus = false;
+	class'UIUtilities_Infiltration'.static.UIInfiltrationDetails(MissionRef);
+	bHideOnLoseFocus = true;
 }
 
 //-------------- GAME DATA HOOKUP --------------------------------------------------------

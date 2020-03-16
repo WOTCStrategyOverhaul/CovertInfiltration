@@ -116,6 +116,19 @@ static function UIPersonnel_PreSetList(array<StateObjectReference> UnitRefs, opt
 	}
 }
 
+static function UIInfiltrationDetails (StateObjectReference InfiltrationRef)
+{
+	local XComHQPresentationLayer HQPres;
+	local UIInfiltrationDetails TheScreen;
+
+	HQPres = `HQPRES;
+
+	TheScreen = HQPres.Spawn(class'UIInfiltrationDetails', HQPres);
+	TheScreen.InfiltrationRef = InfiltrationRef;
+	
+	HQPres.ScreenStack.Push(TheScreen);
+}
+
 static function string ColourText(string strValue, string strColour)
 {
 	return "<font color='#" $ strColour $ "'>" $ strValue $ "</font>";

@@ -125,6 +125,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UICovertActionsGeoscape_Risk.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIDags.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
       <SubType>Content</SubType>
     </Content>
@@ -138,6 +141,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIFacility_ResitanceRing.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIInfiltrationDetails.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIInfiltrationDetails_Milestone.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_AlienFacilityBuilt.uc">
