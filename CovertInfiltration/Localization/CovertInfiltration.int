@@ -204,6 +204,72 @@ ChainsOverview_Label=Activity Chains
 strOngoing=ONGOING
 strEnded=ENDED
 
+[Activity_IntelligenceInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Hack ADVENT Datavault"
+ActionRewardDisplayName="Assorted Intel"
+ActionRewardDetails="Small Intel Cache"
+
+[Activity_InformantInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Rescue Resistance Informant"
+ActionRewardDisplayName="Assorted Intel"
+ActionRewardDetails="Small Intel Cache"
+
+[Activity_DistractionInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Distract ADVENT Garrison"
+ActionRewardDisplayName="Propaganda Victory"
+ActionRewardDetails="Increase Region Income by $10"
+
+[Activity_SabotageInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Sabotage ADVENT Infrastructure"
+ActionRewardDisplayName="Delay Construction"
+ActionRewardDetails="The next AVATAR Facility is delayed by 3 days"
+
+[Activity_PersonnelRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription="Rescue XCOM Personnel"
+ActionRewardDisplayName="XCOM Staff"
+ActionRewardDetails="<XGParam:StrValue0/>"
+
+[Activity_CaptureDVIP X2ActivityTemplate_Infiltration]
+strOverviewDescription="Capture ADVENT Collaborator"
+ActionRewardDisplayName="Interrogation"
+ActionRewardDetails="On Kill: Datapad\nOn Capture: Large Intel Cache"
+
+[Activity_IntelligenceAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Hack ADVENT Datavault"
+MissionPinLabel="Hack Information"
+
+[Activity_InformantAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Rescue Resistance Informant"
+MissionPinLabel="Rescue Informant"
+
+[Activity_DistractionAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Distract ADVENT Garrison"
+MissionPinLabel="Distract ADVENT"
+
+[Activity_SabotageAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Sabotage ADVENT Infrastructure"
+MissionPinLabel="Sabotage ADVENT"
+
+[Activity_SupplyConvoy X2ActivityTemplate_Assault]
+strOverviewDescription="Raid Supply Convoy"
+MissionPinLabel="Supply Convoy"
+
+[Activity_SupplyExtract X2ActivityTemplate_Assault]
+strOverviewDescription="Interrupt Supplies Transfer"
+MissionPinLabel="Supply Transfer"
+
+[Activity_SecureUFO X2ActivityTemplate_Assault]
+strOverviewDescription="Secure the UFO"
+MissionPinLabel="Landed UFO"
+
+[Activity_WaitGeneric X2ActivityTemplate]
+strOverviewHeader="WAIT"
+strOverviewDescription="We must be patient and wait for the target to become vulnerable"
+
+[Activity_WaitDarkEvent X2ActivityTemplate]
+strOverviewHeader="WAIT"
+strOverviewDescription="Our friends in the resistance have caught wind of an ADVENT project and are investigating solutions"
+
 [Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from ADVENT compound
 ActionRewardDisplayName=Captured Soldier
@@ -254,10 +320,6 @@ strOverviewDescription=Recover a valuable piece of information from ADVENT's clu
 ActionRewardDisplayName=Infrastructure Data
 ActionRewardDetails=Using this, we will be able to strike against an alien <font color='#E52E11'>Dark Event</font> and neutralize it
 
-[Activity_SupplyRaid X2ActivityTemplate_Infiltration]
-strOverviewDescription=Raid ADVENT Supply Convoy
-ActionRewardDisplayName=<font color='#CBB11F'>Enemy Materiel</font>
-
 [Activity_CaptureInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT VIP
 ActionRewardDisplayName="Enemy Intelligence"
@@ -280,14 +342,6 @@ ActionRewardDisplayName=<font color='#CBB11F'>Intercepted Materiel</font>
 strOverviewDescription=Protect Resistance Datatap
 MissionPinLabel=Resistance Datatap
 
-[Activity_GatherSupplies X2ActivityTemplate_Assault]
-strOverviewDescription=Extract Supplies
-MissionPinLabel=Supplies Extraction
-
-[Activity_LandedUFO X2ActivityTemplate_Assault]
-strOverviewDescription=Secure the UFO
-MissionPinLabel="Landed UFO"
-
 [Activity_CounterDarkEvent X2ActivityTemplate_Assault]
 strOverviewDescription=Destroy ADVENT Infrastructure
 MissionPinLabel=Counter Dark Event
@@ -306,10 +360,6 @@ strOverviewDescription=Pinpoint AVATAR Collaborator
 
 [Activity_PrepareUFO X2ActivityTemplate_CovertAction]
 strOverviewDescription=Sabotage Landed UFO
-
-[Activity_WaitDE X2ActivityTemplate]
-strOverviewHeader="WAIT"
-strOverviewDescription="Our friends in the resistance have caught wind of an ADVENT project and are investigating solutions"
 
 [ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
 strTitle="Counter Dark Event"

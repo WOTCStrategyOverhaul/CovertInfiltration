@@ -11,6 +11,36 @@ FilledText="%UNITNAME is assisting the Resistance in organization and logistics,
 EmptyText="SOLDIER"
 BonusText="INFILTRATING"
 
+[CovertActionNarrative_IntelligenceInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Hack ADVENT Datavault"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
+[CovertActionNarrative_InformantInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Rescue Resistance Informant"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
+[CovertActionNarrative_DistractionInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Distract ADVENT Garrison"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
+[CovertActionNarrative_SabotageInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Sabotage ADVENT Infrastructure"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
+[CovertActionNarrative_PersonnelRescue X2CovertActionNarrativeTemplate]
+ActionName="Rescue XCOM Personnel"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
+[CovertActionNarrative_CaptureDVIP X2CovertActionNarrativeTemplate]
+ActionName="Capture ADVENT Collaborator"
+ActionPreNarrative=""
+ActionPostNarrative=""
+
 [CovertActionNarrative_CommanderSupplyInfil X2CovertActionNarrativeTemplate]
 ActionName="Neutralize Logistics Officer"
 ActionPreNarrative="Resistance operatives have identified a high-level target. This commander is in charge of <font color='#CBB11F'>logistics</font> for the entire region, and we know where he is."
