@@ -423,6 +423,15 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 
 static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSite MissionState)
 {
+	local XComGameState_Activity ActivityState;
+
+	`CI_Trace("Locking down gamestates to make them visible in tactical");
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', ActivityState)
+	{
+		StartGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID);
+	}
+	// If ModifyStateObject is not called, then the activitystates will be unfindable during the mission and break the Pyrrhic Victories mod
+
 	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
 }
 

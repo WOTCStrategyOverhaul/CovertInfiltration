@@ -142,6 +142,8 @@ static function bool ActivityWasMissionSuccessful (XComGameState_BattleData Batt
 		return ActivityTemplate.WasMissionSuccessful(BattleDataState);
 	}
 
+	`CI_Warn("Could not find the activity template for this mission!");
+
 	// Default is won. See XComGameState_BattleData::SetVictoriousPlayer
 	return true;
 }
