@@ -19,6 +19,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreatePersonnelGeneric(Templates);
 	CreateDistractionGeneric(Templates);
 	CreateSabotageGeneric(Templates);
+
+	CreateDarkEventWaitActivity(Templates);
 	CreateGenericWaitActivity(Templates);
 	
 	CreateSupplyConvoy(Templates);
@@ -210,7 +212,7 @@ static function CreateDarkEventWaitActivity(out array<X2DataTemplate> Templates)
 
 	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
 	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitDarkEvent');
 	
 	Activity.ActivityTag = 'Tag_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
@@ -312,8 +314,8 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
 	Activity.ActivityTag = 'Tag_Distraction';
-	Activity.MissionRewards.AddItem('Reward_Datapad');
-	Activity.MissionRewards.AddItem('Reward_Intel');
+	Activity.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
+	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.OnSuccess = DarkVIPOnSuccess;
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -457,7 +459,7 @@ static function X2ActivityTemplate_Infiltration CreateStandardInfilActivity (X2C
 	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
 	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
 	
-	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName $ "Infil"));
+	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName));
 	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
 
 	Activity.CovertActionName = CovertAction.DataName;

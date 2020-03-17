@@ -119,13 +119,16 @@ function SetupChain (XComGameState NewGameState)
 	{
 		if (Stage.PresetActivity != '')
 		{
+			`CI_Trace("Stage is preset");
 			ActivityTemplateName = Stage.PresetActivity;
 		}
 		else
 		{
+			`CI_Trace("Stage is random");
+
 			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
 			{
-				`Redscreen("Stage definition is invalid! Cannot create activity!");
+				`CI_Warn("Stage definition is invalid! Cannot create activity!");
 			}
 
 			ActivityTemplateName = class'X2Helper_Infiltration'.static.GetActivityFromStage(Stage);
@@ -143,7 +146,7 @@ function SetupChain (XComGameState NewGameState)
 		}
 		else
 		{
-			`CI_Warn("Stage definition is invalid! Cannot spawn activity!");
+			`CI_Warn("Stage definition is invalid! Cannot spawn activity: " $ ActivityTemplateName);
 		}
 	}
 
@@ -416,7 +419,7 @@ protected function bool CanComplicationBeSelected (XComGameState NewGameState, X
 
 			OtherChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(OtherObjectID));
 
-			if (OtherChainState.HasComplication(ComplicationTemplate.DataName))
+			if (!OtherChainState.bEnded && OtherChainState.HasComplication(ComplicationTemplate.DataName))
 			{
 				return false;
 			}
@@ -425,9 +428,11 @@ protected function bool CanComplicationBeSelected (XComGameState NewGameState, X
 
 	if (ComplicationTemplate.CanBeChosen != none && !ComplicationTemplate.CanBeChosen(NewGameState, self))
 	{
+		`CI_Trace(ComplicationTemplate.FriendlyName $ " cannot be chosen");
 		return false;
 	}
-
+	
+	`CI_Trace(ComplicationTemplate.FriendlyName $ " is chosen");
 	return true;
 }
 
