@@ -127,7 +127,6 @@ static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
 	
 	ActivityInfil.ActivityTag = 'Tag_Personnel';
 	// Requires reward override from the parent chain
-	ActivityInfil.MissionRewards.AddItem('Reward_None');
 	ActivityInfil.GetRewardDetailStringFn = GetUnitDetails;
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -151,7 +150,7 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.Difficulty = 1;
 	
 	ActivityAssault.ActivityTag = 'Tag_Distraction';
-	ActivityAssault.MissionRewards.AddItem('Reward_RegionIncome');
+	ActivityAssault.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -162,7 +161,7 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
 	
 	ActivityInfil.ActivityTag = 'Tag_Distraction';
-	ActivityInfil.MissionRewards.AddItem('Reward_RegionIncome'); // TODO: create this reward
+	ActivityInfil.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityInfil.AvailableSound = "GeoscapeFanfares_GuerillaOps";
@@ -196,7 +195,7 @@ static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
 	
 	ActivityInfil.ActivityTag = 'Tag_Sabotage';
-	ActivityInfil.MissionRewards.AddItem('Reward_FacilityDelay'); // TODO: create this reward
+	ActivityInfil.MissionRewards.AddItem('Reward_FacilityDelay');
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityInfil.AvailableSound = "GeoscapeFanfares_GuerillaOps";
