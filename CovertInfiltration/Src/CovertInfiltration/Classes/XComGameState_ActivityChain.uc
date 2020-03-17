@@ -125,7 +125,7 @@ function SetupChain (XComGameState NewGameState)
 		{
 			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
 			{
-				`CI_Warn("Stage definition is invalid! Cannot spawn activity!");
+				`Redscreen("Stage definition is invalid! Cannot create activity!");
 			}
 
 			ActivityTemplateName = class'X2Helper_Infiltration'.static.GetActivityFromStage(Stage);

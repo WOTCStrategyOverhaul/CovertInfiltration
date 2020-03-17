@@ -1240,6 +1240,8 @@ static function name GetActivityFromStage(ChainStage Stage)
 	local X2ActivityTemplate ActivityTemplate;
 	local X2DataTemplate DataTemplate;
 	local array<name> SelectedActivities;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
 	foreach TemplateManager.IterateTemplates(DataTemplate)
 	{
@@ -1254,8 +1256,13 @@ static function name GetActivityFromStage(ChainStage Stage)
 			}
 		}
 	}
+	
+	if (SelectedActivities.Length == 0)
+	{
+		`Redscreen("Failed to find any activities for this stage");
+	}
 
-	return SelectedActivities[`SYNC_RAND_STATIC(0, SelectedActivities.Length)];
+	return SelectedActivities[`SYNC_RAND_STATIC(SelectedActivities.Length)];
 }
 
 static function bool MatchActivityTags(array<name> StageTags, name ActivityTag)
@@ -1271,4 +1278,24 @@ static function bool MatchActivityTags(array<name> StageTags, name ActivityTag)
 	}
 
 	return false;
+}
+
+static function GetWaitPeriodDuration (int MinDays, int MaxDays, out int SecondsWaitDuration)
+{
+	local int Min, Max, Variance;
+
+	Min = MinDays;//default.MinCounterDarkEventDay;
+	Max = MaxDays;//default.MaxCounterDarkEventDay;
+
+	// Make sure that the values are sensible
+	if (Min < 0) Min = 0;
+	if (Max < Min) Max = Min; // This probably won't work properly -.-
+
+	// Convert to seconds
+	Min *= 86400;
+	Max *= 86400;
+
+	// Return
+	Variance = Max - Min;
+	SecondsWaitDuration = Min + `SYNC_RAND_STATIC(Variance);
 }

@@ -216,10 +216,9 @@ static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 	Activity.ActivityTag = 'Tag_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
+	Activity.SetupStage = WaitSetup;
 
 	Templates.AddItem(Activity);
-
-	// TODO: figure out a way to actually give this wait activity a timer
 }
 
 
@@ -552,18 +551,27 @@ static function int GetMissionDifficultyFromMonthPlusTemplate (XComGameState_Act
 	return Difficulty;
 }
 
-static function PreMissionSetup_DE (XComGameState NewGameState, XComGameState_Activity ActivityState)
+static function WaitSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_DarkEvent DarkEventState;
+	local int SecondsWaitDuration;
+	local XComGameState_Activity_Wait WaitActivity;
 
-	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
-	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
+	`CI_Log("Setting up wait stage");
 
-	if (DarkEventState != none)
+	// TODO: unhardcode these values, maybe use existing dark event configs from ACS?
+	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(2, 6, SecondsWaitDuration);
+	
+	WaitActivity = XComGameState_Activity_Wait(ActivityState);
+	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state
+
+	if (WaitActivity == none)
 	{
-		MissionState.DarkEvent = DarkEventState.GetReference();
+		`RedScreen(ActivityState.GetMyTemplateName() $ " is not a wait activity but calls WaitSetup!");
+		return;
 	}
+
+	WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
+	class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsWaitDuration);
 }
 
 static function string GetUnitDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
