@@ -55,34 +55,65 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate_Mission ActivityTemplate;
-	local array<StateObjectReference> RewardRefs;
-	local XComGameState_Reward RewardState;
+	local XComGameState_ActivityChain ChainState;
 	local X2RewardTemplate RewardTemplate;
+	local array<StateObjectReference> RewardRefs;
+	local ChainStage Stage;
 	local name RewardName;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 	
-	foreach ActivityTemplate.MissionRewards(RewardName)
+	ChainState = ActivityState.GetActivityChain();
+	Stage = ChainState.GetMyTemplate().Stages[ActivityState.GetStageIndex()];
+
+	if (Stage.RewardOverrides.Length > 0)
 	{
-		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
-		
-		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
-		
-		// If this is a dark event reward, and the chain has a dark event attached, connect the two
-		if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
+		foreach Stage.RewardOverrides(RewardName)
 		{
-			if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
+			RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
+			if (RewardTemplate != none)
 			{
-				RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
+				`CI_Trace("Initializing overridden reward: " $ RewardName);
+				InitMissionReward(NewGameState, ActivityState, RewardTemplate, RewardRefs);
 			}
 		}
-
-		RewardRefs.AddItem(RewardState.GetReference());
 	}
+	else
+	{
+		foreach ActivityTemplate.MissionRewards(RewardName)
+		{
+			RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
+			if (RewardTemplate != none)
+			{
+				`CI_Trace("Initializing normal reward: " $ RewardName);
+				InitMissionReward(NewGameState, ActivityState, RewardTemplate, RewardRefs);
+			}
+		}
+	}
+	
+	`CI_Trace("InitializeMissionRewards reports " $ RewardRefs.Length $ " rewards");
 
 	return RewardRefs;
+}
+
+static function InitMissionReward (XComGameState NewGameState, XComGameState_Activity ActivityState, X2RewardTemplate RewardTemplate, out array<StateObjectReference> RewardRefs)
+{
+	local XComGameState_Reward RewardState;
+
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+	RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
+		
+	// If this is a dark event reward, and the chain has a dark event attached, connect the two
+	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
+	{
+		if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
+		{
+			RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
+		}
+	}
+
+	RewardRefs.AddItem(RewardState.GetReference());
 }
 
 static function string GenericGetOverworldMeshPath (XComGameState_Activity ActivityState)

@@ -604,6 +604,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameStat
 	local string AdditionalTag;
 
 	MissionState = GetMissionStateFromActivity(ActivityState);
+	`CI_Trace("InitalizeGeneratedMissionFromActivity reports " $ MissionState.Rewards.Length $ " rewards");
 	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
 	MissionMgr = `TACTICALMISSIONMGR;
 	MissionState.GeneratedMission = EmptyData;

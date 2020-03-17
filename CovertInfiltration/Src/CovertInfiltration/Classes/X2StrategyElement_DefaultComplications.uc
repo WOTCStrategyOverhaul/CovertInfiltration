@@ -69,7 +69,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 		return;
 	}
 
-	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
+	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1 || ActivityTemplate.MissionRewards.Find('Reward_SmallIntel') > -1)
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_IntelIntercept'));
 	}

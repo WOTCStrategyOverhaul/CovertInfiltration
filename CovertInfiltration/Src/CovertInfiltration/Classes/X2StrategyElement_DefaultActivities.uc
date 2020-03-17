@@ -204,6 +204,22 @@ static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
 	Templates.AddItem(ActivityInfil);
 }
 
+static function CreateDarkEventWaitActivity(out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate Activity;
+
+	// This is a special "activity" which does nothing but waits and triggers the next stage at some point in time
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
+	
+	Activity.ActivityTag = 'Tag_Wait';
+	Activity.StateClass = class'XComGameState_Activity_Wait';
+	Activity.GetOverviewStatus = WaitGetOverviewStatus;
+	Activity.SetupStage = DarkEventWaitSetup;
+
+	Templates.AddItem(Activity);
+}
+
 static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate Activity;
@@ -557,8 +573,36 @@ static function WaitSetup (XComGameState NewGameState, XComGameState_Activity Ac
 
 	`CI_Log("Setting up wait stage");
 
-	// TODO: unhardcode these values, maybe use existing dark event configs from ACS?
-	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(2, 6, SecondsWaitDuration);
+	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
+		class'XComGameState_ActivityChainSpawner'.default.MinGenericWaitDays, 
+		class'XComGameState_ActivityChainSpawner'.default.MaxGenericWaitDays, 
+		SecondsWaitDuration);
+	
+	
+	WaitActivity = XComGameState_Activity_Wait(ActivityState);
+	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state
+
+	if (WaitActivity == none)
+	{
+		`RedScreen(ActivityState.GetMyTemplateName() $ " is not a wait activity but calls WaitSetup!");
+		return;
+	}
+
+	WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
+	class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsWaitDuration);
+}
+
+static function DarkEventWaitSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local int SecondsWaitDuration;
+	local XComGameState_Activity_Wait WaitActivity;
+
+	`CI_Log("Setting up wait stage");
+
+	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
+		class'XComGameState_ActivityChainSpawner'.default.MinDarkEventWaitDays, 
+		class'XComGameState_ActivityChainSpawner'.default.MaxDarkEventWaitDays, 
+		SecondsWaitDuration);
 	
 	WaitActivity = XComGameState_Activity_Wait(ActivityState);
 	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state

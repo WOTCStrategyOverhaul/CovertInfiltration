@@ -138,4 +138,5 @@ struct ChainStage
 	var EActivityType ActivityType;
 	var array<name> ActivityTags;
 	var name PresetActivity;
+	var array<name> RewardOverrides;
 };

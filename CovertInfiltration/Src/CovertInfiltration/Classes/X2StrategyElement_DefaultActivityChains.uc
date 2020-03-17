@@ -33,8 +33,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	return Activites;
 }
 
-// TODO: create reward override system
-
 static function X2DataTemplate CreateCounterDarkEventTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -47,10 +45,10 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
-	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDarkEvent'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction'));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_DarkEvent'));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 
@@ -124,7 +122,7 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.DeckReq = IsAdvancedChainAvailable;
 
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
-	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_Datapad', 'Reward_Intel'));
 
 	return Template;
 }
@@ -141,7 +139,7 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.NumInDeck = 1;
 	
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Scientist'));
 
 	return Template;
 }
@@ -158,7 +156,7 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.NumInDeck = 1;
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Engineer'));
 
 	return Template;
 }
@@ -176,7 +174,7 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.DeckReq = IsExtraSoldierChainAvailable;
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ExtraFactionSoldier'));
 
 	return Template;
 }
@@ -234,7 +232,7 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_SoldierCaptured'));
 
 	return Template;
 }
@@ -256,7 +254,7 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChosenSoldierCaptured'));
 
 	return Template;
 }
@@ -293,7 +291,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_Intel'));
 
 	return Template;
 }
@@ -403,7 +401,7 @@ static function X2DataTemplate CreateIntelInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_IntelIntercept');
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant',, 'Reward_Container'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -416,7 +414,7 @@ static function X2DataTemplate CreateSupplyInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_SupplyIntercept');
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Sabotage'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Sabotage',, 'Reward_Container'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -546,7 +544,7 @@ static function StateObjectReference FindRegionWithRelay ()
 	return SelectedRegion;
 }
 
-static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '')
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward1 = '', optional name Reward2 = '')
 {
 	local ChainStage Stage;
 
@@ -561,15 +559,33 @@ static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, o
 	{
 		Stage.ActivityTags.AddItem(Tag3);
 	}
+	
+	if (Reward1 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward1);
+	}
+	if (Reward2 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward2);
+	}
 
 	return Stage;
 }
 
-static function ChainStage ConstructPresetStage(name Activity)
+static function ChainStage ConstructPresetStage(name Activity, optional name Reward1 = '', optional name Reward2 = '')
 {
 	local ChainStage Stage;
 
 	Stage.PresetActivity = Activity;
+	
+	if (Reward1 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward1);
+	}
+	if (Reward2 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward2);
+	}
 
 	return Stage;
 }
