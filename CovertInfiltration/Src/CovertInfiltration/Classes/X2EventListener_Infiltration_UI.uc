@@ -137,31 +137,11 @@ static protected function EventListenerReturn CovertAction_ModifyNarrativeParamT
 	
 	if (Action == none || Tag == none) return ELR_NoInterrupt;
 
-	if (
-		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_PrepareCounterDE' &&
-		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_RecoverDarkEventInfil'
-	)
-	{
-		return ELR_NoInterrupt;
-	}
-
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(Action);
 	if (ActivityState == none) ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action);
-	
-	if (ActivityState == none)
-	{
-		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative doesn't belong to an activity");
-		return ELR_NoInterrupt;
-	}
+	if (ActivityState == none) return ELR_NoInterrupt;
 
-	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
-	if (DarkEventState == none)
-	{
-		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative belongs to a chain with no DE");
-		return ELR_NoInterrupt;
-	}
-	
-	Tag.StrValue4 = DarkEventState.GetDisplayName();
+	Tag.StrValue4 = ActivityState.GetActivityChain().GetNarrativeObjective();
 
 	return ELR_NoInterrupt;
 }

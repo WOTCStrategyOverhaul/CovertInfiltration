@@ -29,7 +29,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	CreateCaptureDVIP(Templates);
 	
 	CreatePreparePersonnel(Templates);
-	CreatePrepareCounterDE(Templates);
 	CreatePrepareFactionJB(Templates);
 	CreatePrepareUFO(Templates);
 	CreatePrepareFacility(Templates);
@@ -129,7 +128,6 @@ static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
 	
 	ActivityInfil.ActivityTag = 'Tag_Personnel';
 	// Requires reward override from the parent chain
-	ActivityInfil.GetRewardDetailStringFn = GetUnitDetails;
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityInfil.AvailableSound = "Geoscape_NewResistOpsMissions";
@@ -313,7 +311,7 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureDVIP', true);
 	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
-	Activity.ActivityTag = 'Tag_Distraction';
+	Activity.ActivityTag = 'Tag_DVIP';
 	Activity.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
 	Activity.MissionRewards.AddItem('Reward_Rumor');
 	Activity.OnSuccess = DarkVIPOnSuccess;
@@ -338,28 +336,6 @@ static function CreatePreparePersonnel (out array<X2DataTemplate> Templates)
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PreparePersonnel');
 	CovertAction = CreateStandardActivityCA("PreparePersonnel", "CovertAction");
-
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('Supplies', 25));
-
-	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
-	CovertAction.Rewards.AddItem('Reward_Progress');
-
-	Activity.CovertActionName = CovertAction.DataName;
-	Activity.AvailableSound = "Geoscape_NewResistOpsMissions";
-
-	Templates.AddItem(CovertAction);
-	Templates.AddItem(Activity);
-}
-
-static function CreatePrepareCounterDE (out array<X2DataTemplate> Templates)
-{
-	local X2ActivityTemplate_CovertAction Activity;
-	local X2CovertActionTemplate CovertAction;
-	
-	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PrepareCounterDE');
-	CovertAction = CreateStandardActivityCA("PrepareCounterDE", "CovertAction");
 
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
@@ -617,66 +593,6 @@ static function DarkEventWaitSetup (XComGameState NewGameState, XComGameState_Ac
 
 	WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
 	class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsWaitDuration);
-}
-
-static function string GetUnitDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
-{
-	local XComGameStateHistory History;
-	local XComGameState_MissionSiteInfiltration MissionState;
-	local XComGameState_Reward MissionRewardState;
-	local XComGameState_Unit UnitState;
-	local XGParamTag kTag;
-	local string UnitString;
-	
-	History = `XCOMHISTORY;
-
-	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
-	MissionRewardState = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
-
-	if(MissionRewardState != none)
-	{
-		if(MissionRewardState.RewardObjectReference.ObjectID > 0)
-		{
-			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(MissionRewardState.RewardObjectReference.ObjectID));
-		}
-		else
-		{
-			`Redscreen("GetUnitDetails: mission reward has a null RewardObjectReference!");
-		}
-	}
-	else
-	{
-		`Redscreen("GetUnitDetails: activity has no mission rewards!");
-	}
-
-	if(UnitState != none)
-	{
-		if(UnitState.IsSoldier())
-		{
-			if(UnitState.GetRank() > 0)
-			{
-				UnitString = UnitState.GetName(eNameType_RankFull) @ "-" @ UnitState.GetSoldierClassTemplate().DisplayName;
-			}
-			else
-			{
-				UnitString = UnitState.GetName(eNameType_RankFull);
-			}
-		}
-		else
-		{
-			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "-" @ MissionRewardState.GetMyTemplate().DisplayName;
-		}
-	}
-	else
-	{
-		`Redscreen("GetUnitDetails: mission reward does not contain a UnitState!");
-		UnitString = "UNITNOTFOUND";
-	}
-
-	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	kTag.StrValue0 = UnitString;
-	
-	return `XEXPAND.ExpandString(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails);
 }
 
 static function string WaitGetOverviewStatus (XComGameState_Activity ActivityState)

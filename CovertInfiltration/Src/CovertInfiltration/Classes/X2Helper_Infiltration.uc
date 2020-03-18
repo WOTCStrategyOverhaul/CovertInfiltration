@@ -1300,3 +1300,79 @@ static function GetWaitPeriodDuration (int MinDays, int MaxDays, out int Seconds
 	Variance = Max - Min;
 	SecondsWaitDuration = Min + `SYNC_RAND_STATIC(Variance);
 }
+
+static function string GetUnitDetails (XComGameState_Activity ActivityState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_Reward RewardState;
+	local XComGameState_Unit UnitState;
+	local XGParamTag kTag;
+	local string UnitString;
+	
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2RewardTemplate RewardTemplate;
+	local name RewardName;
+	local int LastActivity;
+	
+	if (ActivityState.GetActivityChain().GetLastActivity().GetMyTemplateName() != 'Activity_PersonnelRescue')
+	{
+		return "INVALIDACTIVITY";
+	}
+
+	History = `XCOMHISTORY;
+	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+	
+	if (MissionState == none)
+	{
+		LastActivity = ActivityState.GetActivityChain().GetLastActivity().GetStageIndex();
+		RewardName = ActivityState.GetActivityChain().GetMyTemplate().Stages[LastActivity].RewardOverrides[0];
+		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
+		return "this" @ RewardTemplate.DisplayName;
+	}
+
+	RewardState = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
+
+	if (RewardState != none)
+	{
+		if (RewardState.RewardObjectReference.ObjectID > 0)
+		{
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+		}
+		else
+		{
+			`Redscreen("GetUnitDetails: mission reward has a null RewardObjectReference!");
+		}
+	}
+	else
+	{
+		`Redscreen("GetUnitDetails: activity has no mission rewards!");
+	}
+
+	if (UnitState != none)
+	{
+		if (UnitState.IsSoldier())
+		{
+			if (UnitState.GetRank() > 0)
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull) @ "(" $ UnitState.GetSoldierClassTemplate().DisplayName $ ")";
+			}
+			else
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull);
+			}
+		}
+		else
+		{
+			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "(" $ RewardState.GetMyTemplate().DisplayName $ ")";
+		}
+	}
+	else
+	{
+		`Redscreen("GetUnitDetails: mission reward does not contain a UnitState!");
+		UnitString = "UNITNOTFOUND";
+	}
+
+	return UnitString;
+}

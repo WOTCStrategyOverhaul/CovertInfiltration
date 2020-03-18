@@ -12,6 +12,9 @@ class X2ActivityChainTemplate extends X2StrategyElementTemplate;
 var localized string strTitle;
 var localized string strDescription;
 
+// For geoscape covert ops UI
+var localized string strObjective;
+
 // Names of X2ActivityTemplates that act as stages for this chain
 var array<ChainStage> Stages;
 

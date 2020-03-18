@@ -827,7 +827,13 @@ simulated function UpdateCovertActionInfo()
 	local array<StrategyCostScalar> CostScalars;
 	local ActionExpirationInfo ExpirationInfo;
 	local int HoursRemaining;
-	local string strExpiration;
+	local string strExpiration, strRewards;
+	local XComGameState_Activity_Infiltration ActivityState;
+	local XComGameState_ActivityChain ChainState;
+	local XComGameStateHistory History;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_Reward RewardState;
+	local StateObjectReference RewardRef;
 
 	ExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
 	CurrentAction = GetAction();
@@ -854,11 +860,41 @@ simulated function UpdateCovertActionInfo()
 	ActionImage.LoadImage(CurrentAction.GetImage());
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
 	ActionDescription.text.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
+	
+	ActivityState = XComGameState_Activity_Infiltration(class'XComGameState_Activity'.static.GetActivityFromObjectID(CurrentAction.ObjectID));
+	if (ActivityState != none)
+	{
+		`CI_Trace("Action is an infil, setting reward string");
 
-	ActionRewardText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
-		class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
-	);
+		History = `XCOMHISTORY;
+		ChainState = ActivityState.GetActivityChain();
+		MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+		strRewards = "";
+
+		foreach MissionState.Rewards(RewardRef)
+		{
+			RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+			
+			`CI_Trace("Reward: " $ RewardState.GetMyTemplateName());
+			`CI_Trace("Reward Name: " $ RewardState.GetRewardString());
+			`CI_Trace("Reward Desc: " $ RewardState.GetRewardDetailsString());
+			
+			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardString(), bIsIn3D, true, true) $ "<br/>";
+			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D) $ "<br/>";
+		}
+		
+		ActionRewardText.SetHtmlText(strRewards);
+	}
+	else
+	{
+		`CI_Trace("Action is not an infil");
+
+		ActionRewardText.SetHtmlText(
+			class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDescriptionString(), bIsIn3D, true, true) $ "<br/>" $ // Short
+			class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetRewardDetailsString(), bIsIn3D) // Long
+		);
+	}
 
 	DurationLabel.SetText(CurrentAction.bStarted ? class'UICovertActions'.default.CovertActions_TimeRemaining : class'UICovertActions'.default.CovertActions_Duration);
 	DurationValue.SetText(class'UIUtilities_Text'.static.AlignRight(CurrentAction.GetDurationString()));

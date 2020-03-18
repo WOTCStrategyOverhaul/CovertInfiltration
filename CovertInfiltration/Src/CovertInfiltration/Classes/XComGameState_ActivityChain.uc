@@ -491,6 +491,8 @@ function XComGameState_DarkEvent GetChainDarkEvent()
 			return DarkEventState;
 		}
 	}
+
+	return none;
 }
 
 function PauseChainDarkEvent(XComGameState NewGameState)
@@ -629,6 +631,17 @@ function string GetOverviewDescription ()
 	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
 
 	return strReturn;
+}
+
+function string GetNarrativeObjective ()
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = class'X2Helper_Infiltration'.static.GetUnitDetails(GetLastActivity());
+	kTag.StrValue1 = GetChainDarkEvent().GetDisplayName();
+
+	return `XEXPAND.ExpandString(GetMyTemplate().strObjective);
 }
 
 /////////////////////////////

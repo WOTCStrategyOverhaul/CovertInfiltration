@@ -30,6 +30,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	// Activity rewards
 	Rewards.AddItem(CreateSmallIntelRewardTemplate());
 	Rewards.AddItem(CreateSmallIncreaseIncomeRewardTemplate());
+	Rewards.AddItem(CreateFacilityDelayRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 	Rewards.AddItem(CreateDarkEventRewardTemplate());
@@ -131,7 +132,7 @@ static function X2DataTemplate CreateSmallIncreaseIncomeRewardTemplate()
 	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetIncreaseIncomeReward;
 	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveIncreaseIncomeReward;
 	Template.GetRewardDetailsStringFn = class'X2StrategyElement_DefaultRewards'.static.GetIncreaseIncomeRewardString;
-	Template.GetRewardStringFn = class'X2StrategyElement_DefaultRewards'.static.GetIncreaseIncomeRewardString;
+	Template.GetRewardStringFn = GetIncreaseIncomeRewardString;
 	Template.CleanUpRewardFn = class'X2StrategyElement_DefaultRewards'.static.CleanUpRewardWithoutRemoval;
 
 	return Template;
@@ -169,6 +170,11 @@ static function int GetSmallIncomeReward()
 	return IncomeMin + `SYNC_RAND_STATIC(IncomeMax - IncomeMin);
 }
 
+static function string GetIncreaseIncomeRewardString(XComGameState_Reward RewardState)
+{
+	return RewardState.GetMyTemplate().DisplayName;
+}
+
 static function X2DataTemplate CreateFacilityDelayRewardTemplate()
 {
 	local X2RewardTemplate Template;
@@ -178,6 +184,8 @@ static function X2DataTemplate CreateFacilityDelayRewardTemplate()
 	Template.GenerateRewardFn = GenerateFacilityDelayReward;
 	Template.SetRewardFn = SetFacilityDelayReward;
 	Template.GiveRewardFn = GiveFacilityDelayReward;
+	Template.GetRewardDetailsStringFn = GetFacilityDelayRewardDetails;
+	Template.GetRewardStringFn = GetFacilityDelayRewardString;
 
 	return Template;
 }
@@ -220,6 +228,16 @@ static function int GetFacilityDelayReward()
 	DelayMax = `ScaleStrategyArrayInt(default.FacilityDelayRewardMax);
 	
 	return DelayMin + `SYNC_RAND_STATIC(DelayMax - DelayMin);
+}
+
+static function string GetFacilityDelayRewardString(XComGameState_Reward RewardState)
+{
+	return RewardState.GetMyTemplate().DisplayName;
+}
+
+static function string GetFacilityDelayRewardDetails(XComGameState_Reward RewardState)
+{
+	return "Facility delayed by" @ RewardState.Quantity @ "days";
 }
 
 static function X2DataTemplate CreateDatapadRewardTemplate()
