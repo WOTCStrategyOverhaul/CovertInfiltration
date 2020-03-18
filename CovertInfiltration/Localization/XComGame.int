@@ -23,7 +23,7 @@ ActionPostNarrative=""
 
 [CovertActionNarrative_DistractionInfiltrate X2CovertActionNarrativeTemplate]
 ActionName="Distract ADVENT Garrison"
-ActionPreNarrative="If we want to <XGParam:StrValue4/>, we're going to need to draw away ADVENT's forces in the area. Attacking a publicly visible monument or public official should do it, and we'll also score a significant propaganda victory."
+ActionPreNarrative="If we want to <XGParam:StrValue4/>, we're going to need to draw away ADVENT's forces in the area. Attacking a highly visible target should do it, and we'll also score a significant propaganda victory."
 ActionPostNarrative=""
 
 [CovertActionNarrative_SabotageInfiltrate X2CovertActionNarrativeTemplate]

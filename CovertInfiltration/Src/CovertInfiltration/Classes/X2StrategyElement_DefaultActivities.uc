@@ -273,7 +273,7 @@ static function CreateSupplyExtract(out array<X2DataTemplate> Templates)
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
 	Activity.Difficulty = 2;
 	
-	Activity.ActivityTag = 'Tag_Distraction';
+	Activity.ActivityTag = 'Tag_Extract';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
