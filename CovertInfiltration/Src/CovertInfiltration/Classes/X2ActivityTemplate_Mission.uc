@@ -123,6 +123,20 @@ static function GenericOnFailure (XComGameState NewGameState, XComGameState_Acti
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
 }
 
+static function GenericOnExpire (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+
+	`CI_Trace("Handling Activity Expiration: " $ ActivityState.GetMyTemplateName());
+	
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
+	MissionState.RemoveEntity(NewGameState);
+	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkExpired(NewGameState);
+}
+
 static function DefaultOnStrategyMapSelected (XComGameState_Activity ActivityState)
 {
 	local X2ActivityTemplate_Mission ActivityTemplate;
@@ -174,6 +188,7 @@ defaultproperties
 
 	OnSuccess = GenericOnSuccess
 	OnFailure = GenericOnFailure
+	OnExpire = GenericOnExpire
 
 	ShouldProgressChain = DefaultShouldProgressChain
 	ScreenClass = class'UIMission_Council'

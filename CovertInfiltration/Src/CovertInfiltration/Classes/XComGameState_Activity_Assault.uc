@@ -26,8 +26,9 @@ function SetupExpiry ()
 protected function UpdateActivity ()
 {
 	local XComGameState_Activity_Assault NewActivityState;
-	local XComGameState_MissionSite NewMissionState;
+	local XComGameState_MissionSite MissionState;
 	local XComGameState NewGameState;
+	local bool bDirty;
 
 	local TDateTime AdjustedTime;
 	local bool WarnBeforeExpiration;
@@ -38,16 +39,28 @@ protected function UpdateActivity ()
 	if (bExpiring && class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, GetCurrentTime()))
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(assault mission) has expired");
-		NewMissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', PrimaryObjectRef.ObjectID));
-		NewActivityState = XComGameState_Activity_Assault(NewGameState.ModifyStateObject(class'XComGameState_Activity_Assault', ObjectID));
+		MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(PrimaryObjectRef.ObjectID));
 
-		NewActivityState.MarkExpired(NewGameState);
-		NewMissionState.RemoveEntity(NewGameState);
+		if (MissionState != none)
+		{
+			if (MissionState.GetMissionSource().OnExpireFn != none)
+			{
+				MissionState.GetMissionSource().OnExpireFn(NewGameState, MissionState);
+				bDirty = true;
+			}
+		}
+		
+		if (bDirty)
+		{
+			`SubmitGameState(NewGameState);
 
-		`SubmitGameState(NewGameState);
-
-		// Remove the expired mission from geoscape HUD
-		`HQPRES.StrategyMap2D.UpdateMissions();
+			// Remove the expired mission from geoscape HUD
+			`HQPRES.StrategyMap2D.UpdateMissions();
+		}
+		else
+		{
+			`CleanupGameState(NewGameState);
+		}
 	}
 	else if (WarnBeforeExpiration && bExpiring && !bAlreadyWarnedOfExpiration)
 	{

@@ -10,10 +10,33 @@ class XComGameState_Activity_Infiltration extends XComGameState_Activity;
 
 protected function EventListenerReturn OnActionExpired (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	local XComGameState_Activity_Infiltration NewActivityState;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState NewGameState;
+	local bool bDirty;
+	
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(infil mission) has expired");
+	MissionState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(PrimaryObjectRef.ObjectID));
 
-	NewActivityState = XComGameState_Activity_Infiltration(GameState.ModifyStateObject(class'XComGameState_Activity_Infiltration', ObjectID));
-	NewActivityState.MarkExpired(GameState);
+	if (MissionState != none)
+	{
+		if (MissionState.GetMissionSource().OnExpireFn != none)
+		{
+			MissionState.GetMissionSource().OnExpireFn(NewGameState, MissionState);
+			bDirty = true;
+		}
+	}
+	
+	if (bDirty)
+	{
+		`SubmitGameState(NewGameState);
+
+		// Remove the expired mission from geoscape HUD
+		`HQPRES.StrategyMap2D.UpdateMissions();
+	}
+	else
+	{
+		`CleanupGameState(NewGameState);
+	}
 
 	return ELR_NoInterrupt;
 }
