@@ -965,7 +965,7 @@ static function BarracksStatusReport GetBarracksStatusReport()
 		{
 			CurrentBarracksStatus.Wounded++;
 		}
-		else if (Soldier.GetMentalStateUIState() == eMentalState_Tired)
+		else if (Soldier.GetMentalState() == eMentalState_Tired)
 		{
 			CurrentBarracksStatus.Tired++;
 		}
