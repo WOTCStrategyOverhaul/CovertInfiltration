@@ -23,7 +23,8 @@ struct CharacterGroupKillCount
 // if (CurrentVersion > CIInfo.ModVersion) 
 var int ModVersion;
 
-// The mod version feature lands in beta 2, so put that as reference for now
+// The first digit denotes release: 0 for prerelease, 1 for postrelease
+// The decimal point is after the third digit, so version 6.9 would be 00690000
 const CURRENT_MOD_VERSION = 00250000;
 
 /////////////////////
