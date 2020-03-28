@@ -58,9 +58,6 @@
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComWeaponTuning.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Content\Maps\CIN_Loading_Infiltration_CityCenter.umap">
       <SubType>Content</SubType>
     </Content>
