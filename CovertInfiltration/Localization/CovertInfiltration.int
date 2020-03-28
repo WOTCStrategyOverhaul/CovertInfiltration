@@ -90,8 +90,6 @@ DaysToHoursDesc="Hours instead of days"
 DaysToHoursTooltip="Display hours instead of days in the EventQueue"
 DaysBeforeHoursDesc="Days before hours"
 DaysBeforeHoursTooltip="How many days left before displaying hours instead"
-RemoveNicknamedUpgradesDesc="Remove upgrades from nicknamed items"
-RemoveNicknamedUpgradesTooltip="Disabling this will preserve any nicknamed weapon's upgrades when selecting 'MAKE UPGRADES AVAILABLE' at the squad select screen"
 WarnBeforeExpirationDesc="Warn Before Expiration"
 WarnBeforeExpirationTooltip="Show a warning before an activity is about to expire"
 HoursBeforeWarningDesc="Hours Before Warning"
@@ -114,11 +112,6 @@ PauseOnMilestone225Desc="Pause at 225% infil (Opportune Moment II)"
 PauseOnMilestone225Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 225%"
 
 [UIUtilities_Infiltration]
-strDropUpgrade=REMOVE UPGRADE
-strStripUpgrades=MAKE UPGRADES AVAILABLE
-strStripUpgradesTooltip=Remove all weapon upgrades from primary weapons NOT equipped by soldiers selected for current mission duty.
-strStripUpgradesConfirm=CONFIRM WEAPON UPGRADES AVAILABLE
-strStripUpgradesConfirmDesc=Confirm removal of all weapon upgrades from all primary weapons NOT equipped by soldiers for current mission duty. These weapon upgrades will become available immediately. Upgrades from weapons with nicknames will be <XGParam:StrValue0>. This can be changed in MCM.
 strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"
 strReinforcementsBodyImminent="Imminent"
 strOpportunityAvaliableUnknownLocation=Unknown Location

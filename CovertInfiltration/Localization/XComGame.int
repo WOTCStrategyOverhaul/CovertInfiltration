@@ -16,33 +16,6 @@ FriendlyNamePlural="Holographic Disguises"
 BriefSummary="Utilizing advanced holographic technology, this new disguise will provide unmatched stealth capability to our operatives without compromising on survivability or mobility."
 TacticalText="<Bullet/> The Holographic Disguise makes a soldier nearly impossible to detect by enemy forces and shortens infiltration time.\n<Bullet/> This disguise also contains ADVENT transponders, allowing the soldier passage underneath ADVENT security towers.\n<Bullet/> The nanoweave outer shell of the Holographic disguise grants protection superior to the ADVENT disguise, while retaining the mobility of the Civilian Disguise."
 
-[TLE_KevlarArmor X2ArmorTemplate]
-FriendlyName="Scavenged Field Armor"
-FriendlyNamePlural="Scavenged Field Armor"
-BriefSummary="This basic armor consists of improvised protection cobbled together from salvage and Resistance arms caches. It provides minimal protection against ADVENT and alien weaponry."
-TacticalText="<Bullet/> All soldiers receive Kevlar Armor as part of their basic kit.\n<Bullet/> Research can give us access to better armor."
-
-[TLE_PlatedArmor X2ArmorTemplate]
-FriendlyName="Prototype Field Plate"
-FriendlyNamePlural="Prototype Field Plate"
-BriefSummary="Using scavenged plates of ADVENT armor, this suit provides increased protection and additional inventory capacity for our soldiers."
-TacticalText="<Bullet/> Mid-weight armor based on ADVENT salvage.\n<Bullet/> As a medium-class armor, it provides a slot for one additional inventory item."
-
-[TLE_PoweredArmor X2ArmorTemplate]
-FriendlyName="Experimental Power Armor"
-FriendlyNamePlural="Experimental Power Armor"
-BriefSummary="Our new mastery of the alien's Elerium technology has lead us to the ultimate in battle armor. Elerium powered armor provides unprecedented survivability and versatility in the battle against increasingly powerful alien enemies."
-TacticalText="<Bullet/> Top tier medium-class armor available.\n<Bullet/> Power Armor has 2 inventory item slots."
-
-[SparkBit_CV X2GremlinTemplate]
-BriefSummary="The BIT is a variation on our GREMLIN drone, with the medikit and electroshock subsystems replaced with a heavy weapons mount."
-
-[SparkBit_MG X2GremlinTemplate]
-BriefSummary="The addition of alien alloys to the BIT design allows us to miniaturize the launcher and make room for additional electronic warfare modules."
-
-[SparkBit_BM X2GremlinTemplate]
-BriefSummary="Elerium powercells have particular utility when applied to our drone designs, drastically increasing power output and cyberwarfare capabilities."
-
 [ResistanceRing X2FacilityTemplate]
 CompletedSummary="Resistance Orders are available!\nNew Staff Slot Available - adds +1 wildcard order slot"
 Summary="The Resistance Ring allows managing Resistance Factions and assigning them orders on monthly basis"
@@ -311,56 +284,6 @@ BonusEmptyText="Trains Soldiers as Specific Class"
 
 [ResCard_LiveFireTraining X2StrategyCardTemplate]
 SummaryText="GTS training will promote soldiers by a further <XGParam:IntValue0/> ranks"
-
-[POI_Prototype_T2 X2PointOfInterestTemplate]
-DisplayNames[0]="Resistance SOS"
-
-CompletedSummaries[0]="While scanning in this area, we detected an SOS signal coming from a hidden structure deep inside the ruins of the city. It seems some scientists defected from ADVENT and continued their research in hiding. We don't know what happened to them, but underneath a collapsed support beam we found a functioning prototype that looks beyond anything we've yet developed."
-
-POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_OvergrownCity"
-
-[Reward_PrototypeT2 X2RewardTemplate]
-DisplayName="Advanced Prototype"
-
-[POI_Prototype_T3 X2PointOfInterestTemplate]
-DisplayNames[0]="Old XCOM Signal"
-
-CompletedSummaries[0]="Tracing a signal once used by XCOM during the invasion, we found an underground bunker, apparently an offsite research lab. The facility is deserted, and plasma impacts score the walls. The defenders seem to have been armed with equipment on-par to the aliens' own designs, and among the fallen troopers who died during the facility's last stand, we found an item that is still undamaged."
-
-POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_WhatsInTheBarn"
-
-[Reward_PrototypeT3 X2RewardTemplate]
-DisplayName="Advanced Prototype"
-
-[POI_Sidegrade_T1 X2PointOfInterestTemplate]
-DisplayNames[0]="Old World Bunker"
-
-CompletedSummaries[0]="The local resistance tipped us off to the existence of an old world bunker hidden in the mountains. The Avenger's scanners easily located it, but unfortunately the innermost rooms of the bunker were eliminated by a direct strike from an orbital plasma weapon. However, there were several secondary rooms which were far enough away to be spared, and in one of them we found an armory with some intact weapons of old."
-
-POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_RadioTower"
-
-[Reward_SidegradeT1 X2RewardTemplate]
-DisplayName="Prototype Items"
-
-[POI_Sidegrade_T2 X2PointOfInterestTemplate]
-DisplayNames[0]="Resistance SOS"
-
-CompletedSummaries[0]="While scanning in this area, we detected an SOS signal coming from a hidden structure deep inside the ruins of the city. It seems some engineers defected from ADVENT and continued their projects in hiding. We don't know what happened to them, but using the Avenger's scanning equipment we were able to identify a metal safe, buried several meters belowground. We excavated it and found a few examples of the engineers' work."
-
-POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_OvergrownCity"
-
-[Reward_SidegradeT2 X2RewardTemplate]
-DisplayName="Prototype Items"
-
-[POI_Sidegrade_T3 X2PointOfInterestTemplate]
-DisplayNames[0]="Old XCOM Signal"
-
-CompletedSummaries[0]="Tracing a signal once used by XCOM during the invasion, we found an underground bunker, apparently an offsite manufactory. The facility is deserted, and plasma impacts score the walls. The defenders seem to have been armed with highly advanced equipment, all rendered unusable by the aliens. But near the main autofabricator, a control panel was still lit. It accepted one of our old codes, and opened a vault filled with several items."
-
-POIImages[0]="img:///UILibrary_StrategyImages.X2StrategyMap.POI_WhatsInTheBarn"
-
-[Reward_SidegradeT3 X2RewardTemplate]
-DisplayName="Prototype Items"
 
 [Reward_UtilityItems X2RewardTemplate]
 DisplayName="Basic Utility Items"
