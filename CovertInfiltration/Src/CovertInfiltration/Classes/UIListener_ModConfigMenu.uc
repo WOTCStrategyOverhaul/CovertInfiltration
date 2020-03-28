@@ -15,7 +15,6 @@ var config int CONFIG_VERSION;
 var config bool DAYS_TO_HOURS;
 var config int DAYS_BEFORE_HOURS;
 var config bool ENABLE_TUTORIAL;
-var config bool REMOVE_NICKNAMED_UPGRADES;
 var config bool WARN_BEFORE_EXPIRATION;
 var config int HOURS_BEFORE_WARNING;
 var config bool LOW_SOLDIERS_WARNING;
@@ -39,8 +38,6 @@ var localized string DaysToHoursDesc;
 var localized string DaysToHoursTooltip;
 var localized string DaysBeforeHoursDesc;
 var localized string DaysBeforeHoursTooltip;
-var localized string RemoveNicknamedUpgradesDesc;
-var localized string RemoveNicknamedUpgradesTooltip;
 
 var localized string EnableTutorialDesc;
 var localized string EnableTutorialTooltip;
@@ -87,7 +84,6 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	VariousSettingsGroup.AddCheckBox('DaysToHours', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, DaysToHoursSaveHandler);
 	VariousSettingsGroup.AddSlider('DaysBeforeHours', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, DaysBeforeHoursSaveHandler);
-	VariousSettingsGroup.AddCheckBox('RemoveNicknamedUpgrades', RemoveNicknamedUpgradesDesc, RemoveNicknamedUpgradesTooltip, REMOVE_NICKNAMED_UPGRADES, RemoveNicknamedUpgradesSaveHandler);
 	
 	TipsGroup = Page.AddGroup('TipsGroup', TipsTitle);
 	
@@ -118,7 +114,6 @@ simulated function LoadSavedSettings()
 {
 	DAYS_TO_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, DAYS_TO_HOURS);
 	DAYS_BEFORE_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, DAYS_BEFORE_HOURS);
-	REMOVE_NICKNAMED_UPGRADES = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.REMOVE_NICKNAMED_UPGRADES_DEFAULT, REMOVE_NICKNAMED_UPGRADES);
 	
 	ENABLE_TUTORIAL = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, ENABLE_TUTORIAL);
 	LOW_SOLDIERS_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, LOW_SOLDIERS_WARNING);
@@ -135,7 +130,6 @@ simulated function LoadSavedSettings()
 
 `MCM_API_BasicCheckboxSaveHandler(DaysToHoursSaveHandler, DAYS_TO_HOURS)
 `MCM_API_BasicSliderSaveHandler(DaysBeforeHoursSaveHandler, DAYS_BEFORE_HOURS)
-`MCM_API_BasicCheckboxSaveHandler(RemoveNicknamedUpgradesSaveHandler, REMOVE_NICKNAMED_UPGRADES)
 
 `MCM_API_BasicCheckboxSaveHandler(EnableTutorialSaveHandler, ENABLE_TUTORIAL)
 `MCM_API_BasicCheckboxSaveHandler(LowSoldiersWarningSaveHandler, LOW_SOLDIERS_WARNING)

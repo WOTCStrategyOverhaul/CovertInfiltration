@@ -139,7 +139,6 @@ static event InstallNewCampaign(XComGameState StartState)
 	
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
-	ForceLockAndLoad(StartState);
 	GrantBonusStartUpStaff(StartState);
 
 	PatchDebugStart(StartState);
@@ -153,7 +152,6 @@ static event OnLoadedSavedGame()
 
 	CreateGoldenPathActions(none);
 	ForceObjectivesCompleted(none);
-	ForceLockAndLoad(none);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -198,26 +196,6 @@ static function ForceObjectivesCompleted (XComGameState NewGameState)
 	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'XP2_M1_SecondCovertActionTutorial');
 	class'XComGameState_Objective'.static.CompleteObjectiveByName(NewGameState, 'T2_M0_CompleteGuerillaOps');
 	
-	if(bSubmitLocally)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-}
-
-static protected function ForceLockAndLoad(XComGameState NewGameState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local bool bSubmitLocally;
-
-	if (NewGameState == none)
-	{
-		bSubmitLocally = true;
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Forcing Lock And Load");
-	}
-
-	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
-	XComHQ.bReuseUpgrades = true;
-
 	if(bSubmitLocally)
 	{
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
@@ -286,8 +264,6 @@ static function OnPreCreateTemplates()
 		GetCDO().SuppressTraceLogs = false;
 	}
 
-	class'X2Helper_Infiltration_TemplateMod'.static.ForceDifficultyVariants();
-
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 	class'X2Helper_Infiltration'.static.ValidateXpMultiplers();
 }
@@ -296,22 +272,14 @@ static event OnPostTemplatesCreated()
 {
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchResistanceRing();
 	class'X2Helper_Infiltration_TemplateMod'.static.RemoveNoCovertActionNags();
-	class'X2Helper_Infiltration_TemplateMod'.static.MakeItemsBuildable();
-	class'X2Helper_Infiltration_TemplateMod'.static.ApplyTradingPostModifiers();
-	class'X2Helper_Infiltration_TemplateMod'.static.KillItems();
-	class'X2Helper_Infiltration_TemplateMod'.static.DisableLockAndBreakthrough();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchNewRetaliationNarrative();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGatecrasher();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
-	class'X2Helper_Infiltration_TemplateMod'.static.PatchUtilityItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchItemStats();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAcademyStaffSlot();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchCovertActionPromotionRewards();
-	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPArmorsets();
-	class'X2Helper_Infiltration_TemplateMod'.static.PatchTLPWeapons();
-	class'X2Helper_Infiltration_TemplateMod'.static.PatchWeaponTechs();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGoldenPath();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchChosenObjectives();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
@@ -323,19 +291,6 @@ static event OnPostTemplatesCreated()
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
-	PatchUIWeaponUpgradeItem();
-}
-
-static protected function PatchUIWeaponUpgradeItem()
-{
-	local UIArmory_WeaponUpgradeItem ItemCDO;
-
-	ItemCDO = UIArmory_WeaponUpgradeItem(class'XComEngine'.static.GetClassDefaultObject(class'UIArmory_WeaponUpgradeItem'));
-	ItemCDO.bProcessesMouseEvents = false;
-
-	 // UIArmory_WeaponUpgradeItem doesn't need to process input - the BG does it
-	 // However, if that flag is set then we don't get mouse events for children
-	 // which breaks the "drop item" button
 }
 
 static protected function MarkPlotsForCovertEscape()

@@ -125,9 +125,6 @@
     <Content Include="Src\CovertInfiltration\Classes\UIDags.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIDropWeaponUpgradeButton.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIEventQueue_CovertActionListItem_CI.uc">
       <SubType>Content</SubType>
     </Content>
@@ -186,12 +183,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_SitRepInformation.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIListener_WeaponUpgrade.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIListener_SSManageEquipment.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIMapToCovertActionsForcer.uc">
@@ -400,9 +391,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationObjectives.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationPointsOfInterest.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationRewards.uc">
