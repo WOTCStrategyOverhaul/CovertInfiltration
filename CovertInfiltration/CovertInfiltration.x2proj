@@ -369,9 +369,6 @@
     <Content Include="Src\CovertInfiltration\Classes\X2SitRep_InfiltrationSitRepEffects.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_InfiltrationFacilityUpgrades.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2StrategyElement_DefaultActivities.uc">
       <SubType>Content</SubType>
     </Content>
