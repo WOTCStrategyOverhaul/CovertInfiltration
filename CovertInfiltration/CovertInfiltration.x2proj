@@ -80,9 +80,6 @@
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Content\UILibrary_DisguiseIcons.upk">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Localization\BetterSecondWaveSupport.int">
       <SubType>Content</SubType>
     </Content>
