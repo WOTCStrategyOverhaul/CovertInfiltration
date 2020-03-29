@@ -27,13 +27,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateContainerRewardTemplate());
 	Rewards.AddItem(CreateDarkEventRewardTemplate());
 
-	// POI rewards
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT2', 'PrototypeT2'));
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_PrototypeT3', 'PrototypeT3'));
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT1', 'SidegradeT1'));
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT2', 'SidegradeT2'));
-	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_SidegradeT3', 'SidegradeT3'));
-
 	// CA rewards
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_AlienCorpses', 'AlienCorpses'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));

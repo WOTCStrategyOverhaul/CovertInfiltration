@@ -9,12 +9,6 @@ class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
 var config int MaxOverCrewLimitTillRed;
 
-// The replacements set directly in config. Will be preferred
-var config array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacements;
-
-// Replacements pulled from schematics during OPTC when items are converted to individual build
-var array<ItemAvaliableImageReplacement> ItemAvaliableImageReplacementsAutomatic;
-
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
 var localized string strCrewSizeTitle;
@@ -30,10 +24,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateAvengerHUDListeners());
 	Templates.AddItem(CreateEventQueueListeners());
 	Templates.AddItem(CreateArmoryListeners());
-	Templates.AddItem(CreateSquadSelectListeners());
 	Templates.AddItem(CreateStrategyPolicyListeners());
 	Templates.AddItem(CreateTacticalHUDListeners());
-	Templates.AddItem(CreateAlertListeners());
 
 	return Templates;
 }
@@ -616,79 +608,11 @@ static function CHEventListenerTemplate CreateArmoryListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Armory');
-	Template.AddCHEvent('UIArmory_WeaponUpgrade_SlotsUpdated', WeaponUpgrade_SlotsUpdated, ELD_Immediate, 99);
-	Template.AddCHEvent('UIArmory_WeaponUpgrade_NavHelpUpdated', WeaponUpgrade_NavHelpUpdated, ELD_Immediate, 99);
 	Template.AddCHEvent('OverridePersonnelStatus', OverridePersonnelStatus, ELD_Immediate, 99);
 	Template.AddCHEvent('SoldierListItem_ShouldDisplayMentalStatus', SoldierListItem_ShouldDisplayMentalStatus, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
-}
-
-static protected function EventListenerReturn WeaponUpgrade_SlotsUpdated(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local UIDropWeaponUpgradeButton DropButton;
-	local UIArmory_WeaponUpgradeItem Slot;
-	local UIList SlotsList;
-	local UIPanel Panel;
-
-	if (`ISCONTROLLERACTIVE)
-	{
-		// We add the button only if using mouse
-		return ELR_NoInterrupt;
-	}
-
-	SlotsList = UIList(EventData);
-	if (SlotsList == none)
-	{
-		`RedScreen("Recived UIArmory_WeaponUpgrade_SlotsUpdated but data isn't UIList");
-		return ELR_NoInterrupt;
-	}
-
-	foreach SlotsList.ItemContainer.ChildPanels(Panel)
-	{
-		Slot = UIArmory_WeaponUpgradeItem(Panel);
-		if (Slot == none || Slot.UpgradeTemplate == none || Slot.bIsDisabled) continue;
-
-		DropButton = Slot.Spawn(class'UIDropWeaponUpgradeButton', Slot);
-		DropButton.InitDropButton();
-	}
-
-	return ELR_NoInterrupt;
-}
-
-static protected function EventListenerReturn WeaponUpgrade_NavHelpUpdated(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local UIArmory_WeaponUpgrade Screen;
-	local UINavigationHelp NavHelp;
-
-	if (!`ISCONTROLLERACTIVE)
-	{
-		// We add the indicator only if using controller
-		return ELR_NoInterrupt;
-	}
-
-	Screen = UIArmory_WeaponUpgrade(EventSource);
-	NavHelp = UINavigationHelp(EventData);
-
-	if (NavHelp == none)
-	{
-		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but data isn't UINavigationHelp");
-		return ELR_NoInterrupt;
-	}
-
-	if (Screen == none)
-	{
-		`RedScreen("Recived UIArmory_WeaponUpgrade_NavHelpUpdated but source isn't UIArmory_WeaponUpgrade");
-		return ELR_NoInterrupt;
-	}
-
-	if (Screen.ActiveList == Screen.SlotsList)
-	{
-		NavHelp.AddLeftHelp(class'UIUtilities_Infiltration'.default.strDropUpgrade, class'UIUtilities_Input'.const.ICON_X_SQUARE);
-	}
-
-	return ELR_NoInterrupt;
 }
 
 /*
@@ -803,41 +727,6 @@ static protected function EventListenerReturn SoldierListItem_ShouldDisplayMenta
 	{
 		Tuple.Data[0].b = true;
 	}
-
-	return ELR_NoInterrupt;
-}
-
-////////////////////
-/// Squad Select ///
-////////////////////
-
-static function CHEventListenerTemplate CreateSquadSelectListeners()
-{
-	local CHEventListenerTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_SquadSelect');
-	Template.AddCHEvent('UISquadSelect_NavHelpUpdate', SSNavHelpUpdate, ELD_Immediate, 99);
-	Template.RegisterInStrategy = true;
-
-	return Template;
-}
-
-static protected function EventListenerReturn SSNavHelpUpdate(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local UINavigationHelp NavHelp;
-
-	if (`ISCONTROLLERACTIVE)
-	{
-		// We add the button only if using mouse
-		return ELR_NoInterrupt;
-	}
-
-	NavHelp = UINavigationHelp(EventData);
-	NavHelp.AddCenterHelp(
-		class'UIUtilities_Infiltration'.default.strStripUpgrades,,
-		class'UIUtilities_Infiltration'.static.OnStripWeaponUpgrades,,
-		class'UIUtilities_Infiltration'.default.strStripUpgradesTooltip
-	);
 
 	return ELR_NoInterrupt;
 }
@@ -966,81 +855,6 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 	{
 		// Hide previously shown alert. Anything wants to show it again will unhide it anyway
 		UICountdown.Hide();
-	}
-
-	return ELR_NoInterrupt;
-}
-
-//////////////
-/// Alerts ///
-//////////////
-
-static function CHEventListenerTemplate CreateAlertListeners()
-{
-	local CHEventListenerTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Alerts');
-	Template.AddCHEvent('OverrideImageForItemAvaliable', OverrideImageForItemAvaliable, ELD_Immediate, 99);
-	Template.RegisterInStrategy = true;
-
-	return Template;
-}
-
-static function EventListenerReturn OverrideImageForItemAvaliable(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local ItemAvaliableImageReplacement Replacement;
-	local X2ItemTemplateManager TemplateManager;
-	local X2ItemTemplate CurrentItemTemplate, ImageSourceTemplate;
-	local XComLWTuple Tuple;
-	local int i;
-
-	Tuple = XComLWTuple(EventData);
-	if (Tuple == none || Tuple.Id != 'OverrideImageForItemAvaliable') return ELR_NoInterrupt;
-
-	CurrentItemTemplate = X2ItemTemplate(Tuple.Data[1].o);
-	
-	// Check if we have a manual replacement first
-	i = default.ItemAvaliableImageReplacements.Find('TargetItem', CurrentItemTemplate.DataName);
-	if (i != INDEX_NONE)
-	{
-		`CI_Trace("Replacing image for" @ CurrentItemTemplate.DataName @ "with a manually configured option");
-		Replacement = default.ItemAvaliableImageReplacements[i];
-	}
-
-	// If we don't, check for an automatic one
-	else
-	{
-		i = default.ItemAvaliableImageReplacementsAutomatic.Find('TargetItem', CurrentItemTemplate.DataName);
-
-		if (i != INDEX_NONE)
-		{
-			`CI_Trace("Replacing image for" @ CurrentItemTemplate.DataName @ "with an automatically generated option");
-			Replacement = default.ItemAvaliableImageReplacementsAutomatic[i];
-		}
-	}
-	
-	if (i != INDEX_NONE)
-	{
-		// Found a replacement
-
-		if (Replacement.strImage != "")
-		{
-			Tuple.Data[0].s = Replacement.strImage;
-		}
-		else
-		{
-			TemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-			ImageSourceTemplate = TemplateManager.FindItemTemplate(Replacement.ImageSourceItem);
-			
-			if (ImageSourceTemplate != none && ImageSourceTemplate.strImage != "")
-			{
-				Tuple.Data[0].s = ImageSourceTemplate.strImage;
-			}
-			else
-			{
-				`CI_Warn(CurrentItemTemplate.DataName @ "has a replacement with image from" @ Replacement.ImageSourceItem @ "but the latter has no image or doesn't exist");
-			}
-		}
 	}
 
 	return ELR_NoInterrupt;
