@@ -1,21 +1,3 @@
-[CivilianDisguise X2ArmorTemplate]
-FriendlyName="Civilian Disguise"
-FriendlyNamePlural="Civilian Disguises"
-BriefSummary="These suits of civilian clothing can serve as disguises for our operatives in the field. They will make our soldiers harder for ADVENT to detect, but provide no protection whatsoever."
-TacticalText="<Bullet/> The Civilian Disguise makes a soldier harder to detect by enemy forces and shortens infiltration time.\n<Bullet/> However, this disguise is paper thin. Soldiers wearing it should avoid heavy engagements if possible, using their enhanced mobility and stealth."
-
-[AdventDisguise X2ArmorTemplate]
-FriendlyName="ADVENT Disguise"
-FriendlyNamePlural="ADVENT Disguises"
-BriefSummary="The data gleaned from ADVENT's neural implants allows us to pass soldiers off as ADVENT troopers. Surveillance systems will be utterly fooled thanks to the neural transponder, but actual enemies may be less convinced."
-TacticalText="<Bullet/> The ADVENT Disguise makes a soldier much harder to detect by enemy forces and shortens infiltration time.\n<Bullet/> The transponders of this disguise render the user invisible to ADVENT security towers.\n<Bullet/> The mixture of alien alloy and steel used by ADVENT provides increased protection over civilian disguises, but no mobility bonus."
-
-[HolographicDisguise X2ArmorTemplate]
-FriendlyName="Holographic Disguise"
-FriendlyNamePlural="Holographic Disguises"
-BriefSummary="Utilizing advanced holographic technology, this new disguise will provide unmatched stealth capability to our operatives without compromising on survivability or mobility."
-TacticalText="<Bullet/> The Holographic Disguise makes a soldier nearly impossible to detect by enemy forces and shortens infiltration time.\n<Bullet/> This disguise also contains ADVENT transponders, allowing the soldier passage underneath ADVENT security towers.\n<Bullet/> The nanoweave outer shell of the Holographic disguise grants protection superior to the ADVENT disguise, while retaining the mobility of the Civilian Disguise."
-
 [ResistanceRing X2FacilityTemplate]
 CompletedSummary="Resistance Orders are available!\nNew Staff Slot Available - adds +1 wildcard order slot"
 Summary="The Resistance Ring allows managing Resistance Factions and assigning them orders on monthly basis"

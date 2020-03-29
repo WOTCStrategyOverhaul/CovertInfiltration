@@ -422,10 +422,6 @@ FriendlyDesc="Completing this chain has a chance to increase the Knowledge of a 
 FriendlyName="Open Provocation"
 FriendlyDesc="Completing this chain has a chance to decrease the Retaliation timer by one week.<br/><i>The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens.</i>"
 
-[X2Ability_InfiltrationAbilitySet]
-strTowerDetectionImmunityName="Disguise"
-strTowerDetectionImmunityDesc="The fake neural transponders of this disguise render the wearer invisible to ADVENT security towers"
-
 [AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
 DisplayName=Enhanced Guerilla Training
 Summary=The maximum GTS training rank is increased by <XGParam:IntValue0>
