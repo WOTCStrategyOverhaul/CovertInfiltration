@@ -7,11 +7,8 @@
 
 class X2EventListener_Infiltration_UI extends X2EventListener config(UI);
 
-var config int MaxOverCrewLimitTillRed;
-
 var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
-var localized string strCrewSizeTitle;
 var localized string strReadySoldiers;
 var localized string strTiredSoldiers;
 var localized string strAcademyTrainingRank;
@@ -457,44 +454,12 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 	local BarracksStatusReport CurrentBarracksStatus;
-	local int CurrentCrewSize, CurrentCrewLimit, MessageColor;
 	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
 	local X2FacilityTemplate AcademyTemplate;
 
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
-	
-	//////////////////
-	/// Crew limit ///
-	//////////////////
-
-	if (UIFacility_LivingQuarters(CurrentScreen) != none ||
-		UIStrategyMap(CurrentScreen) != none ||
-		UIFacilityGrid(CurrentScreen) != none ||
-		UIRecruitSoldiers(CurrentScreen) != none ||
-		(UIChooseUpgrade(CurrentScreen) != none && UIFacility_LivingQuarters(ScreenStack.GetFirstInstanceOf(class'UIFacility_LivingQuarters')) != none))
-	{
-		CurrentCrewSize = class'X2Helper_Infiltration'.static.GetCurrentCrewSize();
-		CurrentCrewLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentCrewLimit;
-
-		if (CurrentCrewSize <= CurrentCrewLimit)
-		{
-			MessageColor = eUIState_Cash;
-		}
-		else if (CurrentCrewSize <= CurrentCrewLimit + default.MaxOverCrewLimitTillRed)
-		{
-			MessageColor = eUIState_Warning;
-		}
-		else
-		{
-			MessageColor = eUIState_Bad;
-		}
-		
-		AvengerHUD.AddResource(default.strCrewSizeTitle, class'UIUtilities_Text'.static.GetColoredText(CurrentCrewSize $ "/" $ CurrentCrewLimit, MessageColor));
-		
-		AvengerHUD.ShowResources();
-	}
 
 	///////////////////////////////////////
 	/// New covert ops screen + loadout ///

@@ -54,11 +54,6 @@ var config name ASSAULT_MISSION_POSITIVE_SITREP_MILESTONE;
 var config int ENVIROMENTAL_SITREP_CHANCE;
 var config(GameData) array<name> ENVIROMENTAL_SITREPS_EXCLUDE;
 
-var config int STARTING_CREW_LIMIT;
-var config int CREW_LIMIT_INCREASE_I;
-var config int CREW_LIMIT_INCREASE_II;
-var config float RECOVERY_PENALTY_PER_SOLDIER;
-
 var config int ACADEMY_HOURS_PER_RANK;
 var config array<TrainingTimeModByRank> ACADEMY_DURATION_MODS;
 
@@ -888,55 +883,6 @@ static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionStat
 			if (NumSelected >= MaxNumSitReps) break;
 		}
 	}
-}
-
-static function int GetNumberOfHumanSoldiers()
-{
-	local XComGameState_Unit Soldier;
-	local int idx, iSoldiers;
-	local XComGameState_HeadquartersXcom XComHQ;
-		
-	XComHQ = `XCOMHQ;
-
-	iSoldiers = 0;
-	for(idx = 0; idx < XComHQ.Crew.Length; idx++)
-	{
-		Soldier = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.Crew[idx].ObjectID));
-
-		if(Soldier != none)
-		{
-			if(Soldier.IsSoldier() && !Soldier.IsRobotic() && !Soldier.IsDead())
-			{
-				iSoldiers++;
-			}
-		}
-	}
-
-	return iSoldiers;
-}
-
-static function int GetCurrentCrewSize()
-{
-	local XComGameState_HeadquartersXcom XComHQ;
-		
-	XComHQ = `XCOMHQ;
-
-	return GetNumberOfHumanSoldiers() + XComHQ.GetNumberOfScientists() + XComHQ.GetNumberOfEngineers();
-}
-
-static function float GetRecoveryTimeModifier()
-{
-	local float CurrentCrewSize, CurrentCrewLimit;
-
-	CurrentCrewSize = GetCurrentCrewSize();
-	CurrentCrewLimit = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().CurrentCrewLimit;
-
-	if (CurrentCrewSize <= CurrentCrewLimit)
-	{
-		return 1.0;
-	}
-
-	return 1.0 - ((CurrentCrewSize - CurrentCrewLimit) * default.RECOVERY_PENALTY_PER_SOLDIER);
 }
 
 static function int GetAcademyTrainingTargetRank ()

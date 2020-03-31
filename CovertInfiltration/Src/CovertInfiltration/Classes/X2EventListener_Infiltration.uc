@@ -75,7 +75,6 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate, 99);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate, 99);
-	Template.AddCHEvent('WillRecoveryTimeModifier', WillRecoveryTimeModifier, ELD_Immediate, 99);
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate, 99);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate, 99);
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
@@ -678,19 +677,6 @@ static protected function EventListenerReturn AfterActionModifyRecoveredLoot (Ob
 
 		History.CleanupPendingGameState(NewGameState);
 	}
-
-	return ELR_NoInterrupt;
-}
-
-static protected function EventListenerReturn WillRecoveryTimeModifier(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
-{
-	local XComLWTuple Tuple;
-	
-	Tuple = XComLWTuple(EventData);
-
-	if (Tuple == none || Tuple.Id != 'WillRecoveryTimeModifier') return ELR_NoInterrupt;
-
-	Tuple.Data[0].f = class'X2Helper_Infiltration'.static.GetRecoveryTimeModifier();
 
 	return ELR_NoInterrupt;
 }

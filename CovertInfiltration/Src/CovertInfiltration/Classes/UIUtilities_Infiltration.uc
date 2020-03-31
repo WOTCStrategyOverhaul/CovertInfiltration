@@ -303,17 +303,6 @@ static function BuildUIAlert_CovertInfiltration (
 	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicStringProperty(PropertySet, 'SoundToPlay', SoundToPlay);
 }
 
-static function ShowCrewOverflowPopup ()
-{
-	local XComHQPresentationLayer HQPres;
-	local DynamicPropertySet PropertySet;
-
-	HQPres = `HQPRES;
-
-	BuildUIAlert_CovertInfiltration(PropertySet, 'eAlert_CrewOverflow', none, '', "Geoscape_DoomIncrease");
-	HQPres.QueueDynamicPopup(PropertySet);
-}
-
 static function InfiltrationActionAvaliable(optional StateObjectReference ActionRef, optional XComGameState NewGameState)
 {
 	local XComHQPresentationLayer HQPres;
