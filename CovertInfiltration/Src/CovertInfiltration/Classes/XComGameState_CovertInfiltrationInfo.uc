@@ -157,6 +157,7 @@ static function CreateInfo(optional XComGameState StartState)
 	
 	Info = XComGameState_CovertInfiltrationInfo(NewGameState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
 	Info.ModVersion = CURRENT_MOD_VERSION;
+	Info.InitExistingCampaign();
 
 	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
 }
