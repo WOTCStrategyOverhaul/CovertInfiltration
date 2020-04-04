@@ -997,6 +997,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_Tactical');
 	Template.AddCHEvent('PostMissionObjectivesSpawned', AddCovertEscapeObjective, ELD_Immediate, 99);
 	Template.AddCHEvent('SquadConcealmentBroken', CallReinforcementsOnSupplyExtraction, ELD_OnStateSubmitted, 99);
+	Template.AddCHEvent('ScamperEnd', CallReinforcementsOnSupplyExtraction, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryEarly, ELD_OnStateSubmitted, 99999);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryLate, ELD_OnStateSubmitted, -99999);
 	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate, 99);
@@ -1094,8 +1095,22 @@ static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object 
 	local XComGameState NewGameState;
 	local XComGameState_CIReinforcementsManager ManagerState;
 	local DelayedReinforcementOrder DelayedReinforcementOrder;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
 
 	if (`TACTICALMISSIONMGR.ActiveMission.sType != "SupplyExtraction")
+	{
+		return ELR_NoInterrupt;
+	}
+
+	// Check if we activated the system already
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	if (CIInfo.bSupplyExtractionRnfsStarted) return ELR_NoInterrupt;
+
+	// Hold until the player squad is revealed
+	if (
+		Event == 'ScamperEnd' &&
+		class'XComGameState_Player'.static.GetPlayerState(eTeam_XCom).bSquadIsConcealed
+	)
 	{
 		return ELR_NoInterrupt;
 	}
@@ -1111,9 +1126,43 @@ static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object 
 
 	ManagerState.DelayedReinforcementOrders.AddItem(DelayedReinforcementOrder);
 
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.bSupplyExtractionRnfsStarted = true;
+
 	`TACTICALRULES.SubmitGameState(NewGameState);
 
+	// Fix for advent extraction never starting when starting mission without concealment
+	if (Event == 'ScamperEnd') KismetStartSupplyExtract();
+
 	return ELR_NoInterrupt;
+}
+
+// MUST BE CALLED
+// 1) Inside gamestate submission "thread"
+// 2) Without pending gamestate (inside ELD_OnStateSubmitted window)
+static protected function KismetStartSupplyExtract ()
+{
+	local array<SequenceObject> Events;
+	local SeqEvent_X2GameState Event;
+	local WorldInfo WorldInfo;
+	local Sequence GameSeq;
+	local int Index;
+
+	WorldInfo = class'WorldInfo'.static.GetWorldInfo();
+	GameSeq = class'WorldInfo'.static.GetWorldInfo().GetGameSequence();
+
+	GameSeq.FindSeqObjectsByClass(class'SeqEvent_X2GameState', true, Events);
+	for (Index = 0; Index < Events.length; ++Index)
+	{
+		Event = SeqEvent_X2GameState(Events[Index]);
+
+		if (Event == none) continue;
+		if (Event.EventName != 'UMS_XCOMFirstLossOfConcealment') continue;
+		if (Event.GetPackageName() != 'Obj_SupplyExtraction_CI') continue;
+
+		// Correct node, FIRE
+		Event.CheckActivate(WorldInfo, none);
+	}
 }
 
 static function EventListenerReturn OnTacticalPlayBegun_VeryEarly (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)

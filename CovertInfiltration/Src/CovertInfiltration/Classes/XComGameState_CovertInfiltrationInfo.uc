@@ -49,6 +49,7 @@ var array<StateObjectReference> UnitsToConsiderUpgradingGearOnMissionExit;
 
 var bool bAirPatrolsTriggered;
 var bool bCommsJammingTriggered;
+var bool bSupplyExtractionRnfsStarted;
 
 // Kill XP scaling system
 var int NumEnemiesAtMissionStart;
@@ -67,6 +68,8 @@ static function ResetPreMission (XComGameState StartGameState)
 
 	NewInfo.bAirPatrolsTriggered = false;
 	NewInfo.bCommsJammingTriggered = false;
+	NewInfo.bSupplyExtractionRnfsStarted = false;
+
 	NewInfo.NumEnemiesAtMissionStart = default.NumEnemiesAtMissionStart;
 	NewInfo.CharacterGroupsKillTracker.Length = 0;
 }
