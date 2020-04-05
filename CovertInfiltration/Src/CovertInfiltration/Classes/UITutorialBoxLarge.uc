@@ -85,7 +85,6 @@ simulated function OnInit()
 {
 	super.OnInit();
 
-	// TODO: This doesn't work (probably because we are not in tactical)
 	`SOUNDMGR.PlaySoundEvent("TacticalUI_Tutorial_Popup");
 }
 
