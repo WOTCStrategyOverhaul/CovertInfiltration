@@ -2,6 +2,7 @@ class UITutorialBoxLarge extends UIScreen;
 
 var UIPanel MainContainer;
 var UIBGBox MainContainerBG;
+var UIImage BottomIcon;
 
 var UIText HeaderText;
 var UIDags DagsRight;
@@ -38,6 +39,14 @@ simulated protected function BuildScreen ()
 	MainContainerBG.AddOnInitDelegate(OnMainContainerBGInit);
 	MainContainerBG.InitBG('MainContainerBG');
 	MainContainerBG.SetSize(1000, 560);
+	
+	BottomIcon = Spawn(class'UIImage', MainContainer);
+	BottomIcon.bAnimateOnInit = false;
+	BottomIcon.InitImage('BottomIcon', "img:///gfxTutorialBox.infoIcon");
+	BottomIcon.SetSize(32, 32);
+	// Center on the bottom of the BG
+	BottomIcon.SetX(MainContainerBG.Width / 2 - BottomIcon.Width / 2);
+	BottomIcon.SetY(MainContainerBG.Height - BottomIcon.Height / 2 - 6); // Slight adjustment so that the icon is on top of the bottom lines
 
 	// Dags' x is calculated when the header is realized
 	DagsRight = Spawn(class'UIDags', MainContainer);
@@ -156,11 +165,13 @@ simulated function AnimateIn (optional float Delay = 0.0)
 	HideWithDelay(HeaderSeparator, Delay);
 	HideWithDelay(MainText, Delay);
 
-	// Step 2 - vertically expand the BG
+	// Step 2 - vertically expand the BG (+ the icon, which is "anchored" at the bottom of BG)
 	// Also, start invisible as otherwise we get a "flash" of a horizontal line
 	MainContainerBG.AddTweenBetween("_alpha", 0, MainContainerBG.Alpha, 0.10, Delay, "easeoutquad");
 	MainContainerBG.AddTweenBetween("_y", MainContainerBG.Y + MainContainerBG.Height / 2, MainContainerBG.Y, 0.20, Delay, "easeoutquad");
 	MainContainerBG.AddTweenBetween("_height", 1, MainContainerBG.Height, 0.20, Delay, "easeoutquad");
+	BottomIcon.AddTweenBetween("_alpha", 0, BottomIcon.Alpha, 0.10, Delay, "easeoutquad");
+	BottomIcon.AddTweenBetween("_y", MainContainerBG.Y + MainContainerBG.Height / 2, BottomIcon.Y, 0.20, Delay, "easeoutquad");
 	Delay += 0.20;
 
 	// Step 3 - once BG is complete, start showing the header
