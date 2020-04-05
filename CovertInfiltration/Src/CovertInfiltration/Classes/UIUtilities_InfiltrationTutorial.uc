@@ -57,8 +57,11 @@ static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	`PRESBASE.UITutorialBox(default.strCrewLimitHeader, default.strCrewLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
-	`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	//`PRESBASE.UITutorialBox(default.strCrewLimitHeader, default.strCrewLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	//`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+
+	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
+	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody);
 }
 
 static function CovertActionLoadout ()
@@ -171,4 +174,18 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 
 	// Signal to show the popup
 	return true;
+}
+
+static protected function UITutorialBoxLarge (string strTitle, string strDescription)
+{
+	local XComPresentationLayerBase PresBase;
+	local UITutorialBoxLarge TheScreen;
+
+	PresBase = `PRESBASE;
+
+	TheScreen = PresBase.Spawn(class'UITutorialBoxLarge', PresBase);
+	PresBase.ScreenStack.Push(TheScreen);
+
+	TheScreen.SetContents(strTitle, strDescription);
+	//TheScreen.AddOnRemovedDelegate();
 }
