@@ -124,5 +124,3 @@ struct ActionRiskDisplayInfo
 	var string RiskName;
 	var string Description;
 };
-
-delegate NoArgsNoReturn ();

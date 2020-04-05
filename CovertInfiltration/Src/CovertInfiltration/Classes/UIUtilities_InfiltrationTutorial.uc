@@ -60,7 +60,7 @@ static function GeoscapeEntry ()
 	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, GeoscapeEntry2);
 }
 
-static protected function GeoscapeEntry2 ()
+static protected function GeoscapeEntry2 (UIPanel Panel)
 {
 	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
 }
@@ -107,7 +107,7 @@ static function FacilityChanges ()
 	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody, FacilityChanges2);
 }
 
-static function FacilityChanges2 ()
+static protected function FacilityChanges2 (UIPanel Panel)
 {
 	UITutorialBoxLarge(default.strFacilityGTSHeader, default.strFacilityGTSBody);
 }
@@ -181,7 +181,7 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 	return true;
 }
 
-static protected function UITutorialBoxLarge (string strTitle, string strDescription, optional delegate<CI_DataStructures.NoArgsNoReturn> OnRemovedFn)
+static protected function UITutorialBoxLarge (string strTitle, string strDescription, optional delegate<UIPanel.OnPanelRemoved> OnRemovedFn)
 {
 	local XComPresentationLayerBase PresBase;
 	local UITutorialBoxLarge TheScreen;
@@ -192,5 +192,5 @@ static protected function UITutorialBoxLarge (string strTitle, string strDescrip
 	PresBase.ScreenStack.Push(TheScreen);
 
 	TheScreen.SetContents(strTitle, strDescription);
-	if (OnRemovedFn != none) TheScreen.OnRemovedNoArgsFns.AddItem(OnRemovedFn);
+	if (OnRemovedFn != none) TheScreen.AddOnRemovedDelegate(OnRemovedFn);
 }

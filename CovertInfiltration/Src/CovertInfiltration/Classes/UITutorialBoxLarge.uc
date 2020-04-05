@@ -12,8 +12,6 @@ var UITextContainer MainText;
 const MARGIN_LEFT_RIGHT = 20;
 const MARGIN_TOP_BOTTOM = 10;
 
-var array< delegate<CI_DataStructures.NoArgsNoReturn> > OnRemovedNoArgsFns;
-
 /////////////
 /// Setup ///
 /////////////
@@ -212,22 +210,6 @@ static protected function HideWithDelay (UIPanel Panel, float Delay)
 {
 	if (Delay > 0.0) Panel.SetTimer(Delay, false, nameof(Hide), Panel);
 	else Panel.Hide();
-}
-
-////////////////
-/// Removing ///
-////////////////
-
-simulated function OnRemoved ()
-{
-	local delegate<CI_DataStructures.NoArgsNoReturn> Fn;
-
-	super.OnRemoved();
-
-	foreach OnRemovedNoArgsFns(Fn)
-	{
-		Fn();
-	}
 }
 
 defaultproperties
