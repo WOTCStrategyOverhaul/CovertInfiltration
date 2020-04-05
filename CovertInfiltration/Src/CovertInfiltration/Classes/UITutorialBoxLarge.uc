@@ -18,15 +18,10 @@ const MARGIN_TOP_BOTTOM = 10;
 
 simulated function InitScreen (XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
-	// For some reason this is config
-	bPlayAnimateInDistortion = true;
-
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	BuildScreen();
 	UpdateNavHelp();
-
-	SetContents("Muh Title", "ASDASDASDASD ADASDasd asdasdasdasdasfdwdgsdger234ty");
 }
 
 simulated protected function BuildScreen ()
@@ -156,43 +151,38 @@ simulated function AnimateIn (optional float Delay = 0.0)
 	//super.AnimateIn(Delay);
 	// No need to call parent (especially not UIPanel) - we do everything manually
 
-	// Step 1 - UI distorsion (copy paste from UIScreen)
-	if (bPlayAnimateInDistortion && !PC.IsPaused())
-	{
-		if (Delay > 0.0) SetTimer(Delay, false, nameof(BeginAnimateInDistortion));
-		else BeginAnimateInDistortion();
-	}
-
-	// Step 2 - Hide everything apart from BG - we will be unhiding them as they begin animating in
+	// Step 1 - Hide everything apart from BG - we will be unhiding them as they begin animating in
 	HideWithDelay(HeaderText, Delay);
 	HideWithDelay(DagsRight, Delay);
 	HideWithDelay(HeaderSeparator, Delay);
 	HideWithDelay(MainText, Delay);
 
-	// Step 3 - vertically expand the BG
+	// Step 2 - vertically expand the BG
+	// Also, start invisible as otherwise we get a "flash" of a horizontal line
+	MainContainerBG.AddTweenBetween("_alpha", 0, MainContainerBG.Alpha, 0.10, Delay, "easeoutquad");
 	MainContainerBG.AddTweenBetween("_y", MainContainerBG.Y + MainContainerBG.Height / 2, MainContainerBG.Y, 0.20, Delay, "easeoutquad");
 	MainContainerBG.AddTweenBetween("_height", 1, MainContainerBG.Height, 0.20, Delay, "easeoutquad");
 	Delay += 0.20;
 
-	// Step 4 - once BG is complete, start showing the header
+	// Step 3 - once BG is complete, start showing the header
 	ShowWithDelay(HeaderText, Delay);
 	HeaderText.AddTweenBetween("_alpha", 0, HeaderText.Alpha, 0.25, Delay, "easeoutquad");
 	HeaderText.AddTweenBetween("_x", HeaderText.X - 10, HeaderText.X, 0.25, Delay, "easeoutquad");
 	Delay += 0.125;
 
-	// Step 5 - halfway through the header animation, start showing the dags
+	// Step 4 - halfway through the header animation, start showing the dags
 	// Note that we can't touch dags's x as we might waiting on the header text to realize
 	ShowWithDelay(DagsRight, Delay);
 	DagsRight.AddTweenBetween("_alpha", 0, DagsRight.Alpha, 0.25, Delay, "easeoutquad");
 	Delay += 0.125;
 
-	// Step 6 - halfway through the dags animation, start showing the separator (the header animation should be completed exactly now)
+	// Step 5 - halfway through the dags animation, start showing the separator (the header animation should be completed exactly now)
 	ShowWithDelay(HeaderSeparator, Delay);
 	HeaderSeparator.AddTweenBetween("_alpha", 0, HeaderSeparator.Alpha, 0.25, Delay, "easeoutquad");
 	HeaderSeparator.AddTweenBetween("_y", HeaderSeparator.Y + 5, HeaderSeparator.Y, 0.25, Delay, "easeoutquad");
 	Delay += 0.125;
 
-	// Step 7 - halfway through the separator animation, start showing the text (the dags animation should be completed exactly now)
+	// Step 6 - halfway through the separator animation, start showing the text (the dags animation should be completed exactly now)
 	ShowWithDelay(MainText, Delay);
 	MainText.AddTweenBetween("_alpha", 0, MainText.Alpha, 0.25, Delay, "easeoutquad");
 	MainText.AddTweenBetween("_y", MainText.Y + 5, MainText.Y, 0.25, Delay, "easeoutquad");
