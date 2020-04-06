@@ -57,65 +57,73 @@ static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	`PRESBASE.UITutorialBox(default.strCrewLimitHeader, default.strCrewLimitBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
-	`PRESBASE.UITutorialBox(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, GeoscapeEntry2);
+}
+
+static protected function GeoscapeEntry2 (UIPanel Panel)
+{
+	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
 }
 
 static function CovertActionLoadout ()
 {
 	if (!ShouldShowPopup('CovertActionLoadout')) return;
 
-	`PRESBASE.UITutorialBox(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody);
 }
 
 static function InfiltrationLoadout ()
 {
 	if (!ShouldShowPopup('InfiltrationLoadout')) return;
 
-	`PRESBASE.UITutorialBox(default.strInfiltrationLoadoutHeader, default.strInfiltrationLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strInfiltrationLoadoutHeader, default.strInfiltrationLoadoutBody);
 }
 
 static function AssaultLoadout ()
 {
 	if (!ShouldShowPopup('AssaultLoadout')) return;
 
-	`PRESBASE.UITutorialBox(default.strAssaultLoadoutHeader, default.strAssaultLoadoutBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strAssaultLoadoutHeader, default.strAssaultLoadoutBody);
 }
 
 static function OverInfiltration ()
 {
 	if (!ShouldShowPopup('OverInfiltration')) return;
 
-	`PRESBASE.UITutorialBox(default.strOverInfiltrationHeader, default.strOverInfiltrationBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strOverInfiltrationHeader, default.strOverInfiltrationBody);
 }
 
 static function CovertActionFinished ()
 {
 	if (!ShouldShowPopup('CovertActionFinished')) return;
 
-	`PRESBASE.UITutorialBox(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody);
 }
 
 static function FacilityChanges ()
 {
 	if (!ShouldShowPopup('FacilityChanges')) return;
 
-	`PRESBASE.UITutorialBox(default.strFacilityGTSHeader, default.strFacilityGTSBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
-	`PRESBASE.UITutorialBox(default.strFacilityRingHeader, default.strFacilityRingBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody, FacilityChanges2);
+}
+
+static protected function FacilityChanges2 (UIPanel Panel)
+{
+	UITutorialBoxLarge(default.strFacilityGTSHeader, default.strFacilityGTSBody);
 }
 
 static function ActivityChains ()
 {
 	if (!ShouldShowPopup('ActivityChains')) return;
 
-	`PRESBASE.UITutorialBox(default.strActivityChainsHeader, default.strActivityChainsBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strActivityChainsHeader, default.strActivityChainsBody);
 }
 
 static function AlienFacilityBuilt ()
 {
 	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
 
-	`PRESBASE.UITutorialBox(default.strAdvancedChainsHeader, default.strAdvancedChainsBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
+	UITutorialBoxLarge(default.strAdvancedChainsHeader, default.strAdvancedChainsBody);
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
@@ -171,4 +179,18 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 
 	// Signal to show the popup
 	return true;
+}
+
+static protected function UITutorialBoxLarge (string strTitle, string strDescription, optional delegate<UIPanel.OnPanelRemoved> OnRemovedFn)
+{
+	local XComPresentationLayerBase PresBase;
+	local UITutorialBoxLarge TheScreen;
+
+	PresBase = `PRESBASE;
+
+	TheScreen = PresBase.Spawn(class'UITutorialBoxLarge', PresBase);
+	PresBase.ScreenStack.Push(TheScreen);
+
+	TheScreen.SetContents(strTitle, strDescription);
+	if (OnRemovedFn != none) TheScreen.AddOnRemovedDelegate(OnRemovedFn);
 }
