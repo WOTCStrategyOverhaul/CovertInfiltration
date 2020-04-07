@@ -11,8 +11,8 @@ class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Gam
 var config array<int> SmallIntelRewardMin;
 var config array<int> SmallIntelRewardMax;
 
-var config array<int> SmallIncomeRewardMin;
-var config array<int> SmallIncomeRewardMax;
+var config array<int> SmallIncomeIncreaseRewardMin;
+var config array<int> SmallIncomeIncreaseRewardMax;
 
 var config array<int> FacilityDelayRewardMin;
 var config array<int> FacilityDelayRewardMax;
@@ -164,8 +164,8 @@ static function int GetSmallIncomeReward()
 	local int IncomeMin;
 	local int IncomeMax;
 	
-	IncomeMin = `ScaleStrategyArrayInt(default.SmallIncomeRewardMin);
-	IncomeMax = `ScaleStrategyArrayInt(default.SmallIncomeRewardMax);
+	IncomeMin = `ScaleStrategyArrayInt(default.SmallIncomeIncreaseRewardMin);
+	IncomeMax = `ScaleStrategyArrayInt(default.SmallIncomeIncreaseRewardMax);
 	
 	return IncomeMin + `SYNC_RAND_STATIC(IncomeMax - IncomeMin);
 }

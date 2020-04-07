@@ -69,7 +69,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 		return;
 	}
 
-	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1 || ActivityTemplate.MissionRewards.Find('Reward_SmallIntel') > -1)
+	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > INDEX_NONE || ActivityTemplate.MissionRewards.Find('Reward_SmallIntel') > INDEX_NONE)
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_IntelIntercept'));
 	}
@@ -111,12 +111,12 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 
 static function bool IsInterceptableActivity(X2ActivityTemplate Template)
 {
-	return default.InterceptMissions.Find(Template.DataName) > -1;
+	return default.InterceptMissions.Find(Template.DataName) > INDEX_NONE;
 }
 
 static function bool IsInterceptableItem(name TemplateName)
 {
-	return default.InterceptableItems.Find(TemplateName) > -1;
+	return default.InterceptableItems.Find(TemplateName) > INDEX_NONE;
 }
 
 static function X2DataTemplate CreateChosenSurveillanceTemplate()

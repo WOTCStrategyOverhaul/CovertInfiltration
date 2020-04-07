@@ -84,6 +84,7 @@ static function string DefaultGetOverviewStatus (XComGameState_Activity Activity
 
 defaultproperties
 {
+	ActivityType = -1
 	StateClass = class'XComGameState_Activity'
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus

@@ -604,7 +604,6 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameStat
 	local string AdditionalTag;
 
 	MissionState = GetMissionStateFromActivity(ActivityState);
-	`CI_Trace("InitalizeGeneratedMissionFromActivity reports " $ MissionState.Rewards.Length $ " rewards");
 	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
 	MissionMgr = `TACTICALMISSIONMGR;
 	MissionState.GeneratedMission = EmptyData;
@@ -1235,58 +1234,12 @@ static function bool ValidateActivityType(eActivityType Type)
 	return false;
 }
 
-static function name GetActivityFromStage(ChainStage Stage)
+static function int GetWaitPeriodDuration (int MinDays, int MaxDays)
 {
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2ActivityTemplate ActivityTemplate;
-	local X2DataTemplate DataTemplate;
-	local array<name> SelectedActivities;
-	
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	local int Min, Max;
 
-	foreach TemplateManager.IterateTemplates(DataTemplate)
-	{
-		ActivityTemplate = X2ActivityTemplate(DataTemplate);
-
-		if (ActivityTemplate != none)
-		{
-			if (Stage.ActivityType == ActivityTemplate.ActivityType && MatchActivityTags(Stage.ActivityTags, ActivityTemplate.ActivityTag))
-			{
-				`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
-				SelectedActivities.AddItem(ActivityTemplate.DataName);
-			}
-		}
-	}
-	
-	if (SelectedActivities.Length == 0)
-	{
-		`Redscreen("Failed to find any activities for this stage");
-	}
-
-	return SelectedActivities[`SYNC_RAND_STATIC(SelectedActivities.Length)];
-}
-
-static function bool MatchActivityTags(array<name> StageTags, name ActivityTag)
-{
-	local name Tag;
-
-	foreach StageTags(Tag)
-	{
-		if (ActivityTag == Tag)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-static function GetWaitPeriodDuration (int MinDays, int MaxDays, out int SecondsWaitDuration)
-{
-	local int Min, Max, Variance;
-
-	Min = MinDays;//default.MinCounterDarkEventDay;
-	Max = MaxDays;//default.MaxCounterDarkEventDay;
+	Min = MinDays;
+	Max = MaxDays;
 
 	// Make sure that the values are sensible
 	if (Min < 0) Min = 0;
@@ -1297,8 +1250,7 @@ static function GetWaitPeriodDuration (int MinDays, int MaxDays, out int Seconds
 	Max *= 86400;
 
 	// Return
-	Variance = Max - Min;
-	SecondsWaitDuration = Min + `SYNC_RAND_STATIC(Variance);
+	return Min + `SYNC_RAND_STATIC(Max - Min);
 }
 
 static function string GetUnitDetails (XComGameState_Activity ActivityState)

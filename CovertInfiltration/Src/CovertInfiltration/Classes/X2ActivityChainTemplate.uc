@@ -61,7 +61,9 @@ function bool ValidateTemplate (out string strError)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate ActivityTemplate;
+	local X2DataTemplate DataTemplate;
 	local ChainStage Stage;
+	local bool bFoundTag;
 	local int i;
 
 	if (Stages.Length == 0)
@@ -89,6 +91,28 @@ function bool ValidateTemplate (out string strError)
 			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
 			{
 				strError = "stage" @ i @ "has no tags or no type";
+				return false;
+			}
+			
+			bFoundTag = false;
+
+			foreach TemplateManager.IterateTemplates(DataTemplate)
+			{
+				ActivityTemplate = X2ActivityTemplate(DataTemplate);
+
+				if (ActivityTemplate != none)
+				{
+					if (Stage.ActivityTags.Find(ActivityTemplate.ActivityTag) > INDEX_NONE)
+					{
+						bFoundTag = true;
+						break;
+					}
+				}
+			}
+
+			if (!bFoundTag)
+			{
+				strError = "stage" @ i @ "holds no valid tags";
 				return false;
 			}
 		}

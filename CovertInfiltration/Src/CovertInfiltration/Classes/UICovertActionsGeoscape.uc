@@ -828,8 +828,6 @@ simulated function UpdateCovertActionInfo()
 	local ActionExpirationInfo ExpirationInfo;
 	local int HoursRemaining;
 	local string strExpiration, strRewards;
-	local XComGameState_Activity_Infiltration ActivityState;
-	local XComGameState_ActivityChain ChainState;
 	local XComGameStateHistory History;
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_Reward RewardState;
@@ -861,14 +859,12 @@ simulated function UpdateCovertActionInfo()
 	ActionDisplayName.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetDisplayName(), bIsIn3D, true));
 	ActionDescription.text.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(CurrentAction.GetNarrative(), bIsIn3D));
 	
-	ActivityState = XComGameState_Activity_Infiltration(class'XComGameState_Activity'.static.GetActivityFromObjectID(CurrentAction.ObjectID));
-	if (ActivityState != none)
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CurrentAction))
 	{
 		`CI_Trace("Action is an infil, setting reward string");
 
 		History = `XCOMHISTORY;
-		ChainState = ActivityState.GetActivityChain();
-		MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+		MissionState = XComGameState_MissionSiteInfiltration(class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(CurrentAction));
 
 		strRewards = "";
 

@@ -58,24 +58,24 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 	local XComGameState_ActivityChain ChainState;
 	local X2RewardTemplate RewardTemplate;
 	local array<StateObjectReference> RewardRefs;
-	local ChainStage Stage;
+	local ChainStage StageDef;
 	local name RewardName;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
 	
 	ChainState = ActivityState.GetActivityChain();
-	Stage = ChainState.GetMyTemplate().Stages[ActivityState.GetStageIndex()];
+	StageDef = ChainState.GetMyTemplate().Stages[ActivityState.GetStageIndex()];
 
-	if (Stage.RewardOverrides.Length > 0)
+	if (StageDef.RewardOverrides.Length > 0)
 	{
-		foreach Stage.RewardOverrides(RewardName)
+		foreach StageDef.RewardOverrides(RewardName)
 		{
 			RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
 			if (RewardTemplate != none)
 			{
 				`CI_Trace("Initializing overridden reward: " $ RewardName);
-				InitMissionReward(NewGameState, ActivityState, RewardTemplate, RewardRefs);
+				RewardRefs.AddItem(InitMissionReward(NewGameState, ActivityState, RewardTemplate));
 			}
 		}
 	}
@@ -87,7 +87,7 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 			if (RewardTemplate != none)
 			{
 				`CI_Trace("Initializing normal reward: " $ RewardName);
-				InitMissionReward(NewGameState, ActivityState, RewardTemplate, RewardRefs);
+				RewardRefs.AddItem(InitMissionReward(NewGameState, ActivityState, RewardTemplate));
 			}
 		}
 	}
@@ -97,7 +97,7 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 	return RewardRefs;
 }
 
-static function InitMissionReward (XComGameState NewGameState, XComGameState_Activity ActivityState, X2RewardTemplate RewardTemplate, out array<StateObjectReference> RewardRefs)
+static function StateObjectReference InitMissionReward (XComGameState NewGameState, XComGameState_Activity ActivityState, X2RewardTemplate RewardTemplate)
 {
 	local XComGameState_Reward RewardState;
 
@@ -113,7 +113,7 @@ static function InitMissionReward (XComGameState NewGameState, XComGameState_Act
 		}
 	}
 
-	RewardRefs.AddItem(RewardState.GetReference());
+	return RewardState.GetReference();
 }
 
 static function string GenericGetOverworldMeshPath (XComGameState_Activity ActivityState)

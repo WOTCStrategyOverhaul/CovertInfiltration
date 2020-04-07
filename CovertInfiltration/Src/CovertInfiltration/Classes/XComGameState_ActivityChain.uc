@@ -90,7 +90,7 @@ function SetupChain (XComGameState NewGameState)
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
-	local ChainStage Stage;
+	local ChainStage StageDef;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
@@ -115,25 +115,9 @@ function SetupChain (XComGameState NewGameState)
 	// Create the stages
 	StageRefs.Length = m_Template.Stages.Length;
 
-	foreach m_Template.Stages(Stage, i)
+	foreach m_Template.Stages(StageDef, i)
 	{
-		if (Stage.PresetActivity != '')
-		{
-			`CI_Trace("Stage is preset");
-			ActivityTemplateName = Stage.PresetActivity;
-		}
-		else
-		{
-			`CI_Trace("Stage is random");
-
-			if (Stage.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(Stage.ActivityType))
-			{
-				`CI_Warn("Stage definition is invalid! Cannot create activity!");
-			}
-
-			ActivityTemplateName = class'X2Helper_Infiltration'.static.GetActivityFromStage(Stage);
-		}
-
+		ActivityTemplateName = GetActivityFromStage(StageDef);
 		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplateName));
 
 		if (ActivityTemplate != none)
@@ -607,6 +591,54 @@ function XComGameState_WorldRegion GetPrimaryRegion ()
 function XComGameState_WorldRegion GetSecondaryRegion ()
 {
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
+}
+
+static function name GetActivityFromStage(ChainStage StageDef)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityTemplate ActivityTemplate;
+	local X2DataTemplate DataTemplate;
+	local array<name> SelectedActivities;
+	
+	if (StageDef.PresetActivity != '')
+	{
+		`CI_Trace("Stage is preset");
+		return StageDef.PresetActivity;
+	}
+	else
+	{
+		`CI_Trace("Stage is random");
+
+		if (StageDef.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(StageDef.ActivityType))
+		{
+			`CI_Warn("Stage definition is invalid! Cannot create activity!");
+			return '';
+		}
+	}
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		ActivityTemplate = X2ActivityTemplate(DataTemplate);
+
+		if (ActivityTemplate != none && ActivityTemplate.ActivityType != -1)
+		{
+			if (StageDef.ActivityType == ActivityTemplate.ActivityType && StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) != INDEX_NONE)
+			{
+				`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
+				SelectedActivities.AddItem(ActivityTemplate.DataName);
+			}
+		}
+	}
+	
+	if (SelectedActivities.Length == 0)
+	{
+		`Redscreen("Failed to find any activities for this stage");
+		return '';
+	}
+
+	return SelectedActivities[`SYNC_RAND_STATIC(SelectedActivities.Length)];
 }
 
 ///////////

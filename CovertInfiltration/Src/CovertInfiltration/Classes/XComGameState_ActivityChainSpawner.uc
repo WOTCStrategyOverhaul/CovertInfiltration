@@ -25,13 +25,6 @@ var const config array<int> GameStartWork; // How much work to add when the camp
 var const config array<int> WorkRequiredForSpawn;
 var const config array<int> WorkRequiredForSpawnVariance;
 
-// These 2 control the interval in which the counter-DE ops will pop
-var const config int MinDarkEventWaitDays;
-var const config int MaxDarkEventWaitDays;
-
-var const config int MinGenericWaitDays;
-var const config int MaxGenericWaitDays;
-
 static function Update()
 {
 	local XComGameState_ActivityChainSpawner Spawner;

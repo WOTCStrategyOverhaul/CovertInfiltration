@@ -8,17 +8,28 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_DefaultActivities extends X2StrategyElement;
+class X2StrategyElement_DefaultActivities extends X2StrategyElement config(GameBoard);
+
+// These 2 control the interval in which the counter-DE ops will pop
+var const config int MinDarkEventWaitDays;
+var const config int MaxDarkEventWaitDays;
+
+var const config int MinGenericWaitDays;
+var const config int MaxGenericWaitDays;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
-	CreateIntelligenceGeneric(Templates);
-	CreateInformantGeneric(Templates);
+	CreateIntelligenceAssault(Templates);
+	CreateIntelligenceInfiltration(Templates);
+	CreateInformantAssault(Templates);
+	CreateInformantInfiltration(Templates);
+	CreateDistractionAssault(Templates);
+	CreateDistractionInfiltration(Templates);
+	CreateSabotageAssault(Templates);
+	CreateSabotageInfiltration(Templates);
 	CreatePersonnelGeneric(Templates);
-	CreateDistractionGeneric(Templates);
-	CreateSabotageGeneric(Templates);
 
 	CreateDarkEventWaitActivity(Templates);
 	CreateGenericWaitActivity(Templates);
@@ -36,17 +47,13 @@ static function array<X2DataTemplate> CreateTemplates()
 	return Templates;
 }
 
-
-
 /////////////////////////
 /// Random Activities ///
 /////////////////////////
 
-static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
+static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault ActivityAssault;
-	local X2ActivityTemplate_Infiltration ActivityInfil;
-	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_IntelligenceAssault');
 	
@@ -59,11 +66,17 @@ static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
-	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(ActivityAssault);
+}
+	
+static function CreateIntelligenceInfiltration (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelligenceInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "IntelligenceInfiltrate", "RadioTower", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ");
@@ -80,11 +93,9 @@ static function CreateIntelligenceGeneric(out array<X2DataTemplate> Templates)
 	Templates.AddItem(ActivityInfil);
 }
 
-static function CreateInformantGeneric(out array<X2DataTemplate> Templates)
+static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault ActivityAssault;
-	local X2ActivityTemplate_Infiltration ActivityInfil;
-	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_InformantAssault');
 	
@@ -97,11 +108,17 @@ static function CreateInformantGeneric(out array<X2DataTemplate> Templates)
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
-	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(ActivityAssault);
+}
+	
+static function CreateInformantInfiltration (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_InformantInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "InformantInfiltrate", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
@@ -127,7 +144,7 @@ static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "PersonnelRescue", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 	
 	ActivityInfil.ActivityTag = 'Tag_Personnel';
-	// Requires reward override from the parent chain
+	// Requires reward override from the chain
 	ActivityInfil.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	ActivityInfil.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityInfil.AvailableSound = "Geoscape_NewResistOpsMissions";
@@ -136,11 +153,9 @@ static function CreatePersonnelGeneric(out array<X2DataTemplate> Templates)
 	Templates.AddItem(ActivityInfil);
 }
 
-static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
+static function CreateDistractionAssault (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault ActivityAssault;
-	local X2ActivityTemplate_Infiltration ActivityInfil;
-	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_DistractionAssault');
 	
@@ -151,11 +166,17 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	
 	ActivityAssault.ActivityTag = 'Tag_Distraction';
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
-	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(ActivityAssault);
+}
+	
+static function CreateDistractionInfiltration (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_DistractionInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
@@ -170,11 +191,9 @@ static function CreateDistractionGeneric(out array<X2DataTemplate> Templates)
 	Templates.AddItem(ActivityInfil);
 }
 
-static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
+static function CreateSabotageAssault (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault ActivityAssault;
-	local X2ActivityTemplate_Infiltration ActivityInfil;
-	local X2CovertActionTemplate CovertAction;
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_SabotageAssault');
 	
@@ -185,11 +204,17 @@ static function CreateSabotageGeneric(out array<X2DataTemplate> Templates)
 	
 	ActivityAssault.ActivityTag = 'Tag_Sabotage';
 	ActivityAssault.MissionRewards.AddItem('Reward_FacilityDelay');
-	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonth;
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "GeoscapeFanfares_GuerillaOps";
 	
 	Templates.AddItem(ActivityAssault);
+}
+	
+static function CreateSabotageInfiltration (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Infiltration ActivityInfil;
+	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SabotageInfiltrate', true);
 	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
@@ -235,8 +260,6 @@ static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 
 	Templates.AddItem(Activity);
 }
-
-
 
 /////////////////////////
 /// Preset Activities ///
@@ -322,8 +345,6 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
-
-
 
 //////////////////////
 /// Covert Actions ///
@@ -419,8 +440,6 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	Templates.AddItem(CovertAction);
 	Templates.AddItem(Activity);
 }
-
-
 
 ///////////////
 /// Helpers ///
@@ -551,11 +570,9 @@ static function WaitSetup (XComGameState NewGameState, XComGameState_Activity Ac
 
 	`CI_Log("Setting up wait stage");
 
-	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
-		class'XComGameState_ActivityChainSpawner'.default.MinGenericWaitDays, 
-		class'XComGameState_ActivityChainSpawner'.default.MaxGenericWaitDays, 
-		SecondsWaitDuration);
-	
+	SecondsWaitDuration = class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
+		default.MinGenericWaitDays, 
+		default.MaxGenericWaitDays);
 	
 	WaitActivity = XComGameState_Activity_Wait(ActivityState);
 	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state
@@ -576,11 +593,10 @@ static function DarkEventWaitSetup (XComGameState NewGameState, XComGameState_Ac
 	local XComGameState_Activity_Wait WaitActivity;
 
 	`CI_Log("Setting up wait stage");
-
-	class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
-		class'XComGameState_ActivityChainSpawner'.default.MinDarkEventWaitDays, 
-		class'XComGameState_ActivityChainSpawner'.default.MaxDarkEventWaitDays, 
-		SecondsWaitDuration);
+	
+	SecondsWaitDuration = class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
+		default.MinDarkEventWaitDays, 
+		default.MaxDarkEventWaitDays);
 	
 	WaitActivity = XComGameState_Activity_Wait(ActivityState);
 	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state
