@@ -24,6 +24,9 @@ var localized string strSlotPenaltyNote;
 var localized string strSlotRequiredPrefix;
 var localized string strConfirmInfiltration;
 
+`include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 simulated function OpenSquadSelect()
 {
 	BuildConfiguration();
@@ -375,8 +378,10 @@ simulated protected function EventListenerReturn OnNeedToEquipSkulljack (Object 
 	}
 
 	// Block if any deployed soldier already has a skulljack
-	// TODO: Gate behind an MCM option
-	if (AnyInfiltratingUnitHasSkulljack())
+	if (
+		`MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_DEFAULT, class'UIListener_ModConfigMenu'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED) &&
+		AnyInfiltratingUnitHasSkulljack()
+	)
 	{
 		return ELR_InterruptListeners;
 	}

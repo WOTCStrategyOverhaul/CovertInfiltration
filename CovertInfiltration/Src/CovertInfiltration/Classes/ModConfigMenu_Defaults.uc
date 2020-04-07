@@ -10,6 +10,8 @@ class ModConfigMenu_Defaults extends Object config(ModConfigMenu_Defaults);
 var config bool DAYS_TO_HOURS_DEFAULT;
 var config int DAYS_BEFORE_HOURS_DEFAULT;
 
+var config bool SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_DEFAULT;
+
 var config bool ENABLE_TUTORIAL_DEFAULT;
 
 var config bool WARN_BEFORE_EXPIRATION_DEFAULT;
