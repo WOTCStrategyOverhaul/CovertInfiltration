@@ -127,10 +127,10 @@ static protected function EventListenerReturn CovertAction_ActionSelectedOverrid
 
 static protected function EventListenerReturn CovertAction_ModifyNarrativeParamTag(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local XComGameState_DarkEvent DarkEventState;
 	local XComGameState_Activity ActivityState;
 	local XComGameState_CovertAction Action;
 	local XGParamTag Tag;
+	local string SavedValue0, SavedValue1;
 
 	Action = XComGameState_CovertAction(EventSource);
 	Tag = XGParamTag(EventData);
@@ -140,8 +140,14 @@ static protected function EventListenerReturn CovertAction_ModifyNarrativeParamT
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(Action);
 	if (ActivityState == none) ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action);
 	if (ActivityState == none) return ELR_NoInterrupt;
+	
+	SavedValue0 = Tag.StrValue0;
+	SavedValue1 = Tag.StrValue1;
 
 	Tag.StrValue4 = ActivityState.GetActivityChain().GetNarrativeObjective();
+	
+	Tag.StrValue0 = SavedValue0;
+	Tag.StrValue1 = SavedValue1;
 
 	return ELR_NoInterrupt;
 }

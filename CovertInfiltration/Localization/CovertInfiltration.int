@@ -364,7 +364,7 @@ strOverviewDescription=Sabotage Landed UFO
 [ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
 strTitle="Counter Dark Event"
 strDescription="Smash infrastructure critical to ADVENT's operations against XCOM."
-strObjective="halt ADVENT's <font color='#E52E11'><XGParam:StrValue1/></font> project"
+strObjective="halt ADVENT's <font color='#E52E11'><XGParam:StrValue0/></font> project"
 
 [ActivityChain_SupplyRaid X2ActivityChainTemplate]
 strTitle="Supply Raid"

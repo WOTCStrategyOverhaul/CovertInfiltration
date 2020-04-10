@@ -1259,7 +1259,6 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_Reward RewardState;
 	local XComGameState_Unit UnitState;
-	local XGParamTag kTag;
 	local string UnitString;
 	
 	local X2StrategyElementTemplateManager TemplateManager;

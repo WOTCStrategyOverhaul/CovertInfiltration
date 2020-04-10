@@ -240,7 +240,7 @@ static function CreateDarkEventWaitActivity(out array<X2DataTemplate> Templates)
 	Activity.ActivityTag = 'Tag_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
-	Activity.SetupStage = DarkEventWaitSetup;
+	//Activity.SetupStage = DarkEventWaitSetup;
 
 	Templates.AddItem(Activity);
 }

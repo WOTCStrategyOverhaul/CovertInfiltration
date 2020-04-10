@@ -274,10 +274,13 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	local XComGameState_DarkEvent DarkEventState;
 	local StateObjectReference DarkEventRef, SelectedRegion;
 	local array<StateObjectReference> DarkEventRefs, RegionRefs;
-	
+
+	local array<XComGameState_ActivityChain> SpawnedChains;
 	local XComGameState_ActivityChain ChainState;
 	local X2ActivityChainTemplate ChainTemplate;
 
+	local int SecondsDelay, SecondsDuration, WindowDuration, SecondsChainDelay;
+	local XComGameState_Activity_Wait WaitActivity;
 	local int i;
 
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
@@ -319,8 +322,60 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		ChainState.PrimaryRegionRef = SelectedRegion;
 		ChainState.SecondaryRegionRef = SelectedRegion;
 		ChainState.StartNextStage(NewGameState);
+		
+		SpawnedChains.AddItem(ChainState);
+	}
+
+	// If we didn't manage to make any chains, don't bother with the timing
+	if (SpawnedChains.Length == 0) return;
+
+	// Step 2: spread them randomly over the beginning of the month
+
+	GetCounterDarkEventPeriodStartAndDuration(SecondsDelay, SecondsDuration);
+	WindowDuration = SecondsDuration / SpawnedChains.Length;
+	SpawnedChains = SortChainsRandomly(SpawnedChains);
+
+	foreach SpawnedChains(ChainState, i)
+	{
+		WaitActivity = XComGameState_Activity_Wait(ChainState.GetActivityAtIndex(0));
+		// No need to call NewGameState.ModifyStateObject here as the object was just created above
+
+		if (WaitActivity == none)
+		{
+			`RedScreen("Counter DE chain should start with XComGameState_Activity_Wait so that it can be delayed by the spawner");
+			continue;
+		}
+
+		SecondsChainDelay =
+			SecondsDelay + // The global delay for all counter DE chains
+			i * WindowDuration + // Account for previous chains
+			`SYNC_RAND_STATIC(WindowDuration); // Pop somewhere randomly within our window
+
+		WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
+		class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsChainDelay);
 	}
 }
+
+static protected function GetCounterDarkEventPeriodStartAndDuration (out int SecondsDelay, out int SecondsDuration)
+{
+	local int Min, Max;
+
+	Min = class'X2StrategyElement_DefaultActivities'.default.MinDarkEventWaitDays;
+	Max = class'X2StrategyElement_DefaultActivities'.default.MaxDarkEventWaitDays;
+
+	// Make sure that the values are sensible
+	if (Min < 0) Min = 0;
+	if (Max < Min) Max = Min; // This will probably won't work properly -.-
+
+	// Convert to seconds
+	Min *= 86400;
+	Max *= 86400;
+
+	// Return
+	SecondsDelay = Min;
+	SecondsDuration = Max - Min;
+}
+
 
 static protected function array<XComGameState_ActivityChain> SortChainsRandomly (array<XComGameState_ActivityChain> Chains)
 {

@@ -23,6 +23,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Activites.AddItem(CreateRescueEngineerTemplate());
 	Activites.AddItem(CreateJailbreakFactionSoldierTemplate());
 	Activites.AddItem(CreateJailbreakCapturedSoldierTemplate());
+	Activites.AddItem(CreateJailbreakChosenSoldierTemplate());
 	Activites.AddItem(CreateGatherSuppliesTemplate());
 	Activites.AddItem(CreateGatherIntelTemplate());
 	Activites.AddItem(CreateLandedUFOTemplate());
@@ -51,6 +52,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_DarkEvent'));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
+	Template.GetNarrativeObjective = GetDarkEventObjective;
 
 	return Template;
 }
@@ -123,6 +125,8 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_Datapad', 'Reward_Intel'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -140,6 +144,8 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Scientist'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -157,6 +163,8 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Engineer'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -175,6 +183,8 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ExtraFactionSoldier'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -233,6 +243,8 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_SoldierCaptured'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -255,6 +267,8 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChosenSoldierCaptured'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -588,4 +602,24 @@ static function ChainStage ConstructPresetStage(name Activity, optional name Rew
 	}
 
 	return Stage;
+}
+
+static function string GetStaffObjective (XComGameState_ActivityChain ChainState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = class'X2Helper_Infiltration'.static.GetUnitDetails(ChainState.GetLastActivity());
+
+	return `XEXPAND.ExpandString(ChainState.GetMyTemplate().strObjective);
+}
+
+static function string GetDarkEventObjective (XComGameState_ActivityChain ChainState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = ChainState.GetChainDarkEvent().GetDisplayName();
+
+	return `XEXPAND.ExpandString(ChainState.GetMyTemplate().strObjective);
 }

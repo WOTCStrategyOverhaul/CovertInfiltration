@@ -667,13 +667,12 @@ function string GetOverviewDescription ()
 
 function string GetNarrativeObjective ()
 {
-	local XGParamTag kTag;
+	local string strReturn;
 
-	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	kTag.StrValue0 = class'X2Helper_Infiltration'.static.GetUnitDetails(GetLastActivity());
-	kTag.StrValue1 = GetChainDarkEvent().GetDisplayName();
+	strReturn = GetMyTemplate().GetNarrativeObjective(self);
+	if (strReturn == "") strReturn = "(MISSING OBJECTIVE)";
 
-	return `XEXPAND.ExpandString(GetMyTemplate().strObjective);
+	return strReturn;
 }
 
 /////////////////////////////

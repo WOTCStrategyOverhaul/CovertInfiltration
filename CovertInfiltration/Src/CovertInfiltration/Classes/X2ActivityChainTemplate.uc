@@ -27,6 +27,7 @@ delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be me
 
 // For overview UI
 delegate string GetOverviewDescription (XComGameState_ActivityChain ChainState);
+delegate string GetNarrativeObjective (XComGameState_ActivityChain ChainState);
 
 delegate SetupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called before stages' callbacks
 delegate CleanupChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState); // Called after stages' callbacks
@@ -135,9 +136,15 @@ static function string DefaultGetOverviewDescription (XComGameState_ActivityChai
 	return ChainState.GetMyTemplate().strDescription;
 }
 
+static function string DefaultGetNarrativeObjective (XComGameState_ActivityChain ChainState)
+{
+	return ChainState.GetMyTemplate().strObjective;
+}
+
 defaultproperties
 {
 	DeckReq = AlwaysAvailable
 	GetOverviewDescription = DefaultGetOverviewDescription
+	GetNarrativeObjective = DefaultGetNarrativeObjective
 	bAllowComplications = true;
 }

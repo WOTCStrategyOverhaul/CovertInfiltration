@@ -202,7 +202,6 @@ static function SetFacilityDelayReward(XComGameState_Reward RewardState, optiona
 
 static function GiveFacilityDelayReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
 {
-	local XComGameStateHistory History;
 	local XComGameState_HeadquartersAlien AlienHQ;
 
 	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersAlien', AlienHQ)
@@ -237,7 +236,12 @@ static function string GetFacilityDelayRewardString(XComGameState_Reward RewardS
 
 static function string GetFacilityDelayRewardDetails(XComGameState_Reward RewardState)
 {
-	return "Facility delayed by" @ RewardState.Quantity @ "days";
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = string(RewardState.Quantity);
+
+	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().RewardDetails);
 }
 
 static function X2DataTemplate CreateDatapadRewardTemplate()
