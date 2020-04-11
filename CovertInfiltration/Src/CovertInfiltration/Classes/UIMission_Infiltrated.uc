@@ -19,6 +19,7 @@ var UIGamepadIcons DetailsControllerHint;
 var localized string strOverInfiltrationHeader;
 var localized string strOverInfiltrationNextBonus;
 var localized string strMissionReady;
+var localized string strMustLaunch;
 var localized string strInfiltration;
 var localized string strWait;
 var localized string strReturnToAvenger;
@@ -107,7 +108,7 @@ simulated function string GetOverInfiltrationText()
 simulated function BuildMissionPanel()
 {
 	LibraryPanel.MC.BeginFunctionOp("UpdateMissionInfoBlade");
-	LibraryPanel.MC.QueueString(strMissionReady);
+	LibraryPanel.MC.QueueString(GetInfiltration().MustLaunch() ? strMustLaunch : strMissionReady);
 	LibraryPanel.MC.QueueString(""); // Handled by SetFactionIcon
 	LibraryPanel.MC.QueueString(m_strMissionDifficulty); // FactionState.GetFactionTitle()
 	LibraryPanel.MC.QueueString(GetDifficultyString()); // FactionState.GetFactionName()
