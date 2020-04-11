@@ -375,16 +375,63 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 
 static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSite MissionState)
 {
-	local XComGameState_Activity ActivityState;
-
-	`CI_Trace("Locking down gamestates to make them visible in tactical");
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Activity', ActivityState)
-	{
-		StartGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID);
-	}
-	// If ModifyStateObject is not called, then the activitystates will be unfindable during the mission and break the Pyrrhic Victories mod
-
+	TryEnlistChainStateIntoTactical(StartGameState, MissionState);
 	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
+}
+
+// Small explanation: the strategy states are archived before the tactical start state and are normally inaccesible in tactical.
+// However, there are cases when we do need the current chain/activity in tactical.
+// In particular Pyrrhic Victories mod calls the WasMissionSuccessfulFn on the mission source while in tactical, which is
+// proxied to the activity template in our case. However, the proxying relies on the activity state (which is normally missing in tactical).
+// Additionally, the chain/activity logic often looks at other "parts" of the chain, so we copy over all the "parts"
+// in order to avoid accidentally introducing subtle bugs.
+static protected function TryEnlistChainStateIntoTactical (XComGameState StartGameState, XComGameState_MissionSite MissionState)
+{
+	local XComGameState_Complication ComplicationState;
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Activity ActivityState;
+	local StateObjectReference StateRef;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(MissionState);
+	
+	if (ActivityState == none)
+	{
+		`CI_Trace("Mission not associated with an activity, skipping enlisting states into tactical");
+		return;
+	}
+
+	`CI_Trace("Enlisting chain (and related states) into tactical start state");
+
+	// Chain itself
+	ChainState = XComGameState_ActivityChain(StartGameState.ModifyStateObject(class'XComGameState_ActivityChain', ActivityState.ChainRef.ObjectID));
+
+	// Activities
+	foreach ChainState.StageRefs(StateRef)
+	{
+		StartGameState.ModifyStateObject(class'XComGameState_Activity', StateRef.ObjectID);
+	}
+
+	// Complications
+	foreach ChainState.ComplicationRefs(StateRef)
+	{
+		StartGameState.ModifyStateObject(class'XComGameState_Complication', StateRef.ObjectID);
+	}
+
+	// Now that the states are enlisted, allow templates to enlist other states as they need
+
+	ChainState.OnEnlistStateIntoTactical(StartGameState);
+
+	foreach ChainState.StageRefs(StateRef)
+	{
+		ActivityState = XComGameState_Activity(StartGameState.GetGameStateForObjectID(StateRef.ObjectID));
+		ActivityState.OnEnlistStateIntoTactical(StartGameState);
+	}
+
+	foreach ChainState.ComplicationRefs(StateRef)
+	{
+		ComplicationState = XComGameState_Complication(StartGameState.GetGameStateForObjectID(StateRef.ObjectID));
+		ComplicationState.OnEnlistStateIntoTactical(StartGameState);
+	}
 }
 
 static event OnPostMission ()

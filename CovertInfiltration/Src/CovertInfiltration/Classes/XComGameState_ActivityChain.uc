@@ -435,6 +435,17 @@ function XComGameState_Complication FindComplication (name Complication)
 	return none;
 }
 
+// See delegate for explanation
+function OnEnlistStateIntoTactical (XComGameState StartGameState)
+{
+	GetMyTemplate();
+
+	if (m_Template.OnEnlistStateIntoTactical != none)
+	{
+		m_Template.OnEnlistStateIntoTactical(StartGameState, self);
+	}
+}
+
 /////////////////
 // Dark Events //
 /////////////////

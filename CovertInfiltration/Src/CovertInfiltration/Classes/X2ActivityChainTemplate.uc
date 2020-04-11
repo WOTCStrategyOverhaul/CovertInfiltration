@@ -36,6 +36,13 @@ delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity Activ
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);
 delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
 
+// Called when the chain is deemed relevant to the tactical history and enlisted/copied over
+// together with all the related states (activities and complications).
+// Use/set this delegate when additional states need to be enlisted into tactical.
+// Note: the chain/activity/complications states are already copied over when this is called
+// Note: the ChainState is already modified (tactical) one
+delegate OnEnlistStateIntoTactical(XComGameState StartGameState, XComGameState_ActivityChain ChainState);
+
 function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState, optional array<StateObjectReference> ChainObjectRefs)
 {
 	local XComGameState_ActivityChain ActivityState;

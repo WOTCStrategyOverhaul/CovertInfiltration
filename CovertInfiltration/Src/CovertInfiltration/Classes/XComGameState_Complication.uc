@@ -55,6 +55,17 @@ function SetupComplication (XComGameState NewGameState)
 	}
 }
 
+// See delegate for explanation
+function OnEnlistStateIntoTactical (XComGameState StartGameState)
+{
+	GetMyTemplate();
+
+	if (m_Template.OnEnlistStateIntoTactical != none)
+	{
+		m_Template.OnEnlistStateIntoTactical(StartGameState, self);
+	}
+}
+
 ///////////////
 /// Removal ///
 ///////////////

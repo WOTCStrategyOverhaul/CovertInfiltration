@@ -37,6 +37,13 @@ delegate OnChainBlocked(XComGameState NewGameState, XComGameState_Complication C
 
 delegate OnComplicationRemoval(XComGameState NewGameState, XComGameState_Complication ComplicationState);
 
+// Called when the associated chain is deemed relevant to the tactical history and enlisted/copied over
+// together with all the related states (activities and complications).
+// Use/set this delegate when additional states need to be enlisted into tactical.
+// Note: the chain/activity/complications states are already copied over when this is called
+// Note: the ComplicationState is already modified (tactical) one
+delegate OnEnlistStateIntoTactical(XComGameState StartGameState, XComGameState_Complication ComplicationState);
+
 function bool ValidateTemplate (out string strError)
 {
 	if (MinChance > MaxChance)

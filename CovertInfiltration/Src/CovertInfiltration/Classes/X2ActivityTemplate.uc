@@ -58,6 +58,14 @@ delegate bool ShouldProgressChain(XComGameState_Activity ActivityState);
 // Called before XComGameState_Activity is deleted
 delegate RemoveStage(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
+// Called when the associated chain is deemed relevant to the tactical history and enlisted/copied over
+// together with all the related states (activities and complications).
+// Use/set this delegate when additional states need to be enlisted into tactical.
+// Note: the chain/activity/complications states are already copied over when this is called
+// Note: the ActivityState is already modified (tactical) one
+// Note: this will be called on all activities, not only the current one
+delegate OnEnlistStateIntoTactical(XComGameState StartGameState, XComGameState_Activity ActivityState);
+
 ////////////////
 /// Defaults ///
 ////////////////
