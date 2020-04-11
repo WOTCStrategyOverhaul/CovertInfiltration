@@ -12,6 +12,7 @@ var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 var config(GameData) array<name> arrAllowPromotionReward;
+var config(GameData) array<string> arrFirstRetalExcludedMissionFamilies;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -183,6 +184,7 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_HeadquartersXCom XComHQ;
+	local string Family;
 
 	CalendarState = class'X2StrategyElement_DefaultMissionSources'.static.GetMissionCalendar(NewGameState);
 
@@ -214,9 +216,10 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 	// Changed: If first one (this used to check for non-narrative, but narrative is forbidden now)
 	if(!CalendarState.HasCreatedMissionOfSource('MissionSource_Retaliation'))
 	{
-		// Force the xpack retal instead of vanilla one
-		// xymanek - I want the first retal not to be so penalizing (first chosen is very hard)
-		MissionState.ExcludeMissionFamilies.AddItem("Terror");
+		foreach default.arrFirstRetalExcludedMissionFamilies(Family)
+		{
+			MissionState.ExcludeMissionFamilies.AddItem(Family);
+		}
 	}
 
 	// Set Mission Data
