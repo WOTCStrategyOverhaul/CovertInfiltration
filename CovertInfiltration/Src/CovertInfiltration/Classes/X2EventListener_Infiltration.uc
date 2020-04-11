@@ -1001,6 +1001,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryEarly, ELD_OnStateSubmitted, 99999);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryLate, ELD_OnStateSubmitted, -99999);
 	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate, 99);
+	Template.AddCHEvent('PostAliensSpawned', PostAliensSpawned, ELD_Immediate, 99);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -1253,4 +1254,55 @@ static function EventListenerReturn XpKillShot (Object EventData, Object EventSo
 	`CI_Trace("Finished processing kill XP");
 
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn PostAliensSpawned (Object EventData, Object EventSource, XComGameState StartGameState, Name Event, Object CallbackData)
+{
+	if (`TACTICALMISSIONMGR.ActiveMission.sType == "CovertEscape")
+	{
+		`CI_Log("CovertEscape PostAliensSpawned ClearPendingLootFromAllUnits");
+		ClearPendingLootFromAllUnits(StartGameState);
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function ClearPendingLootFromAllUnits (XComGameState StartGameState)
+{
+	local XComGameState_Unit UnitState;
+	local LootResults EmptyLootResults;
+	local StateObjectReference ItemRef;
+	local bool bHasLoot;
+
+	EmptyLootResults.bRolledForLoot = true;
+
+	foreach StartGameState.IterateByClassType(class'XComGameState_Unit', UnitState)
+	{
+		bHasLoot = false;
+
+		if (UnitState.PendingLoot.LootToBeCreated.Length > 0)
+		{
+			bHasLoot = true;
+		}
+		
+		if (UnitState.PendingLoot.AvailableLoot.Length > 0)
+		{
+			bHasLoot = true;
+
+			foreach UnitState.PendingLoot.AvailableLoot(ItemRef)
+			{
+				// Let's hope this is actually a fresh item and not something else...
+				StartGameState.RemoveStateObject(ItemRef.ObjectID);
+
+				`CI_Trace("Removed loot" @ ItemRef.ObjectID @ "carried by" @ UnitState.ObjectID @ UnitState.GetMyTemplateName() @ UnitState.GetFullName());
+			}
+		}
+
+		if (bHasLoot)
+		{
+			UnitState.SetLoot(EmptyLootResults);
+
+			`CI_Trace("Cleared pending loot from" @ UnitState.ObjectID @ UnitState.GetMyTemplateName() @ UnitState.GetFullName());
+		}
+	}
 }
