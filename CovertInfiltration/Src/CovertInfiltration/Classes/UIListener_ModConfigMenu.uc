@@ -87,7 +87,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	VariousSettingsGroup.AddCheckBox('DaysToHours', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, DaysToHoursSaveHandler);
 	VariousSettingsGroup.AddSlider('DaysBeforeHours', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, DaysBeforeHoursSaveHandler);
-	VariousSettingsGroup.AddCheckBox('SuppressSkulljackNagIfDeployed', SuppressSkulljackNagIfDeployedDesc, SuppressSkulljackNagIfDeployedTooltip, SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, DaysToHoursSaveHandler);
+	VariousSettingsGroup.AddCheckBox('SuppressSkulljackNagIfDeployed', SuppressSkulljackNagIfDeployedDesc, SuppressSkulljackNagIfDeployedTooltip, SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, SuppressSkulljackNagIfDeployedSaveHandler);
 	
 	TipsGroup = Page.AddGroup('TipsGroup', TipsTitle);
 	
