@@ -24,6 +24,9 @@ var localized string strSlotPenaltyNote;
 var localized string strSlotRequiredPrefix;
 var localized string strConfirmInfiltration;
 
+`include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
+`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+
 simulated function OpenSquadSelect()
 {
 	BuildConfiguration();
@@ -366,6 +369,55 @@ simulated protected function ApplyInfiltrationModifier(XComGameState_Headquarter
 	`log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours",, 'CI');
 }
 
+simulated protected function EventListenerReturn OnNeedToEquipSkulljack (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	// No point in equipping skulljack on CAs
+	if (!class'X2Helper_Infiltration'.static.IsInfiltrationAction(GetAction()))
+	{
+		return ELR_InterruptListeners;
+	}
+
+	// Block if any deployed soldier already has a skulljack
+	if (
+		`MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_DEFAULT, class'UIListener_ModConfigMenu'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED) &&
+		AnyInfiltratingUnitHasSkulljack()
+	)
+	{
+		return ELR_InterruptListeners;
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function bool AnyInfiltratingUnitHasSkulljack ()
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameStateHistory History;
+	local XComGameState_Unit UnitState;
+	local StateObjectReference UnitRef;
+
+	History = `XCOMHISTORY;
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSiteInfiltration', InfiltrationState)
+	{
+		// This should be save to check:
+		// 1) SoldiersOnMission is set right when the CA starts
+		// 2) Aborted/completed infils are removed, hence not included in IterateByClassType
+		foreach InfiltrationState.SoldiersOnMission(UnitRef)
+		{
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+			if (UnitState == none) continue;
+
+			if (UnitState.HasItemOfTemplateType('SKULLJACK'))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 simulated protected function SubscribeToEvents()
 {
 	local X2EventManager EventManager;
@@ -375,6 +427,7 @@ simulated protected function SubscribeToEvents()
     ThisObj = self;
 
 	EventManager.RegisterForEvent(ThisObj, 'rjSquadSelect_UpdateData', OnSquadSelectUpdate,, 99);
+	EventManager.RegisterForEvent(ThisObj, 'NeedToEquipSkulljack', OnNeedToEquipSkulljack, ELD_OnStateSubmitted, 1000);
 }
 
 simulated function UnsubscribeFromAllEvents()

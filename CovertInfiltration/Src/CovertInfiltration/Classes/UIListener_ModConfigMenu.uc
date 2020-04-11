@@ -14,6 +14,7 @@ var config int CONFIG_VERSION;
 
 var config bool DAYS_TO_HOURS;
 var config int DAYS_BEFORE_HOURS;
+var config bool SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED;
 var config bool ENABLE_TUTORIAL;
 var config bool WARN_BEFORE_EXPIRATION;
 var config int HOURS_BEFORE_WARNING;
@@ -38,6 +39,8 @@ var localized string DaysToHoursDesc;
 var localized string DaysToHoursTooltip;
 var localized string DaysBeforeHoursDesc;
 var localized string DaysBeforeHoursTooltip;
+var localized string SuppressSkulljackNagIfDeployedDesc;
+var localized string SuppressSkulljackNagIfDeployedTooltip;
 
 var localized string EnableTutorialDesc;
 var localized string EnableTutorialTooltip;
@@ -84,6 +87,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	VariousSettingsGroup.AddCheckBox('DaysToHours', DaysToHoursDesc, DaysToHoursTooltip, DAYS_TO_HOURS, DaysToHoursSaveHandler);
 	VariousSettingsGroup.AddSlider('DaysBeforeHours', DaysBeforeHoursDesc, DaysBeforeHoursTooltip, 1, 3, 1, DAYS_BEFORE_HOURS, DaysBeforeHoursSaveHandler);
+	VariousSettingsGroup.AddCheckBox('SuppressSkulljackNagIfDeployed', SuppressSkulljackNagIfDeployedDesc, SuppressSkulljackNagIfDeployedTooltip, SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, SuppressSkulljackNagIfDeployedSaveHandler);
 	
 	TipsGroup = Page.AddGroup('TipsGroup', TipsTitle);
 	
@@ -114,6 +118,7 @@ simulated function LoadSavedSettings()
 {
 	DAYS_TO_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, DAYS_TO_HOURS);
 	DAYS_BEFORE_HOURS = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, DAYS_BEFORE_HOURS);
+	SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_DEFAULT, SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED);
 	
 	ENABLE_TUTORIAL = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, ENABLE_TUTORIAL);
 	LOW_SOLDIERS_WARNING = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, LOW_SOLDIERS_WARNING);
@@ -130,6 +135,7 @@ simulated function LoadSavedSettings()
 
 `MCM_API_BasicCheckboxSaveHandler(DaysToHoursSaveHandler, DAYS_TO_HOURS)
 `MCM_API_BasicSliderSaveHandler(DaysBeforeHoursSaveHandler, DAYS_BEFORE_HOURS)
+`MCM_API_BasicCheckboxSaveHandler(SuppressSkulljackNagIfDeployedSaveHandler, SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED)
 
 `MCM_API_BasicCheckboxSaveHandler(EnableTutorialSaveHandler, ENABLE_TUTORIAL)
 `MCM_API_BasicCheckboxSaveHandler(LowSoldiersWarningSaveHandler, LOW_SOLDIERS_WARNING)
