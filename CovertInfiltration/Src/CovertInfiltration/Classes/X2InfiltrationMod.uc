@@ -42,13 +42,23 @@ static function name GetInfilName(name ElementName, EInfilModifierType ElementTy
 
 static function array<X2DataTemplate> CreateTemplates()
 {
+	local X2InfiltrationModTemplate Template;
 	local array<X2DataTemplate> Templates;
 	local InfiltrationModifier Modifier;
-	local X2InfiltrationModTemplate Template;
+	local name TemplateName;
 	
 	foreach default.InfilModifiers(Modifier)
 	{
-		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, GetInfilName(Modifier.DataName, Modifier.ModifyType));
+		TemplateName = GetInfilName(Modifier.DataName, Modifier.ModifyType); 
+
+		// Skip if this comes from a DLC that we don't have
+		if (Modifier.DLC != "" && !class'X2Helper_Infiltration'.static.IsDLCLoaded(Modifier.DLC))
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(TemplateName) @ "requires" @ Modifier.DLC @ "DLC which is not loaded - skipping");
+			continue;
+		}
+
+		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, TemplateName);
 		
 		Template.HoursAdded = Modifier.InfilHoursAdded;
 		Template.Deterrence = Modifier.RiskReductionPercent;

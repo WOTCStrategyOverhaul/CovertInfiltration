@@ -21,6 +21,7 @@ struct InfiltrationModifier
 	var int InfilHoursAdded;
 	var float RiskReductionPercent;
 	var EInfilModifierType ModifyType;
+	var string DLC;
 
 	structdefaultproperties
     {
