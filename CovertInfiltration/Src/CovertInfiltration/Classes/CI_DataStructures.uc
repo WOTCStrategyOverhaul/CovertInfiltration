@@ -130,7 +130,8 @@ enum EActivityType
 {
 	eActivityType_Assault,
 	eActivityType_Action,
-	eActivityType_Infiltration
+	eActivityType_Infiltration,
+	eActivityType_Special
 };
 
 struct ChainStage

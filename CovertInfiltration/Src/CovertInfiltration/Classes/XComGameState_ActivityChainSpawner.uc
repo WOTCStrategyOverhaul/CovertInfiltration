@@ -376,7 +376,6 @@ static protected function GetCounterDarkEventPeriodStartAndDuration (out int Sec
 	SecondsDuration = Max - Min;
 }
 
-
 static protected function array<XComGameState_ActivityChain> SortChainsRandomly (array<XComGameState_ActivityChain> Chains)
 {
 	local array<XComGameState_ActivityChain> Result;

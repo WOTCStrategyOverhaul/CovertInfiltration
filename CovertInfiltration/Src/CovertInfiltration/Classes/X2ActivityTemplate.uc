@@ -82,6 +82,20 @@ static function string DefaultGetOverviewStatus (XComGameState_Activity Activity
 	return class'UIUtilities_Infiltration'.static.GetLabelForActivityCompletionStatus(ActivityState.CompletionStatus);
 }
 
+function bool ValidateTemplate (out string strError)
+{
+	if (ActivityType == eActivityType_Action
+	 || ActivityType == eActivityType_Assault
+	 || ActivityType == eActivityType_Infiltration
+	 || ActivityType == eActivityType_Special)
+	{
+		return true;
+	}
+
+	strError = "has an invalid or missing ActivityType!";
+	return false;
+}
+
 defaultproperties
 {
 	ActivityType = -1

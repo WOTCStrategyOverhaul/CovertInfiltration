@@ -593,7 +593,7 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
 }
 
-static function name GetActivityFromStage(ChainStage StageDef)
+static protected function name GetActivityFromStage(ChainStage StageDef)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate ActivityTemplate;
@@ -608,12 +608,6 @@ static function name GetActivityFromStage(ChainStage StageDef)
 	else
 	{
 		`CI_Trace("Stage is random");
-
-		if (StageDef.ActivityTags.Length == 0 || !class'X2Helper_Infiltration'.static.ValidateActivityType(StageDef.ActivityType))
-		{
-			`CI_Warn("Stage definition is invalid! Cannot create activity!");
-			return '';
-		}
 	}
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
@@ -622,13 +616,12 @@ static function name GetActivityFromStage(ChainStage StageDef)
 	{
 		ActivityTemplate = X2ActivityTemplate(DataTemplate);
 
-		if (ActivityTemplate != none && ActivityTemplate.ActivityType != -1)
+		if (ActivityTemplate != none
+		 && StageDef.ActivityType == ActivityTemplate.ActivityType
+		 && StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) != INDEX_NONE)
 		{
-			if (StageDef.ActivityType == ActivityTemplate.ActivityType && StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) != INDEX_NONE)
-			{
-				`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
-				SelectedActivities.AddItem(ActivityTemplate.DataName);
-			}
+			`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
+			SelectedActivities.AddItem(ActivityTemplate.DataName);
 		}
 	}
 	
