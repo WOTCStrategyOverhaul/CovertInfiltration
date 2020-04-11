@@ -773,10 +773,13 @@ simulated function bool CanOpenLoadout()
 
 simulated function UpdateButtons()
 {
+	local XComGameState_CovertAction CurrentAction;
 	local array<StrategyCostScalar> CostScalars;
 	local bool bHaveIntel;
 
-	if (GetAction().bStarted)
+	CurrentAction = GetAction();
+
+	if (CurrentAction.bStarted)
 	{
 		CostScalars.Length = 0; // Avoid complier warning
 		bHaveIntel = `XCOMHQ.CanAffordAllStrategyCosts(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
@@ -787,10 +790,19 @@ simulated function UpdateButtons()
 	}
 	else
 	{
-
-		MainActionButton.SetText(strOpenLoadout);
 		MainActionButton.OnClickedDelegate = OnConfirmClicked;
 		MainActionButton.SetDisabled(!CanOpenLoadout());
+
+		if (CurrentAction.RequiredFactionInfluence > CurrentAction.GetFaction().GetInfluence())
+		{
+			// In this case the button will be disabled by CanOpenLoadout() check above
+			// TODO: a better way would be an UIScrollingText on top of DurationLabel and DurationValue (and hide those)
+			MainActionButton.SetText(class'UICovertActions'.default.CovertActions_InfluenceRequiredTooltip);
+		}
+		else
+		{
+			MainActionButton.SetText(strOpenLoadout);
+		}
 	}
 }
 
