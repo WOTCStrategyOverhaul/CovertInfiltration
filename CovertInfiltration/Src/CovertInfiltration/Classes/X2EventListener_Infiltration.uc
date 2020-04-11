@@ -152,9 +152,10 @@ static protected function ApplyPostActionWillLoss(XComGameState_CovertAction Cov
 			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', SlotState.GetAssignedStaff().ObjectID));
 			if (UnitState.UsesWillSystem() && !UnitState.IsInjured() && !UnitState.bCaptured)
 			{
-				class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, UnitState);
 				UnitState.SetCurrentStat(eStat_Will, GetWillLoss(UnitState));
 				UnitState.UpdateMentalState();
+
+				class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, UnitState);
 			}
 		}
 	}
