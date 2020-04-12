@@ -32,6 +32,9 @@ var localized string strCompletionStatusLabel_Available;
 var localized string strCompletionStatusLabel_Ongoing;
 var localized string strCompletionStatusLabel_Infiltrating;
 
+// Prefix of the form (X/Y) where X is the current stage and Y is the number of stages in the chain
+var localized string strChainStatusPrefix;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -400,6 +403,24 @@ static function GeoscapeOpportunityNotification (XComGameState_GeoscapeEntity Ge
 
 static function string GetActionObjective (XComGameState_CovertAction ActionState)
 {
+	local XComGameState_Activity ActivityState;
+	local XComGameState_ActivityChain ChainState;
+	local XGParamTag Tag;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(ActionState);
+	if (ActivityState == none) ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(ActionState);
+
+	if (ActivityState != none)
+	{
+		ChainState = ActivityState.GetActivityChain();
+
+		Tag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+		Tag.IntValue0 = ActivityState.GetStageIndex() + 1;
+		Tag.IntValue1 = ChainState.StageRefs.Length;
+		
+		return `XEXPAND.ExpandString(default.strChainStatusPrefix) @ ChainState.GetOverviewTitle();
+	}
+
 	if (ActionState.GetObjective() != "")
 	{
 		return ActionState.GetObjective();

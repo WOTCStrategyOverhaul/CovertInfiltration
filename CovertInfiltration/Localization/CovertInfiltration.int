@@ -135,6 +135,9 @@ strCompletionStatusLabel_Available=Available
 strCompletionStatusLabel_Ongoing=Ongoing
 strCompletionStatusLabel_Infiltrating=Infiltrating
 
+strChainStatusPrefix="(<XGParam:IntValue0>/<XGParam:IntValue1>)"
+;<font color='#34DDDD'>
+
 [UISkyrangerExfiltrate]
 strBody="The Skyranger has reached the action site. Awaiting orders."
 strSkyrangerExfiltrateSubtitle="READY FOR EXFILTRATION"
@@ -316,7 +319,7 @@ strTitle="Counter Dark Event"
 strDescription="Smash infrastructure critical to ADVENT's operations against XCOM."
 
 [ActivityChain_SupplyRaid X2ActivityChainTemplate]
-strTitle="Supply Raid"
+strTitle="Raid Supply Convoy"
 strDescription="Seize enemy materiel from a vulnerable supply convoy."
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
