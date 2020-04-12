@@ -87,6 +87,7 @@ function bool ValidateTemplate (out string strError)
 	if (ActivityType == eActivityType_Action
 	 || ActivityType == eActivityType_Assault
 	 || ActivityType == eActivityType_Infiltration
+	 || ActivityType == eActivityType_Wait
 	 || ActivityType == eActivityType_Special)
 	{
 		return true;

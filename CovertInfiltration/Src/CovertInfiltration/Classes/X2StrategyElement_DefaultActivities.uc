@@ -238,9 +238,9 @@ static function CreateDarkEventWaitActivity(out array<X2DataTemplate> Templates)
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitDarkEvent');
 	
 	Activity.ActivityTag = 'Tag_Wait';
+	Activity.ActivityType = eActivityType_Wait;
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
-	//Activity.SetupStage = DarkEventWaitSetup;
 
 	Templates.AddItem(Activity);
 }
@@ -254,6 +254,7 @@ static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
 	
 	Activity.ActivityTag = 'Tag_Wait';
+	Activity.ActivityType = eActivityType_Wait;
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
 	Activity.SetupStage = WaitSetup;
@@ -573,30 +574,6 @@ static function WaitSetup (XComGameState NewGameState, XComGameState_Activity Ac
 	SecondsWaitDuration = class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
 		default.MinGenericWaitDays, 
 		default.MaxGenericWaitDays);
-	
-	WaitActivity = XComGameState_Activity_Wait(ActivityState);
-	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state
-
-	if (WaitActivity == none)
-	{
-		`RedScreen(ActivityState.GetMyTemplateName() $ " is not a wait activity but calls WaitSetup!");
-		return;
-	}
-
-	WaitActivity.ProgressAt = `STRATEGYRULES.GameTime;
-	class'X2StrategyGameRulesetDataStructures'.static.AddTime(WaitActivity.ProgressAt, SecondsWaitDuration);
-}
-
-static function DarkEventWaitSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
-{
-	local int SecondsWaitDuration;
-	local XComGameState_Activity_Wait WaitActivity;
-
-	`CI_Log("Setting up wait stage");
-	
-	SecondsWaitDuration = class'X2Helper_Infiltration'.static.GetWaitPeriodDuration(
-		default.MinDarkEventWaitDays, 
-		default.MaxDarkEventWaitDays);
 	
 	WaitActivity = XComGameState_Activity_Wait(ActivityState);
 	// No need to call NewGameState.ModifyStateObject here as SetupStage is passed an already modified state

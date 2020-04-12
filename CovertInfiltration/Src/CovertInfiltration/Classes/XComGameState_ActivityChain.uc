@@ -91,6 +91,8 @@ function SetupChain (XComGameState NewGameState)
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
 	local ChainStage StageDef;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
@@ -109,7 +111,7 @@ function SetupChain (XComGameState NewGameState)
 	{
 		m_Template.ChooseRegions(self, PrimaryRegionRef, SecondaryRegionRef);
 	}
-
+	
 	`CI_Trace("Selected faction and regions, spawning stages");
 
 	// Create the stages
@@ -147,6 +149,21 @@ function SetupChain (XComGameState NewGameState)
 	{
 		ActivityState = XComGameState_Activity(NewGameState.GetGameStateForObjectID(ActivityRef.ObjectID));
 		ActivityState.OnSetupChain(NewGameState);
+	}
+	
+	// Generate the chain-wide reward if our template asks for one
+	if (m_Template.ChainReward != '')
+	{
+		`CI_Trace("Template has chain reward: " $ m_Template.ChainReward);
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(m_Template.ChainReward));
+
+		if (RewardTemplate != none)
+		{
+			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState.GenerateReward(NewGameState,, PrimaryRegionRef);
+			ChainObjectRefs.AddItem(RewardState.GetReference());
+			`CI_Trace("Setting chain reward: " $ m_Template.ChainReward);
+		}
 	}
 
 	SetupComplications(NewGameState);
@@ -534,6 +551,32 @@ function RestoreChainDarkEventCompleting (XComGameState NewGameState)
 	DarkEventState = GetChainDarkEvent();
 	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
 	DarkEventState.bTemporarilyBlockActivation = false;
+}
+
+  ////////////////////
+ /// Chain Reward ///
+////////////////////
+
+function XComGameState_Reward GetChainReward()
+{
+	local XComGameStateHistory History;
+	local StateObjectReference RewardRef;
+	local XComGameState_Reward RewardState;
+	
+	History = `XCOMHISTORY;
+
+	foreach ChainObjectRefs(RewardRef)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+		if (RewardState != none)
+		{
+			`CI_Trace("Getting chain reward: " $ RewardState.GetMyTemplateName());
+			return RewardState;
+		}
+	}
+
+	return none;
 }
 
 ///////////////

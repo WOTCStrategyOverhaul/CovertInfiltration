@@ -185,7 +185,7 @@ DisplayName="Increase Region Income"
 
 [Reward_FacilityDelay X2RewardTemplate]
 DisplayName="Delay Facility Construction"
-RewardDetails="Facility delayed by <XGParam:StrValue0/> days"
+RewardDetails="Facility delayed by <XGParam:IntValue0/> days"
 
 [Reward_Rumor X2RewardTemplate]
 DisplayName="Resistance Rumor"

@@ -105,7 +105,6 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.DeckReq = IsAdvancedChainAvailable;
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Distraction'));
-	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_SupplyConvoy'));
 
 	return Template;
@@ -141,9 +140,10 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.ChainReward = 'Reward_Scientist';
 	
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Scientist'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
 	Template.GetNarrativeObjective = GetStaffObjective;
 
@@ -160,9 +160,10 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.ChainReward = 'Reward_Engineer';
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_Engineer'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
 	Template.GetNarrativeObjective = GetStaffObjective;
 
@@ -180,9 +181,10 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsExtraSoldierChainAvailable;
+	Template.ChainReward = 'Reward_ExtraFactionSoldier';
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ExtraFactionSoldier'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
 	Template.GetNarrativeObjective = GetStaffObjective;
 
@@ -241,8 +243,9 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
+	Template.ChainReward = 'Reward_SoldierCaptured';
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_SoldierCaptured'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
 	Template.GetNarrativeObjective = GetStaffObjective;
 
@@ -265,8 +268,9 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
+	Template.ChainReward = 'Reward_ChosenSoldierCaptured';
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChosenSoldierCaptured'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
 	Template.GetNarrativeObjective = GetStaffObjective;
 
@@ -304,8 +308,9 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.ChainReward = 'Reward_Intel';
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_Intel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_ChainProxy'));
 
 	return Template;
 }

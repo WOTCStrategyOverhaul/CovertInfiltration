@@ -1256,7 +1256,6 @@ static function int GetWaitPeriodDuration (int MinDays, int MaxDays)
 static function string GetUnitDetails (XComGameState_Activity ActivityState)
 {
 	local XComGameStateHistory History;
-	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_Reward RewardState;
 	local XComGameState_Unit UnitState;
 	local string UnitString;
@@ -1272,18 +1271,8 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	}
 
 	History = `XCOMHISTORY;
-	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
 	
-	if (MissionState == none)
-	{
-		LastActivity = ActivityState.GetActivityChain().GetLastActivity().GetStageIndex();
-		RewardName = ActivityState.GetActivityChain().GetMyTemplate().Stages[LastActivity].RewardOverrides[0];
-		TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
-		return "this" @ RewardTemplate.DisplayName;
-	}
-
-	RewardState = XComGameState_Reward(History.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
+	RewardState = ActivityState.GetActivityChain().GetChainReward();
 
 	if (RewardState != none)
 	{
@@ -1293,12 +1282,12 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 		}
 		else
 		{
-			`Redscreen("GetUnitDetails: mission reward has a null RewardObjectReference!");
+			`Redscreen("GetUnitDetails: chain reward has a null RewardObjectReference!");
 		}
 	}
 	else
 	{
-		`Redscreen("GetUnitDetails: activity has no mission rewards!");
+		`Redscreen("GetUnitDetails: activity has no chain reward!");
 	}
 
 	if (UnitState != none)
@@ -1321,7 +1310,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	}
 	else
 	{
-		`Redscreen("GetUnitDetails: mission reward does not contain a UnitState!");
+		`Redscreen("GetUnitDetails: chain reward does not contain a UnitState!");
 		UnitString = "UNITNOTFOUND";
 	}
 

@@ -40,8 +40,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_ExperimentalItem', 'ExperimentalItem'));
 	Rewards.AddItem(CreateTechInspireRewardTemplate());
-
+	
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
+	Rewards.AddItem(CreateActivityChainProxyReward());
 
 	return Rewards;
 }
@@ -239,7 +240,7 @@ static function string GetFacilityDelayRewardDetails(XComGameState_Reward Reward
 	local XGParamTag kTag;
 
 	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	kTag.StrValue0 = string(RewardState.Quantity);
+	kTag.IntValue0 = RewardState.Quantity;
 
 	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().RewardDetails);
 }
@@ -442,6 +443,92 @@ static function X2ActivityTemplate_Infiltration GetInfiltrationTemplateFromRewar
 	Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
 
 	return X2ActivityTemplate_Infiltration(Activity.GetMyTemplate());
+}
+
+static function X2DataTemplate CreateActivityChainProxyReward ()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_ChainProxy');
+
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
+	Template.SetRewardFn = SetProxyReward;
+	Template.GiveRewardFn = GiveProxyReward;
+	Template.GetRewardStringFn = GetProxyRewardString;
+	Template.GetRewardPreviewStringFn = GetProxyRewardPreview;
+	Template.GetRewardDetailsStringFn = GetProxyRewardDetails;
+	Template.GetBlackMarketStringFn = GetProxyBlackMarketString;
+	Template.GetRewardImageFn = GetProxyRewardImage;
+	Template.GetRewardIconFn = GetProxyRewardIcon;
+	//Template.RewardPopupFn = ProxyRewardPopup;
+
+	return Template;
+}
+
+static function SetProxyReward (XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	GetActivityChainFromReward(RewardState).GetChainReward().SetReward(RewardObjectRef, Amount);
+}
+
+static function GiveProxyReward (XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	GetActivityChainFromReward(RewardState).GetChainReward().GiveReward(NewGameState, AuxRef, bOrder, OrderHours);
+}
+
+static function string GetProxyRewardString (XComGameState_Reward RewardState)
+{
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Reward ChainRewardState;
+	local string RewardStr;
+
+	ChainState = GetActivityChainFromReward(RewardState);
+	ChainRewardState = ChainState.GetChainReward();
+	RewardStr = ChainRewardState.GetRewardString();
+	
+	`CI_Trace("TESTING CHAIN PROXY REWARD");
+	`CI_Trace(ChainState.GetMyTemplateName());
+	`CI_Trace(ChainRewardState.GetMyTemplateName());
+	`CI_Trace(RewardStr);
+
+	return RewardStr;
+}
+
+static function string GetProxyRewardPreview (XComGameState_Reward RewardState)
+{
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardPreviewString();
+}
+
+static function string GetProxyRewardDetails (XComGameState_Reward RewardState)
+{
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardDetailsString();
+}
+
+static function string GetProxyBlackMarketString (XComGameState_Reward RewardState)
+{
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetBlackMarketString();
+}
+
+static function string GetProxyRewardImage (XComGameState_Reward RewardState)
+{
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardImage();
+}
+
+static function string GetProxyRewardIcon (XComGameState_Reward RewardState)
+{
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardIcon();
+}
+
+// todo add popup
+
+static function XComGameState_ActivityChain GetActivityChainFromReward (XComGameState_Reward RewardState)
+{
+	local XComGameState_Activity Activity;
+
+	Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
+
+	// something's wrong here, it's returning SupplyRaid chain when it should be RescueEngineer
+
+	return Activity.GetActivityChain();
 }
 
 /////////////////////
