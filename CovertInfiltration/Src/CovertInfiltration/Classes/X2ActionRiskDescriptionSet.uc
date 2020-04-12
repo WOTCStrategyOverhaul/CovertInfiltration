@@ -40,5 +40,5 @@ static function string GetFlatRiskDescription (X2ActionRiskDescriptionTemplate T
 	SitRepManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
 	SitRepTemplate = SitRepManager.FindSitRepTemplate(class'X2Helper_Infiltration'.default.FlatRiskSitReps[i].SitRepName);
 
-	return SitRepTemplate.Description;
+	return SitRepTemplate.GetDescriptionExpanded();
 }
