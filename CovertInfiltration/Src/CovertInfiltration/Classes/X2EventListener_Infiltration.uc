@@ -1003,6 +1003,8 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryLate, ELD_OnStateSubmitted, -99999);
 	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate, 99);
 	Template.AddCHEvent('PostAliensSpawned', PostAliensSpawned, ELD_Immediate, 99);
+	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PreSupplyExtract, ELD_OnVisualizationBlockStarted, 99);
+	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PostSupplyExtract, ELD_OnVisualizationBlockCompleted, 99);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -1304,6 +1306,50 @@ static protected function ClearPendingLootFromAllUnits (XComGameState StartGameS
 			UnitState.SetLoot(EmptyLootResults);
 
 			`CI_Trace("Cleared pending loot from" @ UnitState.ObjectID @ UnitState.GetMyTemplateName() @ UnitState.GetFullName());
+		}
+	}
+}
+
+static protected function EventListenerReturn KismetGameStateMatinee_PreSupplyExtract (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	TrySetSupplyExtractorATTVisibility(true, GameState);
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn KismetGameStateMatinee_PostSupplyExtract (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+	TrySetSupplyExtractorATTVisibility(false, GameState);
+	return ELR_NoInterrupt;
+}
+
+static protected function TrySetSupplyExtractorATTVisibility (bool bNewVisible, XComGameState GameState)
+{
+	local XComGameStateContext_Kismet KismetContext;
+	local SeqAct_PlayGameStateMatinee Trigger;
+	local SkeletalMeshActor MeshActor;
+
+	// Check that we are in the correct mission type
+	if (`TACTICALMISSIONMGR.ActiveMission.sType != "SupplyExtraction") return;
+
+	KismetContext = XComGameStateContext_Kismet(GameState.GetContext());
+	if (KismetContext == none) return;
+
+	Trigger = SeqAct_PlayGameStateMatinee(KismetContext.FindSequenceOp());
+	if (Trigger == none) return;
+
+	// Check that it's the correct matinee
+	if (Trigger.MatineeComment != "CIN_SupplyExtraction_ATTArrives") return;
+
+	// Find the ATT actor
+	foreach `XWORLDINFO.AllActors(class'SkeletalMeshActor', MeshActor)
+	{
+		if (
+			MeshActor.GetPackageName() == 'CIN_XP_SupplyExtractionATTArrival' &&
+			PathName(MeshActor.SkeletalMeshComponent.SkeletalMesh) == "TroopTransport_ANIM.Meshes.SM_TroopTransport"
+		)
+		{
+			MeshActor.SetHidden(!bNewVisible);
+			break;
 		}
 	}
 }
