@@ -1268,7 +1268,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	
 	History = `XCOMHISTORY;
 	
-	foreach ActivityState.GetActivityChain().ChainRewardRefs(RewardRef)
+	foreach ActivityState.GetActivityChain().ClaimedChainRewardRefs(RewardRef)
 	{
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 
@@ -1281,6 +1281,27 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 				if (UnitState != none)
 				{
 					break;
+				}
+			}
+		}
+	}
+	
+	if (UnitState == none)
+	{
+		foreach ActivityState.GetActivityChain().UnclaimedChainRewardRefs(RewardRef)
+		{
+			RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+			if (RewardState != none)
+			{
+				if (RewardState.RewardObjectReference.ObjectID > 0)
+				{
+					UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+				
+					if (UnitState != none)
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -1307,7 +1328,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	else
 	{
 		`Redscreen("GetUnitDetails: chain has no personnel rewards!");
-		UnitString = "UNITNOTFOUND";
+		return "UNITNOTFOUND";
 	}
 
 	return UnitString;

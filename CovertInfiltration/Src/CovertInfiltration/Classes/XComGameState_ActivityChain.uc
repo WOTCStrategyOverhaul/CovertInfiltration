@@ -26,9 +26,8 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
-// Any in-play chainwide rewards are moved from
-// ChainObjectRefs to this array
-var array<StateObjectReference> ChainRewardRefs;
+var array<StateObjectReference> UnclaimedChainRewardRefs;
+var array<StateObjectReference> ClaimedChainRewardRefs;
 
 // Chain Complications
 var array<StateObjectReference> ComplicationRefs;
@@ -157,20 +156,17 @@ function SetupChain (XComGameState NewGameState)
 	}
 	
 	// Generate the chain-wide rewards if our template asks for one
-	if (m_Template.ChainRewards.Length > 0)
+	foreach m_Template.ChainRewards(ChainReward)
 	{
-		foreach m_Template.ChainRewards(ChainReward)
-		{
-			`CI_Trace("Template has chain reward: " $ ChainReward);
-			RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
+		`CI_Trace("Template has chain reward: " $ ChainReward);
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
 
-			if (RewardTemplate != none)
-			{
-				RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-				RewardState.GenerateReward(NewGameState,, PrimaryRegionRef);
-				ChainObjectRefs.AddItem(RewardState.GetReference());
-				`CI_Trace("Setting chain reward: " $ ChainReward);
-			}
+		if (RewardTemplate != none)
+		{
+			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState.GenerateReward(NewGameState,, PrimaryRegionRef);
+			UnclaimedChainRewardRefs.AddItem(RewardState.GetReference());
+			`CI_Trace("Creating chain reward: " $ ChainReward);
 		}
 	}
 
@@ -565,7 +561,7 @@ function RestoreChainDarkEventCompleting (XComGameState NewGameState)
  /// Chain Reward ///
 ////////////////////
 
-function XComGameState_Reward GetChainReward()
+function XComGameState_Reward ClaimChainReward (XComGameState NewGameState)
 {
 	local XComGameStateHistory History;
 	local StateObjectReference RewardRef;
@@ -573,15 +569,15 @@ function XComGameState_Reward GetChainReward()
 	
 	History = `XCOMHISTORY;
 
-	foreach ChainObjectRefs(RewardRef)
+	foreach UnclaimedChainRewardRefs(RewardRef)
 	{
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 
 		if (RewardState != none)
 		{
-			`CI_Trace("Getting chain reward: " $ RewardState.GetMyTemplateName());
-			ChainObjectRefs.RemoveItem(RewardRef);
-			ChainRewardRefs.AddItem(RewardRef);
+			`CI_Trace("Claiming chain reward: " $ RewardState.GetMyTemplateName());
+			UnclaimedChainRewardRefs.RemoveItem(RewardRef);
+			ClaimedChainRewardRefs.AddItem(RewardRef);
 			return RewardState;
 		}
 	}

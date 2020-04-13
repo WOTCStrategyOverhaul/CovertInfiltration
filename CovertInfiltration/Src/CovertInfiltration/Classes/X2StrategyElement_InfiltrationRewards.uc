@@ -516,8 +516,8 @@ static function GenerateProxyReward (XComGameState_Reward RewardState, XComGameS
 	local XComGameState_ActivityChain ChainState;
 	local XComGameState_Reward ProxyRewardState;
 
-	ChainState = XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(AuxRef.ObjectID));
-	ProxyRewardState = ChainState.GetChainReward();
+	ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', AuxRef.ObjectID));
+	ProxyRewardState = ChainState.ClaimChainReward(NewGameState);
 
 	RewardState.RewardObjectReference = ProxyRewardState.GetReference();
 	RewardState.Quantity = ProxyRewardState.Quantity;
