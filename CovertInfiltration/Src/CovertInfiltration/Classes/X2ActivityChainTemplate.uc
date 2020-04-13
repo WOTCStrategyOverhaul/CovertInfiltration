@@ -23,7 +23,7 @@ var int NumInDeck; // The larger the number, the more common this chain is
 
 var bool bAllowComplications; // If true, complications can be attached to this chain type
 
-var name ChainReward; // The chain-wide reward that will be granted when the activity with Reward_ChainProxy is finished
+var array<name> ChainRewards; // The chain-wide rewards that will be granted when the activity with Reward_ChainProxy is finished, DO NOT put more proxy rewards than there are chain rewards!
 
 delegate bool DeckReq(XComGameState NewGameState); // Conditions that must be met for the chain to be added to the deck
 
@@ -145,7 +145,6 @@ static function string DefaultGetNarrativeObjective (XComGameState_ActivityChain
 
 defaultproperties
 {
-	ChainReward = ''
 	DeckReq = AlwaysAvailable
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetNarrativeObjective = DefaultGetNarrativeObjective

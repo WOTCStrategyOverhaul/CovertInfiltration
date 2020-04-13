@@ -1258,6 +1258,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	local XComGameStateHistory History;
 	local XComGameState_Reward RewardState;
 	local XComGameState_Unit UnitState;
+	local StateObjectReference RewardRef;
 	local string UnitString;
 	
 	local X2StrategyElementTemplateManager TemplateManager;
@@ -1265,29 +1266,24 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	local name RewardName;
 	local int LastActivity;
 	
-	if (ActivityState.GetActivityChain().GetLastActivity().GetMyTemplateName() != 'Activity_PersonnelRescue')
-	{
-		return "INVALIDACTIVITY";
-	}
-
 	History = `XCOMHISTORY;
 	
-	RewardState = ActivityState.GetActivityChain().GetChainReward();
+	foreach ActivityState.GetActivityChain().ChainRewardRefs(RewardRef)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 
-	if (RewardState != none)
-	{
-		if (RewardState.RewardObjectReference.ObjectID > 0)
+		if (RewardState != none)
 		{
-			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+			if (RewardState.RewardObjectReference.ObjectID > 0)
+			{
+				UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+				
+				if (UnitState != none)
+				{
+					break;
+				}
+			}
 		}
-		else
-		{
-			`Redscreen("GetUnitDetails: chain reward has a null RewardObjectReference!");
-		}
-	}
-	else
-	{
-		`Redscreen("GetUnitDetails: activity has no chain reward!");
 	}
 
 	if (UnitState != none)
@@ -1310,7 +1306,7 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	}
 	else
 	{
-		`Redscreen("GetUnitDetails: chain reward does not contain a UnitState!");
+		`Redscreen("GetUnitDetails: chain has no personnel rewards!");
 		UnitString = "UNITNOTFOUND";
 	}
 

@@ -140,7 +140,7 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.ChainReward = 'Reward_Scientist';
+	Template.ChainRewards.AddItem('Reward_Scientist');
 	
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
@@ -160,7 +160,7 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.ChainReward = 'Reward_Engineer';
+	Template.ChainRewards.AddItem('Reward_Engineer');
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
@@ -181,7 +181,7 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsExtraSoldierChainAvailable;
-	Template.ChainReward = 'Reward_ExtraFactionSoldier';
+	Template.ChainRewards.AddItem('Reward_ExtraFactionSoldier');
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
@@ -243,7 +243,7 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
-	Template.ChainReward = 'Reward_SoldierCaptured';
+	Template.ChainRewards.AddItem('Reward_SoldierCaptured');
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
@@ -268,7 +268,7 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
-	Template.ChainReward = 'Reward_ChosenSoldierCaptured';
+	Template.ChainRewards.AddItem('Reward_ChosenSoldierCaptured');
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
 	
@@ -308,7 +308,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-	Template.ChainReward = 'Reward_Intel';
+	Template.ChainRewards.AddItem('Reward_Intel');
 	
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_ChainProxy'));
 

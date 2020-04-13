@@ -468,59 +468,64 @@ static function X2DataTemplate CreateActivityChainProxyReward ()
 
 static function SetProxyReward (XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
 {
-	GetActivityChainFromReward(RewardState).GetChainReward().SetReward(RewardObjectRef, Amount);
+	GetProxyReward(RewardState).SetReward(RewardObjectRef, Amount);
 }
 
 static function GiveProxyReward (XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
 {
-	GetActivityChainFromReward(RewardState).GetChainReward().GiveReward(NewGameState, AuxRef, bOrder, OrderHours);
+	GetProxyReward(RewardState).GiveReward(NewGameState, AuxRef, bOrder, OrderHours);
 }
 
 static function string GetProxyRewardString (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardString();
+	return GetProxyReward(RewardState).GetRewardString();
 }
 
 static function string GetProxyRewardPreview (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardPreviewString();
+	return GetProxyReward(RewardState).GetRewardPreviewString();
 }
 
 static function string GetProxyRewardDetails (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardDetailsString();
+	return GetProxyReward(RewardState).GetRewardDetailsString();
 }
 
 static function string GetProxyBlackMarketString (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetBlackMarketString();
+	return GetProxyReward(RewardState).GetBlackMarketString();
 }
 
 static function string GetProxyRewardImage (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardImage();
+	return GetProxyReward(RewardState).GetRewardImage();
 }
 
 static function string GetProxyRewardIcon (XComGameState_Reward RewardState)
 {
-	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardIcon();
+	return GetProxyReward(RewardState).GetRewardIcon();
 }
 
 static function DisplayProxyRewardPopup (XComGameState_Reward RewardState)
 {
-	GetActivityChainFromReward(RewardState).GetChainReward().DisplayRewardPopup();
+	GetProxyReward(RewardState).DisplayRewardPopup();
 }
 
 static function GenerateProxyReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
 {
-	// Store parent chain in the reward state so it's easy to get it later
-	RewardState.RewardObjectReference = AuxRef;
-	RewardState.Quantity = GetActivityChainFromReward(RewardState).GetChainReward().Quantity;
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Reward ProxyRewardState;
+
+	ChainState = XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(AuxRef.ObjectID));
+	ProxyRewardState = ChainState.GetChainReward();
+
+	RewardState.RewardObjectReference = ProxyRewardState.GetReference();
+	RewardState.Quantity = ProxyRewardState.Quantity;
 }
 
-static function XComGameState_ActivityChain GetActivityChainFromReward (XComGameState_Reward RewardState)
+static function XComGameState_Reward GetProxyReward (XComGameState_Reward RewardState)
 {
-	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	return XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 }
 
 /////////////////////

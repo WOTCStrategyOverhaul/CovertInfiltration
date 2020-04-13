@@ -26,6 +26,10 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+// Any in-play chainwide rewards are moved from
+// ChainObjectRefs to this array
+var array<StateObjectReference> ChainRewardRefs;
+
 // Chain Complications
 var array<StateObjectReference> ComplicationRefs;
 
@@ -93,6 +97,7 @@ function SetupChain (XComGameState NewGameState)
 	local ChainStage StageDef;
 	local XComGameState_Reward RewardState;
 	local X2RewardTemplate RewardTemplate;
+	local name ChainReward;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
@@ -151,18 +156,21 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 	
-	// Generate the chain-wide reward if our template asks for one
-	if (m_Template.ChainReward != '')
+	// Generate the chain-wide rewards if our template asks for one
+	if (m_Template.ChainRewards.Length > 0)
 	{
-		`CI_Trace("Template has chain reward: " $ m_Template.ChainReward);
-		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(m_Template.ChainReward));
-
-		if (RewardTemplate != none)
+		foreach m_Template.ChainRewards(ChainReward)
 		{
-			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-			RewardState.GenerateReward(NewGameState,, PrimaryRegionRef);
-			ChainObjectRefs.AddItem(RewardState.GetReference());
-			`CI_Trace("Setting chain reward: " $ m_Template.ChainReward);
+			`CI_Trace("Template has chain reward: " $ ChainReward);
+			RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
+
+			if (RewardTemplate != none)
+			{
+				RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+				RewardState.GenerateReward(NewGameState,, PrimaryRegionRef);
+				ChainObjectRefs.AddItem(RewardState.GetReference());
+				`CI_Trace("Setting chain reward: " $ ChainReward);
+			}
 		}
 	}
 
@@ -572,9 +580,13 @@ function XComGameState_Reward GetChainReward()
 		if (RewardState != none)
 		{
 			`CI_Trace("Getting chain reward: " $ RewardState.GetMyTemplateName());
+			ChainObjectRefs.RemoveItem(RewardRef);
+			ChainRewardRefs.AddItem(RewardRef);
 			return RewardState;
 		}
 	}
+
+	`RedScreen(GetMyTemplateName() $ " has no chain rewards to return!");
 
 	return none;
 }
