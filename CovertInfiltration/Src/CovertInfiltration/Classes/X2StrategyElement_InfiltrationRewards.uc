@@ -460,7 +460,8 @@ static function X2DataTemplate CreateActivityChainProxyReward ()
 	Template.GetBlackMarketStringFn = GetProxyBlackMarketString;
 	Template.GetRewardImageFn = GetProxyRewardImage;
 	Template.GetRewardIconFn = GetProxyRewardIcon;
-	//Template.RewardPopupFn = ProxyRewardPopup;
+	Template.RewardPopupFn = DisplayProxyRewardPopup;
+	Template.GenerateRewardFn = GenerateProxyReward;
 
 	return Template;
 }
@@ -477,20 +478,7 @@ static function GiveProxyReward (XComGameState NewGameState, XComGameState_Rewar
 
 static function string GetProxyRewardString (XComGameState_Reward RewardState)
 {
-	local XComGameState_ActivityChain ChainState;
-	local XComGameState_Reward ChainRewardState;
-	local string RewardStr;
-
-	ChainState = GetActivityChainFromReward(RewardState);
-	ChainRewardState = ChainState.GetChainReward();
-	RewardStr = ChainRewardState.GetRewardString();
-	
-	`CI_Trace("TESTING CHAIN PROXY REWARD");
-	`CI_Trace(ChainState.GetMyTemplateName());
-	`CI_Trace(ChainRewardState.GetMyTemplateName());
-	`CI_Trace(RewardStr);
-
-	return RewardStr;
+	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardString();
 }
 
 static function string GetProxyRewardPreview (XComGameState_Reward RewardState)
@@ -518,17 +506,21 @@ static function string GetProxyRewardIcon (XComGameState_Reward RewardState)
 	return GetActivityChainFromReward(RewardState).GetChainReward().GetRewardIcon();
 }
 
-// todo add popup
+static function DisplayProxyRewardPopup (XComGameState_Reward RewardState)
+{
+	GetActivityChainFromReward(RewardState).GetChainReward().DisplayRewardPopup();
+}
+
+static function GenerateProxyReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	// Store parent chain in the reward state so it's easy to get it later
+	RewardState.RewardObjectReference = AuxRef;
+	RewardState.Quantity = GetActivityChainFromReward(RewardState).GetChainReward().Quantity;
+}
 
 static function XComGameState_ActivityChain GetActivityChainFromReward (XComGameState_Reward RewardState)
 {
-	local XComGameState_Activity Activity;
-
-	Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
-
-	// something's wrong here, it's returning SupplyRaid chain when it should be RescueEngineer
-
-	return Activity.GetActivityChain();
+	return XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 }
 
 /////////////////////

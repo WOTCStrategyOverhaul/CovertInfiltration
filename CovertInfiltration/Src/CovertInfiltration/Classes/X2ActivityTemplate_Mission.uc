@@ -102,8 +102,17 @@ static function StateObjectReference InitMissionReward (XComGameState NewGameSta
 	local XComGameState_Reward RewardState;
 
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-	RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
-		
+	
+	// If this is a chain proxy reward, send the chain state reference into it instead of the region reference
+	if (RewardState.GetMyTemplateName() == 'Reward_ChainProxy')
+	{
+		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().GetReference());
+	}
+	else
+	{
+		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
+	}
+
 	// If this is a dark event reward, and the chain has a dark event attached, connect the two
 	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
 	{
