@@ -19,7 +19,7 @@ var protectedwrite int NextSpawnAt; // In work units
 var const config array<int> WorkRateXcom;
 var const config array<int> WorkRatePerContact;
 var const config array<int> WorkRatePerRelay;
-var const config bool bStaringRegionContributesToWork;
+var const config bool bStartingRegionContributesToWork;
 
 var const config array<int> GameStartWork; // How much work to add when the campaign starts
 var const config array<int> WorkRequiredForSpawn;
@@ -151,7 +151,7 @@ static function GetNumContactsAndRelays(out int Contacts, out int Relays)
 
 	foreach History.IterateByClassType(class'XComGameState_WorldRegion', Region)
 	{
-		if (!default.bStaringRegionContributesToWork && XComHQ.StartingRegion.ObjectID == Region.ObjectID)
+		if (!default.bStartingRegionContributesToWork && XComHQ.StartingRegion.ObjectID == Region.ObjectID)
 		{
 			continue;
 		}
