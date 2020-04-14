@@ -587,6 +587,15 @@ function XComGameState_Reward ClaimChainReward (XComGameState NewGameState)
 	return none;
 }
 
+function RewardGenerated (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+{
+	GetMyTemplate();
+	if (m_Template.OnGeneratedReward != none)
+	{
+		m_Template.OnGeneratedReward(NewGameState, ActivityState, RewardState);
+	}
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

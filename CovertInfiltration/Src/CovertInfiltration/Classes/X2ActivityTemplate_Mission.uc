@@ -113,14 +113,7 @@ static function StateObjectReference InitMissionReward (XComGameState NewGameSta
 		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
 	}
 
-	// If this is a dark event reward, and the chain has a dark event attached, connect the two
-	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
-	{
-		if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
-		{
-			RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
-		}
-	}
+	ActivityState.GetActivityChain().RewardGenerated(NewGameState, ActivityState, RewardState);
 
 	return RewardState.GetReference();
 }

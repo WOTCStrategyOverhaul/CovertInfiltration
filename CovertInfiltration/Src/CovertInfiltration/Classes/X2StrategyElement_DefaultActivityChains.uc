@@ -53,6 +53,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 	Template.GetNarrativeObjective = GetDarkEventObjective;
+	Template.OnGeneratedReward = ConnectDarkEventToChain;
 
 	return Template;
 }
@@ -90,6 +91,18 @@ static function string CounterDarkEventGetOverviewDescription (XComGameState_Act
 	kTag.StrValue0 = DarkEventState.GetDisplayName();
 
 	return `XEXPAND.ExpandString(default.strCounterDarkEventDescription);
+}
+
+static function ConnectDarkEventToChain (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+{
+	// If this is a dark event reward, and the chain has a dark event attached, connect the two
+	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
+	{
+		if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
+		{
+			RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
+		}
+	}
 }
 
 static function X2DataTemplate CreateSupplyRaidTemplate()
