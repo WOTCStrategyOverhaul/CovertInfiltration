@@ -47,7 +47,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 
     RulerManager = XComGameState_AlienRulerManager(History.GetSingleGameStateObjectForClass(class'XComGameState_AlienRulerManager'));
 	RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
-	//RulerManager.UpdateActiveAlienRulers();
+	//RulerManager.UpdateActiveAlienRulers(); // TODO: Uncomment when DLC2CHL mess is fixed
 
     foreach RulerManager.ActiveAlienRulers(Candidate)
     {
