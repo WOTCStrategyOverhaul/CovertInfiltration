@@ -757,6 +757,21 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 	EmptyArray.Length = 0;
 }
 
+// Retaliations are not eligible for random positive and negative sitreps
+static function array<name> GetSitrepsForRetaliationMission (XComGameState_MissionSite MissionState)
+{
+	local array<name> EmptyArray;
+
+	// Select enviromental sitreps
+	SelectEnviromentalSitreps(MissionState);
+	
+	// Note that we add directly to state instead of returning the array so that the MeetsRequirements call later accounts for this sitrep
+	return EmptyArray;
+
+	// Prevent compiler warning
+	EmptyArray.Length = 0;
+}
+
 static function array<name> GetAllEnviromentalSitreps ()
 {
 	local X2StrategyElementTemplateManager StrategyTemplateManager;

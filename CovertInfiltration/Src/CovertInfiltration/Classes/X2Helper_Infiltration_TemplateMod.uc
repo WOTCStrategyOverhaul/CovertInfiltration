@@ -165,7 +165,7 @@ static function PatchRetailationMissionSource()
 	{
 		MissionSource = X2MissionSourceTemplate(DataTemplate);
 		MissionSource.SpawnMissionsFn = SpawnRetaliationMission;
-		MissionSource.GetSitrepsFn = class'X2Helper_Infiltration'.static.GetSitrepsForAssaultMission;
+		MissionSource.GetSitrepsFn = class'X2Helper_Infiltration'.static.GetSitrepsForRetaliationMission;
 
 		MissionSource.DifficultyValue = 3;
 		MissionSource.GetMissionDifficultyFn = GetMissionDifficultyFromMonthPlusTemplate;
