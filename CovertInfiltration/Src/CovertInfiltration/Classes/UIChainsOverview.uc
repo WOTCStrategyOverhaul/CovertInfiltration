@@ -113,6 +113,7 @@ simulated function OnInit()
 
 	// Tutorial
 	class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
+	class'UIUtilities_InfiltrationTutorial'.static.ResistanceInformants();
 }
 
 //////////////

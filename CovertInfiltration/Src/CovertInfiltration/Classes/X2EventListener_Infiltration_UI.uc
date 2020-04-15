@@ -12,7 +12,7 @@ var localized string strCanWaitForBonusOrLaunch;
 var localized string strReadySoldiers;
 var localized string strTiredSoldiers;
 var localized string strAcademyTrainingRank;
-var localized string strDiscoveryTitle;
+var localized string strInformantsTitle;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -521,7 +521,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)
 	{
 		AvengerHUD.AddResource(
-			default.strDiscoveryTitle, 
+			default.strInformantsTitle, 
 			class'UIUtilities_Text'.static.GetColoredText(
 				string(class'XComGameState_ActivityChainSpawner'.static.GetCurrentWorkRate()), 
 				eUIState_Cash

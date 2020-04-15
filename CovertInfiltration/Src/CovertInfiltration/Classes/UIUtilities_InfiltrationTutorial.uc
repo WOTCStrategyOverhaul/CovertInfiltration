@@ -42,6 +42,10 @@ var localized string strFacilityGTSBody;
 var localized string strActivityChainsHeader;
 var localized string strActivityChainsBody;
 
+// On Chain Overview
+var localized string strResistanceInformantsHeader;
+var localized string strResistanceInformantsBody;
+
 // On Facility Built
 var localized string strAdvancedChainsHeader;
 var localized string strAdvancedChainsBody;
@@ -117,6 +121,13 @@ static function ActivityChains ()
 	if (!ShouldShowPopup('ActivityChains')) return;
 
 	UITutorialBoxLarge(default.strActivityChainsHeader, default.strActivityChainsBody);
+}
+
+static function ResistanceInformants ()
+{
+	if (!ShouldShowPopup('ResistanceInformants')) return;
+
+	UITutorialBoxLarge(default.strResistanceInformantsHeader, default.strResistanceInformantsBody);
 }
 
 static function AlienFacilityBuilt ()
