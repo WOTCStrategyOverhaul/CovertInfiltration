@@ -49,7 +49,7 @@ delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainSta
 // Note: the ChainState is already modified (tactical) one
 delegate OnEnlistStateIntoTactical(XComGameState StartGameState, XComGameState_ActivityChain ChainState);
 
-delegate OnGeneratedReward(XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState);
+delegate OnActivityGeneratedReward(XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState);
 
 function XComGameState_ActivityChain CreateInstanceFromTemplate (XComGameState NewGameState, optional array<StateObjectReference> ChainObjectRefs)
 {

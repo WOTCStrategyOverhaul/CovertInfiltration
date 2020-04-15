@@ -53,7 +53,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 	Template.GetNarrativeObjective = GetDarkEventObjective;
-	Template.OnGeneratedReward = ConnectDarkEventToChain;
+	Template.OnActivityGeneratedReward = ConnectDarkEventToChain;
 
 	return Template;
 }

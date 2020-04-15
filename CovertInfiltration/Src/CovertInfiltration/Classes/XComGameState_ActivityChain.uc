@@ -589,12 +589,12 @@ function XComGameState_Reward ClaimChainReward (XComGameState NewGameState)
 	return none;
 }
 
-function RewardGenerated (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+function ActivityRewardGenerated (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
 {
 	GetMyTemplate();
-	if (m_Template.OnGeneratedReward != none)
+	if (m_Template.OnActivityGeneratedReward != none)
 	{
-		m_Template.OnGeneratedReward(NewGameState, ActivityState, RewardState);
+		m_Template.OnActivityGeneratedReward(NewGameState, ActivityState, RewardState);
 	}
 }
 
