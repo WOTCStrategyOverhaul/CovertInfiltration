@@ -518,7 +518,7 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.ShowResources();
 	}
 
-	if (ScreenStack.GetFirstInstanceOf(class'UIStrategyMap') != none)
+	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)
 	{
 		AvengerHUD.AddResource(
 			default.strDiscoveryTitle, 
