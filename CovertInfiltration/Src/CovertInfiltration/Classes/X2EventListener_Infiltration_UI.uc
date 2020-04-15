@@ -12,6 +12,7 @@ var localized string strCanWaitForBonusOrLaunch;
 var localized string strReadySoldiers;
 var localized string strTiredSoldiers;
 var localized string strAcademyTrainingRank;
+var localized string strDiscoveryTitle;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -514,6 +515,19 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 			class'UIUtilities_Infiltration'.static.GetAcademyTargetRank()
 		);
 
+		AvengerHUD.ShowResources();
+	}
+
+	if (ScreenStack.GetFirstInstanceOf(class'UIStrategyMap') != none)
+	{
+		AvengerHUD.AddResource(
+			default.strDiscoveryTitle, 
+			class'UIUtilities_Text'.static.GetColoredText(
+				string(class'XComGameState_ActivityChainSpawner'.static.GetCurrentWorkRate()), 
+				eUIState_Cash
+			)
+		);
+		
 		AvengerHUD.ShowResources();
 	}
 

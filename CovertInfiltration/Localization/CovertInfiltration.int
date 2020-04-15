@@ -180,6 +180,7 @@ strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
 strAcademyTrainingRank="TARGET TRAINING RANK"
 strReadySoldiers="READY"
 strTiredSoldiers="TIRED"
+strDiscoveryTitle="DISCOVERY"
 
 [XComGameState_MissionSiteInfiltration]
 strBannerBonusGained="Overinfiltration Bonus Gained"
