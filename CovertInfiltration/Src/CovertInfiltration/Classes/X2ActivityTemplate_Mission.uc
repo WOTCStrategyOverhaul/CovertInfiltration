@@ -100,17 +100,19 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 static function StateObjectReference InitMissionReward (XComGameState NewGameState, XComGameState_Activity ActivityState, X2RewardTemplate RewardTemplate)
 {
 	local XComGameState_Reward RewardState;
+	local XComGameState_HeadquartersResistance ResHQ;
 
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 	
 	// If this is a chain proxy reward, send the chain state reference into it instead of the region reference
 	if (RewardState.GetMyTemplateName() == 'Reward_ChainProxy')
 	{
-		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().GetReference());
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().GetReference());
 	}
 	else
 	{
-		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().PrimaryRegionRef);
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 	}
 
 	ActivityState.GetActivityChain().RewardGenerated(NewGameState, ActivityState, RewardState);
