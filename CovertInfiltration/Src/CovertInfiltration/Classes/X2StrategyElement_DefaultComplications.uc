@@ -2,7 +2,7 @@
 class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
 // Missions that feature lootcrates or other rewards not in its X2RewardTemplates
-var config array<name> LootcrateMissions;
+var config array<name> InterceptMissions;
 
 // Items that can have their quantity halved by interception complications
 var config array<name> InterceptableItems;
@@ -69,7 +69,7 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 		return;
 	}
 
-	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
+	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > INDEX_NONE || ActivityTemplate.MissionRewards.Find('Reward_SmallIntel') > INDEX_NONE)
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_IntelIntercept'));
 	}
@@ -101,7 +101,7 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	if (ActivityTemplate == none) return false;
 	
 	// and if there is a supply or intel rewarding chain
-	if (IsLootcrateActivity(ActivityTemplate) || ActivityTemplate.MissionRewards.Find('Reward_Intel') > -1)
+	if (IsInterceptableActivity(ActivityTemplate))
 	{
 		return true;
 	}
@@ -109,14 +109,14 @@ function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_Act
 	return false;
 }
 
-static function bool IsLootcrateActivity(X2ActivityTemplate Template)
+static function bool IsInterceptableActivity(X2ActivityTemplate Template)
 {
-	return default.LootcrateMissions.Find(Template.DataName) > -1;
+	return default.InterceptMissions.Find(Template.DataName) > INDEX_NONE;
 }
 
 static function bool IsInterceptableItem(name TemplateName)
 {
-	return default.InterceptableItems.Find(TemplateName) > -1;
+	return default.InterceptableItems.Find(TemplateName) > INDEX_NONE;
 }
 
 static function X2DataTemplate CreateChosenSurveillanceTemplate()

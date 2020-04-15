@@ -204,6 +204,72 @@ ChainsOverview_Label=Activity Chains
 strOngoing=ONGOING
 strEnded=ENDED
 
+[Activity_IntelligenceInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Hack ADVENT Datavault"
+ActionRewardDisplayName="Assorted Intel"
+ActionRewardDetails="Small Intel Cache"
+
+[Activity_InformantInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Rescue Resistance Informant"
+ActionRewardDisplayName="Assorted Intel"
+ActionRewardDetails="Small Intel Cache"
+
+[Activity_DistractionInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Distract ADVENT Garrison"
+ActionRewardDisplayName="Propaganda Victory"
+ActionRewardDetails="Increase Region Income by $10"
+
+[Activity_SabotageInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Sabotage ADVENT Infrastructure"
+ActionRewardDisplayName="Delay Construction"
+ActionRewardDetails="The next AVATAR Facility is delayed by 3 days"
+
+[Activity_PersonnelRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription="Rescue XCOM Personnel"
+ActionRewardDisplayName="XCOM Staff"
+ActionRewardDetails="<XGParam:StrValue0/>"
+
+[Activity_CaptureDVIP X2ActivityTemplate_Infiltration]
+strOverviewDescription="Capture ADVENT Collaborator"
+ActionRewardDisplayName="Interrogation"
+ActionRewardDetails="On Kill: Datapad\nOn Capture: Large Intel Cache"
+
+[Activity_IntelligenceAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Hack ADVENT Datavault"
+MissionPinLabel="Hack Information"
+
+[Activity_InformantAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Rescue Resistance Informant"
+MissionPinLabel="Rescue Informant"
+
+[Activity_DistractionAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Distract ADVENT Garrison"
+MissionPinLabel="Distract ADVENT"
+
+[Activity_SabotageAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Sabotage ADVENT Infrastructure"
+MissionPinLabel="Sabotage ADVENT"
+
+[Activity_SupplyConvoy X2ActivityTemplate_Assault]
+strOverviewDescription="Raid Supply Convoy"
+MissionPinLabel="Supply Convoy"
+
+[Activity_SupplyExtract X2ActivityTemplate_Assault]
+strOverviewDescription="Interrupt Supplies Transfer"
+MissionPinLabel="Supply Transfer"
+
+[Activity_SecureUFO X2ActivityTemplate_Assault]
+strOverviewDescription="Secure the UFO"
+MissionPinLabel="Landed UFO"
+
+[Activity_WaitGeneric X2ActivityTemplate]
+strOverviewHeader="WAIT"
+strOverviewDescription="We must be patient and wait for the target to become vulnerable"
+
+[Activity_WaitDarkEvent X2ActivityTemplate]
+strOverviewHeader="WAIT"
+strOverviewDescription="Our friends in the resistance have caught wind of an ADVENT project and are investigating solutions"
+
 [Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
 strOverviewDescription=Rescue soldier from ADVENT compound
 ActionRewardDisplayName=Captured Soldier
@@ -254,10 +320,6 @@ strOverviewDescription=Recover a valuable piece of information from ADVENT's clu
 ActionRewardDisplayName=Infrastructure Data
 ActionRewardDetails=Using this, we will be able to strike against an alien <font color='#E52E11'>Dark Event</font> and neutralize it
 
-[Activity_SupplyRaid X2ActivityTemplate_Infiltration]
-strOverviewDescription=Raid ADVENT Supply Convoy
-ActionRewardDisplayName=<font color='#CBB11F'>Enemy Materiel</font>
-
 [Activity_CaptureInformant X2ActivityTemplate_Infiltration]
 strOverviewDescription=Neutralize ADVENT VIP
 ActionRewardDisplayName="Enemy Intelligence"
@@ -280,14 +342,6 @@ ActionRewardDisplayName=<font color='#CBB11F'>Intercepted Materiel</font>
 strOverviewDescription=Protect Resistance Datatap
 MissionPinLabel=Resistance Datatap
 
-[Activity_GatherSupplies X2ActivityTemplate_Assault]
-strOverviewDescription=Extract Supplies
-MissionPinLabel=Supplies Extraction
-
-[Activity_LandedUFO X2ActivityTemplate_Assault]
-strOverviewDescription=Secure the UFO
-MissionPinLabel="Landed UFO"
-
 [Activity_CounterDarkEvent X2ActivityTemplate_Assault]
 strOverviewDescription=Destroy ADVENT Infrastructure
 MissionPinLabel=Counter Dark Event
@@ -307,65 +361,73 @@ strOverviewDescription=Pinpoint AVATAR Collaborator
 [Activity_PrepareUFO X2ActivityTemplate_CovertAction]
 strOverviewDescription=Sabotage Landed UFO
 
-[Activity_WaitDE X2ActivityTemplate]
-strOverviewHeader="WAIT"
-strOverviewDescription="Our friends in the resistance have caught wind of an ADVENT project and are investigating solutions"
-
 [ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
 strTitle="Counter Dark Event"
 strDescription="Smash infrastructure critical to ADVENT's operations against XCOM."
+strObjective="halt ADVENT's <font color='#E52E11'><XGParam:StrValue0/></font> project"
 
 [ActivityChain_SupplyRaid X2ActivityChainTemplate]
 strTitle="Supply Raid"
 strDescription="Seize enemy materiel from a vulnerable supply convoy."
+strObjective="hit an ADVENT <font color='#CBB11F'>supply convoy</font>"
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Capture ADVENT VIP"
 strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
+strObjective="capture a highly-placed ADVENT <font color='#27AAE1'>collaborator</font>"
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
 strTitle="Rescue Scientist"
 strDescription="Bust a dissident scientist out of an ADVENT gulag."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_RescueEngineer X2ActivityChainTemplate]
 strTitle="Rescue Engineer"
 strDescription="Bust a dissident engineer out of an ADVENT gulag."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_JailbreakFactionSoldier X2ActivityChainTemplate]
 strTitle="Jailbreak Faction Soldier"
-strDescription="Rescue one of the faction's operatives from an ADVENT compound."
+strDescription="Rescue one of the faction's operatives from an ADVENT cell."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_JailbreakCapturedSoldier X2ActivityChainTemplate]
 strTitle="Rescue Soldier"
-strDescription="Rescue one of our captured soldiers from an ADVENT compound."
+strDescription="Rescue one of our captured soldiers from captivity."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_JailbreakChosenSoldier X2ActivityChainTemplate]
 strTitle="Rescue Soldier from Chosen"
 strDescription="Rescue one of our abducted soldiers from the Chosen."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_GatherSupplies X2ActivityChainTemplate]
 strTitle="Extract Supplies"
 strDescription="Interrupt an ADVENT supply transfer before reinforcements arrive to secure the site."
 
 [ActivityChain_GatherIntel X2ActivityChainTemplate]
-strTitle="Gather Intel"
+strTitle="Protect Datatap"
 strDescription="Protect a resistance listening post that recently intercepted important data from ADVENT transmissions."
 
 [ActivityChain_LandedUFO X2ActivityChainTemplate]
 strTitle="Raid Alien UFO"
 strDescription="Force a UFO to ground, eliminate the crew, and strip the site before they know what hit them."
+strObjective="assault the <font color='#CBB11F'>alien UFO</font>"
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Find Avatar Facility"
 strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them where their facilities are."
+strObjective="capture an <font color='#842015'>AVATAR coordinator</font>"
 
 [ActivityChain_SupplyIntercept X2ActivityChainTemplate]
 strTitle="Save Intercepted Supplies"
-strDescription="Protect a vital Resistance convoy that was intercepted by ADVENT forces."
+strDescription="Cut off an ADVENT interdiction force's communications so the Resistance can recover the goods."
+strObjective="save our <font color='#CBB11F'>intercepted supplies</font>"
 
 [ActivityChain_IntelIntercept X2ActivityChainTemplate]
 strTitle="Save Intercepted Intel"
 strDescription="Protect a crucial Resistance courier who has been cornered by ADVENT troops."
+strObjective="save our <font color='#27AAE1'>intercepted intel</font>"
 
 [X2StrategyElement_DefaultActivityChains]
 strCounterDarkEventDescription="The Resistance heard about ADVENT's <font color='#E52E11'>'<XGParam:StrValue0/>'</font> project. If you think it necessary, Commander, we can send a team to disrupt it."

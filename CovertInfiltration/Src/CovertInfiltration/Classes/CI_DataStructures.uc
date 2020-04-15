@@ -125,3 +125,20 @@ struct ActionRiskDisplayInfo
 	var string RiskName;
 	var string Description;
 };
+
+enum EActivityType
+{
+	eActivityType_Assault,
+	eActivityType_Action,
+	eActivityType_Infiltration,
+	eActivityType_Wait,
+	eActivityType_Special
+};
+
+struct ChainStage
+{
+	var EActivityType ActivityType;
+	var array<name> ActivityTags;
+	var name PresetActivity;
+	var array<name> RewardOverrides;
+};

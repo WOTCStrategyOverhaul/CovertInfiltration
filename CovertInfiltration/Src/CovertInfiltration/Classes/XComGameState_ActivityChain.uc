@@ -26,6 +26,9 @@ var array<StateObjectReference> StageRefs;
 // For example: reward units, dark event, etc
 var array<StateObjectReference> ChainObjectRefs;
 
+var array<StateObjectReference> UnclaimedChainRewardRefs;
+var array<StateObjectReference> ClaimedChainRewardRefs;
+
 // Chain Complications
 var array<StateObjectReference> ComplicationRefs;
 
@@ -86,14 +89,20 @@ event OnCreation (optional X2DataTemplate Template)
 function SetupChain (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_Activity ActivityState;
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
+	local ChainStage StageDef;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local name ChainReward;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
 
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 	TemplateManager = GetMyTemplateManager();
 	GetMyTemplate();
 
@@ -108,14 +117,15 @@ function SetupChain (XComGameState NewGameState)
 	{
 		m_Template.ChooseRegions(self, PrimaryRegionRef, SecondaryRegionRef);
 	}
-
+	
 	`CI_Trace("Selected faction and regions, spawning stages");
 
 	// Create the stages
 	StageRefs.Length = m_Template.Stages.Length;
 
-	foreach m_Template.Stages(ActivityTemplateName, i)
+	foreach m_Template.Stages(StageDef, i)
 	{
+		ActivityTemplateName = GetActivityFromStage(StageDef);
 		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplateName));
 
 		if (ActivityTemplate != none)
@@ -125,6 +135,10 @@ function SetupChain (XComGameState NewGameState)
 			ActivityState.OnEarlySetup(NewGameState);
 
 			StageRefs[i] = ActivityState.GetReference();
+		}
+		else
+		{
+			`CI_Warn("Stage definition is invalid! Cannot spawn activity: " $ ActivityTemplateName);
 		}
 	}
 
@@ -141,6 +155,21 @@ function SetupChain (XComGameState NewGameState)
 	{
 		ActivityState = XComGameState_Activity(NewGameState.GetGameStateForObjectID(ActivityRef.ObjectID));
 		ActivityState.OnSetupChain(NewGameState);
+	}
+	
+	// Generate the chain-wide rewards if our template asks for one
+	foreach m_Template.ChainRewards(ChainReward)
+	{
+		`CI_Trace("Template has chain reward: " $ ChainReward);
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
+
+		if (RewardTemplate != none)
+		{
+			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), PrimaryRegionRef);
+			UnclaimedChainRewardRefs.AddItem(RewardState.GetReference());
+			`CI_Trace("Creating chain reward: " $ ChainReward);
+		}
 	}
 
 	SetupComplications(NewGameState);
@@ -397,7 +426,7 @@ protected function bool CanComplicationBeSelected (XComGameState NewGameState, X
 
 			OtherChainState = XComGameState_ActivityChain(History.GetGameStateForObjectID(OtherObjectID));
 
-			if (OtherChainState.HasComplication(ComplicationTemplate.DataName))
+			if (!OtherChainState.bEnded && OtherChainState.HasComplication(ComplicationTemplate.DataName))
 			{
 				return false;
 			}
@@ -406,9 +435,11 @@ protected function bool CanComplicationBeSelected (XComGameState NewGameState, X
 
 	if (ComplicationTemplate.CanBeChosen != none && !ComplicationTemplate.CanBeChosen(NewGameState, self))
 	{
+		`CI_Trace(ComplicationTemplate.FriendlyName $ " cannot be chosen");
 		return false;
 	}
-
+	
+	`CI_Trace(ComplicationTemplate.FriendlyName $ " is chosen");
 	return true;
 }
 
@@ -467,6 +498,8 @@ function XComGameState_DarkEvent GetChainDarkEvent()
 			return DarkEventState;
 		}
 	}
+
+	return none;
 }
 
 function PauseChainDarkEvent(XComGameState NewGameState)
@@ -526,6 +559,45 @@ function RestoreChainDarkEventCompleting (XComGameState NewGameState)
 	DarkEventState.bTemporarilyBlockActivation = false;
 }
 
+  ////////////////////
+ /// Chain Reward ///
+////////////////////
+
+function XComGameState_Reward ClaimChainReward (XComGameState NewGameState)
+{
+	local XComGameStateHistory History;
+	local StateObjectReference RewardRef;
+	local XComGameState_Reward RewardState;
+	
+	History = `XCOMHISTORY;
+
+	foreach UnclaimedChainRewardRefs(RewardRef)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+		if (RewardState != none)
+		{
+			`CI_Trace("Claiming chain reward: " $ RewardState.GetMyTemplateName());
+			UnclaimedChainRewardRefs.RemoveItem(RewardRef);
+			ClaimedChainRewardRefs.AddItem(RewardRef);
+			return RewardState;
+		}
+	}
+
+	`RedScreen(GetMyTemplateName() $ " has no chain rewards to return!");
+
+	return none;
+}
+
+function ActivityRewardGenerated (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+{
+	GetMyTemplate();
+	if (m_Template.OnActivityGeneratedReward != none)
+	{
+		m_Template.OnActivityGeneratedReward(NewGameState, ActivityState, RewardState);
+	}
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
@@ -583,6 +655,47 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
 }
 
+static protected function name GetActivityFromStage(ChainStage StageDef)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2ActivityTemplate ActivityTemplate;
+	local X2DataTemplate DataTemplate;
+	local array<name> SelectedActivities;
+	
+	if (StageDef.PresetActivity != '')
+	{
+		`CI_Trace("Stage is preset");
+		return StageDef.PresetActivity;
+	}
+	else
+	{
+		`CI_Trace("Stage is random");
+	}
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	foreach TemplateManager.IterateTemplates(DataTemplate)
+	{
+		ActivityTemplate = X2ActivityTemplate(DataTemplate);
+
+		if (ActivityTemplate != none
+		 && StageDef.ActivityType == ActivityTemplate.ActivityType
+		 && StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) != INDEX_NONE)
+		{
+			`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
+			SelectedActivities.AddItem(ActivityTemplate.DataName);
+		}
+	}
+	
+	if (SelectedActivities.Length == 0)
+	{
+		`Redscreen("Failed to find any activities for this stage");
+		return '';
+	}
+
+	return SelectedActivities[`SYNC_RAND_STATIC(SelectedActivities.Length)];
+}
+
 ///////////
 /// Loc ///
 ///////////
@@ -603,6 +716,16 @@ function string GetOverviewDescription ()
 
 	strReturn = GetMyTemplate().GetOverviewDescription(self);
 	if (strReturn == "") strReturn = "(MISSING DESCRIPTION)";
+
+	return strReturn;
+}
+
+function string GetNarrativeObjective ()
+{
+	local string strReturn;
+
+	strReturn = GetMyTemplate().GetNarrativeObjective(self);
+	if (strReturn == "") strReturn = "(MISSING OBJECTIVE)";
 
 	return strReturn;
 }

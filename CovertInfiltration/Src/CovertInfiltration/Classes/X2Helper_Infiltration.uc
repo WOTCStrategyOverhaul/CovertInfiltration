@@ -1218,3 +1218,118 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 		}
 	}
 }
+
+static function bool ValidateActivityType(eActivityType Type)
+{
+	switch (Type)
+	{
+		case eActivityType_Assault:
+			return true;
+		case eActivityType_Action:
+			return true;
+		case eActivityType_Infiltration:
+			return true;
+	}
+
+	return false;
+}
+
+static function int GetWaitPeriodDuration (int MinDays, int MaxDays)
+{
+	local int Min, Max;
+
+	Min = MinDays;
+	Max = MaxDays;
+
+	// Make sure that the values are sensible
+	if (Min < 0) Min = 0;
+	if (Max < Min) Max = Min; // This probably won't work properly -.-
+
+	// Convert to seconds
+	Min *= 86400;
+	Max *= 86400;
+
+	// Return
+	return Min + `SYNC_RAND_STATIC(Max - Min);
+}
+
+static function string GetUnitDetails (XComGameState_Activity ActivityState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Reward RewardState;
+	local XComGameState_Unit UnitState;
+	local StateObjectReference RewardRef;
+	local string UnitString;
+	
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2RewardTemplate RewardTemplate;
+	local name RewardName;
+	local int LastActivity;
+	
+	History = `XCOMHISTORY;
+	
+	foreach ActivityState.GetActivityChain().ClaimedChainRewardRefs(RewardRef)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+		if (RewardState != none)
+		{
+			if (RewardState.RewardObjectReference.ObjectID > 0)
+			{
+				UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+				
+				if (UnitState != none)
+				{
+					break;
+				}
+			}
+		}
+	}
+	
+	if (UnitState == none)
+	{
+		foreach ActivityState.GetActivityChain().UnclaimedChainRewardRefs(RewardRef)
+		{
+			RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+			if (RewardState != none)
+			{
+				if (RewardState.RewardObjectReference.ObjectID > 0)
+				{
+					UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+				
+					if (UnitState != none)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (UnitState != none)
+	{
+		if (UnitState.IsSoldier())
+		{
+			if (UnitState.GetRank() > 0)
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull) @ "(" $ UnitState.GetSoldierClassTemplate().DisplayName $ ")";
+			}
+			else
+			{
+				UnitString = UnitState.GetName(eNameType_RankFull);
+			}
+		}
+		else
+		{
+			UnitString = class'X2StrategyElement_DefaultRewards'.default.DoctorPrefixText @ UnitState.GetName(eNameType_Full) @ "(" $ RewardState.GetMyTemplate().DisplayName $ ")";
+		}
+	}
+	else
+	{
+		`Redscreen("GetUnitDetails: chain has no personnel rewards!");
+		return "UNITNOTFOUND";
+	}
+
+	return UnitString;
+}

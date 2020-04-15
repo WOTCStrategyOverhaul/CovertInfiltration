@@ -62,6 +62,8 @@ function InitializeFromActivity (XComGameState NewGameState)
 	{
 		Rewards.AddItem(class'X2Helper_Infiltration'.static.CreateRewardNone(NewGameState));
 	}
+	
+	`CI_Trace("InitializeFromActivity reports " $ Rewards.Length $ " rewards");
 
 	class'X2Helper_Infiltration'.static.InitalizeGeneratedMissionFromActivity(NewGameState, GetActivity()); // This also selects sitreps from plot type
 	SelectPlotAndBiome(); // Need to do this here so that we have plot type display on the loadout. This also selects sitreps from plot type

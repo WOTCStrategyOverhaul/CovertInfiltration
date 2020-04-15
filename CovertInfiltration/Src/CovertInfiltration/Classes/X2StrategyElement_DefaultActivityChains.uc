@@ -23,10 +23,10 @@ static function array<X2DataTemplate> CreateTemplates()
 	Activites.AddItem(CreateRescueEngineerTemplate());
 	Activites.AddItem(CreateJailbreakFactionSoldierTemplate());
 	Activites.AddItem(CreateJailbreakCapturedSoldierTemplate());
+	Activites.AddItem(CreateJailbreakChosenSoldierTemplate());
 	Activites.AddItem(CreateGatherSuppliesTemplate());
 	Activites.AddItem(CreateGatherIntelTemplate());
 	Activites.AddItem(CreateLandedUFOTemplate());
-	//Activites.AddItem(CreateHuntChosenTemplate());
 	Activites.AddItem(CreateDestroyFacilityTemplate());
 	Activites.AddItem(CreateIntelInterceptionTemplate());
 	Activites.AddItem(CreateSupplyInterceptionTemplate());
@@ -46,12 +46,14 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.SetupChain = SetupDarkEventChain;
 	Template.CleanupChain = CleanupDarkEventChain;
 
-	Template.Stages.AddItem('Activity_WaitDE');
-	//Template.Stages.AddItem('Activity_PrepareCounterDE');
-	Template.Stages.AddItem('Activity_RecoverDarkEvent');
-	Template.Stages.AddItem('Activity_CounterDarkEvent');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDarkEvent'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_DarkEvent'));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
+	Template.GetNarrativeObjective = GetDarkEventObjective;
+	Template.OnActivityGeneratedReward = ConnectDarkEventToChain;
 
 	return Template;
 }
@@ -91,6 +93,18 @@ static function string CounterDarkEventGetOverviewDescription (XComGameState_Act
 	return `XEXPAND.ExpandString(default.strCounterDarkEventDescription);
 }
 
+static function ConnectDarkEventToChain (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
+{
+	// If this is a dark event reward, and the chain has a dark event attached, connect the two
+	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
+	{
+		if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
+		{
+			RewardState.SetReward(ActivityState.GetActivityChain().GetChainDarkEvent().GetReference());
+		}
+	}
+}
+
 static function X2DataTemplate CreateSupplyRaidTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -103,8 +117,8 @@ static function X2DataTemplate CreateSupplyRaidTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsAdvancedChainAvailable;
 	
-	Template.Stages.AddItem('Activity_CommanderSupply');
-	Template.Stages.AddItem('Activity_SupplyRaid');
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Distraction'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_SupplyConvoy'));
 
 	return Template;
 }
@@ -121,8 +135,10 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsAdvancedChainAvailable;
 
-	Template.Stages.AddItem('Activity_RecoverInformant');
-	Template.Stages.AddItem('Activity_CaptureInformant');
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_Datapad', 'Reward_Intel'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -137,10 +153,12 @@ static function X2DataTemplate CreateRescueScientistTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.ChainRewards.AddItem('Reward_Scientist');
 	
-	//Template.Stages.AddItem('Activity_RecoverPersonnel');
-	Template.Stages.AddItem('Activity_PreparePersonnel');
-	Template.Stages.AddItem('Activity_RescueScientist');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -155,10 +173,12 @@ static function X2DataTemplate CreateRescueEngineerTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
+	Template.ChainRewards.AddItem('Reward_Engineer');
 
-	//Template.Stages.AddItem('Activity_RecoverPersonnel');
-	Template.Stages.AddItem('Activity_PreparePersonnel');
-	Template.Stages.AddItem('Activity_RescueEngineer');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PreparePersonnel'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -174,9 +194,12 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsExtraSoldierChainAvailable;
+	Template.ChainRewards.AddItem('Reward_ExtraFactionSoldier');
 
-	Template.Stages.AddItem('Activity_PrepareFactionJB');
-	Template.Stages.AddItem('Activity_JailbreakFactionSoldier');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -233,8 +256,11 @@ static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsCapturedSoldierChainAvailable;
-
-	Template.Stages.AddItem('Activity_JailbreakSoldier');
+	Template.ChainRewards.AddItem('Reward_SoldierCaptured');
+	
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -255,8 +281,11 @@ static function X2DataTemplate CreateJailbreakChosenSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsChosenCapturedSoldierChainAvailable;
-
-	Template.Stages.AddItem('Activity_JailbreakChosenSoldier');
+	Template.ChainRewards.AddItem('Reward_ChosenSoldierCaptured');
+	
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Personnel',,, 'Reward_ChainProxy'));
+	
+	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
@@ -277,7 +306,7 @@ static function X2DataTemplate CreateGatherSuppliesTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 
-	Template.Stages.AddItem('Activity_GatherSupplies');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_SupplyExtract'));
 
 	return Template;
 }
@@ -292,8 +321,9 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
-
-	Template.Stages.AddItem('Activity_GatherIntel');
+	Template.ChainRewards.AddItem('Reward_Intel');
+	
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_ChainProxy'));
 
 	return Template;
 }
@@ -310,9 +340,9 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsUFOChainAvailable;
 	
-	Template.Stages.AddItem('Activity_RecoverUFO');
-	Template.Stages.AddItem('Activity_PrepareUFO');
-	Template.Stages.AddItem('Activity_LandedUFO');
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Sabotage'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareUFO'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_SecureUFO'));
 
 	return Template;
 }
@@ -331,25 +361,6 @@ static function bool IsUFOChainAvailable(XComGameState NewGameState)
 	return false;
 }
 
-/*
-static function X2DataTemplate CreateHuntChosenTemplate()
-{
-	local X2ActivityChainTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_HuntChosen');
-	
-	Template.ChooseFaction = ChooseMetFaction; // TODO: spawn immediately when contacting faction
-	Template.ChooseRegions = ChooseRandomContactedRegion; // TODO: choose region that the chosen is at
-	
-	Template.Stages.AddItem('Activity_PrepareChosen');
-	Template.Stages.AddItem('Activity_RecoverChosen');
-	Template.Stages.AddItem('Activity_CommanderChosen');
-	//Template.Stages.AddItem('Activity_ChosenBase');
-	// TODO: when done, reveal chosen base
-
-	return Template;
-}
-*/
 static function X2DataTemplate CreateDestroyFacilityTemplate()
 {
 	local X2ActivityChainTemplate Template;
@@ -362,9 +373,9 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsFacilityChainAvailable;
 	
-	Template.Stages.AddItem('Activity_PrepareFacility');
-	Template.Stages.AddItem('Activity_FacilityInformant');
-	//Template.Stages.AddItem('Activity_AvatarFacility');
+	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFacility'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP'));
+	//Template.Stages.AddItem(ConstructPresetStage('Activity_AvatarFacility'));
 
 	// We can't really make the mission itself into an activity as the facility itself is THE mission
 	// As such, we workaround by rewarding 2nd stage with a facility lead, so that the player can unlock the mission
@@ -422,7 +433,7 @@ static function X2DataTemplate CreateIntelInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_IntelIntercept');
 	
-	Template.Stages.AddItem('Activity_IntelRescue');
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant',, 'Reward_Container'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -435,7 +446,7 @@ static function X2DataTemplate CreateSupplyInterceptionTemplate()
 
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_SupplyIntercept');
 	
-	Template.Stages.AddItem('Activity_SupplyRescue');
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Sabotage',, 'Reward_Container'));
 
 	Template.PostStageSetup = AttachResCon;
 
@@ -563,4 +574,70 @@ static function StateObjectReference FindRegionWithRelay ()
 	}
 
 	return SelectedRegion;
+}
+
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward1 = '', optional name Reward2 = '')
+{
+	local ChainStage Stage;
+
+	Stage.ActivityType = Type;
+	Stage.ActivityTags.AddItem(Tag1);
+	
+	if (Tag2 != '')
+	{
+		Stage.ActivityTags.AddItem(Tag2);
+	}
+	if (Tag3 != '')
+	{
+		Stage.ActivityTags.AddItem(Tag3);
+	}
+	
+	if (Reward1 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward1);
+	}
+	if (Reward2 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward2);
+	}
+
+	return Stage;
+}
+
+static function ChainStage ConstructPresetStage(name Activity, optional name Reward1 = '', optional name Reward2 = '')
+{
+	local ChainStage Stage;
+
+	Stage.PresetActivity = Activity;
+	
+	if (Reward1 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward1);
+	}
+	if (Reward2 != '')
+	{
+		Stage.RewardOverrides.AddItem(Reward2);
+	}
+
+	return Stage;
+}
+
+static function string GetStaffObjective (XComGameState_ActivityChain ChainState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = class'X2Helper_Infiltration'.static.GetUnitDetails(ChainState.GetLastActivity());
+
+	return `XEXPAND.ExpandString(ChainState.GetMyTemplate().strObjective);
+}
+
+static function string GetDarkEventObjective (XComGameState_ActivityChain ChainState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.StrValue0 = ChainState.GetChainDarkEvent().GetDisplayName();
+
+	return `XEXPAND.ExpandString(ChainState.GetMyTemplate().strObjective);
 }

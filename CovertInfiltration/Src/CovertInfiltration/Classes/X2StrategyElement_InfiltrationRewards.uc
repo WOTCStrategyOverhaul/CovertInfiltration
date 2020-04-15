@@ -11,6 +11,12 @@ class X2StrategyElement_InfiltrationRewards extends X2StrategyElement config(Gam
 var config array<int> SmallIntelRewardMin;
 var config array<int> SmallIntelRewardMax;
 
+var config array<int> SmallIncomeIncreaseRewardMin;
+var config array<int> SmallIncomeIncreaseRewardMax;
+
+var config array<int> FacilityDelayRewardMin;
+var config array<int> FacilityDelayRewardMax;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -23,6 +29,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	
 	// Activity rewards
 	Rewards.AddItem(CreateSmallIntelRewardTemplate());
+	Rewards.AddItem(CreateSmallIncreaseIncomeRewardTemplate());
+	Rewards.AddItem(CreateFacilityDelayRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
 	Rewards.AddItem(CreateDarkEventRewardTemplate());
@@ -32,8 +40,9 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_ExperimentalItem', 'ExperimentalItem'));
 	Rewards.AddItem(CreateTechInspireRewardTemplate());
-
+	
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
+	Rewards.AddItem(CreateActivityChainProxyReward());
 
 	return Rewards;
 }
@@ -112,6 +121,128 @@ static function int GetSmallIntelReward()
 	IntelMax = `ScaleStrategyArrayInt(default.SmallIntelRewardMax);
 	
 	return IntelMin + `SYNC_RAND_STATIC(IntelMax - IntelMin);
+}
+
+static function X2DataTemplate CreateSmallIncreaseIncomeRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_SmallIncreaseIncome');
+
+	Template.GenerateRewardFn = GenerateSmallIncomeReward;
+	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetIncreaseIncomeReward;
+	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveIncreaseIncomeReward;
+	Template.GetRewardDetailsStringFn = class'X2StrategyElement_DefaultRewards'.static.GetIncreaseIncomeRewardString;
+	Template.GetRewardStringFn = GetIncreaseIncomeRewardString;
+	Template.CleanUpRewardFn = class'X2StrategyElement_DefaultRewards'.static.CleanUpRewardWithoutRemoval;
+
+	return Template;
+}
+
+static function GenerateSmallIncomeReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	local XComGameStateHistory History;
+	local XComGameState_WorldRegion RegionState;
+	local XComGameState_CovertAction ActionState;
+
+	History = `XCOMHISTORY;
+	RegionState = XComGameState_WorldRegion(History.GetGameStateForObjectID(AuxRef.ObjectID));
+	ActionState = XComGameState_CovertAction(History.GetGameStateForObjectID(AuxRef.ObjectID));
+	if (ActionState != none)
+	{
+		RewardState.RewardObjectReference = ActionState.GetWorldRegion().GetReference();
+	}
+	else
+	{
+		RewardState.RewardObjectReference = RegionState.GetReference();
+	}
+
+	RewardState.Quantity = Round(float(GetSmallIncomeReward()) * RewardScalar);
+}
+
+static function int GetSmallIncomeReward()
+{
+	local int IncomeMin;
+	local int IncomeMax;
+	
+	IncomeMin = `ScaleStrategyArrayInt(default.SmallIncomeIncreaseRewardMin);
+	IncomeMax = `ScaleStrategyArrayInt(default.SmallIncomeIncreaseRewardMax);
+	
+	return IncomeMin + `SYNC_RAND_STATIC(IncomeMax - IncomeMin);
+}
+
+static function string GetIncreaseIncomeRewardString(XComGameState_Reward RewardState)
+{
+	return RewardState.GetMyTemplate().DisplayName;
+}
+
+static function X2DataTemplate CreateFacilityDelayRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_FacilityDelay');
+
+	Template.GenerateRewardFn = GenerateFacilityDelayReward;
+	Template.SetRewardFn = SetFacilityDelayReward;
+	Template.GiveRewardFn = GiveFacilityDelayReward;
+	Template.GetRewardDetailsStringFn = GetFacilityDelayRewardDetails;
+	Template.GetRewardStringFn = GetFacilityDelayRewardString;
+
+	return Template;
+}
+
+static function GenerateFacilityDelayReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	RewardState.Quantity = Round(float(GetFacilityDelayReward()) * RewardScalar);
+}
+
+static function SetFacilityDelayReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.Quantity = Amount;
+}
+
+static function GiveFacilityDelayReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersAlien', AlienHQ)
+	{
+		break;
+	}
+
+	if (AlienHQ == none)
+	{
+		AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+		AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
+	}
+
+	AlienHQ.DelayFacilityTimer(RewardState.Quantity * 24);
+}
+
+static function int GetFacilityDelayReward()
+{
+	local int DelayMin;
+	local int DelayMax;
+	
+	DelayMin = `ScaleStrategyArrayInt(default.FacilityDelayRewardMin);
+	DelayMax = `ScaleStrategyArrayInt(default.FacilityDelayRewardMax);
+	
+	return DelayMin + `SYNC_RAND_STATIC(DelayMax - DelayMin);
+}
+
+static function string GetFacilityDelayRewardString(XComGameState_Reward RewardState)
+{
+	return RewardState.GetMyTemplate().DisplayName;
+}
+
+static function string GetFacilityDelayRewardDetails(XComGameState_Reward RewardState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.IntValue0 = RewardState.Quantity;
+
+	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().RewardDetails);
 }
 
 static function X2DataTemplate CreateDatapadRewardTemplate()
@@ -312,6 +443,89 @@ static function X2ActivityTemplate_Infiltration GetInfiltrationTemplateFromRewar
 	Activity = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
 
 	return X2ActivityTemplate_Infiltration(Activity.GetMyTemplate());
+}
+
+static function X2DataTemplate CreateActivityChainProxyReward ()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_ChainProxy');
+
+	Template.IsRewardAvailableFn = RewardNotAvaliable;
+	Template.SetRewardFn = SetProxyReward;
+	Template.GiveRewardFn = GiveProxyReward;
+	Template.GetRewardStringFn = GetProxyRewardString;
+	Template.GetRewardPreviewStringFn = GetProxyRewardPreview;
+	Template.GetRewardDetailsStringFn = GetProxyRewardDetails;
+	Template.GetBlackMarketStringFn = GetProxyBlackMarketString;
+	Template.GetRewardImageFn = GetProxyRewardImage;
+	Template.GetRewardIconFn = GetProxyRewardIcon;
+	Template.RewardPopupFn = DisplayProxyRewardPopup;
+	Template.GenerateRewardFn = GenerateProxyReward;
+
+	return Template;
+}
+
+static function SetProxyReward (XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	GetProxyReward(RewardState).SetReward(RewardObjectRef, Amount);
+}
+
+static function GiveProxyReward (XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	GetProxyReward(RewardState).GiveReward(NewGameState, AuxRef, bOrder, OrderHours);
+}
+
+static function string GetProxyRewardString (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetRewardString();
+}
+
+static function string GetProxyRewardPreview (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetRewardPreviewString();
+}
+
+static function string GetProxyRewardDetails (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetRewardDetailsString();
+}
+
+static function string GetProxyBlackMarketString (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetBlackMarketString();
+}
+
+static function string GetProxyRewardImage (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetRewardImage();
+}
+
+static function string GetProxyRewardIcon (XComGameState_Reward RewardState)
+{
+	return GetProxyReward(RewardState).GetRewardIcon();
+}
+
+static function DisplayProxyRewardPopup (XComGameState_Reward RewardState)
+{
+	GetProxyReward(RewardState).DisplayRewardPopup();
+}
+
+static function GenerateProxyReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Reward ProxyRewardState;
+
+	ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', AuxRef.ObjectID));
+	ProxyRewardState = ChainState.ClaimChainReward(NewGameState);
+
+	RewardState.RewardObjectReference = ProxyRewardState.GetReference();
+	RewardState.Quantity = ProxyRewardState.Quantity;
+}
+
+static function XComGameState_Reward GetProxyReward (XComGameState_Reward RewardState)
+{
+	return XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 }
 
 /////////////////////

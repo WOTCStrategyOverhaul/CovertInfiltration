@@ -127,41 +127,47 @@ static protected function EventListenerReturn CovertAction_ActionSelectedOverrid
 
 static protected function EventListenerReturn CovertAction_ModifyNarrativeParamTag(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local XComGameState_DarkEvent DarkEventState;
 	local XComGameState_Activity ActivityState;
 	local XComGameState_CovertAction Action;
 	local XGParamTag Tag;
+	local int SavedInt0, SavedInt1, SavedInt2;
+	local string SavedStr0, SavedStr1, SavedStr2, SavedStr3, SavedStr4;
 
 	Action = XComGameState_CovertAction(EventSource);
 	Tag = XGParamTag(EventData);
 	
 	if (Action == none || Tag == none) return ELR_NoInterrupt;
 
-	if (
-		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_PrepareCounterDE' &&
-		Action.GetMyNarrativeTemplateName() != 'CovertActionNarrative_RecoverDarkEventInfil'
-	)
-	{
-		return ELR_NoInterrupt;
-	}
-
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObject(Action);
 	if (ActivityState == none) ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObject(Action);
+	if (ActivityState == none) return ELR_NoInterrupt;
 	
-	if (ActivityState == none)
-	{
-		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative doesn't belong to an activity");
-		return ELR_NoInterrupt;
-	}
+	// XGParamTag is a singleton, which means when we change the values of it
+	// in GetNarrativeObjective they will be altered here as well, therefore
+	// they must be saved and restored before and after the function call...
 
-	DarkEventState = ActivityState.GetActivityChain().GetChainDarkEvent();
-	if (DarkEventState == none)
-	{
-		`Redscreen("CA with" @ Action.GetMyNarrativeTemplateName() @ "narrative belongs to a chain with no DE");
-		return ELR_NoInterrupt;
-	}
+	SavedInt0 = Tag.IntValue0;
+	SavedInt1 = Tag.IntValue1;
+	SavedInt2 = Tag.IntValue2;
+
+	SavedStr0 = Tag.StrValue0;
+	SavedStr1 = Tag.StrValue1;
+	SavedStr2 = Tag.StrValue2;
+	SavedStr3 = Tag.StrValue3;
+
+	// ...except for StrValue4, which we actually intend to override
+	SavedStr4 = ActivityState.GetActivityChain().GetNarrativeObjective();
 	
-	Tag.StrValue4 = DarkEventState.GetDisplayName();
+	Tag.IntValue0 = SavedInt0;
+	Tag.IntValue1 = SavedInt1;
+	Tag.IntValue2 = SavedInt2;
+
+	Tag.StrValue0 = SavedStr0;
+	Tag.StrValue1 = SavedStr1;
+	Tag.StrValue2 = SavedStr2;
+	Tag.StrValue3 = SavedStr3;
+
+	Tag.StrValue4 = SavedStr4;
 
 	return ELR_NoInterrupt;
 }

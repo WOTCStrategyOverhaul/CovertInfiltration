@@ -16,7 +16,6 @@ var name ElementName; // the name of the game element this template modifies
 
 function bool ValidateTemplate(out string strError)
 {
-	local X2DataTemplate             DataTemplate;
 	local X2ItemTemplateManager      ItemTemplateManager;
 	local X2ItemTemplate             ItemTemplate;
 	local X2CharacterTemplateManager CharacterTemplateManager;

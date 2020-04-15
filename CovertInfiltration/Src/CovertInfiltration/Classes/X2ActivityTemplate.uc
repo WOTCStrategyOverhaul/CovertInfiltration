@@ -13,6 +13,8 @@
 class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
+var EActivityType ActivityType;
+var name ActivityTag;
 
 ///////////
 /// Loc ///
@@ -80,8 +82,24 @@ static function string DefaultGetOverviewStatus (XComGameState_Activity Activity
 	return class'UIUtilities_Infiltration'.static.GetLabelForActivityCompletionStatus(ActivityState.CompletionStatus);
 }
 
+function bool ValidateTemplate (out string strError)
+{
+	if (ActivityType == eActivityType_Action
+	 || ActivityType == eActivityType_Assault
+	 || ActivityType == eActivityType_Infiltration
+	 || ActivityType == eActivityType_Wait
+	 || ActivityType == eActivityType_Special)
+	{
+		return true;
+	}
+
+	strError = "has an invalid or missing ActivityType!";
+	return false;
+}
+
 defaultproperties
 {
+	ActivityType = -1
 	StateClass = class'XComGameState_Activity'
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus
