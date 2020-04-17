@@ -127,7 +127,7 @@ static function ResistanceInformants ()
 {
 	if (!ShouldShowPopup('ResistanceInformants')) return;
 
-	UITutorialBoxLarge(default.strResistanceInformantsHeader, default.strResistanceInformantsBody);
+	UITutorialBoxLarge(default.strResistanceInformantsHeader, `XEXPAND.ExpandString(default.strResistanceInformantsBody));
 }
 
 static function AlienFacilityBuilt ()
