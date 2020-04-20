@@ -206,7 +206,7 @@ Description="All enemies gain powerful defensive bonuses when at full health"
 
 [EquipmentCache X2SitRepTemplate]
 FriendlyName="Equipment Cache"
-Description="Up to four soldiers will each recieve an extra basic utility item"
+Description="Each soldier in the squad will recieve an extra basic utility item"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Full Sensor Coverage"
@@ -247,7 +247,7 @@ Description="ADVENT's perimeter sensors have put the garrison on high alert - ou
 FriendlyName="Injured Squadmember"
 Description="Our team ran into an ADVENT patrol on the way to the mission site - they're tired and one squadmember took a hit"
 
-[EquipmentCacheEffect X2SitRepEffect_ModifyTacticalStartState]
+[EquipmentCacheEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Extra Utility Items"
 Description="The Resistance had a supply cache in the area, which our team took advantage of - they have some extra items that may come in handy"
 

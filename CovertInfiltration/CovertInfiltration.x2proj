@@ -285,6 +285,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2DownloadableContentInfo_CovertInfiltration_Fake.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Effect_AddRandomUtilityItem.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Effect_CoverHitModifier.uc">
       <SubType>Content</SubType>
     </Content>

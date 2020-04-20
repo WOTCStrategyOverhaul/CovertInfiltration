@@ -18,6 +18,8 @@ var config float OPPORTUNE_MOMENT_1_DETECTION_MODIFIER;
 var config int OPPORTUNE_MOMENT_2_CRIT_BONUS;
 var config float OPPORTUNE_MOMENT_2_DETECTION_MODIFIER;
 
+var config array<name> EQUIPMENTCACHE_ITEMS;
+
 var config int EXPERIMENTALROLLOUT_CRITMODIFIER;
 var config float EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE;
 
@@ -46,6 +48,7 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(FoxholesBuff());
     Templates.AddItem(OpportuneMoment1());
     Templates.AddItem(OpportuneMoment2());
+    Templates.AddItem(EquipmentCacheItem());
     Templates.AddItem(ExperimentalRolloutBuff());
 
     return Templates;
@@ -249,6 +252,30 @@ static function X2AbilityTemplate ExperimentalRolloutBuff ()
 	ArmorEffect.CritModifier = default.EXPERIMENTALROLLOUT_CRITMODIFIER;
 	ArmorEffect.ExplosiveResistance = default.EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE;
 	Template.AddTargetEffect(ArmorEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate EquipmentCacheItem ()
+{
+	local X2AbilityTemplate Template;
+	local X2Effect_AddRandomUtilityItem ItemEffect;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'EquipmentCacheItem');
+    Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_loot";
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+    Template.bIsPassive = true;
+
+	ItemEffect = new class'X2Effect_AddRandomUtilityItem';
+	ItemEffect.DataNames = default.EQUIPMENTCACHE_ITEMS;
+	Template.AddTargetEffect(ItemEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 

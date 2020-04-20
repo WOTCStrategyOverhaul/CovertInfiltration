@@ -29,8 +29,6 @@ var config array<SitRepUnitSelectionData> CongregationCharacterSelection;
 var config float MESSYINSERTION_WILLLOSS;
 var config float MESSYINSERTION_HEALTHLOSS;
 
-var config array<name> EQUIPMENTCACHE_ITEMS;
-
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -44,6 +42,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateFoxholesBuffEffect());
 	Templates.AddItem(CreateOpportuneMoment1Effect());
 	Templates.AddItem(CreateOpportuneMoment2Effect());
+	Templates.AddItem(CreateEquipmentCacheEffect());
 	Templates.AddItem(CreateExperimentalRolloutEffect());
 
 	// podsize & encounters
@@ -60,7 +59,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateVolunteerArmyEffectTemplate());
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
 	Templates.AddItem(CreateMessyInsertionEffectTemplate());
-	Templates.AddItem(CreateEquipmentCacheEffectTemplate());
 	
 	// misc
 	Templates.AddItem(CreateUpdatedFirewallsEffect());
@@ -165,6 +163,19 @@ static function X2SitRepEffectTemplate CreateOpportuneMoment2Effect()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'OpportuneMoment2Effect');
 
 	Template.AbilityTemplateNames.AddItem('OpportuneMoment2');
+	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateEquipmentCacheEffect()
+{
+	local X2SitRepEffect_GrantAbilities Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'EquipmentCacheEffect');
+	
+	Template.AbilityTemplateNames.AddItem('EquipmentCacheItem');
+	
 	Template.GrantToSoldiers = true;
 
 	return Template;
@@ -680,163 +691,6 @@ static function MessyInsertionTacticalStartModifier(XComGameState StartState)
 				`CI_Trace("Health: " $ UnitState.GetCurrentStat(eStat_HP));
 			}
 		}
-	}
-}
-
-static function X2SitRepEffectTemplate CreateEquipmentCacheEffectTemplate()
-{
-	local X2SitRepEffect_ModifyTacticalStartState Template;
-
-	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'EquipmentCacheEffect');
-
-	Template.ModifyTacticalStartStateFn = EquipmentCacheTacticalStartModifier;
-	
-	return Template;
-}
-
-static function EquipmentCacheTacticalStartModifier(XComGameState StartState)
-{
-	local X2ItemTemplate ItemTemplate;
-	local X2ItemTemplateManager ItemTemplateMgr;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_Unit UnitState;
-	local array<StateObjectReference> UnitRefs;
-	local int LoopIdx;
-
-	`CI_Trace("Editing StartState!");
-
-	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
-	{
-		break;
-	}
-
-	UnitRefs = XComHQ.Squad;
-	
-	for (LoopIdx = 0; LoopIdx < UnitRefs.Length; LoopIdx++)
-	{
-		UnitState = XComGameState_Unit(StartState.GetGameStateForObjectID(UnitRefs[LoopIdx].ObjectID));
-
-		if (UnitState != none && LoopIdx < default.EQUIPMENTCACHE_ITEMS.Length)
-		{
-			UnitState = XComGameState_Unit(StartState.ModifyStateObject(class'XComGameState_Unit', UnitState.ObjectID));
-			
-			ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
-			ItemTemplate = ItemTemplateMgr.FindItemTemplate(default.EQUIPMENTCACHE_ITEMS[LoopIdx]);
-			`XCOMHQ.UpdateItemTemplateToHighestAvailableUpgrade(ItemTemplate);
-
-			`CI_Trace("Granting " $ default.EQUIPMENTCACHE_ITEMS[LoopIdx]);
-
-			AddUtilityItem(UnitState, ItemTemplate, StartState);
-		}
-	}
-}
-
-// Taken from XModBase's XMBEffect_AddUtilityItem
-static function AddUtilityItem(XComGameState_Unit NewUnit, X2ItemTemplate ItemTemplate, XComGameState NewGameState)
-{
-	local X2EquipmentTemplate EquipmentTemplate;
-	local XComGameState_Item ItemState;
-	local X2AbilityTemplateManager AbilityTemplateMan;
-	local X2AbilityTemplate AbilityTemplate;
-	local XComGameStateHistory History;
-	local name AbilityName;
-	local array<SoldierClassAbilityType> EarnedSoldierAbilities;
-	local XGUnit UnitVisualizer;
-	local int idx;
-
-	History = `XCOMHISTORY;
-
-	AbilityTemplateMan = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
-
-	EquipmentTemplate = X2EquipmentTemplate(ItemTemplate);
-	if (EquipmentTemplate == none)
-	{
-		`RedScreen("Missing equipment template for" @ ItemTemplate.DataName);
-		return;
-	}
-
-	// No items to merge with, so create the item
-	ItemState = EquipmentTemplate.CreateInstanceFromTemplate(NewGameState);
-	ItemState.Ammo = 1;
-	ItemState.Quantity = 0;  // Flag as not a real item
-
-	// Temporarily turn off equipment restrictions so we can add the item to the unit's inventory
-	NewUnit.bIgnoreItemEquipRestrictions = true;
-	NewUnit.AddItemToInventory(ItemState, eInvSlot_Utility, NewGameState);
-	NewUnit.bIgnoreItemEquipRestrictions = false;
-
-	// Update the unit's visualizer to include the new item
-	// Note: Normally this should be done in an X2Action, but since this effect is normally used in
-	// a PostBeginPlay trigger, we just apply the change immediately.
-	//UnitVisualizer = XGUnit(NewUnit.GetVisualizer());
-	//UnitVisualizer.ApplyLoadoutFromGameState(NewUnit, NewGameState);
-
-	// Add equipment-dependent soldier abilities
-	EarnedSoldierAbilities = NewUnit.GetEarnedSoldierAbilities();
-	for (idx = 0; idx < EarnedSoldierAbilities.Length; ++idx)
-	{
-		AbilityTemplate = AbilityTemplateMan.FindAbilityTemplate(EarnedSoldierAbilities[idx].AbilityName);
-
-		// Add utility-item abilities
-		if (EarnedSoldierAbilities[idx].ApplyToWeaponSlot == eInvSlot_Utility &&
-			EarnedSoldierAbilities[idx].UtilityCat == ItemState.GetWeaponCategory())
-		{
-			InitAbility(AbilityTemplate, NewUnit, NewGameState, ItemState.GetReference());
-		}
-
-		// Add grenade abilities
-		if (AbilityTemplate.bUseLaunchedGrenadeEffects && X2GrenadeTemplate(EquipmentTemplate) != none)
-		{
-			InitAbility(AbilityTemplate, NewUnit, NewGameState, NewUnit.GetItemInSlot(EarnedSoldierAbilities[idx].ApplyToWeaponSlot, NewGameState).GetReference(), ItemState.GetReference());
-		}
-	}
-
-	// Add abilities from the equipment item itself. Add these last in case they're overridden by soldier abilities.
-	foreach EquipmentTemplate.Abilities(AbilityName)
-	{
-		AbilityTemplate = AbilityTemplateMan.FindAbilityTemplate(AbilityName);
-		InitAbility(AbilityTemplate, NewUnit, NewGameState, ItemState.GetReference());
-	}
-}
-
-// Taken from XModBase's XMBEffect_AddUtilityItem
-static function InitAbility(X2AbilityTemplate AbilityTemplate, XComGameState_Unit NewUnit, XComGameState NewGameState, optional StateObjectReference ItemRef, optional StateObjectReference AmmoRef)
-{
-	local XComGameState_Ability OtherAbility;
-	local StateObjectReference AbilityRef;
-	local XComGameStateHistory History;
-	local X2AbilityTemplateManager AbilityTemplateMan;
-	local name AdditionalAbility;
-
-	History = `XCOMHISTORY;
-	AbilityTemplateMan = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
-
-	// Check for ability overrides
-	foreach NewUnit.Abilities(AbilityRef)
-	{
-		OtherAbility = XComGameState_Ability(History.GetGameStateForObjectID(AbilityRef.ObjectID));
-
-		if (OtherAbility.GetMyTemplate().OverrideAbilities.Find(AbilityTemplate.DataName) != INDEX_NONE)
-			return;
-	}
-
-	AbilityRef = `TACTICALRULES.InitAbilityForUnit(AbilityTemplate, NewUnit, NewGameState, ItemRef, AmmoRef);
-
-	// Add additional abilities
-	foreach AbilityTemplate.AdditionalAbilities(AdditionalAbility)
-	{
-		AbilityTemplate = AbilityTemplateMan.FindAbilityTemplate(AdditionalAbility);
-
-		// Check for overrides of the additional abilities
-		foreach NewUnit.Abilities(AbilityRef)
-		{
-			OtherAbility = XComGameState_Ability(History.GetGameStateForObjectID(AbilityRef.ObjectID));
-
-			if (OtherAbility.GetMyTemplate().OverrideAbilities.Find(AbilityTemplate.DataName) != INDEX_NONE)
-				return;
-		}
-
-		AbilityRef = `TACTICALRULES.InitAbilityForUnit(AbilityTemplate, NewUnit, NewGameState, ItemRef, AmmoRef);
 	}
 }
 
