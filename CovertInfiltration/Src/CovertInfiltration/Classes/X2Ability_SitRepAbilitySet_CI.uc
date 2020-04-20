@@ -18,6 +18,9 @@ var config float OPPORTUNE_MOMENT_1_DETECTION_MODIFIER;
 var config int OPPORTUNE_MOMENT_2_CRIT_BONUS;
 var config float OPPORTUNE_MOMENT_2_DETECTION_MODIFIER;
 
+var config int EXPERIMENTALROLLOUT_CRITMODIFIER;
+var config float EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE;
+
 var localized string MentalReadinessFriendlyName;
 var localized string MentalReadinessFriendlyDesc;
 var localized string IntelligenceLeakFriendlyName;
@@ -30,6 +33,9 @@ var localized string OpportuneMoment1FriendlyDesc;
 var localized string OpportuneMoment2FriendlyName;
 var localized string OpportuneMoment2FriendlyDesc;
 
+var localized string ExperimentalRolloutFriendlyName;
+var localized string ExperimentalRolloutFriendlyDesc;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
@@ -40,6 +46,7 @@ static function array<X2DataTemplate> CreateTemplates()
     Templates.AddItem(FoxholesBuff());
     Templates.AddItem(OpportuneMoment1());
     Templates.AddItem(OpportuneMoment2());
+    Templates.AddItem(ExperimentalRolloutBuff());
 
     return Templates;
 }
@@ -215,6 +222,33 @@ static function X2AbilityTemplate OpportuneMoment2 ()
     StatEffect.AddPersistentStatChange(eStat_DetectionModifier, default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER);
     StatEffect.SetDisplayInfo(ePerkBuff_Passive, default.OpportuneMoment2FriendlyName, default.OpportuneMoment2FriendlyDesc, Template.IconImage, true,, Template.AbilitySourceName);
     Template.AddTargetEffect(StatEffect);
+
+    Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
+
+    return Template;
+}
+
+static function X2AbilityTemplate ExperimentalRolloutBuff ()
+{
+	local X2AbilityTemplate Template;
+	local X2Effect_ExperimentalArmor ArmorEffect;
+
+    `CREATE_X2ABILITY_TEMPLATE(Template, 'ExperimentalRolloutBuff');
+    Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_bulwark";
+    Template.AbilitySourceName = 'eAbilitySource_Standard';
+    Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
+    Template.Hostility = eHostility_Neutral;
+    Template.AbilityToHitCalc = default.DeadEye;
+    Template.AbilityTargetStyle = default.SelfTarget;
+    Template.AbilityTriggers.AddItem(default.UnitPostBeginPlayTrigger);
+    Template.bIsPassive = true;
+
+	ArmorEffect = new class'X2Effect_ExperimentalArmor';
+	ArmorEffect.BuildPersistentEffect(1, true, false, false);
+	ArmorEffect.SetDisplayInfo(ePerkBuff_Passive, default.ExperimentalRolloutFriendlyName, default.ExperimentalRolloutFriendlyDesc, Template.IconImage);
+	ArmorEffect.CritModifier = default.EXPERIMENTALROLLOUT_CRITMODIFIER;
+	ArmorEffect.ExplosiveResistance = default.EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE;
+	Template.AddTargetEffect(ArmorEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 

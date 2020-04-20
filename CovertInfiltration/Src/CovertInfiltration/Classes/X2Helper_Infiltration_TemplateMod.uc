@@ -936,3 +936,21 @@ static function bool NeverAppear(XComGameState_PointOfInterest POIState)
 {
 	return false;
 }
+
+/////////////////
+/// Abilities ///
+/////////////////
+
+static function PatchEvacAbility ()
+{
+	local X2AbilityTemplateManager AbilityTemplateManager;
+	local X2AbilityTemplate AbilityTemplate;
+	local X2Condition_GameplayTag SitrepCondition;
+
+	SitrepCondition = new class'X2Condition_GameplayTag';
+	SitrepCondition.DisallowGameplayTag = 'SITREP_RestrictedAirspace';
+	
+	AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+	AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('PlaceEvacZone');
+	AbilityTemplate.AbilityShooterConditions.AddItem(SitrepCondition);
+}

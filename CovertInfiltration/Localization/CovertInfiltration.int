@@ -174,6 +174,9 @@ OpportuneMoment1FriendlyDesc="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% 
 OpportuneMoment2FriendlyName="Opportune Moment II"
 OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
+ExperimentalRolloutFriendlyName="Experimental Armor"
+ExperimentalRolloutFriendlyDesc="All enemy units have +66% explosive damage resistance and -50% chance to crit against them while they are at full health"
+
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
