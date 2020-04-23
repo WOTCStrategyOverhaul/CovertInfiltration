@@ -10,6 +10,13 @@ class XComGameState_Activity_Infiltration extends XComGameState_Activity;
 
 protected function EventListenerReturn OnActionExpired (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
+	OnInfilExpired(GameState);
+	
+	return ELR_NoInterrupt;
+}
+
+function OnInfilExpired (XComGameState NewGameState)
+{
 	local XComGameState_MissionSiteInfiltration MissionState;
 
 	MissionState = XComGameState_MissionSiteInfiltration(`XCOMHISTORY.GetGameStateForObjectID(PrimaryObjectRef.ObjectID));
@@ -18,11 +25,9 @@ protected function EventListenerReturn OnActionExpired (Object EventData, Object
 	{
 		if (MissionState.GetMissionSource().OnExpireFn != none)
 		{
-			MissionState.GetMissionSource().OnExpireFn(GameState, MissionState);
+			MissionState.GetMissionSource().OnExpireFn(NewGameState, MissionState);
 		}
 	}
-	
-	return ELR_NoInterrupt;
 }
 
 protected function PostMarkCompleted (XComGameState NewGameState)
