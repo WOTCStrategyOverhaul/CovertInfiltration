@@ -1177,6 +1177,60 @@ exec function SetRiskOccurance (name RiskName, bool bOccurs)
 	`SubmitGameState(NewGameState);
 }
 
+exec function ForceAbortSelectedInfil ()
+{
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
+	local XComGameState_Activity_Infiltration ActivityState;
+	local UIMission_Infiltrated MissionScreen;
+	local XComGameState NewGameState;
+
+	MissionScreen = UIMission_Infiltrated(`SCREENSTACK.GetCurrentScreen());
+	if (MissionScreen == none)
+	{
+		`CI_Log("ForceAbortSelectedInfil failed - not looking at infiltration mission blades");
+		return;
+	}
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: ForceAbortSelectedInfil");
+	
+	InfiltrationState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', MissionScreen.MissionRef.ObjectID));
+	ActivityState = XComGameState_Activity_Infiltration(class'XComGameState_Activity'.static.GetActivityFromObject(InfiltrationState));
+	ActivityState = XComGameState_Activity_Infiltration(NewGameState.ModifyStateObject(class'XComGameState_Activity_Infiltration', ActivityState.ObjectID));
+	
+	ClearUnitsFromInfil(NewGameState, InfiltrationState);
+	ActivityState.OnInfilExpired(NewGameState); // Giant hack. Fix together with #513
+
+	`SubmitGameState(NewGameState);
+
+	MissionScreen.CloseScreenOnly();
+}
+
+simulated function ClearUnitsFromInfil (XComGameState NewGameState, XComGameState_MissionSiteInfiltration InfiltrationState)
+{
+	local XComGameState_StaffSlot SlotState;
+	local XComGameState_Unit UnitState;
+	local XComGameStateHistory History;
+	local StateObjectReference UnitRef;
+
+	History = `XCOMHISTORY;
+
+	foreach InfiltrationState.SoldiersOnMission(UnitRef)
+	{
+		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+		if (UnitState == none) continue;
+
+		SlotState = UnitState.GetStaffSlot();
+		SlotState.EmptySlot(NewGameState);
+
+		// Refresh the will recovery project
+		if (UnitState.IsSoldier() && UnitState.UsesWillSystem())
+		{
+			class'X2Helper_Infiltration'.static.DestroyWillRecoveryProject(NewGameState, UnitRef);
+			class'X2Helper_Infiltration'.static.CreateWillRecoveryProject(NewGameState, UnitState);
+		}
+	}
+}
+
 exec function ForceNextEnviromentalSitrep(name SitRep)
 {
 	ForcedNextEnviromentalSitrep = SitRep;
