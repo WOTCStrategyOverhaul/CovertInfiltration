@@ -263,6 +263,7 @@ static function OnPreCreateTemplates()
 
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 	class'X2Helper_Infiltration'.static.ValidateXpMultiplers();
+	class'X2Helper_Infiltration'.static.OverridePrototypeArmoury();
 }
 
 static event OnPostTemplatesCreated()

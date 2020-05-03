@@ -9,6 +9,8 @@ Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "X2WOTCCommunityHighlander",
 EndProject
 Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "SquadSelectAtAnyTime", "SquadSelectAnyTime\SquadSelectAtAnyTime\SquadSelectAtAnyTime.x2proj", "{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}"
 EndProject
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "PrototypeArmoury", "PrototypeArmoury\PrototypeArmoury\PrototypeArmoury.x2proj", "{8044863D-25F8-41C0-A02E-1306FC2188E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|XCOM 2 = Debug|XCOM 2
@@ -23,6 +25,10 @@ Global
 		{D8026E40-05DA-4006-8708-C36137E37D8B}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
 		{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
 		{6346B63E-EBD7-4D66-9C0F-39A75F9FC7A5}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{8044863D-25F8-41C0-A02E-1306FC2188E4}.Debug|XCOM 2.ActiveCfg = Debug|XCOM 2
+		{8044863D-25F8-41C0-A02E-1306FC2188E4}.Debug|XCOM 2.Build.0 = Debug|XCOM 2
+		{8044863D-25F8-41C0-A02E-1306FC2188E4}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{8044863D-25F8-41C0-A02E-1306FC2188E4}.Default|XCOM 2.Build.0 = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

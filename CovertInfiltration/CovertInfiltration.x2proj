@@ -522,7 +522,7 @@
       <SDKInstallPath>$(XCOM2_UserPath)..\\</SDKInstallPath>
       <SolutionRoot>$(MSBuildProjectDirectory)\..\\</SolutionRoot>
       <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
-      <PowershellBuildCommand>powershell.exe –NonInteractive –ExecutionPolicy Unrestricted  -file "$(ScriptsDir)build.ps1" -mod "CovertInfiltration" -srcDirectory "$(SolutionRoot)" -sdkPath "$(SDKInstallPath)" -gamePath "$(GameInstallPath)" -includes "SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime" -clean "SquadSelectAtAnyTime"</PowershellBuildCommand>
+      <PowershellBuildCommand>powershell.exe –NonInteractive –ExecutionPolicy Unrestricted  -file "$(ScriptsDir)build.ps1" -mod "CovertInfiltration" -srcDirectory "$(SolutionRoot)" -sdkPath "$(SDKInstallPath)" -gamePath "$(GameInstallPath)" -includes "SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime", "PrototypeArmoury/PrototypeArmoury/Src/PrototypeArmoury" -clean "SquadSelectAtAnyTime", "PrototypeArmoury"</PowershellBuildCommand>
       <PowershellBuildCommand Condition="'$(Configuration)'=='Debug'">$(PowershellBuildCommand) -debug</PowershellBuildCommand>
     </PropertyGroup>
     <Message Text="Starting custom build $(Configuration)" />

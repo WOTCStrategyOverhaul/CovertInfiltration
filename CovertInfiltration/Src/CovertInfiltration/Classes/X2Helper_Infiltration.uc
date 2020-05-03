@@ -71,6 +71,9 @@ var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS;
 // Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
 var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
+var config(StrategyTuning) array<StrategyCostScalar> ResourceCostScalars_CI;
+var config(StrategyTuning) array<StrategyCostScalar> ArtifactCostMultiplier_CI;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -1332,4 +1335,16 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	}
 
 	return UnitString;
+}
+
+static function OverridePrototypeArmoury ()
+{
+	local PATemplateMods PrototypeArmoury;
+
+	PrototypeArmoury = PATemplateMods(class'XComEngine'.static.GetClassDefaultObject(class'PATemplateMods'));
+
+	`CI_Log("Overriding Prototype Armoury!");
+	
+	PrototypeArmoury.ResourceCostScalars = default.ResourceCostScalars_CI;
+	PrototypeArmoury.ArtifactCostMultiplier = default.ArtifactCostMultiplier_CI;
 }
