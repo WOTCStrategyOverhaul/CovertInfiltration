@@ -829,6 +829,18 @@ static function PatchCovertActionPromotionRewards()
 	}
 }
 
+static function PatchDoomRemovalCovertAction()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate('CovertAction_RemoveDoom'));
+
+	ActionTemplate.bMultiplesAllowed = false;
+}
+
 /////////////////////
 /// Faction Cards ///
 /////////////////////

@@ -277,6 +277,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAcademyStaffSlot();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchCovertActionPromotionRewards();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchDoomRemovalCovertAction();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGoldenPath();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchChosenObjectives();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLivingQuarters();
