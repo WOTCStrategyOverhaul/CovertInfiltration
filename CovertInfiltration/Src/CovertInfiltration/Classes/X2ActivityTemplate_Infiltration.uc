@@ -67,9 +67,9 @@ static function CreateCovertAction (XComGameState NewGameState, XComGameState_Ac
 
 static function PostActionInit (XComGameState NewGameState, XComGameState_CovertAction ActionState, XComGameState_Activity ActivityState)
 {
-	// 1st and 6th slots are optional
+	// 1st and last slots are optional
 	ActionState.StaffSlots[0].bOptional = true;
-	ActionState.StaffSlots[5].bOptional = true;
+	ActionState.StaffSlots[ActionState.StaffSlots.Length - 1].bOptional = true;
 }
 
 static function AddExpiration (XComGameState NewGameState, XComGameState_Activity ActivityState)

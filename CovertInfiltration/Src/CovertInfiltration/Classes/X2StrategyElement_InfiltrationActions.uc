@@ -6,7 +6,9 @@
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
 
-class X2StrategyElement_InfiltrationActions extends X2StrategyElement;
+class X2StrategyElement_InfiltrationActions extends X2StrategyElement config(GameData);
+
+var config int InfiltrationMaxSquadSize;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -154,6 +156,7 @@ static function X2CovertActionTemplate CreateInfiltrationTemplate(name CovertAct
 {
 	local X2CovertActionTemplate Template;
 	local ActionFlatRiskSitRep FlatRiskSitRep;
+	local int i;
 
 	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, CovertActionName);
 	Template.bCanNeverBeRookie = true;
@@ -165,12 +168,12 @@ static function X2CovertActionTemplate CreateInfiltrationTemplate(name CovertAct
 
 	if (bCreateSlots)
 	{
-		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
-		Template.Slots.AddItem(CreateDefaultOptionalSlot('InfiltrationStaffSlot'));
+		for (i = 0; i < default.InfiltrationMaxSquadSize; i++)
+		{
+			// No point of using CreateDefaultOptionalSlot here since it doesn't actually help
+			// See X2ActivityTemplate_Infiltration::PostActionInit for the fix
+			Template.Slots.AddItem(CreateDefaultStaffSlot('InfiltrationStaffSlot'));
+		}
 	}
 
 	return Template;
