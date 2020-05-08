@@ -186,7 +186,7 @@ strTiredSoldiers="TIRED"
 strInformantsTitle="INFORMANTS"
 
 [XComGameState_MissionSiteInfiltration]
-strBannerBonusGained="Overinfiltration Bonus Gained"
+strBannerBonusGained="Bonus Gained (<XGParam:IntValue0>%)"
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"

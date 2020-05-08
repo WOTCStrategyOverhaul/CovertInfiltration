@@ -369,6 +369,7 @@ function UpdateGameBoard()
 	local XComGameState_MissionSiteInfiltration NewMissionState;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local XComHQPresentationLayer HQPres;
+	local XGParamTag ParamTag;
 
 	// Do not do anything if we didn't transition to the mission stage yet
 	if (!Available) return;
@@ -391,7 +392,9 @@ function UpdateGameBoard()
 		ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(NewMissionState);
 
 		HQPres = `HQPRES;
-		HQPres.NotifyBanner(strBannerBonusGained, GetUIButtonIcon(), NewMissionState.GetMissionObjectiveText(), BonusTemplate.GetBonusName(), eUIState_Good);
+		ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+		ParamTag.IntValue0 = GetCurrentInfilInt();
+		HQPres.NotifyBanner(`XEXPAND.ExpandString(default.strBannerBonusGained), GetUIButtonIcon(), BonusTemplate.GetBonusName(), NewMissionState.GetMissionObjectiveText(), eUIState_Good);
 		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
 		`CI_Log("Checking if should pause at: " $ BonusTemplate.Milestone);
