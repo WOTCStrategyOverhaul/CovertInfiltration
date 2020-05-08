@@ -10,6 +10,8 @@ var UIPanel HeaderSeparator;
 
 var UITextContainer MainText;
 
+var protectedwrite bool bEffectsPresented;
+
 const MARGIN_LEFT_RIGHT = 20;
 const MARGIN_TOP_BOTTOM = 10;
 
@@ -22,7 +24,6 @@ simulated function InitScreen (XComPlayerController InitController, UIMovie Init
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	BuildScreen();
-	UpdateNavHelp();
 }
 
 simulated protected function BuildScreen ()
@@ -90,11 +91,24 @@ simulated protected function OnMainContainerBGInit (UIPanel Panel)
 	AS_SetMCColor(MainContainerBG.MCPath $ ".bottomLines", class'UIUtilities_Colors'.const.WARNING_HTML_COLOR);
 }
 
-simulated function OnInit()
+simulated function OnInit ()
 {
 	super.OnInit();
 
+	if (Movie.Pres.ScreenStack.IsTopScreen(self))
+	{
+		PresentUIEffects();
+		UpdateNavHelp();
+	}
+}
+
+simulated protected function PresentUIEffects()
+{
+	if (bEffectsPresented) return;
+	bEffectsPresented = true;
+
 	`SOUNDMGR.PlaySoundEvent("TacticalUI_Tutorial_Popup");
+	AnimateIn(0);
 }
 
 simulated function UpdateNavHelp ()
@@ -128,6 +142,7 @@ simulated function OnReceiveFocus ()
 	super.OnReceiveFocus();
 
 	UpdateNavHelp();
+	PresentUIEffects();
 }
 
 simulated function bool OnUnrealCommand (int cmd, int arg)
@@ -217,5 +232,5 @@ defaultproperties
 	InputState = eInputState_Consume;
 	bConsumeMouseEvents = true;
 
-	bAnimateOnInit = true;
+	bAnimateOnInit = false; // See PresentUIEffects
 }

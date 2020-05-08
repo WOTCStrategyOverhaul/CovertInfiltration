@@ -56,16 +56,14 @@ var localized string strAdvancedChainsBody;
 ///////////////////////
 /// Tutorial popups ///
 ///////////////////////
+// Note for functions/stages that trigger more than one popup: 
+// The popups will be shown in the reverse order - the last one will be shown first
 
 static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody, GeoscapeEntry2);
-}
-
-static protected function GeoscapeEntry2 (UIPanel Panel)
-{
+	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody);
 	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
 }
 
@@ -108,11 +106,7 @@ static function FacilityChanges ()
 {
 	if (!ShouldShowPopup('FacilityChanges')) return;
 
-	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody, FacilityChanges2);
-}
-
-static protected function FacilityChanges2 (UIPanel Panel)
-{
+	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody);
 	UITutorialBoxLarge(default.strFacilityGTSHeader, default.strFacilityGTSBody);
 }
 
@@ -192,7 +186,7 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 	return true;
 }
 
-static protected function UITutorialBoxLarge (string strTitle, string strDescription, optional delegate<UIPanel.OnPanelRemoved> OnRemovedFn)
+static protected function UITutorialBoxLarge (string strTitle, string strDescription)
 {
 	local XComPresentationLayerBase PresBase;
 	local UITutorialBoxLarge TheScreen;
@@ -203,5 +197,4 @@ static protected function UITutorialBoxLarge (string strTitle, string strDescrip
 	PresBase.ScreenStack.Push(TheScreen);
 
 	TheScreen.SetContents(strTitle, strDescription);
-	if (OnRemovedFn != none) TheScreen.AddOnRemovedDelegate(OnRemovedFn);
 }
