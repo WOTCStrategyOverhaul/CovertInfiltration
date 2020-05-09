@@ -237,7 +237,7 @@ static function X2AbilityTemplate ExperimentalRolloutBuff ()
 	local X2Effect_ExperimentalArmor ArmorEffect;
 
     `CREATE_X2ABILITY_TEMPLATE(Template, 'ExperimentalRolloutBuff');
-    Template.IconImage = "img:///UILibrary_DLC3Images.UIPerk_spark_bulwark";
+    Template.IconImage = "img:///UILibrary_CI_Abilities.UIPerk_experimental_armor";
     Template.AbilitySourceName = 'eAbilitySource_Standard';
     Template.eAbilityIconBehaviorHUD = EAbilityIconBehavior_NeverShow;
     Template.Hostility = eHostility_Neutral;

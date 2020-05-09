@@ -367,6 +367,30 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 		return true;
 	}
 
+	if (InString == "MESSYINSERTION_WILLLOSS")
+	{
+		OutString = string(int(class'X2SitRep_InfiltrationSitRepEffects'.default.MESSYINSERTION_WILLLOSS * 100));
+		return true;
+	}
+
+	if (InString == "MESSYINSERTION_HEALTHLOSS")
+	{
+		OutString = string(int(class'X2SitRep_InfiltrationSitRepEffects'.default.MESSYINSERTION_HEALTHLOSS * 100));
+		return true;
+	}
+	
+	if (InString == "EXPERIMENTALROLLOUT_CRITMODIFIER")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.EXPERIMENTALROLLOUT_CRITMODIFIER * -1);
+		return true;
+	}
+
+	if (InString == "EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE * 100));
+		return true;
+	}
+
 	return false;
 }
 

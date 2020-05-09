@@ -948,7 +948,7 @@ static function PatchEvacAbility ()
 	local X2Condition_GameplayTag SitrepCondition;
 
 	SitrepCondition = new class'X2Condition_GameplayTag';
-	SitrepCondition.DisallowGameplayTag = 'SITREP_RestrictedAirspace';
+	SitrepCondition.DisallowGameplayTag = 'CI_DisablePlaceEvac';
 	
 	AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 	AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate('PlaceEvacZone');

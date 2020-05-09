@@ -139,7 +139,7 @@ Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius 
 
 [MessyInsertion X2SitRepTemplate]
 FriendlyName="Messy Insertion"
-Description="The squad begins the mission slightly tired and one soldier will be lightly injured"
+Description="The squad begins the mission <Ability:MESSYINSERTION_WILLLOSS/>% tired and one soldier will be <Ability:MESSYINSERTION_HEALTHLOSS/>% injured"
 
 [RestrictedAirspace X2SitRepTemplate]
 FriendlyName="Restricted Airspace"
@@ -147,7 +147,7 @@ Description="The Skyranger cannot arrive to pickup the squad until the area has 
 
 [ExperimentalRollout X2SitRepTemplate]
 FriendlyName="Experimental Rollout"
-Description="All enemies gain powerful defensive bonuses when at full health"
+Description="All enemies have <Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/> critical defense and <Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% explosive damage resistance while at full health"
 
 [EquipmentCache X2SitRepTemplate]
 FriendlyName="Equipment Cache"

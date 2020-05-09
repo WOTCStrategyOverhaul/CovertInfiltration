@@ -6,7 +6,7 @@ var float ExplosiveResistance;
 
 function RegisterForEvents(XComGameState_Effect EffectGameState)
 {
-	local Object								EffectObj, TargetObj;
+	local Object EffectObj, TargetObj;
 
 	EffectObj = EffectGameState;
 	TargetObj = `XCOMHISTORY.GetGameStateForObjectID(EffectGameState.ApplyEffectParameters.TargetStateObjectRef.ObjectID);
@@ -16,9 +16,9 @@ function RegisterForEvents(XComGameState_Effect EffectGameState)
 
 static function EventListenerReturn RemoveEffectWhenDamaged(Object EventData, Object EventSource, XComGameState NewGameState, Name InEventID, Object CallbackData)
 {
-	local XComGameState_Effect					EffectState;
-	local XComGameStateContext_EffectRemoved	EffectRemovedContext;
-	local XComGameState							EffectRemovedGameState;
+	local XComGameState_Effect               EffectState;
+	local XComGameStateContext_EffectRemoved EffectRemovedContext;
+	local XComGameState	                     EffectRemovedGameState;
 
 	`CI_Trace("RemoveEffectWhenDamaged - Event Fired");
 
