@@ -286,6 +286,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.RemoveFactionCards();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchHangar();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchEvacAbility();
 
 	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
 	MarkPlotsForCovertEscape();
@@ -364,6 +365,30 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 	if (InString == "OPPORTUNE_MOMENT_2_DETECTION_MODIFIER")
 	{
 		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.OPPORTUNE_MOMENT_2_DETECTION_MODIFIER * 100));
+		return true;
+	}
+
+	if (InString == "MESSYINSERTION_WILLLOSS")
+	{
+		OutString = string(int(class'X2SitRep_InfiltrationSitRepEffects'.default.MESSYINSERTION_WILLLOSS * 100));
+		return true;
+	}
+
+	if (InString == "MESSYINSERTION_HEALTHLOSS")
+	{
+		OutString = string(int(class'X2SitRep_InfiltrationSitRepEffects'.default.MESSYINSERTION_HEALTHLOSS * 100));
+		return true;
+	}
+	
+	if (InString == "EXPERIMENTALROLLOUT_CRITMODIFIER")
+	{
+		OutString = string(class'X2Ability_SitRepAbilitySet_CI'.default.EXPERIMENTALROLLOUT_CRITMODIFIER * -1);
+		return true;
+	}
+
+	if (InString == "EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE")
+	{
+		OutString = string(int(class'X2Ability_SitRepAbilitySet_CI'.default.EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE * 100));
 		return true;
 	}
 

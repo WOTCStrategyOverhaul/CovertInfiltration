@@ -137,6 +137,22 @@ Description="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% Detection Radius 
 FriendlyName="Opportune Moment II"
 Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
+[MessyInsertion X2SitRepTemplate]
+FriendlyName="Messy Insertion"
+Description="The squad begins the mission <Ability:MESSYINSERTION_WILLLOSS/>% tired and one soldier will be <Ability:MESSYINSERTION_HEALTHLOSS/>% injured"
+
+[RestrictedAirspace X2SitRepTemplate]
+FriendlyName="Restricted Airspace"
+Description="The Skyranger cannot arrive to pickup the squad until the area has been completely cleared"
+
+[ExperimentalRollout X2SitRepTemplate]
+FriendlyName="Experimental Rollout"
+Description="All enemies have <Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/> critical defense and <Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% explosive damage resistance while at full health"
+
+[EquipmentCache X2SitRepTemplate]
+FriendlyName="Equipment Cache"
+Description="Each soldier in the squad will recieve an extra basic utility item"
+
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
 RiskName="Full Sensor Coverage"
 
@@ -155,6 +171,15 @@ RiskName="Phalanx"
 [CovertActionRisk_Congregation X2CovertActionRiskTemplate]
 RiskName="Congregation"
 
+[CovertActionRisk_MessyInsertion X2CovertActionRiskTemplate]
+RiskName="Messy Insertion"
+
+[CovertActionRisk_RestrictedAirspace X2CovertActionRiskTemplate]
+RiskName="Restricted Airspace"
+
+[CovertActionRisk_ExperimentalRollout X2CovertActionRiskTemplate]
+RiskName="Experimental Rollout"
+
 [NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
 FriendlyName="No Starting Concealment"
 Description="ADVENT has a massive array of perimeter detectors - we won't start with concealment here"
@@ -162,6 +187,14 @@ Description="ADVENT has a massive array of perimeter detectors - we won't start 
 [IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Increased Detection Range"
 Description="ADVENT's perimeter sensors have put the garrison on high alert - our concealed units will be more easily spotted"
+
+[MessyInsertionEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Injured Squadmember"
+Description="Our team ran into an ADVENT patrol on the way to the mission site - they're tired and one squadmember took a hit"
+
+[EquipmentCacheEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Extra Utility Items"
+Description="The Resistance had a supply cache in the area, which our team took advantage of - they have some extra items that may come in handy"
 
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Countered"

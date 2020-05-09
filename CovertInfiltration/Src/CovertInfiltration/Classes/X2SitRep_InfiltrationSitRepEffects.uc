@@ -26,6 +26,9 @@ var config bool EmplaceFollower_AllowEncountersWithFollowerOverride;
 var config array<SitRepUnitSelectionData> PhalanxCharacterSelection;
 var config array<SitRepUnitSelectionData> CongregationCharacterSelection;
 
+var config float MESSYINSERTION_WILLLOSS;
+var config float MESSYINSERTION_HEALTHLOSS;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -39,6 +42,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateFoxholesBuffEffect());
 	Templates.AddItem(CreateOpportuneMoment1Effect());
 	Templates.AddItem(CreateOpportuneMoment2Effect());
+	Templates.AddItem(CreateEquipmentCacheEffect());
+	Templates.AddItem(CreateExperimentalRolloutEffect());
 
 	// podsize & encounters
 	Templates.AddItem(CreateGunneryEmplacementsEffectTemplate());
@@ -53,6 +58,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateNoSquadConcealmentEffectTemplate());
 	Templates.AddItem(CreateVolunteerArmyEffectTemplate());
 	Templates.AddItem(CreateTacticalAnalysisEffectTemplate());
+	Templates.AddItem(CreateMessyInsertionEffectTemplate());
 	
 	// misc
 	Templates.AddItem(CreateUpdatedFirewallsEffect());
@@ -158,6 +164,32 @@ static function X2SitRepEffectTemplate CreateOpportuneMoment2Effect()
 
 	Template.AbilityTemplateNames.AddItem('OpportuneMoment2');
 	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateEquipmentCacheEffect()
+{
+	local X2SitRepEffect_GrantAbilities Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'EquipmentCacheEffect');
+	
+	Template.AbilityTemplateNames.AddItem('EquipmentCacheItem');
+	
+	Template.GrantToSoldiers = true;
+
+	return Template;
+}
+
+static function X2SitRepEffectTemplate CreateExperimentalRolloutEffect()
+{
+	local X2SitRepEffect_GrantAbilities Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'ExperimentalRolloutEffect');
+	
+	Template.AbilityTemplateNames.AddItem('ExperimentalRolloutBuff');
+
+	Template.Teams.AddItem(eTeam_Alien);
 
 	return Template;
 }
@@ -604,6 +636,62 @@ static function TacticalAnalysisStartModifier(XComGameState StartState)
 	PlayerObject = Player;
 
 	`XEVENTMGR.RegisterForEvent(PlayerObject, 'ScamperEnd', Player.TacticalAnalysisScamperResponse, ELD_OnStateSubmitted);
+}
+
+static function X2SitRepEffectTemplate CreateMessyInsertionEffectTemplate()
+{
+	local X2SitRepEffect_ModifyTacticalStartState Template;
+
+	`CREATE_X2TEMPLATE(class'X2SitRepEffect_ModifyTacticalStartState', Template, 'MessyInsertionEffect');
+
+	Template.ModifyTacticalStartStateFn = MessyInsertionTacticalStartModifier;
+	
+	return Template;
+}
+
+static function MessyInsertionTacticalStartModifier(XComGameState StartState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_Unit UnitState;
+	local array<StateObjectReference> UnitRefs;
+	local int WoundedIdx, LoopIdx, WillLoss, HealthLoss;
+
+	`CI_Trace("Editing StartState!");
+
+	foreach StartState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
+	{
+		break;
+	}
+
+	UnitRefs = XComHQ.Squad;
+	WoundedIdx = `SYNC_RAND_STATIC(UnitRefs.Length);
+	
+	for (LoopIdx = 0; LoopIdx < UnitRefs.Length; LoopIdx++)
+	{
+		`CI_Trace("Looping Soldiers!");
+		UnitState = XComGameState_Unit(StartState.GetGameStateForObjectID(UnitRefs[LoopIdx].ObjectID));
+
+		if (UnitState != none)
+		{
+			UnitState = XComGameState_Unit(StartState.ModifyStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+			`CI_Trace("Unlucky Soldier: " $ LoopIdx);
+				
+			`CI_Trace("Will: " $ UnitState.GetCurrentStat(eStat_Will));
+			WillLoss = UnitState.GetCurrentStat(eStat_Will) * (1.0 - default.MESSYINSERTION_WILLLOSS);
+			UnitState.SetCurrentStat(eStat_Will, WillLoss);
+			`CI_Trace("Will: " $ UnitState.GetCurrentStat(eStat_Will));
+
+			if (LoopIdx == WoundedIdx)
+			{
+				`CI_Trace("Super Unlucky Soldier: " $ LoopIdx);
+
+				`CI_Trace("Health: " $ UnitState.GetCurrentStat(eStat_HP));
+				HealthLoss = UnitState.GetMaxStat(eStat_HP) * (1.0 - default.MESSYINSERTION_HEALTHLOSS);
+				UnitState.SetCurrentStat(eStat_HP, HealthLoss);
+				`CI_Trace("Health: " $ UnitState.GetCurrentStat(eStat_HP));
+			}
+		}
+	}
 }
 
 ////////////
