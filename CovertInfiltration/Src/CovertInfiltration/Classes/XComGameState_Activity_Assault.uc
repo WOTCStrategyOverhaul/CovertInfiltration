@@ -36,7 +36,10 @@ protected function UpdateActivity ()
 
 	WarnBeforeExpiration = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION);
 
-	if (bExpiring && class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, GetCurrentTime()))
+	if (bExpiring
+	 && class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, GetCurrentTime())
+	 && `HQPRES.StrategyMap2D != none
+	 && `HQPRES.StrategyMap2D.m_eUIState != eSMS_Flight)
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(assault mission) has expired");
 		MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(PrimaryObjectRef.ObjectID));
