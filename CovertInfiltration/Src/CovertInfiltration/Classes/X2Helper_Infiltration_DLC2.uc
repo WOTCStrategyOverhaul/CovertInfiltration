@@ -32,7 +32,6 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 {
     local XComGameState_AlienRulerManager RulerManager;
     local array<StateObjectReference> Candidates;
-    local AlienRulerLocation RulerLocation;
     local StateObjectReference Candidate;
     local XComGameState_Unit RulerState;
     local XComGameStateHistory History;
@@ -70,11 +69,11 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 	Candidate = Candidates[`SYNC_RAND_STATIC(Candidates.Length)];
 
 	// Place the ruler
-    RulerLocation.RulerRef = Candidate;
-    RulerLocation.MissionRef = InfiltrationState.GetReference();
-    RulerLocation.bActivated = true;
-    RulerLocation.bNeedsPopup = false;
-    RulerManager.AlienRulerLocations.AddItem(RulerLocation);
+	RulerManager.AlienRulerLocations.Add(1);
+	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].RulerRef = Candidate;
+	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].MissionRef = InfiltrationState.GetReference();
+	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].bActivated = true;
+	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].bNeedsPopup = false;
 
     // The ruler is ready and waiting bwahahaha
     RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
