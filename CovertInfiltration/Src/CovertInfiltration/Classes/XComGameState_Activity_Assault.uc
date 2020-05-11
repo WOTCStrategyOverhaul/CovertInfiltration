@@ -38,8 +38,7 @@ protected function UpdateActivity ()
 
 	if (bExpiring
 	 && class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, GetCurrentTime())
-	 && `HQPRES.StrategyMap2D != none
-	 && `HQPRES.StrategyMap2D.m_eUIState != eSMS_Flight)
+	 && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
 	{
 		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Activity" @ m_TemplateName @ "(assault mission) has expired");
 		MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(PrimaryObjectRef.ObjectID));
