@@ -1261,11 +1261,6 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 	local StateObjectReference RewardRef;
 	local string UnitString;
 	
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2RewardTemplate RewardTemplate;
-	local name RewardName;
-	local int LastActivity;
-	
 	History = `XCOMHISTORY;
 	
 	foreach ActivityState.GetActivityChain().ClaimedChainRewardRefs(RewardRef)
