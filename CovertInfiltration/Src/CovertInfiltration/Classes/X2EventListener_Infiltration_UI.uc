@@ -522,6 +522,8 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		);
 
 		AvengerHUD.ShowResources();
+
+		class'UIUtilities_InfiltrationTutorial'.static.GuerillaTactics();
 	}
 
 	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)

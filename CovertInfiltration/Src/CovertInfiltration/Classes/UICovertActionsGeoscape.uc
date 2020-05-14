@@ -1148,6 +1148,11 @@ simulated protected function TriggerTutorialOnSelection ()
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 	}
+
+	if (GetAction().bStarted)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.CovertOpsAbort();
+	}
 	
 	bHideOnLoseFocus = true;
 }

@@ -80,6 +80,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
 	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
+	Template.AddCHEvent('CrewCountChanged', CrewCountChanged, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -987,6 +988,13 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	return ELR_NoInterrupt;
 }
 
+static protected function EventListenerReturn CrewCountChanged (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	class'UIUtilities_InfiltrationTutorial'.static.ChangedCrewCount();
+
+	return ELR_NoInterrupt;
+}
+
 ////////////////
 /// Tactical ///
 ////////////////
@@ -1188,6 +1196,12 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	class'X2Helper_Infiltration'.static.SetStartingEnemiesForXp(NewGameState);
 
 	`SubmitGameState(NewGameState);
+	
+	// If supply extract, show tutorial
+	if (`TACTICALMISSIONMGR.ActiveMission.sType == "SupplyExtraction")
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.SupplyExtractMission();
+	}
 
 	return ELR_NoInterrupt;
 }

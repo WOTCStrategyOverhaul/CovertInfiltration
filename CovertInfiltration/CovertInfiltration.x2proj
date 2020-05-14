@@ -137,6 +137,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_AlienFacilityBuilt.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_DarkEvents.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_SquadSelect.uc">
       <SubType>Content</SubType>
     </Content>

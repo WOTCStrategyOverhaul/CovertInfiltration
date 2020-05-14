@@ -480,6 +480,15 @@ strResistanceInformantsBody="<Bullet/> In the top right corner of this screen, y
 strAdvancedChainsHeader=More Resistance Opportunities
 strAdvancedChainsBody=Building a Radio Relay in a region will increase the number of opportunities the Resistance can find each month. Radio Relays will also allow us to coordinate the local resistance in finding and acting against higher-value ADVENT targets, perhaps even their AVATAR Project.
 
+strDarkEventsHeader=Countering Dark Events
+strDarkEventsBody="Dark Event stuff!"
+
+strCovertOpsAbortHeader=Aborting Covert Ops
+strCovertOpsAbortBody="Covert Ops Aborting stuff!"
+
+strSupplyExtractHeader=Supply Extraction Changes
+strSupplyExtractBody="REINFORCEMENTS"
+
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
