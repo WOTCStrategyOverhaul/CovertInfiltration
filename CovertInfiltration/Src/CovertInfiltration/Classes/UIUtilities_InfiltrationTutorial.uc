@@ -79,63 +79,63 @@ static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody);
+	UITutorialBoxLarge(default.strGeoscapeEntryHeader, `XEXPAND.ExpandString(default.strGeoscapeEntryBody));
 }
 
 static function CovertActionLoadout ()
 {
 	if (!ShouldShowPopup('CovertActionLoadout')) return;
 
-	UITutorialBoxLarge(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody);
+	UITutorialBoxLarge(default.strCovertActionLoadoutHeader, `XEXPAND.ExpandString(default.strCovertActionLoadoutBody));
 }
 
 static function InfiltrationLoadout ()
 {
 	if (!ShouldShowPopup('InfiltrationLoadout')) return;
 
-	UITutorialBoxLarge(default.strInfiltrationLoadoutHeader, default.strInfiltrationLoadoutBody);
+	UITutorialBoxLarge(default.strInfiltrationLoadoutHeader, `XEXPAND.ExpandString(default.strInfiltrationLoadoutBody));
 }
 
 static function AssaultLoadout ()
 {
 	if (!ShouldShowPopup('AssaultLoadout')) return;
 
-	UITutorialBoxLarge(default.strAssaultLoadoutHeader, default.strAssaultLoadoutBody);
+	UITutorialBoxLarge(default.strAssaultLoadoutHeader, `XEXPAND.ExpandString(default.strAssaultLoadoutBody));
 }
 
 static function OverInfiltration ()
 {
 	if (!ShouldShowPopup('OverInfiltration')) return;
 
-	UITutorialBoxLarge(default.strOverInfiltrationHeader, default.strOverInfiltrationBody);
+	UITutorialBoxLarge(default.strOverInfiltrationHeader, `XEXPAND.ExpandString(default.strOverInfiltrationBody));
 }
 
 static function CovertActionFinished ()
 {
 	if (!ShouldShowPopup('CovertActionFinished')) return;
 
-	UITutorialBoxLarge(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody);
+	UITutorialBoxLarge(default.strCovertActionFinishedHeader, `XEXPAND.ExpandString(default.strCovertActionFinishedBody));
 }
 
 static function FacilityChanges ()
 {
 	if (!ShouldShowPopup('FacilityChanges')) return;
 
-	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody);
+	UITutorialBoxLarge(default.strFacilityRingHeader, `XEXPAND.ExpandString(default.strFacilityRingBody));
 }
 
 static function GuerillaTactics ()
 {
 	if (!ShouldShowPopup('GuerillaTactics')) return;
 
-	UITutorialBoxLarge(default.strFacilityGTSHeader, default.strFacilityGTSBody);
+	UITutorialBoxLarge(default.strFacilityGTSHeader, `XEXPAND.ExpandString(default.strFacilityGTSBody));
 }
 
 static function ActivityChains ()
 {
 	if (!ShouldShowPopup('ActivityChains')) return;
 
-	UITutorialBoxLarge(default.strActivityChainsHeader, default.strActivityChainsBody);
+	UITutorialBoxLarge(default.strActivityChainsHeader, `XEXPAND.ExpandString(default.strActivityChainsBody));
 }
 
 static function ResistanceInformants ()
@@ -149,28 +149,28 @@ static function AlienFacilityBuilt ()
 {
 	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
 
-	UITutorialBoxLarge(default.strAdvancedChainsHeader, default.strAdvancedChainsBody);
+	UITutorialBoxLarge(default.strAdvancedChainsHeader, `XEXPAND.ExpandString(default.strAdvancedChainsBody));
 }
 
 static function DarkEventPreview ()
 {
 	if (!ShouldShowPopup('DarkEventPreview')) return;
 
-	UITutorialBoxLarge(default.strDarkEventsHeader, default.strDarkEventsBody);
+	UITutorialBoxLarge(default.strDarkEventsHeader, `XEXPAND.ExpandString(default.strDarkEventsBody));
 }
 
 static function CovertOpsAbort ()
 {
 	if (!ShouldShowPopup('CovertOpsAbort')) return;
 
-	UITutorialBoxLarge(default.strCovertOpsAbortHeader, default.strCovertOpsAbortBody);
+	UITutorialBoxLarge(default.strCovertOpsAbortHeader, `XEXPAND.ExpandString(default.strCovertOpsAbortBody));
 }
 
 static function ChangedCrewCount ()
 {
 	if (!ShouldShowPopup('ChangedCrewCount')) return;
 	
-	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
+	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
