@@ -4,6 +4,3 @@
 [submodule "SquadSelectAnyTime"]
 	path = SquadSelectAnyTime
 	url = https://github.com/WOTCStrategyOverhaul/SquadSelectAnyTime.git
-[submodule "PrototypeArmoury"]
-	path = PrototypeArmoury
-	url = https://github.com/WOTCStrategyOverhaul/PrototypeArmoury.git
