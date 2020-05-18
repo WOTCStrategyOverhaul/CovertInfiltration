@@ -1272,6 +1272,36 @@ exec function ForceRemoveEndedChainsAll ()
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains(true);
 }
 
+exec function ListAllMissionTypesWithQuestItems ()
+{
+	local X2QuestItemTemplate QuestItemDataTemplate;
+	local array<string> ResultMissionTypes;
+	local X2DataTemplate DataTemplate;
+	local string MissionType;
+
+	foreach class'X2ItemTemplateManager'.static.GetItemTemplateManager().IterateTemplates(DataTemplate, none)
+	{
+		QuestItemDataTemplate = X2QuestItemTemplate(DataTemplate);
+		if (QuestItemDataTemplate == none) continue;
+
+		foreach QuestItemDataTemplate.MissionType(MissionType)
+		{
+			if (ResultMissionTypes.Find(MissionType) == INDEX_NONE)
+			{
+				ResultMissionTypes.AddItem(MissionType);
+			}
+		}
+	}
+
+	`CI_Log("===============================");
+	`CI_Log("Missions with quest items:");
+	foreach ResultMissionTypes(MissionType)
+	{
+		`CI_Log("  " $ MissionType);
+	}
+	`CI_Log("===============================");
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
