@@ -732,6 +732,7 @@ simulated function UpdateData()
 	UpdateViewChainButton();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
+	UpdateNavHelp();
 
 	TriggerTutorialOnSelection();
 }
@@ -1152,6 +1153,19 @@ simulated protected function TriggerTutorialOnSelection ()
 	bHideOnLoseFocus = true;
 }
 
+simulated protected function UpdateNavHelp ()
+{
+	local UINavigationHelp NavHelp;
+
+	NavHelp = XComHQPresentationLayer(Movie.Pres).m_kAvengerHUD.NavHelp;
+	NavHelp.ClearButtonHelp();
+	
+	if (!`ISCONTROLLERACTIVE)
+	{
+		NavHelp.AddBackButton(CloseScreen);
+	}
+}
+
 //////////////////////////////////////
 /// Interaction with other screens ///
 //////////////////////////////////////
@@ -1162,6 +1176,7 @@ simulated function OnReceiveFocus()
 
 	super.OnReceiveFocus();
 	
+	UpdateNavHelp();
 	MakeMapProperlyShow();
 	FocusCameraOnCurrentAction(true);
 
