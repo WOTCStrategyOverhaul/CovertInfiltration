@@ -137,6 +137,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	GrantBonusStartUpStaff(StartState);
+	ReplaceGatecrasher(StartState);
 
 	PatchDebugStart(StartState);
 }
@@ -220,6 +221,85 @@ static function GrantBonusStartUpStaff (XComGameState StartState)
 	XComHQ.AddToCrew(StartState, ScientistState);
 
 	XComHQ.HandlePowerOrStaffingChange(StartState);
+}
+
+static function ReplaceGatecrasher (XComGameState StartState)
+{
+	local XComGameState_MissionSite MissionState;
+	local Vector StartingMissionLoc;
+
+	`CI_Log("Replacing Gatecrasher!");
+
+	foreach StartState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+	{
+		if (MissionState.Source == 'MissionSource_Start')
+			break;
+	}
+
+	if (MissionState != none)
+	{
+		StartingMissionLoc.X = MissionState.Location.X;
+		StartingMissionLoc.Y = MissionState.Location.Y;
+
+		StartState.RemoveStateObject(MissionState.ObjectID);
+
+		CreateStartingMission(StartState, StartingMissionLoc);
+
+		`CI_Log("Gatecrasher Replaced!");
+	}
+	else
+	{
+		`RedScreen("Failed to find existing Gatecrasher!");
+	}
+}
+
+static function CreateStartingMission (XComGameState StartState, Vector StartingMissionLoc)
+{
+	local XComGameState_MissionSite Mission;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<XComGameState_Reward> MissionRewards;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local XComGameStateHistory History;
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2MissionSourceTemplate MissionSource;
+	local XComGameState_WorldRegion RegionState;
+	local Vector2D v2Loc;
+
+	History = `XCOMHISTORY;
+
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	RegionState = XComGameState_WorldRegion(StartState.GetGameStateForObjectID(XComHQ.StartingRegion.ObjectID));
+	v2Loc.X = StartingMissionLoc.X;
+	v2Loc.Y = StartingMissionLoc.Y;
+	
+	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Engineer'));
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
+	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_00');
+	MissionRewards.AddItem(RewardState);
+	
+	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Scientist'));
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
+	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_01');
+	MissionRewards.AddItem(RewardState);
+
+	Mission = XComGameState_MissionSite(StartState.CreateNewStateObject(class'XComGameState_MissionSite'));
+	MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_Start'));
+	Mission.BuildMission(MissionSource, v2Loc, RegionState.GetReference(), MissionRewards, true);
+}
+
+// Copied from X2StrategyElement_XpackMissionSources
+private static function AddTacticalTagToRewardUnit(XComGameState NewGameState, XComGameState_Reward RewardState, name TacticalTag)
+{
+	local XComGameState_Unit UnitState;
+
+	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	if (UnitState != none)
+	{
+		UnitState.TacticalTag = TacticalTag;
+	}
 }
 
 static protected function PatchDebugStart (XComGameState StartState)

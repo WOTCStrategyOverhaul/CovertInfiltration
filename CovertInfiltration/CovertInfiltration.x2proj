@@ -348,6 +348,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityChainTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2MissionNarrative_InfiltrationNarrativeSet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
       <SubType>Content</SubType>
     </Content>

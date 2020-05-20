@@ -319,3 +319,15 @@ m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:Str
 
 [UIStrategyPolicy]
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
+
+[DefaultGatecrasher X2MissionNarrativeTemplate]
+ObjectiveTextPools[0]="Eliminate All Hostiles"
+ObjectiveTextPools[1]="Eliminate All Hostiles"
+
+[Gatecrasher X2MissionTemplate]
+DisplayName="Assault ADVENT Offsite Holding Facility"
+Briefing="Crash This Gate"
+PostMissionType="Offsite Holding Facility"
+BriefingImage="img:///UILibrary_Common.Xcom_default"
+ObjectiveTextPools[0]="Eliminate All Hostiles"
+ObjectiveTextPools[1]="Eliminate All Hostiles"
