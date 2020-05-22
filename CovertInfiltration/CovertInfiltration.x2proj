@@ -13,6 +13,7 @@
     <Folder Include="Config\" />
     <Folder Include="Content\Maps" />
     <Folder Include="Content\Maps\Missions" />
+    <Folder Include="Content\Maps\Parcels" />
     <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
@@ -43,6 +44,9 @@
     <Content Include="Config\XComMissionDefs.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComParcels.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComPlots.ini">
       <SubType>Content</SubType>
     </Content>
@@ -68,6 +72,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\Parcels\md_InterrogationCompound_01_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Content\Maps\Parcels\md_InterrogationCompound_02_CI.umap">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
