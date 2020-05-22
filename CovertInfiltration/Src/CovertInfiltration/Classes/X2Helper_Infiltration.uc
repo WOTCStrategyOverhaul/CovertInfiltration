@@ -598,14 +598,12 @@ static function bool GeoscapeReadyForUpdate ()
 static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
 	local XComGameState_MissionSite MissionState;
-	local XComTacticalMissionManager MissionMgr;
 	local X2RewardTemplate MissionReward;
 	local GeneratedMissionData EmptyData;
 	local string AdditionalTag;
 
 	MissionState = GetMissionStateFromActivity(ActivityState);
 	MissionReward = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID)).GetMyTemplate();
-	MissionMgr = `TACTICALMISSIONMGR;
 	MissionState.GeneratedMission = EmptyData;
 	
 	MissionState.GeneratedMission.MissionID = MissionState.ObjectID;
@@ -625,7 +623,7 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameStat
 		MissionState.GeneratedMission.Mission.RequiredPlotObjectiveTags.AddItem(AdditionalTag);
 	}
 
-	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(MissionState.Source, MissionReward, MissionState.GeneratedMission.Mission, MissionState.DarkEvent.ObjectID > 0);
+	SetActivityMissionQuestItem(MissionState);
 	
 	if (X2ActivityTemplate_Mission(ActivityState.GetMyTemplate()).bNeedsPOI)
 	{
@@ -636,6 +634,28 @@ static function InitalizeGeneratedMissionFromActivity (XComGameState NewGameStat
 
 	MissionState.GeneratedMission.BattleOpName = class'XGMission'.static.GenerateOpName(false);
 	MissionState.GenerateMissionFlavorText();
+}
+
+static protected function SetActivityMissionQuestItem (XComGameState_MissionSite MissionState)
+{
+	local XComTacticalMissionManager MissionMgr;
+	local XComGameState_Reward RewardState;
+
+	MissionMgr = `TACTICALMISSIONMGR;
+	RewardState = XComGameState_Reward(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Rewards[0].ObjectID));
+
+	// "Unwrap" if chain proxy
+	if (RewardState.GetMyTemplateName() == 'Reward_ChainProxy')
+	{
+		RewardState = class'X2StrategyElement_InfiltrationRewards'.static.GetProxyReward(RewardState);
+	}
+
+	MissionState.GeneratedMission.MissionQuestItemTemplate = MissionMgr.ChooseQuestItemTemplate(
+		MissionState.Source,
+		RewardState.GetMyTemplate(),
+		MissionState.GeneratedMission.Mission,
+		MissionState.DarkEvent.ObjectID > 0
+	);
 }
 
 static function SetFactionOnMissionSite (XComGameState NewGameState, XComGameState_Activity ActivityState)
