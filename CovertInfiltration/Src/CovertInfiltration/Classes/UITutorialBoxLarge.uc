@@ -165,6 +165,15 @@ simulated function bool OnUnrealCommand (int cmd, int arg)
 	return super.OnUnrealCommand(cmd, arg);
 }
 
+simulated event Removed()
+{
+	super.Removed();
+
+	// Too many screens do not handle their navhelp properly - way easier to just clear it here
+	// Example: sitreps tutorial popup
+	`HQPRES.m_kAvengerHUD.NavHelp.ClearButtonHelp();
+}
+
 /////////////////
 /// Animation ///
 /////////////////

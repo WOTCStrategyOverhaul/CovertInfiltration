@@ -327,9 +327,9 @@ simulated protected function PanelRealized (UIPanel Panel)
 	}
 }
 
-/////////////
-/// Input ///
-/////////////
+///////////////////
+/// Interaction ///
+///////////////////
 
 simulated function bool OnUnrealCommand (int cmd, int arg)
 {
@@ -360,6 +360,13 @@ simulated function UpdateNavHelp ()
 	{
 		NavHelp.AddGeoscapeButton();
 	}
+}
+
+simulated function OnReceiveFocus ()
+{
+	super.OnReceiveFocus();
+
+	UpdateNavHelp();
 }
 
 simulated event Removed()
