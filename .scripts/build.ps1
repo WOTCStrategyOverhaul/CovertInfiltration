@@ -191,6 +191,7 @@ Write-Host "Mirrored."
 
 # mirror Highlander's source files to Src so that the mod can use them
 Write-Host "Copying Highlander files to Src..."
+Robocopy.exe "$srcDirectory\X2WOTCCommunityHighlander\Components\DLC2CommunityHighlander\DLC2CommunityHighlander\Src" "$sdkPath\Development\Src" *.uc *.uci /S /E /DCOPY:DA /COPY:DAT /NP /R:1000000 /W:30 2>&1>$null
 Robocopy.exe "$srcDirectory\X2WOTCCommunityHighlander\X2WOTCCommunityHighlander\Src" "$sdkPath\Development\Src" *.uc *.uci /XD X2WOTCCommunityHighlander /S /E /DCOPY:DA /COPY:DAT /NP /R:1000000 /W:30 2>&1>$null
 Write-Host "Copied."
 

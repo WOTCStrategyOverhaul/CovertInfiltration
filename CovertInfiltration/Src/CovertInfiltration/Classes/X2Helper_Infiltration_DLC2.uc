@@ -1,7 +1,10 @@
 //---------------------------------------------------------------------------------------
-//  AUTHOR:    Xymanek
-//  PURPOSE:   Houses functionality used for interacting with DLC2
-//  IMPORTANT: DO NOT call any method on this class if DLC2 isn't loaded
+// AUTHOR:    Xymanek
+// PURPOSE:   Houses functionality used for interacting with DLC2
+// IMPORTANT: DO NOT call any method on this class if DLC2 isn't loaded
+//
+// Implementation detail: do not declare variables of struct types that come from the DLC
+// package - these will CTD on game start if the DLC is missing. Reference types are fine
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -35,6 +38,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
     local StateObjectReference Candidate;
     local XComGameState_Unit RulerState;
     local XComGameStateHistory History;
+	local int i;
 
     if (InfiltrationHasRuler(InfiltrationState.GetReference()))
     {
@@ -46,7 +50,7 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 
     RulerManager = XComGameState_AlienRulerManager(History.GetSingleGameStateObjectForClass(class'XComGameState_AlienRulerManager'));
 	RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
-	//RulerManager.UpdateActiveAlienRulers(); // TODO: Uncomment when DLC2CHL mess is fixed
+	RulerManager.UpdateActiveAlienRulers();
 
     foreach RulerManager.ActiveAlienRulers(Candidate)
     {
@@ -70,10 +74,11 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
 
 	// Place the ruler
 	RulerManager.AlienRulerLocations.Add(1);
-	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].RulerRef = Candidate;
-	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].MissionRef = InfiltrationState.GetReference();
-	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].bActivated = true;
-	RulerManager.AlienRulerLocations[RulerManager.AlienRulerLocations.Length - 1].bNeedsPopup = false;
+	i = RulerManager.AlienRulerLocations.Length - 1;
+	RulerManager.AlienRulerLocations[i].RulerRef = Candidate;
+	RulerManager.AlienRulerLocations[i].MissionRef = InfiltrationState.GetReference();
+	RulerManager.AlienRulerLocations[i].bActivated = true;
+	RulerManager.AlienRulerLocations[i].bNeedsPopup = false;
 
     // The ruler is ready and waiting bwahahaha
     RulerState = XComGameState_Unit(History.GetGameStateForObjectID(Candidate.ObjectID));
