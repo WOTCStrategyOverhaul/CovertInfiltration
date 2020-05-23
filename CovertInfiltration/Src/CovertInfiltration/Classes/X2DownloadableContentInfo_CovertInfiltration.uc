@@ -250,6 +250,29 @@ static protected function ForceAllFactionsMet (XComGameState StartState)
 	}
 }
 
+static function OnLoadedSavedGameWithDLCExisting ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+
+	// Do nothing if we are adding the mod to an existing campaign (why is this called???) or if we already updated the state
+	if (CIInfo == none || CIInfo.ModVersion >= class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Updating CI state from" @ CIInfo.ModVersion @ "to" @ class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION);
+
+	// State fix-up changes go here
+	`CI_Log("OnLoadedSavedGameWithDLCExisting running");
+
+	// Save that the state was updated.
+	// Do this last, so that the state update code can access the previous version
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+	CIInfo.ModVersion = class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION;
+
+	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
+}
+
 /////////////////
 /// Templates ///
 /////////////////
