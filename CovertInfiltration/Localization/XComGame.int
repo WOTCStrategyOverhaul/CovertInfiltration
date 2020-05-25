@@ -319,3 +319,8 @@ m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:Str
 
 [UIStrategyPolicy]
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
+
+[ActionableFacilityLead X2ItemTemplate]
+FriendlyName="Actionable Lead"
+FriendlyNamePlural="Actionable Leads"
+BriefSummary="Now that our research team has suffiently poked around, we are able to act on this lead. Be aware: once we use this, ADVENT will react and the data here will be rendered useless - we will need to find a different lead"

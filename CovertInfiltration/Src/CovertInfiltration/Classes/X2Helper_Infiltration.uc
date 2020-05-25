@@ -1354,3 +1354,18 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 
 	return UnitString;
 }
+
+////////////////////////
+/// Actionable Leads ///
+////////////////////////
+
+// No leads are required if you have a relay in the region
+static function bool DoesFacilityRequireLead (XComGameState_MissionSite MissionState)
+{
+	local XComGameState_WorldRegion RegionState;
+
+	RegionState = XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(MissionState.Region.ObjectID));
+	if (RegionState == none) return true;
+
+	return RegionState.ResistanceLevel < eResLevel_Outpost;
+}

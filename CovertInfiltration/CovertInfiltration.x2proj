@@ -354,6 +354,9 @@
     <Content Include="Src\CovertInfiltration\Classes\X2ActivityChainTemplate.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationResources.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
       <SubType>Content</SubType>
     </Content>

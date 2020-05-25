@@ -488,6 +488,8 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local BarracksStatusReport CurrentBarracksStatus;
 	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
 	local X2FacilityTemplate AcademyTemplate;
+	local UIMission_AlienFacility AlienFacilityScreen;
+	local int Quantity;
 
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
@@ -549,6 +551,10 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.ShowResources();
 	}
 
+	//////////////////////////
+	/// Chain spawner rate ///
+	//////////////////////////
+
 	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)
 	{
 		AvengerHUD.AddResource(
@@ -559,6 +565,26 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 			)
 		);
 		
+		AvengerHUD.ShowResources();
+	}
+	
+	////////////////////////
+	/// Actionable leads ///
+	////////////////////////
+
+	AlienFacilityScreen = UIMission_AlienFacility(ScreenStack.GetCurrentScreen());
+	if (
+		AlienFacilityScreen != none &&
+		class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(AlienFacilityScreen.GetMission())
+	)
+	{
+		Quantity = `XCOMHQ.GetResourceAmount('ActionableFacilityLead');
+
+		AvengerHUD.AddResource(
+			Caps(class'UIUtilities_Strategy'.static.GetResourceDisplayName('ActionableFacilityLead', Quantity)),
+			class'UIUtilities_Text'.static.GetColoredText(string(Quantity), (Quantity > 0) ? eUIState_Normal : eUIState_Bad)
+		);
+
 		AvengerHUD.ShowResources();
 	}
 

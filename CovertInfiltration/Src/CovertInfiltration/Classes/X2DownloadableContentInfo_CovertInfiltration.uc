@@ -137,6 +137,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	GrantBonusStartUpStaff(StartState);
+	CreateActionableLeadResourceState(StartState);
 
 	PatchDebugStart(StartState);
 }
@@ -149,6 +150,7 @@ static event OnLoadedSavedGame()
 
 	CreateGoldenPathActions(none);
 	ForceObjectivesCompleted(none);
+	CreateActionableLeadResourceState(none);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -220,6 +222,35 @@ static function GrantBonusStartUpStaff (XComGameState StartState)
 	XComHQ.AddToCrew(StartState, ScientistState);
 
 	XComHQ.HandlePowerOrStaffingChange(StartState);
+}
+
+static protected function CreateActionableLeadResourceState (XComGameState NewGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2ItemTemplateManager ItemTemplateMgr;
+	local XComGameState_Item NewItemState;
+	local X2ItemTemplate ItemTemplate;
+	local bool bSubmitLocally;
+
+	ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateMgr.FindItemTemplate('ActionableFacilityLead');
+
+	if (NewGameState == none)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating Actionable Leads resource state");
+		bSubmitLocally = true;
+	}
+
+	NewItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+	NewItemState.Quantity = 0;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddItemToHQInventory(NewItemState);
+
+	if (bSubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
 }
 
 static protected function PatchDebugStart (XComGameState StartState)
