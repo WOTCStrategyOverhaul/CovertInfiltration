@@ -194,6 +194,11 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 	local XComGameState_CovertInfiltrationInfo Info;
 	local XComGameState NewGameState;
 	local UIScreenStack ScreenStack;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2ResistanceActivityTemplate ResActTemplate;
+	local TResistanceActivity ResActStruct;
+	local int iMissions;
 
 	Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 	ScreenStack = `SCREENSTACK;
@@ -213,6 +218,26 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		}
 
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	foreach ResHQ.ResistanceActivities(ResActStruct)
+	{
+		ResActTemplate = X2ResistanceActivityTemplate(StratMgr.FindStrategyElementTemplate(ResActStruct.ActivityTemplateName));
+
+		if (ResActTemplate.bMission)
+		{
+			iMissions += ResActStruct.Count;
+		}
+	}
+
+	// If the player has returned from their second mission, display the crew limit tutorial
+	// Gatecrasher isn't registered as a Resistance Activity, hence >0 rather than >1
+	if (iMissions > 0)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.CrewLimit();
 	}
 
 	return ELR_NoInterrupt;
@@ -522,8 +547,6 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		);
 
 		AvengerHUD.ShowResources();
-
-		class'UIUtilities_InfiltrationTutorial'.static.GuerillaTactics();
 	}
 
 	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)

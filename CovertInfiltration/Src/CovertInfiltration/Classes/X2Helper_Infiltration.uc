@@ -316,22 +316,28 @@ static function CreateWillRecoveryProject(XComGameState NewGameState, XComGameSt
 	XComHQ.Projects.AddItem(WillProject.GetReference());
 }
 
-static function StrategyCost GetExfiltrationCost(XComGameState_CovertAction CovertAction)
+static function StrategyCost GetExfiltrationStrategyCost(XComGameState_CovertAction CovertAction)
 {
 	local StrategyCost ExfiltrateCost;
 	local ArtifactCost IntelCost;
+
+	IntelCost.Quantity = GetExfiltrationIntegerCost(CovertAction);
+	IntelCost.ItemTemplateName = 'Intel';
+
+	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);
+
+	return ExfiltrateCost;
+}
+
+static function int GetExfiltrationIntegerCost(XComGameState_CovertAction CovertAction)
+{
 	local TDateTime CurrentTime;
 	local float Days;
 
 	CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 	Days = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(CurrentTime, CovertAction.StartDateTime) / 24;
 
-	IntelCost.Quantity = default.EXFIL_INTEL_COST_BASEAMOUNT + Round(Days * default.EXFIL_INTEL_COST_MULTIPLIER);
-	IntelCost.ItemTemplateName = 'Intel';
-
-	ExfiltrateCost.ResourceCosts.AddItem(IntelCost);
-
-	return ExfiltrateCost;
+	return default.EXFIL_INTEL_COST_BASEAMOUNT + Round(Days * default.EXFIL_INTEL_COST_MULTIPLIER);
 }
 
 static function bool IsInfiltrationAction(XComGameState_CovertAction Action)

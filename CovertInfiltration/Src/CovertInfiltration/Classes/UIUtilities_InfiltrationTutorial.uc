@@ -166,9 +166,9 @@ static function CovertOpsAbort ()
 	UITutorialBoxLarge(default.strCovertOpsAbortHeader, `XEXPAND.ExpandString(default.strCovertOpsAbortBody));
 }
 
-static function ChangedCrewCount ()
+static function CrewLimit ()
 {
-	if (!ShouldShowPopup('ChangedCrewCount')) return;
+	if (!ShouldShowPopup('CrewLimit')) return;
 	
 	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
 }

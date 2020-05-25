@@ -140,6 +140,12 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_DarkEvents.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_GuerillaTacticsSchool.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_RecruitSoldiers.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_SquadSelect.uc">
       <SubType>Content</SubType>
     </Content>
