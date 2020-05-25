@@ -80,6 +80,8 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
 	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
+	Template.AddCHEvent('BlackMarketGoodsReset', BlackMarketGoodsReset, ELD_Immediate, 99);
+	Template.AddCHEvent('BlackMarketPurchase', BlackMarketPurchase_OSS, ELD_OnStateSubmitted, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -983,6 +985,81 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	{
 		History.CleanupPendingGameState(NewGameState);
 	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn BlackMarketGoodsReset (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2ItemTemplateManager ItemTemplateMgr;
+	local XComGameState_BlackMarket MarketState;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local XComGameState_Item ItemState;
+	local X2ItemTemplate ItemTemplate;
+	local Commodity ForSaleItem;
+
+	MarketState = XComGameState_BlackMarket(EventData);
+	if (MarketState == none) return ELR_NoInterrupt;
+
+	// Check if the player bought the first lead already
+	if (class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bBlackMarketLeadPurchased) return ELR_NoInterrupt;
+
+	// Get the latest pending state
+	MarketState = XComGameState_BlackMarket(NewGameState.ModifyStateObject(class'XComGameState_BlackMarket', MarketState.ObjectID));
+
+	// Create the item
+	ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateMgr.FindItemTemplate('ActionableFacilityLead');
+	ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+	ItemState.Quantity = 1;
+
+	// Create the reward
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Item'));
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+	RewardState.SetReward(ItemState.GetReference());
+
+	// Fill out the commodity
+	ForSaleItem.RewardRef = RewardState.GetReference();
+	ForSaleItem.Title = RewardState.GetRewardString();
+	ForSaleItem.Desc = RewardState.GetBlackMarketString(); // TODO: Replace this with something about this being a one-time sale?
+	ForSaleItem.Image = RewardState.GetRewardImage();
+	ForSaleItem.CostScalars = MarketState.GoodsCostScalars;
+	ForSaleItem.DiscountPercent = MarketState.GoodsCostPercentDiscount;
+
+	// Set the price
+	ForSaleItem.Cost = MarketState.GetForSaleItemCost(MarketState.PriceReductionScalar);
+
+	// Add to sale
+	MarketState.ForSaleItems.AddItem(ForSaleItem);
+
+	// We are done
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn BlackMarketPurchase_OSS (Object EventData, Object EventSource, XComGameState SubmittedGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Reward RewardState;
+	local XComGameState_Item ItemState;
+	local XComGameState NewGameState;
+
+	RewardState = XComGameState_Reward(EventData);
+	if (RewardState == none) return ELR_NoInterrupt;
+
+	ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	if (ItemState == none) return ELR_NoInterrupt;
+	
+	// Make sure we bought a lead and not something else
+	if (ItemState.GetMyTemplateName() != 'ActionableFacilityLead') return ELR_NoInterrupt;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling BM Actionable Lead purchase");
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.bBlackMarketLeadPurchased = true;
+	// TODO: update mission locks
+	`SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
 }
