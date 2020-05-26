@@ -1370,84 +1370,108 @@ static function bool DoesFacilityRequireLead (XComGameState_MissionSite MissionS
 	return RegionState.ResistanceLevel < eResLevel_Outpost;
 }
 
+static function bool CanTakeFacilityMission (XComGameState_MissionSite MissionState)
+{
+	if (!DoesFacilityRequireLead(MissionState))
+	{
+		return true;
+	}
+	else
+	{
+		return `XCOMHQ.GetResourceAmount('ActionableFacilityLead') > 0;
+	}
+}
+
 // This method is idempotent and can be called as many times as needed
 // If NewGameState is not provided, this method will create a new one on its own
 // but will not submit it (i.e. will clean up) if no changes are made
 // TODO: Call this on region res level change. Need event in SetResistanceLevel (#874)
 static function UpdateFacilityMissionLocks (optional XComGameState NewGameState)
 {
-	local bool bSubmitLocally, bNotAtThresholdExpected;
-	local XComGameState_MissionSite MissionState;
-	local XComGameStateHistory History;
-	local int LeadsCount, MissionID;
-	local array<int> MissionIDs;
+	// It turns out that all places that check whether the player can take the mission, do so in the following manner:
+	//
+	// bMissionLocked = ((MissionRegion != none) && !MissionRegion.HaveMadeContact() && MissionSite.bNotAtThreshold);
+	//
+	// This is redundant (as making contact sets bNotAtThreshold = false) but most importantly, means that we cannot use 
+	// bNotAtThreshold to deny access to mission in contacted regions.
+	//
+	// As such, the whole situation was reworked using UI hooks (see MissionIconSetMissionSite and
+	// OverrideCanTakeFacilityMission in X2EventListener_Infiltration_UI) and the below code
+	// turned out to be useless *sob*
 
-	LeadsCount = `XCOMHQ.GetResourceAmount('ActionableFacilityLead');
-	History = `XCOMHISTORY;
-
-	if (NewGameState == none)
-	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating facility mission locks");
-		bSubmitLocally = true;
-	}
-
-	// History.IterateByClassType does not include changes from the pending state,
-	// so if we were given one, collect mission IDs there.
-	// Covers the case when the facility/mission was created in the passed NewGameState
-	if (!bSubmitLocally)
-	{
-		foreach NewGameState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
-		{
-			if (MissionState.Source == 'MissionSource_AlienNetwork')
-			{
-				`AddUniqueItemToArray(MissionIDs, MissionState.ObjectID)
-			}
-		}
-	}
-
-	// Grab the rest
-	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionState)
-	{
-		if (MissionState.Source == 'MissionSource_AlienNetwork')
-		{
-			`AddUniqueItemToArray(MissionIDs, MissionState.ObjectID)
-		}
-	}
-
-	// Process each mission
-	foreach MissionIDs(MissionID)
-	{
-		// This is safe to do without caring for pending/history stuff, since History.GetGameStateForObjectID
-		// will return the pending state (if exists)
-		MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(MissionID));
-
-		if (!DoesFacilityRequireLead(MissionState))
-		{
-			bNotAtThresholdExpected = false;
-		}
-		else
-		{
-			// If we have no actionable leads, then we cannot launch the mission (not at threshold)
-			bNotAtThresholdExpected = LeadsCount == 0;
-		}
-
-		// If the mission state is correct already, don't do anything
-		if (MissionState.bNotAtThreshold == bNotAtThresholdExpected) continue;
-
-		// Set the correct flag
-		MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
-		MissionState.bNotAtThreshold = bNotAtThresholdExpected;
-	}
-
-	if (bSubmitLocally)
-	{
-		if (NewGameState.GetNumGameStateObjects() > 0)
-		{
-			`SubmitGameState(NewGameState);
-		}
-		else
-		{
-			History.CleanupPendingGameState(NewGameState);
-		}
-	}
+//	local bool bSubmitLocally, bNotAtThresholdExpected;
+//	local XComGameState_MissionSite MissionState;
+//	local XComGameStateHistory History;
+//	local int LeadsCount, MissionID;
+//	local array<int> MissionIDs;
+//
+//	LeadsCount = `XCOMHQ.GetResourceAmount('ActionableFacilityLead');
+//	History = `XCOMHISTORY;
+//
+//	if (NewGameState == none)
+//	{
+//		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Updating facility mission locks");
+//		bSubmitLocally = true;
+//	}
+//
+//	// History.IterateByClassType does not include changes from the pending state,
+//	// so if we were given one, collect mission IDs there.
+//	// Covers the case when the facility/mission was created in the passed NewGameState
+//	if (!bSubmitLocally)
+//	{
+//		foreach NewGameState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+//		{
+//			if (MissionState.Source == 'MissionSource_AlienNetwork')
+//			{
+//				`AddUniqueItemToArray(MissionIDs, MissionState.ObjectID)
+//			}
+//		}
+//	}
+//
+//	// Grab the rest
+//	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+//	{
+//		if (MissionState.Source == 'MissionSource_AlienNetwork')
+//		{
+//			`AddUniqueItemToArray(MissionIDs, MissionState.ObjectID)
+//		}
+//	}
+//
+//	// Process each mission
+//	foreach MissionIDs(MissionID)
+//	{
+//		// This is safe to do without caring for pending/history stuff, since History.GetGameStateForObjectID
+//		// will return the pending state (if exists)
+//		MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(MissionID));
+//
+//		if (!DoesFacilityRequireLead(MissionState))
+//		{
+//			bNotAtThresholdExpected = false;
+//		}
+//		else
+//		{
+//			// If we have no actionable leads, then we cannot launch the mission (not at threshold)
+//			bNotAtThresholdExpected = LeadsCount == 0;
+//		}
+//
+//		// If the mission state is correct already, don't do anything
+//		if (MissionState.bNotAtThreshold == bNotAtThresholdExpected) continue;
+//
+//		// Set the correct flag
+//		MissionState = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionState.ObjectID));
+//		MissionState.bNotAtThreshold = bNotAtThresholdExpected;
+//	}
+//
+//	if (bSubmitLocally)
+//	{
+//		if (NewGameState.GetNumGameStateObjects() > 0)
+//		{
+//			`SubmitGameState(NewGameState);
+//		}
+//		else
+//		{
+//			History.CleanupPendingGameState(NewGameState);
+//		}
+//	}
 }
+

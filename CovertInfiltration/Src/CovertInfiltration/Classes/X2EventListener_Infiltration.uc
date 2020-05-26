@@ -1062,6 +1062,8 @@ static protected function EventListenerReturn BlackMarketPurchase_OSS (Object Ev
 	CIInfo.bBlackMarketLeadPurchased = true;
 	`SubmitGameState(NewGameState);
 
+	if (`HQPRES.StrategyMap2D != none) `HQPRES.StrategyMap2D.UpdateMissions();
+
 	return ELR_NoInterrupt;
 }
 
@@ -1075,6 +1077,7 @@ static protected function EventListenerReturn AddResource_OSS (Object EventData,
 	if (ResourceItemState.GetMyTemplateName() == 'ActionableFacilityLead')
 	{
 		class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks();
+		if (`HQPRES.StrategyMap2D != none) `HQPRES.StrategyMap2D.UpdateMissions();
 	}
 
 	 return ELR_NoInterrupt;

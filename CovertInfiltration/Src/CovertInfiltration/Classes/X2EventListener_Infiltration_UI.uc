@@ -50,6 +50,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate, 99);
 	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideCanTakeFacilityMission', OverrideCanTakeFacilityMission, ELD_Immediate, 99);
 	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate, 99);
 	Template.AddCHEvent('UIResistanceReport_ShowCouncil', UIResistanceReport_ShowCouncil, ELD_Immediate, 99);
 	Template.AddCHEvent('OverrideNextRetaliationDisplay', OverrideNextRetaliationDisplay, ELD_Immediate, 99);
@@ -386,6 +387,7 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 static protected function EventListenerReturn MissionIconSetMissionSite (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_MissionSite MissionState;
 	local UIStrategyMap_MissionIcon MissionIcon;
 
 	MissionIcon = UIStrategyMap_MissionIcon(EventSource);
@@ -398,7 +400,29 @@ static protected function EventListenerReturn MissionIconSetMissionSite (Object 
 		MissionIcon.AS_SetAlert(true);
 	}
 
+	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(MissionIcon.MissionSite.ObjectID));
+
+	if (MissionState != none && MissionState.Source == 'MissionSource_AlienNetwork')
+	{
+		MissionIcon.AS_SetLock(!class'X2Helper_Infiltration'.static.CanTakeFacilityMission(MissionState));
+	}
+
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideCanTakeFacilityMission (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_MissionSite MissionSite;
+	local XComLWTuple Tuple;
+
+	MissionSite = XComGameState_MissionSite(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (MissionSite == none || Tuple == none) return ELR_NoInterrupt;
+
+	Tuple.Data[0].b = class'X2Helper_Infiltration'.static.CanTakeFacilityMission(MissionSite);
+
+	 return ELR_NoInterrupt;
 }
 
 static protected function EventListenerReturn OverrideMissionImage (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
