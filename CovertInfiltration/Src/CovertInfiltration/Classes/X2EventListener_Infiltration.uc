@@ -1188,6 +1188,12 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	class'X2Helper_Infiltration'.static.SetStartingEnemiesForXp(NewGameState);
 
 	`SubmitGameState(NewGameState);
+	
+	// If supply extract, show tutorial
+	if (`TACTICALMISSIONMGR.ActiveMission.sType == "SupplyExtraction")
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.SupplyExtractMission();
+	}
 
 	return ELR_NoInterrupt;
 }

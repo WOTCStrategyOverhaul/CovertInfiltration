@@ -783,7 +783,7 @@ simulated function UpdateButtons()
 	if (CurrentAction.bStarted)
 	{
 		CostScalars.Length = 0; // Avoid complier warning
-		bHaveIntel = `XCOMHQ.CanAffordAllStrategyCosts(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
+		bHaveIntel = `XCOMHQ.CanAffordAllStrategyCosts(class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(GetAction()), CostScalars);
 		
 		MainActionButton.SetText(strAbortAction);
 		MainActionButton.OnClickedDelegate = OnAbortClicked;
@@ -899,7 +899,7 @@ simulated function UpdateCovertActionInfo()
 	if (CurrentAction.bStarted)
 	{
 		SecondaryLabel.SetText(strExfilLabel);
-		SecondaryValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars)));
+		SecondaryValue.SetText(class'UIUtilities_Text'.static.AlignRight(class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(GetAction()), CostScalars)));
 
 		SecondaryLabel.Show();
 		SecondaryValue.Show();
@@ -1143,11 +1143,22 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
+	local XComGameState_HeadquartersResistance ResHQ;
+	
 	bHideOnLoseFocus = false;
 
 	if (class'XComGameState_Activity'.static.GetActivityFromObject(GetAction()) != none)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
+	}
+	
+	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
+	
+	if (GetAction().bStarted
+	 && ResHQ.NumMonths > 0
+	 && class'X2Helper_Infiltration'.static.GetExfiltrationIntegerCost(GetAction()) > class'X2Helper_Infiltration'.default.EXFIL_INTEL_COST_BASEAMOUNT)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.CovertOpsAbort();
 	}
 	
 	bHideOnLoseFocus = true;
@@ -1414,7 +1425,7 @@ simulated function ConfirmAbortPopup()
 	
 	CostScalars.Length = 0; // Avoid compiler warning
 	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	ParamTag.StrValue0 = class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationCost(GetAction()), CostScalars);
+	ParamTag.StrValue0 = class'UIUtilities_Strategy'.static.GetStrategyCostString(class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(GetAction()), CostScalars);
 
 	DialogData.eType = eDialog_Normal;
 	DialogData.strTitle = strDialogDataTitle;
@@ -1437,7 +1448,7 @@ simulated function ConfirmAbortPopupCallback(Name eAction)
 		// This needs to be done before calling PreparePickupSite, so that when it sets flight mode, we won't override it
 		OnRemoveRestoreResistanceNetwork();
 		
-		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationCost(CovertAction));
+		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(CovertAction));
 		CloseScreen();
 	}
 }

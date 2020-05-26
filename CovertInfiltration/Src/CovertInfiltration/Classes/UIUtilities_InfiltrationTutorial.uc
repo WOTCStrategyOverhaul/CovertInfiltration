@@ -13,8 +13,6 @@ class UIUtilities_InfiltrationTutorial extends Object;
 // On Geoscape
 var localized string strGeoscapeEntryHeader;
 var localized string strGeoscapeEntryBody;
-var localized string strCrewLimitHeader;
-var localized string strCrewLimitBody;
 
 // On Squad Select
 var localized string strCovertActionLoadoutHeader;
@@ -35,8 +33,6 @@ var localized string strCovertActionFinishedBody;
 // On Empty Room
 var localized string strFacilityRingHeader;
 var localized string strFacilityRingBody;
-var localized string strFacilityGTSHeader;
-var localized string strFacilityGTSBody;
 
 // On Chain Selected
 var localized string strActivityChainsHeader;
@@ -46,9 +42,29 @@ var localized string strActivityChainsBody;
 var localized string strResistanceInformantsHeader;
 var localized string strResistanceInformantsBody;
 
-// On Facility Built
+// On Alien Facility Built
 var localized string strAdvancedChainsHeader;
 var localized string strAdvancedChainsBody;
+
+// On Dark Event Preview
+var localized string strDarkEventsHeader;
+var localized string strDarkEventsBody;
+
+// On In-Progress Operation Selected
+var localized string strCovertOpsAbortHeader;
+var localized string strCovertOpsAbortBody;
+
+// On Supply Extract Mission Start
+var localized string strSupplyExtractHeader;
+var localized string strSupplyExtractBody;
+
+// On Crew Count Changed
+var localized string strCrewLimitHeader;
+var localized string strCrewLimitBody;
+
+// On GTS Facility Built
+var localized string strFacilityGTSHeader;
+var localized string strFacilityGTSBody;
 
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
@@ -63,58 +79,63 @@ static function GeoscapeEntry ()
 {
 	if (!ShouldShowPopup('GeoscapeEntry')) return;
 	
-	UITutorialBoxLarge(default.strGeoscapeEntryHeader, default.strGeoscapeEntryBody);
-	UITutorialBoxLarge(default.strCrewLimitHeader, default.strCrewLimitBody);
+	UITutorialBoxLarge(default.strGeoscapeEntryHeader, `XEXPAND.ExpandString(default.strGeoscapeEntryBody));
 }
 
 static function CovertActionLoadout ()
 {
 	if (!ShouldShowPopup('CovertActionLoadout')) return;
 
-	UITutorialBoxLarge(default.strCovertActionLoadoutHeader, default.strCovertActionLoadoutBody);
+	UITutorialBoxLarge(default.strCovertActionLoadoutHeader, `XEXPAND.ExpandString(default.strCovertActionLoadoutBody));
 }
 
 static function InfiltrationLoadout ()
 {
 	if (!ShouldShowPopup('InfiltrationLoadout')) return;
 
-	UITutorialBoxLarge(default.strInfiltrationLoadoutHeader, default.strInfiltrationLoadoutBody);
+	UITutorialBoxLarge(default.strInfiltrationLoadoutHeader, `XEXPAND.ExpandString(default.strInfiltrationLoadoutBody));
 }
 
 static function AssaultLoadout ()
 {
 	if (!ShouldShowPopup('AssaultLoadout')) return;
 
-	UITutorialBoxLarge(default.strAssaultLoadoutHeader, default.strAssaultLoadoutBody);
+	UITutorialBoxLarge(default.strAssaultLoadoutHeader, `XEXPAND.ExpandString(default.strAssaultLoadoutBody));
 }
 
 static function OverInfiltration ()
 {
 	if (!ShouldShowPopup('OverInfiltration')) return;
 
-	UITutorialBoxLarge(default.strOverInfiltrationHeader, default.strOverInfiltrationBody);
+	UITutorialBoxLarge(default.strOverInfiltrationHeader, `XEXPAND.ExpandString(default.strOverInfiltrationBody));
 }
 
 static function CovertActionFinished ()
 {
 	if (!ShouldShowPopup('CovertActionFinished')) return;
 
-	UITutorialBoxLarge(default.strCovertActionFinishedHeader, default.strCovertActionFinishedBody);
+	UITutorialBoxLarge(default.strCovertActionFinishedHeader, `XEXPAND.ExpandString(default.strCovertActionFinishedBody));
 }
 
 static function FacilityChanges ()
 {
 	if (!ShouldShowPopup('FacilityChanges')) return;
 
-	UITutorialBoxLarge(default.strFacilityRingHeader, default.strFacilityRingBody);
-	UITutorialBoxLarge(default.strFacilityGTSHeader, default.strFacilityGTSBody);
+	UITutorialBoxLarge(default.strFacilityRingHeader, `XEXPAND.ExpandString(default.strFacilityRingBody));
+}
+
+static function GuerillaTactics ()
+{
+	if (!ShouldShowPopup('GuerillaTactics')) return;
+
+	UITutorialBoxLarge(default.strFacilityGTSHeader, `XEXPAND.ExpandString(default.strFacilityGTSBody));
 }
 
 static function ActivityChains ()
 {
 	if (!ShouldShowPopup('ActivityChains')) return;
 
-	UITutorialBoxLarge(default.strActivityChainsHeader, default.strActivityChainsBody);
+	UITutorialBoxLarge(default.strActivityChainsHeader, `XEXPAND.ExpandString(default.strActivityChainsBody));
 }
 
 static function ResistanceInformants ()
@@ -128,7 +149,28 @@ static function AlienFacilityBuilt ()
 {
 	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
 
-	UITutorialBoxLarge(default.strAdvancedChainsHeader, default.strAdvancedChainsBody);
+	UITutorialBoxLarge(default.strAdvancedChainsHeader, `XEXPAND.ExpandString(default.strAdvancedChainsBody));
+}
+
+static function DarkEventPreview ()
+{
+	if (!ShouldShowPopup('DarkEventPreview')) return;
+
+	UITutorialBoxLarge(default.strDarkEventsHeader, `XEXPAND.ExpandString(default.strDarkEventsBody));
+}
+
+static function CovertOpsAbort ()
+{
+	if (!ShouldShowPopup('CovertOpsAbort')) return;
+
+	UITutorialBoxLarge(default.strCovertOpsAbortHeader, `XEXPAND.ExpandString(default.strCovertOpsAbortBody));
+}
+
+static function CrewLimit ()
+{
+	if (!ShouldShowPopup('CrewLimit')) return;
+	
+	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
@@ -149,6 +191,16 @@ static function QueueAlienFacilityBuilt ()
 		`SubmitGameState(NewGameState);
 	}
 }
+
+static function SupplyExtractMission ()
+{
+	if (!ShouldShowPopup('SupplyExtract')) return;
+
+	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strSupplyExtractHeader, default.strSupplyExtractBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies");
+}
+
+// TODO: need to standardize all the function names here, some are titled with the
+// subject of their tutorials and some are titled with the event that triggers them
 
 ///////////////
 /// Helpers ///
