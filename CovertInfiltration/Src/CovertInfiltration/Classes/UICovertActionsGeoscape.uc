@@ -1142,14 +1142,20 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
+	local XComGameState_HeadquartersResistance ResHQ;
+	
 	bHideOnLoseFocus = false;
 
 	if (class'XComGameState_Activity'.static.GetActivityFromObject(GetAction()) != none)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 	}
-
-	if (GetAction().bStarted && class'X2Helper_Infiltration'.static.GetExfiltrationIntegerCost(GetAction()) > class'X2Helper_Infiltration'.default.EXFIL_INTEL_COST_BASEAMOUNT)
+	
+	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance'));
+	
+	if (GetAction().bStarted
+	 && ResHQ.NumMonths > 0
+	 && class'X2Helper_Infiltration'.static.GetExfiltrationIntegerCost(GetAction()) > class'X2Helper_Infiltration'.default.EXFIL_INTEL_COST_BASEAMOUNT)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.CovertOpsAbort();
 	}
