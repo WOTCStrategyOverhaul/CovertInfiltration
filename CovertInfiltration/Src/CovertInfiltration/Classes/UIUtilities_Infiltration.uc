@@ -35,6 +35,10 @@ var localized string strCompletionStatusLabel_Infiltrating;
 // Prefix of the form (X/Y) where X is the current stage and Y is the number of stages in the chain
 var localized string strChainStatusPrefix;
 
+// Post-facility mission global effect
+var localized string strActionableLeadUsed;
+var localized string strLastActionableLeadUsed;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 

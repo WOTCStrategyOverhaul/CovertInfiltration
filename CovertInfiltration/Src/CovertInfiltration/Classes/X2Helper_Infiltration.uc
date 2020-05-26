@@ -1373,6 +1373,7 @@ static function bool DoesFacilityRequireLead (XComGameState_MissionSite MissionS
 // This method is idempotent and can be called as many times as needed
 // If NewGameState is not provided, this method will create a new one on its own
 // but will not submit it (i.e. will clean up) if no changes are made
+// TODO: Call this on region res level change. Need event in SetResistanceLevel (#874)
 static function UpdateFacilityMissionLocks (optional XComGameState NewGameState)
 {
 	local bool bSubmitLocally, bNotAtThresholdExpected;

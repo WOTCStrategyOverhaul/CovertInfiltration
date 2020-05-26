@@ -518,6 +518,7 @@ static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();
 	TriggerMissionExitEvents();
+	HandleFacilityMissionExit();
 
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
 }
@@ -580,6 +581,44 @@ static protected function TriggerMissionExitEvents ()
 	{
 		History.CleanupPendingGameState(NewGameState);
 	}
+}
+
+static protected function HandleFacilityMissionExit ()
+{
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local string strEffect;
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	// Do nothing if we came back from some other mission
+	if (MissionState.Source != 'MissionSource_AlienNetwork') return;
+
+	// Do nothing is this was attempt did not use a lead
+	if (!class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(MissionState)) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: HandleFacilityMissionExit");
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddResource(NewGameState, 'ActionableFacilityLead', -1);
+	// No need to call X2Helper_Infiltration::UpdateFacilityMissionLocks() here - it will be called by the AddResource event
+
+	// Save our changes cuz otherwise XComHQ.GetResourceAmount will return the old value
+	`SubmitGameState(NewGameState);
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: HandleFacilityMissionExit 2");
+
+	strEffect = XComHQ.GetResourceAmount('ActionableFacilityLead') > 0
+		? class'UIUtilities_Infiltration'.default.strActionableLeadUsed
+		: class'UIUtilities_Infiltration'.default.strLastActionableLeadUsed;
+
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, strEffect, true);
+
+	`SubmitGameState(NewGameState);
 }
 
 static event OnExitPostMissionSequence ()
@@ -1354,6 +1393,17 @@ exec function ListAllMissionTypesWithQuestItems ()
 		`CI_Log("  " $ MissionType);
 	}
 	`CI_Log("===============================");
+}
+
+exec function RefreshFacilityMissionsLocks ()
+{
+	local XComGameState NewGameState;
+
+	// Give UpdateFacilityMissionLocks an explicit gamestate, so that if it does nothing,
+	// we will see the empty gamestate in the X2DebugHistory
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: RefreshFacilityLocks");
+	class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks(NewGameState);
+	`SubmitGameState(NewGameState);
 }
 
 ///////////////

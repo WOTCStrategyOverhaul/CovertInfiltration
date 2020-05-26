@@ -138,6 +138,9 @@ strCompletionStatusLabel_Infiltrating=Infiltrating
 strChainStatusPrefix="(<XGParam:IntValue0>/<XGParam:IntValue1>)"
 ;<font color='#34DDDD'>
 
+strActionableLeadUsed="We used one of our actionable facility leads"
+strLastActionableLeadUsed="We used our last actionable facility lead"
+
 [UISkyrangerExfiltrate]
 strBody="The Skyranger has reached the action site. Awaiting orders."
 strSkyrangerExfiltrateSubtitle="READY FOR EXFILTRATION"
