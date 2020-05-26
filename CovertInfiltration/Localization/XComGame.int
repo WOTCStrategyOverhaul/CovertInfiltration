@@ -324,3 +324,5 @@ LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 FriendlyName="Actionable Lead"
 FriendlyNamePlural="Actionable Leads"
 BriefSummary="Now that our research team has suffiently poked around, we are able to act on this lead. Be aware: once we use this, ADVENT will react and the data here will be rendered useless - we will need to find a different lead"
+
+; TODO: Improve above and also rework [Tech_AlienFacilityLead X2TechTemplate]

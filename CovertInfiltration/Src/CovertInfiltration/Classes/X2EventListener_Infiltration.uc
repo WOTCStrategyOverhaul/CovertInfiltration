@@ -82,6 +82,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
 	Template.AddCHEvent('BlackMarketGoodsReset', BlackMarketGoodsReset, ELD_Immediate, 99);
 	Template.AddCHEvent('BlackMarketPurchase', BlackMarketPurchase_OSS, ELD_OnStateSubmitted, 99);
+	Template.AddCHEvent('AddResource', AddResource_OSS, ELD_OnStateSubmitted, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -1056,12 +1057,27 @@ static protected function EventListenerReturn BlackMarketPurchase_OSS (Object Ev
 	if (ItemState.GetMyTemplateName() != 'ActionableFacilityLead') return ELR_NoInterrupt;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling BM Actionable Lead purchase");
+	class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks(NewGameState);
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
 	CIInfo.bBlackMarketLeadPurchased = true;
-	// TODO: update mission locks
 	`SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn AddResource_OSS (Object EventData, Object EventSource, XComGameState SubmittedGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_Item ResourceItemState;
+
+	ResourceItemState = XComGameState_Item(EventData);
+	if (ResourceItemState == none) return ELR_NoInterrupt;
+
+	if (ResourceItemState.GetMyTemplateName() == 'ActionableFacilityLead')
+	{
+		class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks();
+	}
+
+	 return ELR_NoInterrupt;
 }
 
 ////////////////
