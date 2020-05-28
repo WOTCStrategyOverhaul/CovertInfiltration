@@ -13,6 +13,8 @@ var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 var config(GameData) array<name> arrAllowPromotionReward;
 var config(GameData) array<string> arrFirstRetalExcludedMissionFamilies;
+var config(GameData) int FacilityLeadResearchPointsToComplete;
+var config(GameData) int FacilityLeadResearchRepeatPointsIncrease;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -160,7 +162,56 @@ static protected function PatchGoldenPathTechs ()
 
 static function PatchFacilityLeadResearch ()
 {
-	//
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+	local int i;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	Manager.FindDataTemplateAllDifficulties('Tech_AlienFacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+		if (TechTemplate == none) continue;
+
+		TechTemplate.PointsToComplete = default.FacilityLeadResearchPointsToComplete;
+		TechTemplate.RepeatPointsIncrease = default.FacilityLeadResearchRepeatPointsIncrease;
+
+		TechTemplate.Requirements.SpecialRequirementsFn = IsFacilityMissionAvailable;
+		TechTemplate.ResearchCompletedFn = FacilityLeadCompleted; // TODO: Popup
+
+		// Remove intel cost, it's hard enough already to get leads
+		i = TechTemplate.Cost.ResourceCosts.Find('ItemTemplateName', 'Intel');
+		if (i != INDEX_NONE) TechTemplate.Cost.ResourceCosts.Remove(i, 1);
+	}
+}
+
+static protected function bool IsFacilityMissionAvailable ()
+{
+	local XComGameStateHistory History;
+	local XComGameState_MissionSite MissionState;
+
+	History = `XCOMHISTORY;
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+	{
+		if (MissionState.Source == 'MissionSource_AlienNetwork' && class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(MissionState))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static function FacilityLeadCompleted (XComGameState NewGameState, XComGameState_Tech TechState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddResource(NewGameState, 'ActionableFacilityLead', 1);
 }
 
 ////////////////

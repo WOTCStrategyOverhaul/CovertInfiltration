@@ -323,6 +323,16 @@ LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 [ActionableFacilityLead X2ItemTemplate]
 FriendlyName="Actionable Lead"
 FriendlyNamePlural="Actionable Leads"
-BriefSummary="Now that our research team has suffiently poked around, we are able to act on this lead. Be aware: once we use this, ADVENT will react and the data here will be rendered useless - we will need to find a different lead"
+BriefSummary="Now that the data on this lead was decrypted, we are able to assault a facility without ADVENT instantly sending a battalion of troops against us. Be aware: once we use this, ADVENT will react and the data here will be rendered useless - we will need to find a different lead"
 
-; TODO: Improve above and also rework [Tech_AlienFacilityLead X2TechTemplate]
+[FacilityLeadItem X2ItemTemplate]
+BriefSummary="A valuable stash of information about the security of aliens' clandestine facilities. Our research team can use them to discover a way for us to safely (relatively speaking) assault a facility, but it'll take some time."
+
+[Tech_AlienFacilityLead X2TechTemplate]
+DisplayName="Facility Lead"
+Summary="Our forces recently uncovered valuable information about of one of ADVENT's remote facilities. If we can successfully decrypt the recovered data, it will allow for a tactical strike." 
+CodeName="Insight"
+LongDescription="Although it was a time-intenstive process, I was able to successfully decrypt the ADVENT data recovered by our troops in the field. As expected, the information includes the exact coordinates for one of ADVENT's remote facilities. With this knowledge in hand, we should be able to deploy a strike team to infiltrate and destroy the facility. I have no doubts that the loss of this site will deal a significant blow to the aliens' efforts towards the Avatar Project. R. Tygan."
+UnlockedDescription="" ; Vanilla: "Alien Facility Mission in <XGParam:StrValue0/!RegionName/> Unlocked"
+
+; TODO: Improve above/rework
