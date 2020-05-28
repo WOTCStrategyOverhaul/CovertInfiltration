@@ -8,6 +8,7 @@
 class X2StrategyElement_DefaultActivityChains extends X2StrategyElement config(Infiltration);
 
 var config EFactionInfluence MinFactionInfluenceForExtraSoldier;
+var config int FacilityChainMinGlobalFacilityDoom;
 
 var localized string strCounterDarkEventDescription;
 var localized string strCounterHiddenDarkEventDescription;
@@ -390,11 +391,28 @@ static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, ou
 
 static function bool IsFacilityChainAvailable(XComGameState NewGameState)
 {
-	return (IsAdvancedChainAvailable(NewGameState) && FindRegionForFacilityChain().ObjectID > 0);
+	local array<XComGameState_MissionSite> Missions;
+	local XComGameState_MissionSite FacilityMission;
+	local int TotalFacilityDoom;
+
+	// Do not spawn the chain if there is no place for it
+	// Eg. due to ongoing chains
+	if (FindRegionForFacilityChain().ObjectID == 0) return false;
+
+	// Check whether the global threshold is met
+	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(false);
+
+	foreach Missions(FacilityMission)
+	{
+		TotalFacilityDoom += FacilityMission.Doom;
+	}
+
+	return TotalFacilityDoom >= default.FacilityChainMinGlobalFacilityDoom;
 }
 
 static function StateObjectReference FindRegionForFacilityChain ()
 {
+	local array<StateObjectReference> PreferredRegionsRefs, ValidRegionsRefs;
 	local array<XComGameState_MissionSite> Missions;
 	local XComGameState_MissionSite FacilityMission;
 	local XComGameState_ActivityChain ChainState;
@@ -402,7 +420,7 @@ static function StateObjectReference FindRegionForFacilityChain ()
 	local XComGameStateHistory History;
 	local bool bOngoingChain;
 	
-	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(true);
+	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(false);
 	History = `XCOMHISTORY;
 
 	foreach Missions(FacilityMission)
@@ -420,8 +438,30 @@ static function StateObjectReference FindRegionForFacilityChain ()
 
 		if (!bOngoingChain)
 		{
-			return FacilityMission.Region;
+			// Give preference to missions that require a lead
+			if (class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(FacilityMission))
+			{
+				if (PreferredRegionsRefs.Find('ObjectID', FacilityMission.Region.ObjectID) == INDEX_NONE)
+				{
+					PreferredRegionsRefs.AddItem(FacilityMission.Region);
+				}
+			}
+
+			if (ValidRegionsRefs.Find('ObjectID', FacilityMission.Region.ObjectID) == INDEX_NONE)
+			{
+				ValidRegionsRefs.AddItem(FacilityMission.Region);
+			}
 		}
+	}
+
+	if (PreferredRegionsRefs.Length > 0)
+	{
+		return PreferredRegionsRefs[`SYNC_RAND_STATIC(PreferredRegionsRefs.Length)];
+	}
+
+	if (ValidRegionsRefs.Length > 0)
+	{
+		return ValidRegionsRefs[`SYNC_RAND_STATIC(ValidRegionsRefs.Length)];
 	}
 
 	return EmptyRef;

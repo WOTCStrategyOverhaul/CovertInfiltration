@@ -1008,6 +1008,9 @@ static protected function EventListenerReturn BlackMarketGoodsReset (Object Even
 	MarketState = XComGameState_BlackMarket(EventData);
 	if (MarketState == none) return ELR_NoInterrupt;
 
+	// Do not spawn a lead if there were no facilities built yet
+	if (!class'UIUtilities_Strategy'.static.GetAlienHQ().bHasSeenFacility) return ELR_NoInterrupt;
+
 	// Check if the player bought the first lead already
 	if (class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bBlackMarketLeadPurchased) return ELR_NoInterrupt;
 

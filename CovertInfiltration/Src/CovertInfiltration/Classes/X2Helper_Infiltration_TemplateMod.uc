@@ -179,8 +179,8 @@ static function PatchFacilityLeadResearch ()
 		TechTemplate.PointsToComplete = default.FacilityLeadResearchPointsToComplete;
 		TechTemplate.RepeatPointsIncrease = default.FacilityLeadResearchRepeatPointsIncrease;
 
-		TechTemplate.Requirements.SpecialRequirementsFn = IsFacilityMissionAvailable;
-		TechTemplate.ResearchCompletedFn = FacilityLeadCompleted; // TODO: Popup
+		TechTemplate.Requirements.SpecialRequirementsFn = HasSeenAlienFacility;
+		TechTemplate.ResearchCompletedFn = FacilityLeadCompleted;
 
 		// Remove intel cost, it's hard enough already to get leads
 		i = TechTemplate.Cost.ResourceCosts.Find('ItemTemplateName', 'Intel');
@@ -188,25 +188,12 @@ static function PatchFacilityLeadResearch ()
 	}
 }
 
-static protected function bool IsFacilityMissionAvailable ()
+static protected function bool HasSeenAlienFacility ()
 {
-	local XComGameStateHistory History;
-	local XComGameState_MissionSite MissionState;
-
-	History = `XCOMHISTORY;
-
-	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionState)
-	{
-		if (MissionState.Source == 'MissionSource_AlienNetwork' && class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(MissionState))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return class'UIUtilities_Strategy'.static.GetAlienHQ().bHasSeenFacility;
 }
 
-static function FacilityLeadCompleted (XComGameState NewGameState, XComGameState_Tech TechState)
+static protected function FacilityLeadCompleted (XComGameState NewGameState, XComGameState_Tech TechState)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
 
