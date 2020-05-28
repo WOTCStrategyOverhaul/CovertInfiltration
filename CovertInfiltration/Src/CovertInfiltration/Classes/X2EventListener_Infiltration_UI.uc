@@ -23,6 +23,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateEventQueueListeners());
 	Templates.AddItem(CreateArmoryListeners());
 	Templates.AddItem(CreateStrategyPolicyListeners());
+	Templates.AddItem(CreateResearchListeners());
 	Templates.AddItem(CreateTacticalHUDListeners());
 
 	return Templates;
@@ -855,6 +856,41 @@ static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOn
 	// Never show actions popup after UIStrategyPolicy
 	Tuple.Data[0].b = false;
 	
+	return ELR_NoInterrupt;
+}
+
+//////////////////////////
+/// UI Strategy Policy ///
+//////////////////////////
+
+static function CHEventListenerTemplate CreateResearchListeners ()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Research');
+	Template.AddCHEvent('OnResearchReport', OnResearchReport_AlienFacilityLead, ELD_OnStateSubmitted, 99);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn OnResearchReport_AlienFacilityLead (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_Tech TechState;
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+
+	TechState = XComGameState_Tech(EventData);
+	if (TechState == none) return ELR_NoInterrupt;
+
+	if (TechState.GetMyTemplateName() == 'Tech_AlienFacilityLead')
+	{
+		ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+		ItemTemplate = ItemTemplateManager.FindItemTemplate('ActionableFacilityLead');
+
+		`HQPRES.UIItemReceived(ItemTemplate);
+	}
+
 	return ELR_NoInterrupt;
 }
 

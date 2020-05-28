@@ -333,6 +333,6 @@ DisplayName="Facility Lead"
 Summary="Our forces recently uncovered valuable information about of one of ADVENT's remote facilities. If we can successfully decrypt the recovered data, it will allow for a tactical strike." 
 CodeName="Insight"
 LongDescription="Although it was a time-intenstive process, I was able to successfully decrypt the ADVENT data recovered by our troops in the field. As expected, the information includes the exact coordinates for one of ADVENT's remote facilities. With this knowledge in hand, we should be able to deploy a strike team to infiltrate and destroy the facility. I have no doubts that the loss of this site will deal a significant blow to the aliens' efforts towards the Avatar Project. R. Tygan."
-UnlockedDescription="" ; Vanilla: "Alien Facility Mission in <XGParam:StrValue0/!RegionName/> Unlocked"
+UnlockedDescription="We now have +1 Actionable Leads" ; Vanilla: "Alien Facility Mission in <XGParam:StrValue0/!RegionName/> Unlocked"
 
 ; TODO: Improve above/rework
