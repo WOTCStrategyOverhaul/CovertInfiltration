@@ -336,3 +336,8 @@ LongDescription="Although it was a time-intenstive process, I was able to succes
 UnlockedDescription="We now have +1 Actionable Leads" ; Vanilla: "Alien Facility Mission in <XGParam:StrValue0/!RegionName/> Unlocked"
 
 ; TODO: Improve above/rework
+
+; Note: the double header is required. Does NOT work without it
+[XComGame.UIMission_AlienFacility]
+[UIMission_AlienFacility]
+m_strLockedHelp="We must find an actionable lead or build a radio relay in this region before we can assault and destroy this facility!"
