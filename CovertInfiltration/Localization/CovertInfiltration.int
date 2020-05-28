@@ -384,7 +384,7 @@ strObjective="hit an ADVENT <font color='#CBB11F'>supply convoy</font>"
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Capture ADVENT VIP"
 strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
-strObjective="capture a highly-placed ADVENT <font color='#27AAE1'>collaborator</font>"
+strObjective="capture a highly-placed <font color='#27AAE1'>human collaborator</font>"
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
 strTitle="Rescue Scientist"
@@ -491,6 +491,9 @@ strCovertOpsAbortBody="<Bullet/> Once a Covert Operation has begun, the team ent
 
 strSupplyExtractHeader=Supply Extraction Changes
 strSupplyExtractBody="ADVENT is in the middle of a supply transfer to one of their remote outposts. Reinforcements from enemy airbases can easily reach this location and will launch as soon as the squad is spotted. Recovering more than a few crates will be extremely difficult. Grab what you can and get out before your position is overrun."
+
+strAvatarCaptureHeader=Avatar Collaborator
+strAvatarCaptureBody="The target of this operation is a human collaborator we suspect is involved in the AVATAR Project. The only way to find a lead on the aliens' facilities is to take them alive. Killing them won't accomplish anything aside from a small construction delay."
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"

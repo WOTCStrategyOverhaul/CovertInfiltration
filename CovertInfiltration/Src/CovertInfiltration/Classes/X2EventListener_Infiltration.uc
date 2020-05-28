@@ -1283,7 +1283,10 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryEarly (Object EventD
 
 static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
+	local X2TacticalGameRuleset GameRules;
 	local XComGameState NewGameState;
+	local XComGameState_BattleData BattleData;
+	local XComGameState_Activity ActivityState;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: OnTacticalPlayBegun_VeryLate");
 
@@ -1296,6 +1299,16 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	if (`TACTICALMISSIONMGR.ActiveMission.sType == "SupplyExtraction")
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.SupplyExtractMission();
+	}
+	
+	GameRules = X2TacticalGameRuleset(EventData);
+	BattleData = XComGameState_BattleData(GameRules.CachedHistory.GetGameStateForObjectID(GameRules.GetCachedBattleDataRef().ObjectID));
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(BattleData.m_iMissionID);
+
+	// If avatar DVIP capture, show tutorial
+	if (ActivityState.GetActivityChain().GetMyTemplateName() == 'ActivityChain_DestroyFacility')
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.AvatarCaptureMission();
 	}
 
 	return ELR_NoInterrupt;

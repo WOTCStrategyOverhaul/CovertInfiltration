@@ -139,8 +139,6 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_Datapad', 'Reward_Intel'));
 	
-	Template.GetNarrativeObjective = GetStaffObjective;
-
 	return Template;
 }
 
@@ -375,7 +373,7 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	Template.DeckReq = IsFacilityChainAvailable;
 	
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFacility'));
-	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP'));
+	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_FacilityDelay', 'Reward_FacilityLead'));
 	//Template.Stages.AddItem(ConstructPresetStage('Activity_AvatarFacility'));
 
 	// We can't really make the mission itself into an activity as the facility itself is THE mission

@@ -54,9 +54,11 @@ var localized string strDarkEventsBody;
 var localized string strCovertOpsAbortHeader;
 var localized string strCovertOpsAbortBody;
 
-// On Supply Extract Mission Start
+// On Mission Start
 var localized string strSupplyExtractHeader;
 var localized string strSupplyExtractBody;
+var localized string strAvatarCaptureHeader;
+var localized string strAvatarCaptureBody;
 
 // On Crew Count Changed
 var localized string strCrewLimitHeader;
@@ -197,6 +199,13 @@ static function SupplyExtractMission ()
 	if (!ShouldShowPopup('SupplyExtract')) return;
 
 	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strSupplyExtractHeader, default.strSupplyExtractBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies");
+}
+
+static function AvatarCaptureMission ()
+{
+	if (!ShouldShowPopup('AvatarCapture')) return;
+
+	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strAvatarCaptureHeader, default.strAvatarCaptureBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 // TODO: need to standardize all the function names here, some are titled with the
