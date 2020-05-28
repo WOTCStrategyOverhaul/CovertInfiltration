@@ -116,6 +116,17 @@ static function PatchItemStats()
 	}
 }
 
+static function PatchFacilityLeadItem ()
+{
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateManager.FindItemTemplate('FacilityLeadItem');
+
+	ItemTemplate.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Locked";
+}
+
 ////////////////
 /// Research ///
 ////////////////
@@ -145,6 +156,11 @@ static protected function PatchGoldenPathTechs ()
 			else TechTemplate.Requirements.RequiredObjectives.AddItem('T2_M0_L0_BlacksiteReveal');
 		}
 	}
+}
+
+static function PatchFacilityLeadResearch ()
+{
+	//
 }
 
 ////////////////

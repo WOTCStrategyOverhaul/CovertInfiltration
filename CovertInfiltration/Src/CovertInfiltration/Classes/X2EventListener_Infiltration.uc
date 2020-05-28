@@ -37,6 +37,10 @@ var config(GameData) int NumDarkEventsThirdMonth;
 var config(GameBoard) float RiskChancePercentMultiplier;
 var config(GameBoard) float RiskChancePercentPerForceLevel;
 
+var config array<StrategyCost> OneTimeMarketLeadCost;
+
+var localized string strOneTimeMarketLeadDescription;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -1022,16 +1026,16 @@ static protected function EventListenerReturn BlackMarketGoodsReset (Object Even
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
 	RewardState.SetReward(ItemState.GetReference());
 
-	// Fill out the commodity
+	// Fill out the commodity (default)
 	ForSaleItem.RewardRef = RewardState.GetReference();
-	ForSaleItem.Title = RewardState.GetRewardString();
-	ForSaleItem.Desc = RewardState.GetBlackMarketString(); // TODO: Replace this with something about this being a one-time sale?
 	ForSaleItem.Image = RewardState.GetRewardImage();
 	ForSaleItem.CostScalars = MarketState.GoodsCostScalars;
 	ForSaleItem.DiscountPercent = MarketState.GoodsCostPercentDiscount;
 
-	// Set the price
-	ForSaleItem.Cost = MarketState.GetForSaleItemCost(MarketState.PriceReductionScalar);
+	// Fill out the commodity (custom)
+	ForSaleItem.Title = ItemTemplate.GetItemFriendlyName(); // Get rid of the "1"
+	ForSaleItem.Desc = default.strOneTimeMarketLeadDescription;
+	ForSaleItem.Cost = default.OneTimeMarketLeadCost[`StrategyDifficultySetting];
 
 	// Add to sale
 	MarketState.ForSaleItems.AddItem(ForSaleItem);

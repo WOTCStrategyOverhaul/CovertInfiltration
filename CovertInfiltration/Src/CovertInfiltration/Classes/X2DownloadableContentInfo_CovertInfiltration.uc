@@ -328,6 +328,8 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGatecrasher();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchItemStats();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadItem();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadResearch();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAcademyStaffSlot();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchCovertActionPromotionRewards();

@@ -545,3 +545,6 @@ strName=Opportune Moment II
 
 [SitRep3 X2InfiltrationBonusMilestoneTemplate]
 strName=SITREP 3
+
+[X2EventListener_Infiltration]
+strOneTimeMarketLeadDescription="YOU do not want to know how we got this.<br/>WE are not going to do this again."
