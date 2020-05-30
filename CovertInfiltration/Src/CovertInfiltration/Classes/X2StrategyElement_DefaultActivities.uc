@@ -491,6 +491,7 @@ static function X2CovertActionTemplate CreateStandardActivityCA (string Activity
 
 	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', CovertAction, name("CovertAction_" $ ActivityName));
 
+	CovertAction.bCanNeverBeRookie = true;
 	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
 	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
 	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName));
