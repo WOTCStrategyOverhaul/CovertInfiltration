@@ -337,7 +337,7 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	
 	Activity.ActivityTag = 'Tag_DVIP';
 	Activity.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
-	Activity.MissionRewards.AddItem('Reward_Rumor');
+	Activity.MissionRewards.AddItem('Reward_SmallIntel');
 	Activity.OnSuccess = DarkVIPOnSuccess;
 	Activity.GetMissionDifficulty = GetMissionDifficultyFromMonth;
 	Activity.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -475,7 +475,6 @@ static function DarkVIPOnSuccess(XComGameState NewGameState, XComGameState_Activ
 
 	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
-	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
 	MissionState.RemoveEntity(NewGameState);
 	
 	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));

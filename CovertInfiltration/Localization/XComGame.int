@@ -323,7 +323,7 @@ LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 [ActionableFacilityLead X2ItemTemplate]
 FriendlyName="Actionable Lead"
 FriendlyNamePlural="Actionable Leads"
-BriefSummary="Now that the data on this lead was decrypted, we know the exact location of ADVENT's facilities and can deploy jammers to safely assault one of them. But only one - win or lose, ADVENT will react to make sure their remaining assets are hidden, and the data here will be rendered useless."
+BriefSummary="Now that the data on this lead was decrypted, we know the exact location of ADVENT's facilities and can deploy jammers to safely assault one of them. But only one - win or lose, ADVENT will react to make sure their remaining assets are protected, and the data here will be rendered useless."
 
 [FacilityLeadItem X2ItemTemplate]
 BriefSummary="A valuable stash of information about the security of ADVENT's remote facilities. Our research team can use them to discover a way for us to deploy jammers and safely assault a facility, but it will take time and intel."
@@ -332,7 +332,7 @@ BriefSummary="A valuable stash of information about the security of ADVENT's rem
 DisplayName="Facility Lead"
 Summary="Our forces recently uncovered valuable information about ADVENT's remote facilities. If we can successfully decrypt the recovered data, it will allow for a tactical strike." 
 CodeName="Insight"
-LongDescription="Although it was a time-intensive process, I was able to successfully decrypt the ADVENT data recovered by our troops in the field. As expected, the information includes the exact coordinates for one of ADVENT's remote facilities. With this knowledge in hand, we should be able to deploy a strike team to assault and destroy the facility. I have no doubts that the loss of this site will deal a significant blow to the aliens' efforts towards the Avatar Project. R. Tygan."
+LongDescription="Although it was a time-intensive process, I was able to successfully decrypt the ADVENT data we recently obtained. As expected, the data includes specifications on the security protocols for all of ADVENT's remote facilities. With this knowledge in hand, we should be able to deploy signal jammers and send in a strike team to assault and destroy the facility. However, ADVENT will surely switch their encryption methods once they figure out what's going on. This information is only useful to us for one strike. But I have no doubts that if we can pull it off, the loss of a facility will deal a significant blow to the aliens' efforts towards the Avatar Project. R. Tygan."
 UnlockedDescription="Facility Lead converted to Actionable Lead"
 
 ; Note: the double header is required. Does NOT work without it
