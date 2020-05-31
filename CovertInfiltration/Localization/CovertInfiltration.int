@@ -381,7 +381,7 @@ strObjective="hit an ADVENT <font color='#CBB11F'>supply convoy</font>"
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Capture ADVENT VIP"
 strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
-strObjective="capture a highly-placed ADVENT <font color='#27AAE1'>collaborator</font>"
+strObjective="capture a highly-placed <font color='#27AAE1'>ADVENT collaborator</font>"
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
 strTitle="Rescue Scientist"

@@ -137,8 +137,6 @@ static function X2DataTemplate CreateCaptureVIPTemplate()
 
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Infiltration, 'Tag_Intelligence', 'Tag_Informant'));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_CaptureDVIP', 'Reward_Datapad', 'Reward_Intel'));
-	
-	Template.GetNarrativeObjective = GetStaffObjective;
 
 	return Template;
 }
