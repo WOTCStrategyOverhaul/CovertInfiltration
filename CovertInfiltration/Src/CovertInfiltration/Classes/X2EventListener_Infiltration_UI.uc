@@ -196,10 +196,7 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 	local XComGameState_CovertInfiltrationInfo Info;
 	local XComGameState NewGameState;
 	local UIScreenStack ScreenStack;
-	local XComGameState_HeadquartersResistance ResHQ;
-	local X2StrategyElementTemplateManager StratMgr;
-	local X2ResistanceActivityTemplate ResActTemplate;
-	local TResistanceActivity ResActStruct;
+	local XComGameState_Analytics Analytics;
 	local int iMissions;
 
 	Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
@@ -222,22 +219,11 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 	
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	foreach ResHQ.ResistanceActivities(ResActStruct)
-	{
-		ResActTemplate = X2ResistanceActivityTemplate(StratMgr.FindStrategyElementTemplate(ResActStruct.ActivityTemplateName));
-
-		if (ResActTemplate.bMission)
-		{
-			iMissions += ResActStruct.Count;
-		}
-	}
+	Analytics = XComGameState_Analytics(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_Analytics'));
+	iMissions = int(Analytics.GetFloatValue("BATTLES_WON") + Analytics.GetFloatValue("BATTLES_LOST"));
 
 	// If the player has returned from their second mission, display the crew limit tutorial
-	// Gatecrasher isn't registered as a Resistance Activity, hence >0 rather than >1
-	if (iMissions > 0)
+	if (iMissions > 1)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.CrewLimit();
 	}

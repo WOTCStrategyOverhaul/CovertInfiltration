@@ -1408,6 +1408,28 @@ exec function RefreshFacilityMissionsLocks ()
 	`SubmitGameState(NewGameState);
 }
 
+exec function RecordAnalyticsMission (bool bMissionSuccess)
+{
+	local XComGameState NewGameState;
+	local XComGameState_Analytics Analytics;
+	
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: RecordAnalyticsMission");
+
+	Analytics = XComGameState_Analytics(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_Analytics'));
+	Analytics = XComGameState_Analytics(NewGameState.ModifyStateObject(class'XComGameState_Analytics', Analytics.ObjectID));
+
+	if (bMissionSuccess)
+	{
+		Analytics.AddValue("BATTLES_WON", 1);
+	}
+	else
+	{
+		Analytics.AddValue("BATTLES_LOST", 1);
+	}
+	
+	`SubmitGameState(NewGameState);
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
