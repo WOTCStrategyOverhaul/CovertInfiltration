@@ -57,8 +57,8 @@ ActionPreNarrative="With the command codes in hand, we can trick the UFO into <f
 ActionPostNarrative="Commander, we've achieved stunning success! The alien ship has touched down, and the jamming net is in place. I think they're starting to get wise, though, so we should strike immediately."
 
 [CovertActionNarrative_PrepareFacility X2CovertActionNarrativeTemplate]
-ActionName="Identify Avatar Project Collaborators"
-ActionPreNarrative="The aliens have buried the construction of <font color='#842015'>Avatar facilities</font> fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
+ActionName="Identify Avatar Coordinators"
+ActionPreNarrative="The aliens have buried information related to their <font color='#842015'>Avatar facilities</font> fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
 ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of an <font color='#842015'>Avatar facility</font>. Even better, we know where they are."
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
@@ -323,7 +323,7 @@ LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 [ActionableFacilityLead X2ItemTemplate]
 FriendlyName="Actionable Lead"
 FriendlyNamePlural="Actionable Leads"
-BriefSummary="Now that the data on this lead was decrypted, we know the exact location of ADVENT's facilities and can deploy jammers to safely assault one of them. But only one - win or lose, ADVENT will react to make sure their remaining assets are protected, and the data here will be rendered useless."
+BriefSummary="Now that the data on this lead was decrypted, we know the frequencies used by ADVENT's facilities and can deploy jammers to safely assault one of them. But only one - win or lose, ADVENT will react to make sure their remaining assets are protected, and the data here will be rendered useless."
 
 [FacilityLeadItem X2ItemTemplate]
 BriefSummary="A valuable stash of information about the security of ADVENT's remote facilities. Our research team can use them to discover a way for us to deploy jammers and safely assault a facility, but it will take time and intel."

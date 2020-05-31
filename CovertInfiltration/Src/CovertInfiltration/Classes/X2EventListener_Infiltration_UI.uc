@@ -242,6 +242,12 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		class'UIUtilities_InfiltrationTutorial'.static.CrewLimit();
 	}
 
+	// If the player has returned from their fifth mission, display the advanced chains tutorial
+	if (iMissions > 4)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.AdvancedChains();
+	}
+
 	return ELR_NoInterrupt;
 }
 
