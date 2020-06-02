@@ -24,6 +24,10 @@ var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
 var name ForcedNextEnviromentalSitrep;
 
+// Internal "config"
+
+var const array<name> HQInvetoryStatesToEnlistIntoTactical;
+
 //////////////////////////////////
 /// Vanilla DLCInfo misc hooks ///
 //////////////////////////////////
@@ -458,6 +462,7 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSite MissionState)
 {
 	TryEnlistChainStateIntoTactical(StartGameState, MissionState);
+	EnlistHQInvetoryStatesToEnlistIntoTactical(StartGameState);
 	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
 }
 
@@ -513,6 +518,33 @@ static protected function TryEnlistChainStateIntoTactical (XComGameState StartGa
 	{
 		ComplicationState = XComGameState_Complication(StartGameState.GetGameStateForObjectID(StateRef.ObjectID));
 		ComplicationState.OnEnlistStateIntoTactical(StartGameState);
+	}
+}
+
+// Similar thing as the previous method.
+// See defaultproperties for specific examples.
+static protected function EnlistHQInvetoryStatesToEnlistIntoTactical (XComGameState StartGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+    local XComGameState_Item ItemState;
+	local StateObjectReference ItemRef;
+    local XComGameStateHistory History;
+
+	History = `XCOMHISTORY;
+
+	foreach StartGameState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
+	{
+		break;
+	}
+
+	foreach XComHQ.Inventory(ItemRef)
+	{
+		 ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+
+		 if (ItemState != none && default.HQInvetoryStatesToEnlistIntoTactical.Find(ItemState.GetMyTemplateName()) != INDEX_NONE)
+		 {
+			StartGameState.ModifyStateObject(class'XComGameState_Item', ItemRef.ObjectID);
+		 }
 	}
 }
 
@@ -1437,4 +1469,16 @@ exec function RecordAnalyticsMission (bool bMissionSuccess)
 static function X2DownloadableContentInfo_CovertInfiltration GetCDO()
 {
 	return X2DownloadableContentInfo_CovertInfiltration(class'XComEngine'.static.GetClassDefaultObjectByName(default.Class.Name));
+}
+
+/////////////////////////
+/// defaultproperties ///
+/////////////////////////
+
+defaultproperties
+{
+	// These are needed to be able to call X2Helper_Infiltration::GetCountOfAnyLeads
+	// E.g. a mec is dropped as part of RNFs and we check whether facility lead can be used a hack reward
+	HQInvetoryStatesToEnlistIntoTactical.Add("FacilityLeadItem")
+	HQInvetoryStatesToEnlistIntoTactical.Add("ActionableFacilityLead")
 }

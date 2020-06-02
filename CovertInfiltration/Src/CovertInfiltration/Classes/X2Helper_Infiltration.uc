@@ -1382,6 +1382,15 @@ static function bool CanTakeFacilityMission (XComGameState_MissionSite MissionSt
 	}
 }
 
+static function int GetCountOfAnyLeads ()
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = `XCOMHQ;
+
+	return XComHQ.GetResourceAmount('FacilityLeadItem') + XComHQ.GetResourceAmount('ActionableFacilityLead');
+}
+
 // This method is idempotent and can be called as many times as needed
 // If NewGameState is not provided, this method will create a new one on its own
 // but will not submit it (i.e. will clean up) if no changes are made
