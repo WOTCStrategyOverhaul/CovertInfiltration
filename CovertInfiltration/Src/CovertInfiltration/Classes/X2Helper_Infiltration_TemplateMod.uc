@@ -15,6 +15,8 @@ var config(GameData) array<name> arrAllowPromotionReward;
 var config(GameData) array<string> arrFirstRetalExcludedMissionFamilies;
 var config(GameData) int FacilityLeadResearchPointsToComplete;
 var config(GameData) int FacilityLeadResearchRepeatPointsIncrease;
+var config(Infiltration) float FacilityLeadPOINeededProgressThreshold;
+var config(Infiltration) int FacilityLeadPOINeededLeadsCap;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -129,6 +131,36 @@ static function PatchFacilityLeadItem ()
 	ItemTemplate.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Locked";
 }
 
+static function PatchFacilityLeadReward ()
+{
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2StrategyElementTemplateManager Manager;
+	local X2RewardTemplate RewardTemplate;
+	local X2DataTemplate DataTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Manager.FindDataTemplateAllDifficulties('Reward_FacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		RewardTemplate = X2RewardTemplate(DataTemplate);
+		if (RewardTemplate == none) continue;
+
+		RewardTemplate.IsRewardAvailableFn = IsFacilityLeadRewardAvailable;
+	}
+}
+
+static protected function bool IsFacilityLeadRewardAvailable (optional XComGameState NewGameState, optional StateObjectReference AuxRef)
+{
+	// Check if we reached the relevant part of the game
+	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
+
+	// Check if it's ok to spawn new leads
+	if (!class'X2Helper_Infiltration'.static.ShouldAllowCasualLeadGain()) return false;
+
+	return true;
+}
+
 ////////////////
 /// Research ///
 ////////////////
@@ -179,7 +211,8 @@ static function PatchFacilityLeadResearch ()
 		TechTemplate.PointsToComplete = default.FacilityLeadResearchPointsToComplete;
 		TechTemplate.RepeatPointsIncrease = default.FacilityLeadResearchRepeatPointsIncrease;
 
-		TechTemplate.Requirements.SpecialRequirementsFn = HasSeenAlienFacility;
+		//TechTemplate.Requirements.SpecialRequirementsFn = HasSeenAlienFacility;
+		TechTemplate.Requirements.SpecialRequirementsFn = none; // If we got a lead somehow, then we can research it
 		TechTemplate.ResearchCompletedFn = FacilityLeadCompleted;
 
 		// Remove intel cost, it's hard enough already to get leads
@@ -532,9 +565,9 @@ static function PatchChosenObjectives ()
 	}
 }
 
-//////////////////
-/// Facilities ///
-//////////////////
+///////////////////////
+/// XCOM Facilities ///
+///////////////////////
 
 static function PatchResistanceRing()
 {
@@ -1001,6 +1034,44 @@ static function RemovePointsOfInterest ()
 static function bool NeverAppear(XComGameState_PointOfInterest POIState)
 {
 	return false;
+}
+
+static function PatchFacilityLeadPOI ()
+{
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2StrategyElementTemplateManager Manager;
+	local X2PointOfInterestTemplate POITemplate;
+	local X2DataTemplate DataTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Manager.FindDataTemplateAllDifficulties('POI_FacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		POITemplate = X2PointOfInterestTemplate(DataTemplate);
+		if (POITemplate == none) continue;
+
+		POITemplate.CanAppearFn = CanFacilityLeadPOIAppear;
+		POITemplate.IsRewardNeededFn = IsFacilityLeadPOINeeded;
+	}
+}
+
+static protected function bool CanFacilityLeadPOIAppear (XComGameState_PointOfInterest POIState)
+{
+	return class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged();
+}
+
+static protected function bool IsFacilityLeadPOINeeded (XComGameState_PointOfInterest POIState)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local float fDoomPercent;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	fDoomPercent = (1.0 * AlienHQ.GetCurrentDoom()) / AlienHQ.GetMaxDoom();
+
+	return
+		fDoomPercent >= default.FacilityLeadPOINeededProgressThreshold &&
+		class'X2Helper_Infiltration'.static.GetCountOfAnyLeads() <= default.FacilityLeadPOINeededLeadsCap;
 }
 
 /////////////////

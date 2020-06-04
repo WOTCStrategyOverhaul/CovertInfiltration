@@ -71,6 +71,10 @@ var config array<XpMultiplerEntry> XP_GROUP_MULTIPLIERS;
 // Intended for use by mission mods with missions that use RNFs instead of preplaced enemies
 var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE; 
 
+// The max count of locked/unlocked leads in the HQ inventory at which point the "casual" sources
+// of leads will stop showing up. E.g. chain, hack reward, etc
+var config int CasualFacilityLeadGainCap;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -1358,6 +1362,18 @@ static function string GetUnitDetails (XComGameState_Activity ActivityState)
 ////////////////////////
 /// Actionable Leads ///
 ////////////////////////
+
+// A generic check that's called in various places to gate various things
+// related to assaulting facilities
+static function bool IsLeadsSystemEngaged ()
+{
+	return class'UIUtilities_Strategy'.static.GetAlienHQ().bHasSeenFacility;
+}
+
+static function bool ShouldAllowCasualLeadGain ()
+{
+	return GetCountOfAnyLeads() <= default.CasualFacilityLeadGainCap;
+}
 
 // No leads are required if you have a relay in the region
 static function bool DoesFacilityRequireLead (XComGameState_MissionSite MissionState)

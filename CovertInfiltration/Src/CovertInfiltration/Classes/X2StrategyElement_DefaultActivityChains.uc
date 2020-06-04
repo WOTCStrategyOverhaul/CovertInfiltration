@@ -389,7 +389,7 @@ static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, ou
 	PrimaryRegionRef = FindRegionForFacilityChain();
 }
 
-static function bool IsFacilityChainAvailable(XComGameState NewGameState)
+static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 {
 	local array<XComGameState_MissionSite> Missions;
 	local XComGameState_MissionSite FacilityMission;
@@ -398,6 +398,12 @@ static function bool IsFacilityChainAvailable(XComGameState NewGameState)
 	// Do not spawn the chain if there is no place for it
 	// Eg. due to ongoing chains
 	if (FindRegionForFacilityChain().ObjectID == 0) return false;
+
+	// Check if we reached the relevant part of the game
+	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
+
+	// Check if it's ok to spawn new leads
+	if (!class'X2Helper_Infiltration'.static.ShouldAllowCasualLeadGain()) return false;
 
 	// Check whether the global threshold is met
 	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(false);
