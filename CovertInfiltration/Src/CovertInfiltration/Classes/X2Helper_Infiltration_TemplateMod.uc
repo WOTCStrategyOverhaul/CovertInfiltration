@@ -129,6 +129,21 @@ static function PatchFacilityLeadItem ()
 	ItemTemplate = ItemTemplateManager.FindItemTemplate('FacilityLeadItem');
 
 	ItemTemplate.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Locked";
+	
+	// Needed to gate the hack reward
+	// (see X2HackRewardTemplate::IsHackRewardCurrentlyPossible)
+	ItemTemplate.Requirements.SpecialRequirementsFn = IsFacilityLeadItemAvailable; 
+}
+
+static protected function bool IsFacilityLeadItemAvailable ()
+{
+	// Check if we reached the relevant part of the game
+	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
+
+	// Check if it's ok to spawn new leads
+	if (!class'X2Helper_Infiltration'.static.ShouldAllowCasualLeadGain()) return false;
+
+	return true;
 }
 
 static function PatchFacilityLeadReward ()
@@ -152,13 +167,7 @@ static function PatchFacilityLeadReward ()
 
 static protected function bool IsFacilityLeadRewardAvailable (optional XComGameState NewGameState, optional StateObjectReference AuxRef)
 {
-	// Check if we reached the relevant part of the game
-	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
-
-	// Check if it's ok to spawn new leads
-	if (!class'X2Helper_Infiltration'.static.ShouldAllowCasualLeadGain()) return false;
-
-	return true;
+	return IsFacilityLeadItemAvailable();
 }
 
 ////////////////
