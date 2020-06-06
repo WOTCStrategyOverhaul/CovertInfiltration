@@ -24,6 +24,10 @@ var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
 var name ForcedNextEnviromentalSitrep;
 
+// Internal "config"
+
+var const array<name> HQInventoryStatesToEnlistIntoTactical;
+
 //////////////////////////////////
 /// Vanilla DLCInfo misc hooks ///
 //////////////////////////////////
@@ -137,6 +141,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	GrantBonusStartUpStaff(StartState);
+	CreateActionableLeadResourceState(StartState);
 
 	PatchDebugStart(StartState);
 }
@@ -149,6 +154,7 @@ static event OnLoadedSavedGame()
 
 	CreateGoldenPathActions(none);
 	ForceObjectivesCompleted(none);
+	CreateActionableLeadResourceState(none);
 }
 
 static protected function CreateGoldenPathActions(XComGameState NewGameState)
@@ -220,6 +226,35 @@ static function GrantBonusStartUpStaff (XComGameState StartState)
 	XComHQ.AddToCrew(StartState, ScientistState);
 
 	XComHQ.HandlePowerOrStaffingChange(StartState);
+}
+
+static protected function CreateActionableLeadResourceState (XComGameState NewGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2ItemTemplateManager ItemTemplateMgr;
+	local XComGameState_Item NewItemState;
+	local X2ItemTemplate ItemTemplate;
+	local bool bSubmitLocally;
+
+	ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateMgr.FindItemTemplate('ActionableFacilityLead');
+
+	if (NewGameState == none)
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Creating Actionable Leads resource state");
+		bSubmitLocally = true;
+	}
+
+	NewItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+	NewItemState.Quantity = 0;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddItemToHQInventory(NewItemState);
+
+	if (bSubmitLocally)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
 }
 
 static protected function PatchDebugStart (XComGameState StartState)
@@ -297,6 +332,10 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGatecrasher();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchItemStats();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadPOI();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadItem();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadReward();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadResearch();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchGuerillaTacticsSchool();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAcademyStaffSlot();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchCovertActionPromotionRewards();
@@ -425,6 +464,7 @@ static function bool AbilityTagExpandHandler (string InString, out string OutStr
 static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSite MissionState)
 {
 	TryEnlistChainStateIntoTactical(StartGameState, MissionState);
+	EnlistHQInventoryStatesToEnlistIntoTactical(StartGameState);
 	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
 }
 
@@ -483,10 +523,38 @@ static protected function TryEnlistChainStateIntoTactical (XComGameState StartGa
 	}
 }
 
+// Similar thing as the previous method.
+// See defaultproperties for specific examples.
+static protected function EnlistHQInventoryStatesToEnlistIntoTactical (XComGameState StartGameState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+    local XComGameState_Item ItemState;
+	local StateObjectReference ItemRef;
+    local XComGameStateHistory History;
+
+	History = `XCOMHISTORY;
+
+	foreach StartGameState.IterateByClassType(class'XComGameState_HeadquartersXCom', XComHQ)
+	{
+		break;
+	}
+
+	foreach XComHQ.Inventory(ItemRef)
+	{
+		 ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+
+		 if (ItemState != none && default.HQInventoryStatesToEnlistIntoTactical.Find(ItemState.GetMyTemplateName()) != INDEX_NONE)
+		 {
+			StartGameState.ModifyStateObject(class'XComGameState_Item', ItemRef.ObjectID);
+		 }
+	}
+}
+
 static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();
 	TriggerMissionExitEvents();
+	HandleFacilityMissionExit();
 
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
 }
@@ -549,6 +617,44 @@ static protected function TriggerMissionExitEvents ()
 	{
 		History.CleanupPendingGameState(NewGameState);
 	}
+}
+
+static protected function HandleFacilityMissionExit ()
+{
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local string strEffect;
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	MissionState = XComGameState_MissionSite(History.GetGameStateForObjectID(BattleData.m_iMissionID));
+
+	// Do nothing if we came back from some other mission
+	if (MissionState.Source != 'MissionSource_AlienNetwork') return;
+
+	// Do nothing is this was attempt did not use a lead
+	if (!class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(MissionState)) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: HandleFacilityMissionExit");
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddResource(NewGameState, 'ActionableFacilityLead', -1);
+	// No need to call X2Helper_Infiltration::UpdateFacilityMissionLocks() here - it will be called by the AddResource event
+
+	// Save our changes cuz otherwise XComHQ.GetResourceAmount will return the old value
+	`SubmitGameState(NewGameState);
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: HandleFacilityMissionExit 2");
+
+	strEffect = XComHQ.GetResourceAmount('ActionableFacilityLead') > 0
+		? class'UIUtilities_Infiltration'.default.strActionableLeadUsed
+		: class'UIUtilities_Infiltration'.default.strLastActionableLeadUsed;
+
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, strEffect, true);
+
+	`SubmitGameState(NewGameState);
 }
 
 static event OnExitPostMissionSequence ()
@@ -1325,6 +1431,39 @@ exec function ListAllMissionTypesWithQuestItems ()
 	`CI_Log("===============================");
 }
 
+exec function RefreshFacilityMissionsLocks ()
+{
+	local XComGameState NewGameState;
+
+	// Give UpdateFacilityMissionLocks an explicit gamestate, so that if it does nothing,
+	// we will see the empty gamestate in the X2DebugHistory
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: RefreshFacilityLocks");
+	class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks(NewGameState);
+	`SubmitGameState(NewGameState);
+}
+
+exec function CIRecordAnalyticsMission (bool bMissionSuccess)
+{
+	local XComGameState NewGameState;
+	local XComGameState_Analytics Analytics;
+	
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: RecordAnalyticsMission");
+
+	Analytics = XComGameState_Analytics(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_Analytics'));
+	Analytics = XComGameState_Analytics(NewGameState.ModifyStateObject(class'XComGameState_Analytics', Analytics.ObjectID));
+
+	if (bMissionSuccess)
+	{
+		Analytics.AddValue("BATTLES_WON", 1);
+	}
+	else
+	{
+		Analytics.AddValue("BATTLES_LOST", 1);
+	}
+	
+	`SubmitGameState(NewGameState);
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
@@ -1332,4 +1471,16 @@ exec function ListAllMissionTypesWithQuestItems ()
 static function X2DownloadableContentInfo_CovertInfiltration GetCDO()
 {
 	return X2DownloadableContentInfo_CovertInfiltration(class'XComEngine'.static.GetClassDefaultObjectByName(default.Class.Name));
+}
+
+/////////////////////////
+/// defaultproperties ///
+/////////////////////////
+
+defaultproperties
+{
+	// These are needed to be able to call X2Helper_Infiltration::GetCountOfAnyLeads
+	// E.g. a mec is dropped as part of RNFs and we check whether facility lead can be used a hack reward
+	HQInventoryStatesToEnlistIntoTactical.Add("FacilityLeadItem")
+	HQInventoryStatesToEnlistIntoTactical.Add("ActionableFacilityLead")
 }

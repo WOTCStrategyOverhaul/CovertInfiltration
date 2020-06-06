@@ -43,8 +43,8 @@ var localized string strResistanceInformantsHeader;
 var localized string strResistanceInformantsBody;
 
 // On Alien Facility Built
-var localized string strAdvancedChainsHeader;
-var localized string strAdvancedChainsBody;
+var localized string strFacilityAssaultsHeader;
+var localized string strFacilityAssaultsBody;
 
 // On Dark Event Preview
 var localized string strDarkEventsHeader;
@@ -54,13 +54,19 @@ var localized string strDarkEventsBody;
 var localized string strCovertOpsAbortHeader;
 var localized string strCovertOpsAbortBody;
 
-// On Supply Extract Mission Start
+// On Mission Start
 var localized string strSupplyExtractHeader;
 var localized string strSupplyExtractBody;
+var localized string strAvatarCaptureHeader;
+var localized string strAvatarCaptureBody;
 
-// On Crew Count Changed
+// On Second Mission Completed
 var localized string strCrewLimitHeader;
 var localized string strCrewLimitBody;
+
+// On Fifth Mission Completed
+var localized string strAdvancedChainsHeader;
+var localized string strAdvancedChainsBody;
 
 // On GTS Facility Built
 var localized string strFacilityGTSHeader;
@@ -149,7 +155,7 @@ static function AlienFacilityBuilt ()
 {
 	if (!ShouldShowPopup('AlienFacilityBuilt')) return;
 
-	UITutorialBoxLarge(default.strAdvancedChainsHeader, `XEXPAND.ExpandString(default.strAdvancedChainsBody));
+	UITutorialBoxLarge(default.strFacilityAssaultsHeader, `XEXPAND.ExpandString(default.strFacilityAssaultsBody));
 }
 
 static function DarkEventPreview ()
@@ -171,6 +177,13 @@ static function CrewLimit ()
 	if (!ShouldShowPopup('CrewLimit')) return;
 	
 	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
+}
+
+static function AdvancedChains ()
+{
+	if (!ShouldShowPopup('AdvancedChains')) return;
+
+	UITutorialBoxLarge(default.strAdvancedChainsHeader, `XEXPAND.ExpandString(default.strAdvancedChainsBody));
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
@@ -197,6 +210,13 @@ static function SupplyExtractMission ()
 	if (!ShouldShowPopup('SupplyExtract')) return;
 
 	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strSupplyExtractHeader, default.strSupplyExtractBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies");
+}
+
+static function AvatarCaptureMission ()
+{
+	if (!ShouldShowPopup('AvatarCapture')) return;
+
+	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strAvatarCaptureHeader, default.strAvatarCaptureBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
 // TODO: need to standardize all the function names here, some are titled with the

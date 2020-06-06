@@ -13,6 +13,10 @@ var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 var config(GameData) array<name> arrAllowPromotionReward;
 var config(GameData) array<string> arrFirstRetalExcludedMissionFamilies;
+var config(GameData) int FacilityLeadResearchPointsToComplete;
+var config(GameData) int FacilityLeadResearchRepeatPointsIncrease;
+var config(Infiltration) float FacilityLeadPOINeededProgressThreshold;
+var config(Infiltration) int FacilityLeadPOINeededLeadsCap;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -116,6 +120,56 @@ static function PatchItemStats()
 	}
 }
 
+static function PatchFacilityLeadItem ()
+{
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateManager.FindItemTemplate('FacilityLeadItem');
+
+	ItemTemplate.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Locked";
+	
+	// Needed to gate the hack reward
+	// (see X2HackRewardTemplate::IsHackRewardCurrentlyPossible)
+	ItemTemplate.Requirements.SpecialRequirementsFn = IsFacilityLeadItemAvailable; 
+}
+
+static protected function bool IsFacilityLeadItemAvailable ()
+{
+	// Check if we reached the relevant part of the game
+	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
+
+	// Check if it's ok to spawn new leads
+	if (!class'X2Helper_Infiltration'.static.ShouldAllowCasualLeadGain()) return false;
+
+	return true;
+}
+
+static function PatchFacilityLeadReward ()
+{
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2StrategyElementTemplateManager Manager;
+	local X2RewardTemplate RewardTemplate;
+	local X2DataTemplate DataTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Manager.FindDataTemplateAllDifficulties('Reward_FacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		RewardTemplate = X2RewardTemplate(DataTemplate);
+		if (RewardTemplate == none) continue;
+
+		RewardTemplate.IsRewardAvailableFn = IsFacilityLeadRewardAvailable;
+	}
+}
+
+static protected function bool IsFacilityLeadRewardAvailable (optional XComGameState NewGameState, optional StateObjectReference AuxRef)
+{
+	return IsFacilityLeadItemAvailable();
+}
+
 ////////////////
 /// Research ///
 ////////////////
@@ -145,6 +199,48 @@ static protected function PatchGoldenPathTechs ()
 			else TechTemplate.Requirements.RequiredObjectives.AddItem('T2_M0_L0_BlacksiteReveal');
 		}
 	}
+}
+
+static function PatchFacilityLeadResearch ()
+{
+	local X2StrategyElementTemplateManager Manager;
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2DataTemplate DataTemplate;
+	local X2TechTemplate TechTemplate;
+	local int i;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	
+	Manager.FindDataTemplateAllDifficulties('Tech_AlienFacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		TechTemplate = X2TechTemplate(DataTemplate);
+		if (TechTemplate == none) continue;
+
+		TechTemplate.PointsToComplete = default.FacilityLeadResearchPointsToComplete;
+		TechTemplate.RepeatPointsIncrease = default.FacilityLeadResearchRepeatPointsIncrease;
+
+		//TechTemplate.Requirements.SpecialRequirementsFn = HasSeenAlienFacility;
+		TechTemplate.Requirements.SpecialRequirementsFn = none; // If we got a lead somehow, then we can research it
+		TechTemplate.ResearchCompletedFn = FacilityLeadCompleted;
+
+		// Remove intel cost, it's hard enough already to get leads
+		i = TechTemplate.Cost.ResourceCosts.Find('ItemTemplateName', 'Intel');
+		if (i != INDEX_NONE) TechTemplate.Cost.ResourceCosts.Remove(i, 1);
+	}
+}
+
+static protected function bool HasSeenAlienFacility ()
+{
+	return class'UIUtilities_Strategy'.static.GetAlienHQ().bHasSeenFacility;
+}
+
+static protected function FacilityLeadCompleted (XComGameState NewGameState, XComGameState_Tech TechState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+
+	XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', `XCOMHQ.ObjectID));
+	XComHQ.AddResource(NewGameState, 'ActionableFacilityLead', 1);
 }
 
 ////////////////
@@ -478,9 +574,9 @@ static function PatchChosenObjectives ()
 	}
 }
 
-//////////////////
-/// Facilities ///
-//////////////////
+///////////////////////
+/// XCOM Facilities ///
+///////////////////////
 
 static function PatchResistanceRing()
 {
@@ -947,6 +1043,44 @@ static function RemovePointsOfInterest ()
 static function bool NeverAppear(XComGameState_PointOfInterest POIState)
 {
 	return false;
+}
+
+static function PatchFacilityLeadPOI ()
+{
+	local array<X2DataTemplate> DifficulityVariants;
+	local X2StrategyElementTemplateManager Manager;
+	local X2PointOfInterestTemplate POITemplate;
+	local X2DataTemplate DataTemplate;
+
+	Manager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Manager.FindDataTemplateAllDifficulties('POI_FacilityLead', DifficulityVariants);
+	foreach DifficulityVariants(DataTemplate)
+	{
+		POITemplate = X2PointOfInterestTemplate(DataTemplate);
+		if (POITemplate == none) continue;
+
+		POITemplate.CanAppearFn = CanFacilityLeadPOIAppear;
+		POITemplate.IsRewardNeededFn = IsFacilityLeadPOINeeded;
+	}
+}
+
+static protected function bool CanFacilityLeadPOIAppear (XComGameState_PointOfInterest POIState)
+{
+	return class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged();
+}
+
+static protected function bool IsFacilityLeadPOINeeded (XComGameState_PointOfInterest POIState)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local float fDoomPercent;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	fDoomPercent = (1.0 * AlienHQ.GetCurrentDoom()) / AlienHQ.GetMaxDoom();
+
+	return
+		fDoomPercent >= default.FacilityLeadPOINeededProgressThreshold &&
+		class'X2Helper_Infiltration'.static.GetCountOfAnyLeads() <= default.FacilityLeadPOINeededLeadsCap;
 }
 
 /////////////////

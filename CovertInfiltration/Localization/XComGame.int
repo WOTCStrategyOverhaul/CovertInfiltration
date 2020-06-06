@@ -57,8 +57,8 @@ ActionPreNarrative="With the command codes in hand, we can trick the UFO into <f
 ActionPostNarrative="Commander, we've achieved stunning success! The alien ship has touched down, and the jamming net is in place. I think they're starting to get wise, though, so we should strike immediately."
 
 [CovertActionNarrative_PrepareFacility X2CovertActionNarrativeTemplate]
-ActionName="Identify Avatar Project Collaborators"
-ActionPreNarrative="The aliens have buried the construction of <font color='#842015'>Avatar facilities</font> fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
+ActionName="Identify Avatar Coordinators"
+ActionPreNarrative="The aliens have buried information related to their <font color='#842015'>Avatar facilities</font> fairly deep, but there must be at least one human in the know. At least one weak link. We just have to find it."
 ActionPostNarrative="Commander, after 'borrowing' some ADVENT records, my team found one human higher-up who was involved in the construction of an <font color='#842015'>Avatar facility</font>. Even better, we know where they are."
 
 [InfiltrationSize1 X2SoldierUnlockTemplate]
@@ -319,3 +319,23 @@ m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:Str
 
 [UIStrategyPolicy]
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
+
+[ActionableFacilityLead X2ItemTemplate]
+FriendlyName="Actionable Lead"
+FriendlyNamePlural="Actionable Leads"
+BriefSummary="Now that the data on this lead was decrypted, we know the frequencies used by ADVENT's facilities and can deploy jammers to safely assault one of them. But only one - win or lose, ADVENT will react to make sure their remaining assets are protected, and the data here will be rendered useless."
+
+[FacilityLeadItem X2ItemTemplate]
+BriefSummary="A valuable stash of information about the security of ADVENT's remote facilities. Our research team can use them to discover a way for us to deploy jammers and safely assault a facility, but it will take time and intel."
+
+[Tech_AlienFacilityLead X2TechTemplate]
+DisplayName="Facility Lead"
+Summary="Our forces recently uncovered valuable information about ADVENT's remote facilities. If we can successfully decrypt the recovered data, it will allow for a tactical strike." 
+CodeName="Insight"
+LongDescription="Although it was a time-intensive process, I was able to successfully decrypt the ADVENT data we recently obtained. As expected, the data includes specifications on the security protocols for all of ADVENT's remote facilities. With this knowledge in hand, we should be able to deploy signal jammers and send in a strike team to assault and destroy the facility. However, ADVENT will surely switch their encryption methods once they figure out what's going on. This information is only useful to us for one strike. But I have no doubts that if we can pull it off, the loss of a facility will deal a significant blow to the aliens' efforts towards the Avatar Project. R. Tygan."
+UnlockedDescription="Facility Lead converted to Actionable Lead"
+
+; Note: the double header is required. Does NOT work without it
+[XComGame.UIMission_AlienFacility]
+[UIMission_AlienFacility]
+m_strLockedHelp="We must find an actionable lead or build a radio relay in this region before we can assault and destroy this facility!"

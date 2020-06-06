@@ -23,6 +23,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateEventQueueListeners());
 	Templates.AddItem(CreateArmoryListeners());
 	Templates.AddItem(CreateStrategyPolicyListeners());
+	Templates.AddItem(CreateResearchListeners());
 	Templates.AddItem(CreateTacticalHUDListeners());
 
 	return Templates;
@@ -50,6 +51,7 @@ static function CHEventListenerTemplate CreateGeoscapeListeners()
 	Template.AddCHEvent('CovertActionAllowEngineerPopup', CovertActionAllowEngineerPopup, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_Immediate, 99);
 	Template.AddCHEvent('MissionIconSetMissionSite', MissionIconSetMissionSite, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideCanTakeFacilityMission', OverrideCanTakeFacilityMission, ELD_Immediate, 99);
 	Template.AddCHEvent('OverrideMissionImage', OverrideMissionImage, ELD_Immediate, 99);
 	Template.AddCHEvent('UIResistanceReport_ShowCouncil', UIResistanceReport_ShowCouncil, ELD_Immediate, 99);
 	Template.AddCHEvent('OverrideNextRetaliationDisplay', OverrideNextRetaliationDisplay, ELD_Immediate, 99);
@@ -194,10 +196,7 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 	local XComGameState_CovertInfiltrationInfo Info;
 	local XComGameState NewGameState;
 	local UIScreenStack ScreenStack;
-	local XComGameState_HeadquartersResistance ResHQ;
-	local X2StrategyElementTemplateManager StratMgr;
-	local X2ResistanceActivityTemplate ResActTemplate;
-	local TResistanceActivity ResActStruct;
+	local XComGameState_Analytics Analytics;
 	local int iMissions;
 
 	Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
@@ -220,24 +219,19 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
 	
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	foreach ResHQ.ResistanceActivities(ResActStruct)
-	{
-		ResActTemplate = X2ResistanceActivityTemplate(StratMgr.FindStrategyElementTemplate(ResActStruct.ActivityTemplateName));
-
-		if (ResActTemplate.bMission)
-		{
-			iMissions += ResActStruct.Count;
-		}
-	}
+	Analytics = XComGameState_Analytics(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_Analytics'));
+	iMissions = int(Analytics.GetFloatValue("BATTLES_WON") + Analytics.GetFloatValue("BATTLES_LOST"));
 
 	// If the player has returned from their second mission, display the crew limit tutorial
-	// Gatecrasher isn't registered as a Resistance Activity, hence >0 rather than >1
-	if (iMissions > 0)
+	if (iMissions > 1)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.CrewLimit();
+	}
+
+	// If the player has returned from their fifth mission, display the advanced chains tutorial
+	if (iMissions > 4)
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.AdvancedChains();
 	}
 
 	return ELR_NoInterrupt;
@@ -386,6 +380,7 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 static protected function EventListenerReturn MissionIconSetMissionSite (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_MissionSite MissionState;
 	local UIStrategyMap_MissionIcon MissionIcon;
 
 	MissionIcon = UIStrategyMap_MissionIcon(EventSource);
@@ -398,7 +393,29 @@ static protected function EventListenerReturn MissionIconSetMissionSite (Object 
 		MissionIcon.AS_SetAlert(true);
 	}
 
+	MissionState = XComGameState_MissionSite(`XCOMHISTORY.GetGameStateForObjectID(MissionIcon.MissionSite.ObjectID));
+
+	if (MissionState != none && MissionState.Source == 'MissionSource_AlienNetwork')
+	{
+		MissionIcon.AS_SetLock(!class'X2Helper_Infiltration'.static.CanTakeFacilityMission(MissionState));
+	}
+
 	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn OverrideCanTakeFacilityMission (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_MissionSite MissionSite;
+	local XComLWTuple Tuple;
+
+	MissionSite = XComGameState_MissionSite(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (MissionSite == none || Tuple == none) return ELR_NoInterrupt;
+
+	Tuple.Data[0].b = class'X2Helper_Infiltration'.static.CanTakeFacilityMission(MissionSite);
+
+	 return ELR_NoInterrupt;
 }
 
 static protected function EventListenerReturn OverrideMissionImage (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
@@ -488,6 +505,8 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	local BarracksStatusReport CurrentBarracksStatus;
 	local X2StrategyElementTemplateManager StrategyElementTemplateManager; 
 	local X2FacilityTemplate AcademyTemplate;
+	local UIMission_AlienFacility AlienFacilityScreen;
+	local int Quantity;
 
 	AvengerHUD = `HQPRES.m_kAvengerHUD;
 	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
@@ -549,6 +568,10 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 		AvengerHUD.ShowResources();
 	}
 
+	//////////////////////////
+	/// Chain spawner rate ///
+	//////////////////////////
+
 	if (ScreenStack.GetFirstInstanceOf(class'UIChainsOverview') != none)
 	{
 		AvengerHUD.AddResource(
@@ -559,6 +582,26 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 			)
 		);
 		
+		AvengerHUD.ShowResources();
+	}
+	
+	////////////////////////
+	/// Actionable leads ///
+	////////////////////////
+
+	AlienFacilityScreen = UIMission_AlienFacility(ScreenStack.GetCurrentScreen());
+	if (
+		AlienFacilityScreen != none &&
+		class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(AlienFacilityScreen.GetMission())
+	)
+	{
+		Quantity = `XCOMHQ.GetResourceAmount('ActionableFacilityLead');
+
+		AvengerHUD.AddResource(
+			Caps(class'UIUtilities_Strategy'.static.GetResourceDisplayName('ActionableFacilityLead', Quantity)),
+			class'UIUtilities_Text'.static.GetColoredText(string(Quantity), (Quantity > 0) ? eUIState_Normal : eUIState_Bad)
+		);
+
 		AvengerHUD.ShowResources();
 	}
 
@@ -805,6 +848,41 @@ static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOn
 	// Never show actions popup after UIStrategyPolicy
 	Tuple.Data[0].b = false;
 	
+	return ELR_NoInterrupt;
+}
+
+//////////////////////////
+/// UI Strategy Policy ///
+//////////////////////////
+
+static function CHEventListenerTemplate CreateResearchListeners ()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_Research');
+	Template.AddCHEvent('OnResearchReport', OnResearchReport_AlienFacilityLead, ELD_OnStateSubmitted, 99);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn OnResearchReport_AlienFacilityLead (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_Tech TechState;
+	local X2ItemTemplateManager ItemTemplateManager;
+	local X2ItemTemplate ItemTemplate;
+
+	TechState = XComGameState_Tech(EventData);
+	if (TechState == none) return ELR_NoInterrupt;
+
+	if (TechState.GetMyTemplateName() == 'Tech_AlienFacilityLead')
+	{
+		ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+		ItemTemplate = ItemTemplateManager.FindItemTemplate('ActionableFacilityLead');
+
+		`HQPRES.UIItemReceived(ItemTemplate);
+	}
+
 	return ELR_NoInterrupt;
 }
 

@@ -37,6 +37,10 @@ var config(GameData) int NumDarkEventsThirdMonth;
 var config(GameBoard) float RiskChancePercentMultiplier;
 var config(GameBoard) float RiskChancePercentPerForceLevel;
 
+var config array<StrategyCost> OneTimeMarketLeadCost;
+
+var localized string strOneTimeMarketLeadDescription;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -80,6 +84,9 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
 	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
+	Template.AddCHEvent('BlackMarketGoodsReset', BlackMarketGoodsReset, ELD_Immediate, 99);
+	Template.AddCHEvent('BlackMarketPurchase', BlackMarketPurchase_OSS, ELD_OnStateSubmitted, 99);
+	Template.AddCHEvent('AddResource', AddResource_OSS, ELD_OnStateSubmitted, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -987,6 +994,102 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	return ELR_NoInterrupt;
 }
 
+static protected function EventListenerReturn BlackMarketGoodsReset (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2ItemTemplateManager ItemTemplateMgr;
+	local XComGameState_BlackMarket MarketState;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local XComGameState_Item ItemState;
+	local X2ItemTemplate ItemTemplate;
+	local Commodity ForSaleItem;
+
+	MarketState = XComGameState_BlackMarket(EventData);
+	if (MarketState == none) return ELR_NoInterrupt;
+
+	// Check if we reached the relevant part of the game
+	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return ELR_NoInterrupt;
+
+	// Check if the player bought the first lead already
+	if (class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bBlackMarketLeadPurchased) return ELR_NoInterrupt;
+
+	// Get the latest pending state
+	MarketState = XComGameState_BlackMarket(NewGameState.ModifyStateObject(class'XComGameState_BlackMarket', MarketState.ObjectID));
+
+	// Create the item
+	ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	ItemTemplate = ItemTemplateMgr.FindItemTemplate('ActionableFacilityLead');
+	ItemState = ItemTemplate.CreateInstanceFromTemplate(NewGameState);
+	ItemState.Quantity = 1;
+
+	// Create the reward
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Item'));
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+	RewardState.SetReward(ItemState.GetReference());
+
+	// Fill out the commodity (default)
+	ForSaleItem.RewardRef = RewardState.GetReference();
+	ForSaleItem.Image = RewardState.GetRewardImage();
+	ForSaleItem.CostScalars = MarketState.GoodsCostScalars;
+	ForSaleItem.DiscountPercent = MarketState.GoodsCostPercentDiscount;
+
+	// Fill out the commodity (custom)
+	ForSaleItem.Title = ItemTemplate.GetItemFriendlyName(); // Get rid of the "1"
+	ForSaleItem.Desc = default.strOneTimeMarketLeadDescription;
+	ForSaleItem.Cost = default.OneTimeMarketLeadCost[`StrategyDifficultySetting];
+
+	// Add to sale
+	MarketState.ForSaleItems.AddItem(ForSaleItem);
+
+	// We are done
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn BlackMarketPurchase_OSS (Object EventData, Object EventSource, XComGameState SubmittedGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Reward RewardState;
+	local XComGameState_Item ItemState;
+	local XComGameState NewGameState;
+
+	RewardState = XComGameState_Reward(EventData);
+	if (RewardState == none) return ELR_NoInterrupt;
+
+	ItemState = XComGameState_Item(`XCOMHISTORY.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	if (ItemState == none) return ELR_NoInterrupt;
+	
+	// Make sure we bought a lead and not something else
+	if (ItemState.GetMyTemplateName() != 'ActionableFacilityLead') return ELR_NoInterrupt;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling BM Actionable Lead purchase");
+	class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks(NewGameState);
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.bBlackMarketLeadPurchased = true;
+	`SubmitGameState(NewGameState);
+
+	if (`HQPRES.StrategyMap2D != none) `HQPRES.StrategyMap2D.UpdateMissions();
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn AddResource_OSS (Object EventData, Object EventSource, XComGameState SubmittedGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_Item ResourceItemState;
+
+	ResourceItemState = XComGameState_Item(EventData);
+	if (ResourceItemState == none) return ELR_NoInterrupt;
+
+	if (ResourceItemState.GetMyTemplateName() == 'ActionableFacilityLead')
+	{
+		class'X2Helper_Infiltration'.static.UpdateFacilityMissionLocks();
+		if (`HQPRES.StrategyMap2D != none) `HQPRES.StrategyMap2D.UpdateMissions();
+	}
+
+	 return ELR_NoInterrupt;
+}
+
 ////////////////
 /// Tactical ///
 ////////////////
@@ -1180,7 +1283,10 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryEarly (Object EventD
 
 static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
+	local X2TacticalGameRuleset GameRules;
 	local XComGameState NewGameState;
+	local XComGameState_BattleData BattleData;
+	local XComGameState_Activity ActivityState;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: OnTacticalPlayBegun_VeryLate");
 
@@ -1193,6 +1299,16 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	if (`TACTICALMISSIONMGR.ActiveMission.sType == "SupplyExtraction")
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.SupplyExtractMission();
+	}
+	
+	GameRules = X2TacticalGameRuleset(EventData);
+	BattleData = XComGameState_BattleData(GameRules.CachedHistory.GetGameStateForObjectID(GameRules.GetCachedBattleDataRef().ObjectID));
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(BattleData.m_iMissionID);
+
+	// If avatar DVIP capture, show tutorial
+	if (ActivityState.GetActivityChain().GetMyTemplateName() == 'ActivityChain_DestroyFacility')
+	{
+		class'UIUtilities_InfiltrationTutorial'.static.AvatarCaptureMission();
 	}
 
 	return ELR_NoInterrupt;
