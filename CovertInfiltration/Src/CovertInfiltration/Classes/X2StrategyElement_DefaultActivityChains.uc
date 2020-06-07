@@ -193,6 +193,7 @@ static function X2DataTemplate CreateJailbreakFactionSoldierTemplate()
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsExtraSoldierChainAvailable;
+	Template.GenerateChainRewards = GenerateJailbreakFactionSoldierChainRewards;
 	Template.ChainRewards.AddItem('Reward_ExtraFactionSoldier');
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_PrepareFactionJB'));
@@ -242,6 +243,41 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState)
 {
 	return FindFactionForExtraSoldier(NewGameState).ObjectID > 0;
+}
+
+static function array<StateObjectReference> GenerateJailbreakFactionSoldierChainRewards (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local array<StateObjectReference> RewardRefs;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local name ChainReward;
+
+	`CI_Trace("Starting GenerateJailbreakFactionSoldierChainRewards");
+
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	TemplateManager = ChainState.GetMyTemplateManager();
+
+	foreach ChainState.GetMyTemplate().ChainRewards(ChainReward)
+	{
+		`CI_Trace("Template has chain reward: " $ ChainReward);
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
+
+		if (RewardTemplate != none)
+		{
+			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState.GenerateReward(
+				NewGameState,
+				ResHQ.GetMissionResourceRewardScalar(RewardState),
+				ChainReward == 'Reward_ExtraFactionSoldier' ? ChainState.FactionRef : ChainState.PrimaryRegionRef
+			);
+			RewardRefs.AddItem(RewardState.GetReference());
+			`CI_Trace("Generated chain reward: " $ ChainReward);
+		}
+	}
+
+	return RewardRefs;
 }
 
 static function X2DataTemplate CreateJailbreakCapturedSoldierTemplate()

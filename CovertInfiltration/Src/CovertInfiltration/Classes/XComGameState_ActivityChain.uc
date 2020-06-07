@@ -89,20 +89,15 @@ event OnCreation (optional X2DataTemplate Template)
 function SetupChain (XComGameState NewGameState)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
-	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_Activity ActivityState;
 	local X2ActivityTemplate ActivityTemplate;
 	local StateObjectReference ActivityRef;
 	local name ActivityTemplateName;
 	local ChainStage StageDef;
-	local XComGameState_Reward RewardState;
-	local X2RewardTemplate RewardTemplate;
-	local name ChainReward;
 	local int i;
 
 	`CI_Trace("Setting up chain" @ m_TemplateName);
 
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 	TemplateManager = GetMyTemplateManager();
 	GetMyTemplate();
 
@@ -157,19 +152,10 @@ function SetupChain (XComGameState NewGameState)
 		ActivityState.OnSetupChain(NewGameState);
 	}
 	
-	// Generate the chain-wide rewards if our template asks for one
-	foreach m_Template.ChainRewards(ChainReward)
+	// Generate the chain-wide rewards if our template asks for them
+	if (m_Template.GenerateChainRewards != none)
 	{
-		`CI_Trace("Template has chain reward: " $ ChainReward);
-		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
-
-		if (RewardTemplate != none)
-		{
-			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
-			RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), PrimaryRegionRef);
-			UnclaimedChainRewardRefs.AddItem(RewardState.GetReference());
-			`CI_Trace("Creating chain reward: " $ ChainReward);
-		}
+		UnclaimedChainRewardRefs = m_Template.GenerateChainRewards(self, NewGameState);
 	}
 
 	SetupComplications(NewGameState);

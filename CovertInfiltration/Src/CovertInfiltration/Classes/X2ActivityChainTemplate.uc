@@ -41,6 +41,7 @@ delegate PostStageSetup(XComGameState NewGameState, XComGameState_Activity Activ
 
 delegate ChooseRegions(XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef);
 delegate StateObjectReference ChooseFaction(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
+delegate array<StateObjectReference> GenerateChainRewards(XComGameState_ActivityChain ChainState, XComGameState NewGameState);
 
 // Called when the chain is deemed relevant to the tactical history and enlisted/copied over
 // together with all the related states (activities and complications).
@@ -145,10 +146,42 @@ static function string DefaultGetNarrativeObjective (XComGameState_ActivityChain
 	return ChainState.GetMyTemplate().strObjective;
 }
 
+static function array<StateObjectReference> DefaultGenerateChainRewards (XComGameState_ActivityChain ChainState, XComGameState NewGameState)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local array<StateObjectReference> RewardRefs;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
+	local name ChainReward;
+
+	`CI_Trace("Starting DefaultGenerateChainRewards");
+
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	TemplateManager = ChainState.GetMyTemplateManager();
+
+	foreach ChainState.GetMyTemplate().ChainRewards(ChainReward)
+	{
+		`CI_Trace("Template has chain reward: " $ ChainReward);
+		RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(ChainReward));
+
+		if (RewardTemplate != none)
+		{
+			RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+			RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ChainState.PrimaryRegionRef);
+			RewardRefs.AddItem(RewardState.GetReference());
+			`CI_Trace("Generated chain reward: " $ ChainReward);
+		}
+	}
+
+	return RewardRefs;
+}
+
 defaultproperties
 {
 	DeckReq = AlwaysAvailable
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetNarrativeObjective = DefaultGetNarrativeObjective
+	GenerateChainRewards = DefaultGenerateChainRewards
 	bAllowComplications = true;
 }
