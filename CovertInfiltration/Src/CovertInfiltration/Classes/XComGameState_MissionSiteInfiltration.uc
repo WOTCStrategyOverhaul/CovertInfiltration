@@ -910,6 +910,8 @@ static function bool ShouldPauseGeoscapeAtMilestone (name MilestoneReached)
 		case 'GenericBuff2':
 			return `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.PAUSE_ON_MILESTONE_225_DEFAULT, class'UIListener_ModConfigMenu'.default.PAUSE_ON_MILESTONE_225);
 			break;
+		case 'SitRep3':
+			return false; // This doesn't really matter anyway - 250% will block goescape ticking anyway
 		default:
 			`RedScreen("XCGS_MissionSiteInfiltration::ShouldPauseGeoscapeAtMilestone was passed an invalid milestone name!");
 			return true;
