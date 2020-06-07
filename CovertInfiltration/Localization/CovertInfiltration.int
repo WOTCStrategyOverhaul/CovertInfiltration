@@ -73,6 +73,8 @@ strUnavailable=Unavailable
 strInfilLabel=INFILTRATION HOURS
 strDeterLabel=DETERRENCE PERCENT
 
+strAcademyProjectStatusGTS=GTS
+
 [UIFacility_ResitanceRing]
 strAssingOrdersOverlay=Assign Orders
 

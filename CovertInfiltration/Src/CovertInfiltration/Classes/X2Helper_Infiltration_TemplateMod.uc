@@ -32,6 +32,8 @@ var localized string strUnavailable;
 var localized string strInfilLabel;
 var localized string strDeterLabel;
 
+var localized string strAcademyProjectStatusGTS;
+
 /////////////
 /// Items ///
 /////////////
@@ -707,6 +709,7 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 	local XComGameState_StaffSlot StaffSlot;
 	local string strSoldierClass, Message;
 	local int i, iCurrentHoursRemaining, iLowestHoursRemaining;
+	local bool bProjectFound;
 
 	FacilityState = XComGameState_FacilityXCom(`XCOMHISTORY.GetGameStateForObjectID(FacilityRef.ObjectID));
 	iLowestHoursRemaining = 0;
@@ -719,6 +722,7 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 			AcademyProject = class'X2Helper_Infiltration'.static.GetAcademyProjectForUnit(StaffSlot.GetAssignedStaffRef());
 			if (AcademyProject != none)
 			{
+				bProjectFound = true;
 				iCurrentHoursRemaining = AcademyProject.GetCurrentNumHoursRemaining();
 				if (iCurrentHoursRemaining < 0)
 				{
@@ -736,7 +740,7 @@ static function string GetAcademyQueueMessage(StateObjectReference FacilityRef)
 		}
 	}
 
-	return strSoldierClass $ ":" @ Message;
+	return bProjectFound ? (strSoldierClass $ ":" @ Message) : "";
 }
 
 static function PatchLivingQuarters()
@@ -891,7 +895,7 @@ static protected function string GetAcademySlotBonusDisplayString (XComGameState
 		}
 		else
 		{
-			Contribution = "GTS"; // TODO: loc
+			Contribution = default.strAcademyProjectStatusGTS;
 		}
 	}
 

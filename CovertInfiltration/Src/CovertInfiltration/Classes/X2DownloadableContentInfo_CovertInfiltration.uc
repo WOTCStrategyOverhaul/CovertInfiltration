@@ -864,7 +864,7 @@ static protected function bool ProcessEventAcademy (XComGameState_HeadquartersPr
 
 	if (!AcademyProject.PromotingFromRookie())
 	{
-		ClassName = "GTS"; // TODO: Loc
+		ClassName = class'X2Helper_Infiltration_TemplateMod'.default.strAcademyProjectStatusGTS;
 	}
 	else
 	{
