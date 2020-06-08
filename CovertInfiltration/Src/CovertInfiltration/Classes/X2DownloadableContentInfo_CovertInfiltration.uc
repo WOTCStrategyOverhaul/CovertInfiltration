@@ -1353,7 +1353,10 @@ exec function ForceAbortSelectedInfil ()
 	ActivityState = XComGameState_Activity_Infiltration(NewGameState.ModifyStateObject(class'XComGameState_Activity_Infiltration', ActivityState.ObjectID));
 	
 	ClearUnitsFromInfil(NewGameState, InfiltrationState);
-	ActivityState.OnInfilExpired(NewGameState); // Giant hack. Fix together with #513
+
+	// Not really intended to be used this way (once launchable, infils are not supposed to be aborted)
+	// but it's the best we can do
+	X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).OnAborted(NewGameState, ActivityState);
 
 	`SubmitGameState(NewGameState);
 

@@ -21,6 +21,8 @@ var config int ExpirationBaseTime;
 var config int ExpirationVariance;
 var config bool ExpirationNotBlocksCleanup; // Inverted, so that default is "block cleanup"
 
+delegate OnAborted (XComGameState NewGameState, XComGameState_Activity ActivityState);
+
 delegate string GetRewardDetailStringFn(XComGameState_Activity ActivityState, XComGameState_Reward RewardState);
 
 //////////////////////
@@ -184,6 +186,20 @@ static function DefaultSetupStageSubmitted (XComGameState_Activity ActivityState
 	);
 }
 
+static function GenericOnAborted (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+
+	`CI_Trace("Handling Activity Aborted: " $ ActivityState.GetMyTemplateName());
+	
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
+	MissionState.RemoveEntity(NewGameState);
+	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkFailed(NewGameState);
+}
+
 /////////////////
 /// Callbacks ///
 /////////////////
@@ -239,6 +255,7 @@ defaultproperties
 {
 	SetupStage = DefaultInfiltrationSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted
+	OnAborted = GenericOnAborted
 	GetMissionImage = DefaultGetMissionImageInfiltration
 	GetRewardDetailStringFn = DefaultGetRewardDetails
 	GetOverviewStatus = DefaultGetOverviewStatusInfiltration

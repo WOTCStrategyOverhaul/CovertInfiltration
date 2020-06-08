@@ -133,6 +133,8 @@ simulated function DestroyTheEvidence()
 		CovertAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
 		CovertAction.RemoveEntity(NewGameState);
 
+		`XEVENTMGR.TriggerEvent('CovertActionAborted', self, CovertAction, NewGameState);
+
 		ActionTemplate = CovertAction.GetMyTemplate();
 		if (ActionTemplate.bGoldenPath)
 		{

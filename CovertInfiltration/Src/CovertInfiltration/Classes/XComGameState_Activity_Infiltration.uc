@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
-//  PURPOSE: Activity state for X2ActivityTemplate_Infiltration. Listens for expiry of
-//           mission-spawning covert action
+//  PURPOSE: Activity state for X2ActivityTemplate_Infiltration. Listens for expiry and 
+//           and abort of mission-spawning covert action
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -30,6 +30,22 @@ function OnInfilExpired (XComGameState NewGameState)
 	}
 }
 
+protected function EventListenerReturn OnActionAborted (Object EventData, Object EventSource, XComGameState NewGameState, Name EventID, Object CallbackData)
+{
+	local X2ActivityTemplate_Infiltration InfilTemplate;
+	local XComGameState_Activity NewActivityState;
+
+	InfilTemplate = X2ActivityTemplate_Infiltration(GetMyTemplate());
+	NewActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ObjectID));
+	
+	if (InfilTemplate.OnAborted != none)
+	{
+		InfilTemplate.OnAborted(NewGameState, NewActivityState);
+	}
+
+	return ELR_NoInterrupt;
+}
+
 protected function PostMarkCompleted (XComGameState NewGameState)
 {
 	UnRegisterFromAllEvents();
@@ -44,14 +60,15 @@ protected function PostMarkCompleted (XComGameState NewGameState)
 function RegisterForActionEvents ()
 {
 	local XComGameState_CovertAction ActionState;
-	local X2EventManager EventManger;
+	local X2EventManager EventManager;
 	local Object SelfObject;
 
-	EventManger = class'X2EventManager'.static.GetEventManager();
+	EventManager = class'X2EventManager'.static.GetEventManager();
 	ActionState = GetAction();
 	SelfObject = self;
 
-	EventManger.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate, 99, ActionState, true);
+	EventManager.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate, 99, ActionState, true);
+	EventManager.RegisterForEvent(SelfObject, 'CovertActionAborted', OnActionAborted, ELD_Immediate, 99, ActionState, true);
 }
 
 function UnRegisterFromAllEvents ()
