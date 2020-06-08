@@ -246,7 +246,6 @@ static function GatecrasherOnComplete(XComGameState NewGameState, XComGameState_
 	local XComGameState_WorldRegion RegionState;
 	local XComGameState_ResistanceFaction FactionState;
 	local XComGameState_Unit UnitState;
-	local array<int> ExcludeIndices;
 	local int idx;
 	
 	History = `XCOMHISTORY;
@@ -279,32 +278,6 @@ static function GatecrasherOnComplete(XComGameState NewGameState, XComGameState_
 		}
 	}
 	
-	ExcludeIndices = GetGatecrasherExcludeRewards(MissionState);
-	GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	GiveRewards(NewGameState, MissionState);
 	MissionState.RemoveEntity(NewGameState);
-}
-
-static function array<int> GetGatecrasherExcludeRewards(XComGameState_MissionSite MissionState)
-{
-	local XComGameStateHistory History;
-	local XComGameState_BattleData BattleData;
-	local array<int> ExcludeIndices;
-	local int idx;
-
-	History = `XCOMHISTORY;
-	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
-
-	for (idx = 0; idx < BattleData.MapData.ActiveMission.MissionObjectives.Length; idx++)
-	{
-		// Check if any prisoners survived the mission
-		if (BattleData.MapData.ActiveMission.MissionObjectives[idx].ObjectiveName != 'SaveAnyPrisoners' &&
-			!BattleData.MapData.ActiveMission.MissionObjectives[idx].bCompleted)
-		{
-			// Forfeit if ded
-			ExcludeIndices.AddItem(idx);
-			`CI_LOG(" GetGatecrasherExcludeRewards() : Objective " $ BattleData.MapData.ActiveMission.MissionObjectives[idx].ObjectiveName $ " was not completed. Removing index " $ idx);
-		}
-	}
-
-	return ExcludeIndices;
 }
