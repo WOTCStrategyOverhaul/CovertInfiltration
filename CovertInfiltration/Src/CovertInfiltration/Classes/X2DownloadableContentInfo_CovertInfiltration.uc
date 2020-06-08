@@ -255,39 +255,57 @@ static function ReplaceGatecrasher (XComGameState StartState)
 
 static function CreateStartingMission (XComGameState StartState, Vector StartingMissionLoc)
 {
-	local XComGameState_MissionSite Mission;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local array<XComGameState_Reward> MissionRewards;
-	local XComGameState_Reward RewardState;
-	local X2RewardTemplate RewardTemplate;
-	local XComGameStateHistory History;
-	local X2StrategyElementTemplateManager StratMgr;
-	local X2MissionSourceTemplate MissionSource;
-	local XComGameState_WorldRegion RegionState;
-	local Vector2D v2Loc;
+	local Vector2D									v2Loc;
+	local XComGameState_MissionSite					MissionState;
+	local XComGameState_WorldRegion					RegionState;
+	local XComGameState_Reward						RewardState;
+	local XComGameState_CovertAction				ActionState;
+	local X2RewardTemplate							RewardTemplate;
+	local X2StrategyElementTemplateManager			StratMgr;
+	local X2MissionSourceTemplate					MissionSource;
+	local array<XComGameState_Reward>				MissionRewards;
+	local array<XComGameState_WorldRegion>			ContactRegions;
+	local XComGameState_AdventChosen				ChosenState;
+	local XComGameState_HeadquartersAlien			AlienHQ;
+	local XComGameStateHistory						History;
+	local XComGameState_HeadquartersResistance		ResHQ;
+	local XComGameState_HeadquartersXCom			XComHQ;
 
 	History = `XCOMHISTORY;
 
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	
 	RegionState = XComGameState_WorldRegion(StartState.GetGameStateForObjectID(XComHQ.StartingRegion.ObjectID));
 	v2Loc.X = StartingMissionLoc.X;
 	v2Loc.Y = StartingMissionLoc.Y;
+
+	MissionRewards.Length = 0;
+
+	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_None'));
+	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
+	RewardState.GenerateReward(StartState,, RegionState.GetReference());
+	MissionRewards.AddItem(RewardState);
 	
 	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Engineer'));
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
+	RewardState.GenerateReward(StartState, 1.0, RegionState.GetReference());
 	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_00');
 	MissionRewards.AddItem(RewardState);
 	
 	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Scientist'));
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
+	RewardState.GenerateReward(StartState, 1.0, RegionState.GetReference());
 	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_01');
 	MissionRewards.AddItem(RewardState);
 
-	Mission = XComGameState_MissionSite(StartState.CreateNewStateObject(class'XComGameState_MissionSite'));
-	MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_Start'));
-	Mission.BuildMission(MissionSource, v2Loc, RegionState.GetReference(), MissionRewards, true);
+	`CI_LOG(" CreateStartingMission() : Generated " $ MissionRewards.Length $ " rewards for Gatecrasher mission");
+
+	MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_GatecrasherCI'));
+
+	MissionState = XComGameState_MissionSite(StartState.CreateNewStateObject(class'XComGameState_MissionSite'));
+	MissionState.BuildMission(MissionSource, v2Loc, RegionState.GetReference(), MissionRewards, true);
 }
 
 // Copied from X2StrategyElement_XpackMissionSources

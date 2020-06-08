@@ -14,6 +14,7 @@
     <Folder Include="Content\Maps" />
     <Folder Include="Content\Maps\Missions" />
     <Folder Include="Content\Maps\Parcels" />
+    <Folder Include="Content\Maps\Parcels\Wilderness" />
     <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
@@ -71,13 +72,16 @@
     <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_Gatecrasher_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Content\Maps\Parcels\md_InterrogationCompound_01_CI.umap">
+    <Content Include="Content\Maps\Parcels\Wilderness\md_InterrogationCompound_01_CI.umap">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Content\Maps\Parcels\md_InterrogationCompound_02_CI.umap">
+    <Content Include="Content\Maps\Parcels\Wilderness\md_InterrogationCompound_02_CI.umap">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
@@ -106,6 +110,18 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_DestroyEvacZone.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetAssociatedObjectiveObjects.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetInteractiveObjectHacked.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_SetInteractiveObjectHacked.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIAlert_CovertInfiltration.uc">
@@ -359,6 +375,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2MissionNarrative_InfiltrationNarrativeSet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2MissionSet_InfiltrationMissionSet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">

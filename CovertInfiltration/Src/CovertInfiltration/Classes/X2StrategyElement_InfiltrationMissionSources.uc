@@ -12,6 +12,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> MissionSources;
 	
 	MissionSources.AddItem(CreateActivitySourceTemplate());
+	MissionSources.AddItem(CreateGatecrasherTemplate());
 
 	return MissionSources;
 }
@@ -214,4 +215,96 @@ static function bool ActivityCanLaunchMission (XComGameState_MissionSite Mission
 	}
 
 	return true;
+}
+
+// CHEEKY PRISON BREAKY
+//---------------------------------------------------------------------------------------
+static function X2DataTemplate CreateGatecrasherTemplate()
+{
+	local X2MissionSourceTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2MissionSourceTemplate', Template, 'MissionSource_GatecrasherCI');
+
+	Template.bStart = true;
+	Template.bSkipRewardsRecap = true;
+	Template.bBlocksNegativeTraits = true;
+	Template.bBlockShaken = true;
+	Template.DifficultyValue = 1;
+	Template.GetMissionDifficultyFn = GetMissionDifficultyFromTemplate;
+	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
+	Template.OnSuccessFn = GatecrasherOnComplete;
+	Template.OnFailureFn = GatecrasherOnComplete;
+
+	return Template;
+}
+
+static function GatecrasherOnComplete(XComGameState NewGameState, XComGameState_MissionSite MissionState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_CampaignSettings CampaignSettings;
+	local XComGameState_WorldRegion RegionState;
+	local XComGameState_ResistanceFaction FactionState;
+	local XComGameState_Unit UnitState;
+	local array<int> ExcludeIndices;
+	local int idx;
+	
+	History = `XCOMHISTORY;
+	XComHQ = GetAndAddXComHQ(NewGameState);
+	XComHQ.bJustWentOnFirstMission = true;
+
+	// Ensure that every rookie who goes on Gatecrasher gets a promotion when the mission ends
+	for (idx = 0; idx < XComHQ.Squad.Length; idx++)
+	{
+		if (XComHQ.Squad[idx].ObjectID != 0)
+		{
+			UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', XComHQ.Squad[idx].ObjectID));
+			if (UnitState != none && UnitState.IsAlive() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() < 1)
+			{
+				UnitState.NonTacticalKills++;
+			}
+		}
+	}
+	
+	CampaignSettings = XComGameState_CampaignSettings(History.GetSingleGameStateObjectForClass(class'XComGameState_CampaignSettings'));
+	if (!CampaignSettings.bXPackNarrativeEnabled)
+	{
+		RegionState = XComGameState_WorldRegion(History.GetGameStateForObjectID(XComHQ.StartingRegion.ObjectID));		
+		FactionState = RegionState.GetResistanceFaction();
+		if (FactionState != none && !FactionState.bMetXCom)
+		{
+			// XCom started with a Resistance soldier, so make sure they meet that Faction
+			FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
+			FactionState.MeetXCom(NewGameState);
+		}
+	}
+	
+	ExcludeIndices = GetGatecrasherExcludeRewards(MissionState);
+	GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	MissionState.RemoveEntity(NewGameState);
+}
+
+static function array<int> GetGatecrasherExcludeRewards(XComGameState_MissionSite MissionState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_BattleData BattleData;
+	local array<int> ExcludeIndices;
+	local int idx;
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	for (idx = 0; idx < BattleData.MapData.ActiveMission.MissionObjectives.Length; idx++)
+	{
+		// Check if any prisoners survived the mission
+		if (BattleData.MapData.ActiveMission.MissionObjectives[idx].ObjectiveName != 'SaveAnyPrisoners' &&
+			!BattleData.MapData.ActiveMission.MissionObjectives[idx].bCompleted)
+		{
+			// Forfeit if ded
+			ExcludeIndices.AddItem(idx);
+			`CI_LOG(" GetGatecrasherExcludeRewards() : Objective " $ BattleData.MapData.ActiveMission.MissionObjectives[idx].ObjectiveName $ " was not completed. Removing index " $ idx);
+		}
+	}
+
+	return ExcludeIndices;
 }

@@ -320,14 +320,35 @@ m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:Str
 [UIStrategyPolicy]
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 
-[DefaultGatecrasher X2MissionNarrativeTemplate]
-ObjectiveTextPools[0]="Eliminate All Hostiles"
-ObjectiveTextPools[1]="Eliminate All Hostiles"
+[DefaultGatecrasherCI X2MissionNarrativeTemplate]
+ObjectiveTextPools[0]="Placeholder text. If you are reading this please report it as a bug"
+ObjectiveTextPools[1]="Rescue the Prisoners"
+ObjectiveTextPools[2]="Eliminate All Hostiles"
+ObjectiveTextPools[3]="Prisoners Must Survive"
 
-[Gatecrasher X2MissionTemplate]
+; Ignore this, game throws warnings if it doesn't exist
+ConsoleObjectiveTextPools[0]=
+ConsoleObjectiveTextPools[1]=
+
+[GatecrasherCI X2MissionTemplate]
 DisplayName="Assault ADVENT Offsite Holding Facility"
-Briefing="Crash This Gate"
+Briefing="Free the prisoners and clear the area"
 PostMissionType="Offsite Holding Facility"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
-ObjectiveTextPools[0]="Eliminate All Hostiles"
-ObjectiveTextPools[1]="Eliminate All Hostiles"
+ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
+ObjectiveTextPools[1]="Rescue the prisoners from their prison cells"
+ObjectiveTextPools[2]="Keep prisoners alive until the site is cleared"
+PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_01"
+PreMissionNarratives[1]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_02"
+PreMissionNarratives[2]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_03"
+PreMissionNarratives[3]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_04"
+PreMissionNarratives[4]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_05"
+
+[MissionSource_GatecrasherCI X2MissionSourceTemplate]
++BattleOpName="Operation Gatecrasher"
+
+; The player shouldn't ever see this, but just in case
+[GatecrasherCI X2MissionFlavorTextTemplate]
+FlavorText="MISSING FLAVOR TEXT"
+CouncilSpokesmanSuccessText="Word of the successful rescue operation is already spreading. Your efforts today will no doubt bolster the resolve of Resistance forces across the globe, Commander."
+CouncilSpokesmanFailureText="It is unfortunate you were unable to free those captives, Commander. Our allies will no doubt question our methods after such a loss."
