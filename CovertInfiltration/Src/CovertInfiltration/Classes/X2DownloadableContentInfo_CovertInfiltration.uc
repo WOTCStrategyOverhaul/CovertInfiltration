@@ -136,7 +136,6 @@ static event InstallNewCampaign(XComGameState StartState)
 	
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
-	GrantBonusStartUpStaff(StartState);
 	ReplaceGatecrasher(StartState);
 
 	PatchDebugStart(StartState);
@@ -200,35 +199,12 @@ static function ForceObjectivesCompleted (XComGameState NewGameState)
 	}
 }
 
-static function GrantBonusStartUpStaff (XComGameState StartState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_Unit EngineerState, ScientistState;
-
-	XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	
-	if (XComHQ == none)
-	{
-		return;
-	}
-
-	EngineerState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Engineer');
-	ScientistState = `CHARACTERPOOLMGR.CreateCharacter(StartState, eCPSM_Mixed, 'Scientist');
-
-	XComHQ = XComGameState_HeadquartersXCom(StartState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
-
-	XComHQ.AddToCrew(StartState, EngineerState);
-	XComHQ.AddToCrew(StartState, ScientistState);
-
-	XComHQ.HandlePowerOrStaffingChange(StartState);
-}
-
 static function ReplaceGatecrasher (XComGameState StartState)
 {
 	local XComGameState_MissionSite MissionState;
 	local Vector StartingMissionLoc;
 
-	`CI_Log("Replacing Gatecrasher!");
+	`CI_Trace("Replacing Gatecrasher!");
 
 	foreach StartState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
 	{
@@ -245,7 +221,7 @@ static function ReplaceGatecrasher (XComGameState StartState)
 
 		CreateStartingMission(StartState, StartingMissionLoc);
 
-		`CI_Log("Gatecrasher Replaced!");
+		`CI_Trace("Gatecrasher Replaced!");
 	}
 	else
 	{
@@ -299,8 +275,6 @@ static function CreateStartingMission (XComGameState StartState, Vector Starting
 	RewardState.GenerateReward(StartState, 1.0, RegionState.GetReference());
 	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_01');
 	MissionRewards.AddItem(RewardState);
-
-	`CI_LOG(" CreateStartingMission() : Generated " $ MissionRewards.Length $ " rewards for Gatecrasher mission");
 
 	MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_GatecrasherCI'));
 
