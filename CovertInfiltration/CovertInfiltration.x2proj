@@ -115,13 +115,7 @@
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\SeqAct_DestroyEvacZone.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetAssociatedObjectiveObjects.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetInteractiveObjectHacked.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_SetInteractiveObjectHacked.uc">
