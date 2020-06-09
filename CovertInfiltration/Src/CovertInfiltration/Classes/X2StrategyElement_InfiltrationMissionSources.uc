@@ -217,8 +217,6 @@ static function bool ActivityCanLaunchMission (XComGameState_MissionSite Mission
 	return true;
 }
 
-// CHEEKY PRISON BREAKY
-//---------------------------------------------------------------------------------------
 static function X2DataTemplate CreateGatecrasherTemplate()
 {
 	local X2MissionSourceTemplate Template;
@@ -229,7 +227,7 @@ static function X2DataTemplate CreateGatecrasherTemplate()
 	Template.bSkipRewardsRecap = true;
 	Template.bBlocksNegativeTraits = true;
 	Template.bBlockShaken = true;
-	Template.DifficultyValue = 1;
+	Template.DifficultyValue = 2;
 	Template.GetMissionDifficultyFn = GetMissionDifficultyFromTemplate;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
 	Template.OnSuccessFn = GatecrasherOnComplete;

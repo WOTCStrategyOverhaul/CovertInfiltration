@@ -273,40 +273,6 @@ static function PatchNewRetaliationNarrative()
 	Template.NarrativeMoments[10] = "";
 }
 
-static function PatchGatecrasher()
-{
-	local X2StrategyElementTemplateManager StratMgr;
-	local XComTacticalMissionManager MissionManager;
-	local array<X2DataTemplate> DifficultyVariants;
-	local X2MissionSourceTemplate MissionSource;
-	local X2DataTemplate DataTemplate;
-	local int i;
-
-	// Bump alert level by one
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	StratMgr.FindDataTemplateAllDifficulties('MissionSource_Start', DifficultyVariants);
-
-	foreach DifficultyVariants(DataTemplate)
-	{
-		MissionSource = X2MissionSourceTemplate(DataTemplate);
-		MissionSource.DifficultyValue = 2;
-	}
-
-	// Add the new schedule
-
-	MissionManager = `TACTICALMISSIONMGR;
-	i = MissionManager.arrMissions.Find('MissionName', 'SabotageAdventMonument');
-
-	if (i == INDEX_NONE)
-	{
-		`CI_Warn("Failed to find SabotageAdventMonument mission def to add new schedule");
-		return;
-	}
-
-	MissionManager.arrMissions[i].MissionSchedules.AddItem('SabotageCC_D4_Standard');
-}
-
 static function PatchQuestItems ()
 {
 	local array<X2DataTemplate> DifficulityVariants;
