@@ -230,13 +230,13 @@ static function X2DataTemplate CreateGatecrasherTemplate()
 	Template.DifficultyValue = 2;
 	Template.GetMissionDifficultyFn = GetMissionDifficultyFromTemplate;
 	Template.WasMissionSuccessfulFn = OneStrategyObjectiveCompleted;
-	Template.OnSuccessFn = GatecrasherOnComplete;
-	Template.OnFailureFn = GatecrasherOnComplete;
+	Template.OnSuccessFn = GatecrasherOnSuccess;
+	Template.OnFailureFn = GatecrasherOnFailure;
 
 	return Template;
 }
 
-static function GatecrasherOnComplete(XComGameState NewGameState, XComGameState_MissionSite MissionState)
+static function GatecrasherOnSuccess(XComGameState NewGameState, XComGameState_MissionSite MissionState)
 {
 	local XComGameStateHistory History;
 	local XComGameState_HeadquartersXCom XComHQ;
@@ -277,5 +277,16 @@ static function GatecrasherOnComplete(XComGameState NewGameState, XComGameState_
 	}
 	
 	GiveRewards(NewGameState, MissionState);
+	MissionState.RemoveEntity(NewGameState);
+}
+
+static function GatecrasherOnFailure(XComGameState NewGameState, XComGameState_MissionSite MissionState)
+{
+	local XComGameState_HeadquartersAlien AlienHQ;
+
+	AlienHQ = GetAndAddAlienHQ(NewGameState);
+
+	// YOU HAVE FAILED
+	AlienHQ.bAlienFullGameVictory = true;
 	MissionState.RemoveEntity(NewGameState);
 }

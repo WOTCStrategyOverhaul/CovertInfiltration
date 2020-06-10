@@ -332,7 +332,7 @@ ConsoleObjectiveTextPools[1]=
 
 [GatecrasherCI X2MissionTemplate]
 DisplayName="Operation Gatecrasher"
-Briefing="ADVENT's brought two dissident academics here for 're-education'. This pair could be of extreme value to the Resistance. Ensure they both make it out alive."
+Briefing="ADVENT has brought a pair of dissident academics to this facility for 're-education'. These two could be of extreme value to the Resistance. Ensure they both make it out of here alive."
 PostMissionType="Operation Gatecrasher"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
 ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
