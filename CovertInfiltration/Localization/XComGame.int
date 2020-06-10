@@ -321,7 +321,7 @@ m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:Str
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS
 
 [DefaultGatecrasherCI X2MissionNarrativeTemplate]
-ObjectiveTextPools[0]="Placeholder text. If you are reading this please report it as a bug"
+ObjectiveTextPools[0]="THIS_IS_A_BUG"
 ObjectiveTextPools[1]="Rescue the Prisoners"
 ObjectiveTextPools[2]="Eliminate All Hostiles"
 ObjectiveTextPools[3]="Prisoners Must Survive"
@@ -331,9 +331,9 @@ ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]=
 
 [GatecrasherCI X2MissionTemplate]
-DisplayName="Assault ADVENT Offsite Holding Facility"
-Briefing="Free the prisoners and clear the area"
-PostMissionType="Offsite Holding Facility"
+DisplayName="Operation Gatecrasher"
+Briefing="ADVENT's brought two dissident academics here for 're-education'. This pair could be of extreme value to the Resistance. Ensure they both make it out alive."
+PostMissionType="Operation Gatecrasher"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
 ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
 ObjectiveTextPools[1]="Rescue the prisoners from their prison cells"
@@ -349,6 +349,4 @@ PreMissionNarratives[4]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_M
 
 ; The player shouldn't ever see this, but just in case
 [GatecrasherCI X2MissionFlavorTextTemplate]
-FlavorText="MISSING FLAVOR TEXT"
-CouncilSpokesmanSuccessText="Word of the successful rescue operation is already spreading. Your efforts today will no doubt bolster the resolve of Resistance forces across the globe, Commander."
-CouncilSpokesmanFailureText="It is unfortunate you were unable to free those captives, Commander. Our allies will no doubt question our methods after such a loss."
+FlavorText="THIS_IS_A_BUG"
