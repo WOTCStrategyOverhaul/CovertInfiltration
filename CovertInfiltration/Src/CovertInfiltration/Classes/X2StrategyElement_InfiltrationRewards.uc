@@ -513,14 +513,7 @@ static function DisplayProxyRewardPopup (XComGameState_Reward RewardState)
 
 static function GenerateProxyReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
 {
-	local XComGameState_ActivityChain ChainState;
-	local XComGameState_Reward ProxyRewardState;
-
-	ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', AuxRef.ObjectID));
-	ProxyRewardState = ChainState.ClaimChainReward(NewGameState);
-
-	RewardState.RewardObjectReference = ProxyRewardState.GetReference();
-	RewardState.Quantity = ProxyRewardState.Quantity;
+	`REDSCREEN("Reward_ChainProxy was generated! This should never happen! This reward should not be used for any mission outside of an activity chain!");
 }
 
 static function XComGameState_Reward GetProxyReward (XComGameState_Reward RewardState)
