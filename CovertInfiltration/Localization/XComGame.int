@@ -339,3 +339,34 @@ UnlockedDescription="Facility Lead converted to Actionable Lead"
 [XComGame.UIMission_AlienFacility]
 [UIMission_AlienFacility]
 m_strLockedHelp="We must find an actionable lead or build a radio relay in this region before we can assault and destroy this facility!"
+
+[DefaultGatecrasherCI X2MissionNarrativeTemplate]
+ObjectiveTextPools[0]="THIS_IS_A_BUG"
+ObjectiveTextPools[1]="Rescue the Prisoners"
+ObjectiveTextPools[2]="Eliminate All Hostiles"
+ObjectiveTextPools[3]="Prisoners Must Survive"
+
+; Ignore this, game throws warnings if it doesn't exist
+ConsoleObjectiveTextPools[0]=
+ConsoleObjectiveTextPools[1]=
+
+[GatecrasherCI X2MissionTemplate]
+DisplayName="Operation Gatecrasher"
+Briefing="ADVENT has brought a pair of dissident academics to this facility for 're-education'. These two could be of extreme value to the Resistance. Ensure they both make it out of here alive."
+PostMissionType="Operation Gatecrasher"
+BriefingImage="img:///UILibrary_Common.Xcom_default"
+ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
+ObjectiveTextPools[1]="Rescue the prisoners from their prison cells"
+ObjectiveTextPools[2]="Keep prisoners alive until the site is cleared"
+PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_01"
+PreMissionNarratives[1]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_02"
+PreMissionNarratives[2]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_03"
+PreMissionNarratives[3]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_04"
+PreMissionNarratives[4]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_05"
+
+[MissionSource_GatecrasherCI X2MissionSourceTemplate]
++BattleOpName="Operation Gatecrasher"
+
+; The player shouldn't ever see this, but just in case
+[GatecrasherCI X2MissionFlavorTextTemplate]
+FlavorText="THIS_IS_A_BUG"

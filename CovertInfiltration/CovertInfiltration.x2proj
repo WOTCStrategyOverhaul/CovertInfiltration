@@ -34,6 +34,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComMissions.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComMissionSources.ini">
       <SubType>Content</SubType>
     </Content>
@@ -67,6 +70,9 @@
     <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_Gatecrasher_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
       <SubType>Content</SubType>
     </Content>
@@ -96,6 +102,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetAssociatedObjectiveObjects.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_SetInteractiveObjectHacked.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIAlert_CovertInfiltration.uc">
@@ -355,6 +367,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Item_InfiltrationResources.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2MissionNarrative_InfiltrationNarrativeSet.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2MissionSet_InfiltrationMissionSet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2OverInfiltrationBonusTemplate.uc">
