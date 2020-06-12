@@ -105,10 +105,10 @@ static function StateObjectReference InitMissionReward (XComGameState NewGameSta
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
 	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 	
-	// If this is a chain proxy reward, send the chain state reference into it instead of the region reference
+	// If this is a chain proxy reward, replace it with a reward from the chainwide reward pool
 	if (RewardState.GetMyTemplateName() == 'Reward_ChainProxy')
 	{
-		RewardState.GenerateReward(NewGameState,, ActivityState.GetActivityChain().GetReference());
+		RewardState = ActivityState.GetActivityChain().ClaimChainReward(NewGameState);
 	}
 	else
 	{
