@@ -351,18 +351,14 @@ ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]=
 
 [GatecrasherCI X2MissionTemplate]
-DisplayName="Operation Gatecrasher"
-Briefing="ADVENT has brought a pair of dissident academics to this facility for 're-education'. These two could be of extreme value to the Resistance. Ensure they both make it out of here alive."
+DisplayName="Rescue VIPs from ADVENT Compound"
+Briefing="Rescue VIPs from ADVENT Compound"
 PostMissionType="Operation Gatecrasher"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
 ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
 ObjectiveTextPools[1]="Rescue the prisoners from their prison cells"
 ObjectiveTextPools[2]="Keep prisoners alive until the site is cleared"
-PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_01"
-PreMissionNarratives[1]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_02"
-PreMissionNarratives[2]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_03"
-PreMissionNarratives[3]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_04"
-PreMissionNarratives[4]="X2NarrativeMoments.TACTICAL.RescueVIP.Central_Council_Missions_Rescue_VIP_05"
+PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.SabotageCC.T_SabotageCC_Narrative_Wrappers_04"
 
 [MissionSource_GatecrasherCI X2MissionSourceTemplate]
 +BattleOpName="Operation Gatecrasher"

@@ -22,7 +22,7 @@ static function X2MissionNarrativeTemplate AddDefaultGatecrasherMissionNarrative
     Template.NarrativeMoments[2]="XPACK_NarrativeMoments.X2_XP_CEN_T_Comp_Rescue_Operative_Recovered_Squad_Wipe";
     Template.NarrativeMoments[3]="XPACK_NarrativeMoments.X2_XP_CEN_T_Comp_Rescue_Operative_Recovered_Heavy_Losses";
     Template.NarrativeMoments[4]="XPACK_NarrativeMoments.X2_XP_CEN_T_Comp_Rescue_Operative_Not_Recovered";
-    Template.NarrativeMoments[5]="XPACK_NarrativeMoments.X2_XP_CEN_T_Comp_Rescue_Mission_Intro";
+    Template.NarrativeMoments[5]="X2NarrativeMoments.TACTICAL.RescueVIP.CEN_RescVEH_Intro";
     Template.NarrativeMoments[6]="XPACK_NarrativeMoments.X2_XP_CEN_T_Comp_Rescue_Mission_Accomplished";
 	
     return Template;
