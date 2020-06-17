@@ -877,8 +877,15 @@ simulated function UpdateCovertActionInfo()
 			`CI_Trace("Reward Name: " $ RewardState.GetRewardString());
 			`CI_Trace("Reward Desc: " $ RewardState.GetRewardDetailsString());
 			
-			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardString(), bIsIn3D, true, true) $ "<br/>";
-			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D) $ "<br/>";
+			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardString(), bIsIn3D, true, true);
+
+			if (RewardState.GetRewardDetailsString() != "")
+			{
+				strRewards = strRewards $ "<br/>";
+				strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D);
+			}
+
+			strRewards = strRewards $ "<br/>";
 		}
 		
 		ActionRewardText.SetHtmlText(strRewards);

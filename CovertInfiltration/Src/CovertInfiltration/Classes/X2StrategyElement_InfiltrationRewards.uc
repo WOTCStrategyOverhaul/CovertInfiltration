@@ -422,12 +422,36 @@ static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
 
 static function string GetInfiltrationActionPreview (XComGameState_Reward RewardState)
 {
-	return GetInfiltrationTemplateFromReward(RewardState).ActionRewardDisplayName;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameState_Activity ActivityState;
+	local XComGameStateHistory History;
+	local StateObjectReference RewardRef;
+	local string strRewards;
+	
+	History = `XCOMHISTORY;
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID);
+	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+	strRewards = "";
+
+	foreach MissionState.Rewards(RewardRef)
+	{
+		if (RewardRef != MissionState.Rewards[0])
+		{
+			strRewards = strRewards $ ", ";
+		}
+
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+		strRewards = strRewards $ RewardState.GetRewardString();
+	}
+
+	return strRewards;
 }
 
 static function string GetInfiltrationActionDetails (XComGameState_Reward RewardState)
 {
-	return GetInfiltrationTemplateFromReward(RewardState).GetRewardDetailStringFn(class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID), RewardState);
+	return GetInfiltrationActionPreview(RewardState);
 }
 
 static function GenerateRewardDelegate (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
