@@ -72,6 +72,10 @@ var localized string strAdvancedChainsBody;
 var localized string strFacilityGTSHeader;
 var localized string strFacilityGTSBody;
 
+// On Engineering Bay
+var localized string strIndividualBuiltItemsHeader;
+var localized string strIndividualBuiltItemsBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -184,6 +188,13 @@ static function AdvancedChains ()
 	if (!ShouldShowPopup('AdvancedChains')) return;
 
 	UITutorialBoxLarge(default.strAdvancedChainsHeader, `XEXPAND.ExpandString(default.strAdvancedChainsBody));
+}
+
+static function IndividualBuiltItems ()
+{
+	if (!ShouldShowPopup('IndividualBuiltItems')) return;
+
+	UITutorialBoxLarge(default.strIndividualBuiltItemsHeader, `XEXPAND.ExpandString(default.strIndividualBuiltItemsBody));
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player
