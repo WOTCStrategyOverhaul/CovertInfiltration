@@ -1143,11 +1143,15 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
+	local XComGameState_Activity ActivityState;
 	local XComGameState_HeadquartersResistance ResHQ;
 	
 	bHideOnLoseFocus = false;
 
-	if (class'XComGameState_Activity'.static.GetActivityFromObject(GetAction()) != none)
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(GetAction());
+	
+	// Don't trigger this tutorial on single stage chains
+	if (ActivityState != none && ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();
 	}
