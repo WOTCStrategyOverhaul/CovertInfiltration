@@ -106,7 +106,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	OverInfiltrationGroup.AddCheckBox('PauseOnMilestone225', PauseOnMilestone225Desc, PauseOnMilestone225Tooltip, PAUSE_ON_MILESTONE_225, PauseOnMilestone225SaveHandler);
 
 	// Not localized on purpose
-	DeveloperToolsGroup = Page.AddGroup('DeveloperToolsGroup', "Developer tools");
+	DeveloperToolsGroup = Page.AddGroup('DeveloperToolsGroup', "Developer Tools");
 	DeveloperToolsGroup.AddCheckBox('EnableTraceStartup', "Enable trace on startup", "WARNING: Can flood logs with internal info. WILL reveal things that player is not supposed to be aware of", ENABLE_TRACE_STARTUP, EnableTraceStartupSaveHandler);
 
 	Page.ShowSettings();

@@ -1,9 +1,9 @@
 [ResistanceRing X2FacilityTemplate]
 CompletedSummary="Resistance Orders are available!\nNew Staff Slot Available - adds +1 wildcard order slot"
-Summary="The Resistance Ring allows managing Resistance Factions and assigning them orders on monthly basis"
+Summary="The Resistance Ring allows the assignment of Resistance Orders on a monthly basis."
 
 [ResistanceRingStaffSlot X2StaffSlotTemplate]
-BonusEmptyText="Grants +1 wildcard orders slot"
+BonusEmptyText="Grants +1 wildcard order slot"
 BonusText="WILDCARD ORDERS +%AVENGERBONUS%"
 FilledText="%UNITNAME is assisting the Resistance in organization and logistics, allowing them to carry out more orders"
 
@@ -13,7 +13,7 @@ BonusText="INFILTRATING"
 
 [CovertActionNarrative_IntelligenceInfiltrate X2CovertActionNarrativeTemplate]
 ActionName="Hack ADVENT Datavault"
-ActionPreNarrative="Our best chance to <XGParam:StrValue4/> is to hit this datavault. In addition to information about our target, it should also contain some other intel we can use."
+ActionPreNarrative="Our best chance to <XGParam:StrValue4/> is to hack into this datavault. In addition to information about our target, it should also contain some other intel we can use."
 ActionPostNarrative=""
 
 [CovertActionNarrative_InformantInfiltrate X2CovertActionNarrativeTemplate]
@@ -83,11 +83,11 @@ Description="XCOM units gain +<Ability:LIGHTNINGSTRIKEMOVEBONUS/> mobility for t
 
 [AdventPatrols X2SitRepTemplate]
 FriendlyName="Show Of Force"
-Description="ADVENT pods contain an extra enemy unit"
+Description="ADVENT pods each contain an extra enemy unit"
 
 [GunneryEmplacements X2SitRepTemplate]
 FriendlyName="Gunnery Emplacements"
-Description="ADVENT has placed addtional turrets in this location"
+Description="ADVENT has deployed additional turrets in this location"
 
 [Phalanx_CI X2SitRepTemplate]
 FriendlyName="Phalanx"
@@ -95,7 +95,7 @@ Description="All enemy pods include a Shieldbearer"
 
 [Congregation X2SitRepTemplate]
 FriendlyName="Congregation"
-Description="All enemy pods include a Priest."
+Description="All enemy pods include a Priest"
 
 [ShoddyIntel X2SitRepTemplate]
 FriendlyName="Shoddy Intel"
@@ -110,7 +110,7 @@ FriendlyName="Volunteer Army"
 Description="A Resistance soldier joins the squad for this operation"
 
 [IntelligenceLeak X2SitRepTemplate]
-FriendlyName="Full Sensor Coverage"
+FriendlyName="Leaked Operation"
 Description="The squad does not start with concealment, and detection ranges are increased by 33%"
 
 [Foxholes X2SitRepTemplate]
@@ -122,8 +122,8 @@ FriendlyName="Tactical Analysis"
 Description="Enemies activated on the XCOM turn will lose one action on their next turn"
 
 [AdventAirPatrols X2SitRepTemplate]
-FriendlyName="ADVENT Air Patrols"
-Description="Extra ADVENT reinforcements will be dropped into the AO once the enemy is alerted"
+FriendlyName="Air Patrols"
+Description="Extra ADVENT reinforcements will be dropped into the area once the enemy is alerted"
 
 [CommsJamming X2SitRepTemplate]
 FriendlyName="Comms Jamming"
@@ -131,11 +131,11 @@ Description="The first ADVENT reinforcements dropship will be delayed"
 
 [OpportuneMoment1 X2SitRepTemplate]
 FriendlyName="Opportune Moment"
-Description="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% crit"
+Description="-<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% detection radius, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% crit"
 
 [OpportuneMoment2 X2SitRepTemplate]
 FriendlyName="Opportune Moment II"
-Description="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
+Description="-<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% detection radius, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
 [MessyInsertion X2SitRepTemplate]
 FriendlyName="Messy Insertion"
@@ -154,10 +154,10 @@ FriendlyName="Equipment Cache"
 Description="Each soldier in the squad will recieve an extra basic utility item"
 
 [CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
-RiskName="Full Sensor Coverage"
+RiskName="Leaked Operation"
 
 [CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
-RiskName="ADVENT Air Patrols"
+RiskName="Air Patrols"
 
 [CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
 RiskName="Shoddy Intel"
@@ -182,11 +182,11 @@ RiskName="Experimental Rollout"
 
 [NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
 FriendlyName="No Starting Concealment"
-Description="ADVENT has a massive array of perimeter detectors - we won't start with concealment here"
+Description="ADVENT was somehow tipped off to our operation - we won't start with concealment here"
 
 [IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
 FriendlyName="Increased Detection Range"
-Description="ADVENT's perimeter sensors have put the garrison on high alert - our concealed units will be more easily spotted"
+Description="ADVENT's garrison is on high alert - our concealed units will be more easily spotted"
 
 [MessyInsertionEffect X2SitRepEffect_ModifyTacticalStartState]
 FriendlyName="Injured Squadmember"
@@ -222,7 +222,7 @@ RewardDetails="Facility delayed by <XGParam:IntValue0/> days"
 
 [Reward_Rumor X2RewardTemplate]
 DisplayName="Resistance Rumor"
-RewardDetails="Reveal a Point of Interest on the Geoscape"
+RewardDetails="Reveal a scanning site on the Geoscape"
 
 [Reward_Materiel X2RewardTemplate]
 DisplayName="Enemy Materiel"
@@ -298,7 +298,7 @@ ActionPostNarrative="I must admit, your soldiers made quite the impression. I be
 [CovertActionNarrative_ExhaustiveTraining_Reapers X2CovertActionNarrativeTemplate]
 ActionName="Inter-Resistance Exercises"
 ActionPreNarrative="Reapers are subjected to only the most demanding of training exercises. I think your troops could learn a thing or two - let's see if they can survive the experience."
-ActionPostNarrative="I never had any doubt in your soldiers, and it would seem that faith has been rewarded. They leave us as honorary Reapers."
+ActionPostNarrative="I never had any doubt in your soldiers, and it would seem that my faith has been rewarded. They leave us as honorary Reapers."
 
 [CovertActionNarrative_ExhaustiveTraining_Templars X2CovertActionNarrativeTemplate]
 ActionName="Inter-Resistance Exercises"
@@ -315,7 +315,7 @@ DisplayName="Rush Research"
 DisplayName="Alien Corpses"
 
 [UIAlert]
-m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:StrValue0/!WorldRegionName/> will increase their monthly collection to +<XGParam:IntValue0/> supplies. The contact cost of nearby regions will also be reduced, and Advanced Activity Chains will begin to spawn in the region.
+m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:StrValue0/!WorldRegionName/> will increase their monthly collection to +<XGParam:IntValue0/> supplies. The contact cost of nearby regions will also be reduced, Advanced Activity Chains will begin to spawn here, and any Avatar Facilities will be unlocked.
 
 [UIStrategyPolicy]
 LockedSlotLabel=RAISE INFLUENCE THROUGH COVERT OPS

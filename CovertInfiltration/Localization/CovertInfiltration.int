@@ -88,31 +88,31 @@ PageTitle="Covert Infiltration"
 VariousSettingsTitle="Various Settings"
 TipsTitle="Tips and Explanations"
 OverInfiltrationTitle="Over Infiltration"
-DaysToHoursDesc="Hours instead of days"
-DaysToHoursTooltip="Display hours instead of days in the EventQueue"
-DaysBeforeHoursDesc="Days before hours"
-DaysBeforeHoursTooltip="How many days left before displaying hours instead"
+DaysToHoursDesc="Hours Instead of Days"
+DaysToHoursTooltip="Display hours instead of days in the EventQueue once the time remaining hits a certain threshold"
+DaysBeforeHoursDesc="Days to Hours Threshold"
+DaysBeforeHoursTooltip="At this many days left, hours will be displayed instead of days"
 SuppressSkulljackNagIfDeployedDesc="Disable SKULLJACK remainder when it's already deployed"
-SuppressSkulljackNagIfDeployedTooltip="If any of your currently infitrating troops have a SKULLJACK equipped, disable the remainder to equip it when opening Squad Select"
+SuppressSkulljackNagIfDeployedTooltip="If any of your currently infiltrating troops have a SKULLJACK equipped, disable Shen's reminder to equip it in Squad Select"
 WarnBeforeExpirationDesc="Warn Before Expiration"
 WarnBeforeExpirationTooltip="Show a warning before an activity is about to expire"
 HoursBeforeWarningDesc="Hours Before Warning"
-HoursBeforeWarningTooltip="The warning will appear this many hours before expiry"
+HoursBeforeWarningTooltip="The expiration warning will appear this many hours before activity expiration"
 EnableTutorialDesc="Enable Tutorial"
 EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
 LowSoldiersWarningDesc="Enable Low Soldiers Warning"
-LowSoldiersWarningTooltip="Play Central's warning when commiting too many soldiers to covert ops"
+LowSoldiersWarningTooltip="Bradford will warn you when less than 6 ready to fight soldiers remain in the barracks"
 PauseOnMilestone100Desc="Pause at 100% infil (Mission Ready)"
 PauseOnMilestone100Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 100%"
-PauseOnMilestone125Desc="Pause at 125% infil (Opportune Moment I)"
+PauseOnMilestone125Desc="Pause at 125% infil (Generic Buff Tier 1)"
 PauseOnMilestone125Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 125%"
-PauseOnMilestone150Desc="Pause at 150% infil (Tier 1 Sitrep)"
+PauseOnMilestone150Desc="Pause at 150% infil (Tier 1 Random Sitrep)"
 PauseOnMilestone150Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 150%"
-PauseOnMilestone175Desc="Pause at 175% infil (Negative Risk Removed)"
+PauseOnMilestone175Desc="Pause at 175% infil (Negative Sitrep Removed)"
 PauseOnMilestone175Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 175%"
-PauseOnMilestone200Desc="Pause at 200% infil (Tier 2 Sitrep)"
+PauseOnMilestone200Desc="Pause at 200% infil (Tier 2 Random Sitrep)"
 PauseOnMilestone200Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 200%"
-PauseOnMilestone225Desc="Pause at 225% infil (Opportune Moment II)"
+PauseOnMilestone225Desc="Pause at 225% infil (Generic Buff Tier 2)"
 PauseOnMilestone225Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 225%"
 
 [UIUtilities_Infiltration]
@@ -138,7 +138,6 @@ strCompletionStatusLabel_Ongoing=Ongoing
 strCompletionStatusLabel_Infiltrating=Infiltrating
 
 strChainStatusPrefix="(<XGParam:IntValue0>/<XGParam:IntValue1>)"
-;<font color='#34DDDD'>
 
 strActionableLeadUsed="One of our actionable facility leads has been consumed."
 strLastActionableLeadUsed="Our last actionable facility lead has been consumed!"
@@ -171,8 +170,8 @@ BonusDescription="Subvert the risk-added sitrep, removing its effects on the mis
 MentalReadinessFriendlyName="Mental Readiness"
 MentalReadinessFriendlyDesc="Squad gains +<Ability:MENTAL_READINESS_VALUE/> dodge, hack and defense against psi"
 
-IntelligenceLeakFriendlyName="Full Sensor Coverage"
-IntelligenceLeakFriendlyDesc="Start mission without concealment and compromised detection radius on concealed soldiers."
+IntelligenceLeakFriendlyName="Leaked Operation"
+IntelligenceLeakFriendlyDesc="Start mission without concealment and compromised detection radius on concealed soldiers"
 
 FoxholesFriendlyName="Foxholes"
 FoxholesFriendlyDesc="Squad gains +<Ability:FOXHOLES_MOBILITY/> mobility and +<Ability:FOXHOLES_DEFENSE/> defense while in low cover"
@@ -183,11 +182,11 @@ OpportuneMoment2FriendlyName="Opportune Moment II"
 OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% Detection Radius Reduction, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
 
 ExperimentalRolloutFriendlyName="Experimental Armor"
-ExperimentalRolloutFriendlyDesc="All enemy units have +66% explosive damage resistance and -50% chance to crit against them while they are at full health"
+ExperimentalRolloutFriendlyDesc="All enemy units have +<Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% explosive damage resistance and -<Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/>% chance to crit against them while they are at full health"
 
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
-strCanWaitForBonusOrLaunch="Squad can assault now or wait to gain bonuses"
+strCanWaitForBonusOrLaunch="Squad can Assault now or Overinfiltrate"
 strAcademyTrainingRank="TARGET TRAINING RANK"
 strReadySoldiers="READY"
 strTiredSoldiers="TIRED"
@@ -229,12 +228,12 @@ ActionRewardDetails="Small Intel Cache"
 [Activity_DistractionInfiltrate X2ActivityTemplate_Infiltration]
 strOverviewDescription="Distract ADVENT Garrison"
 ActionRewardDisplayName="Propaganda Victory"
-ActionRewardDetails="Increase Region Income by $10"
+ActionRewardDetails="Increase Region Income"
 
 [Activity_SabotageInfiltrate X2ActivityTemplate_Infiltration]
 strOverviewDescription="Sabotage ADVENT Infrastructure"
 ActionRewardDisplayName="Delay Construction"
-ActionRewardDetails="The next AVATAR Facility is delayed by 3 days"
+ActionRewardDetails="Facility Construction Delay"
 
 [Activity_PersonnelRescue X2ActivityTemplate_Infiltration]
 strOverviewDescription="Rescue XCOM Personnel"
@@ -260,7 +259,7 @@ MissionPinLabel="Distract ADVENT"
 
 [Activity_SabotageAssault X2ActivityTemplate_Assault]
 strOverviewDescription="Sabotage ADVENT Infrastructure"
-MissionPinLabel="Sabotage ADVENT"
+MissionPinLabel="Sabotage Communications"
 
 [Activity_SupplyConvoy X2ActivityTemplate_Assault]
 strOverviewDescription="Raid Supply Convoy"
@@ -282,87 +281,8 @@ strOverviewDescription="We must be patient and wait for the target to become vul
 strOverviewHeader="WAIT"
 strOverviewDescription="Our friends in the resistance have caught wind of an ADVENT project and are investigating solutions"
 
-[Activity_JailbreakSoldier X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue soldier from ADVENT compound
-ActionRewardDisplayName=Captured Soldier
-ActionRewardDetails=<XGParam:StrValue0/>
-
-[Activity_JailbreakChosenSoldier X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue soldier from Chosen's compound
-ActionRewardDisplayName=Captured Soldier
-ActionRewardDetails=<XGParam:StrValue0/>
-
-[Activity_JailbreakFactionSoldier X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue faction soldier from ADVENT compound
-ActionRewardDisplayName=Faction Hero
-ActionRewardDetails=<XGParam:StrValue0/>
-
-[Activity_RescueEngineer X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue an Engineer from a City Center
-ActionRewardDisplayName=Engineer
-ActionRewardDetails=<XGParam:StrValue0/>
-
-[Activity_RescueScientist X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue a Scientist from a City Center
-ActionRewardDisplayName=Scientist
-ActionRewardDetails=<XGParam:StrValue0/>
-
-[Activity_RecoverInformant X2ActivityTemplate_Infiltration]
-strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
-ActionRewardDisplayName=ADVENT Schedule
-ActionRewardDetails=Using this, we will be able to find and capture a <font color='#27AAE1'>knowedgable enemy VIP</font>
-
-[Activity_RecoverPersonnel X2ActivityTemplate_Infiltration]
-strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
-ActionRewardDisplayName=Prisoner Manifest
-ActionRewardDetails=Using this, we will be able to find and rescue a <font color='#33AB13'>highly-skilled resistance VIP</font>
-
-[Activity_RecoverUFO X2ActivityTemplate_Infiltration]
-strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
-ActionRewardDisplayName=UFO Flightpath
-ActionRewardDetails=Using this, we will be able to intercept the UFO and leave it <font color='#CBB11F'>grounded and vulnerable</font>
-
-[Activity_CommanderSupply X2ActivityTemplate_Infiltration]
-strOverviewDescription=Neutralize ADVENT General
-ActionRewardDisplayName=Logistics Report
-ActionRewardDetails=Using this, we can pinpoint the most vulnerable ADVENT <font color='#CBB11F'>supply convoy</font> for a smash and grab
-
-[Activity_RecoverDarkEvent X2ActivityTemplate_Infiltration]
-strOverviewDescription=Recover a valuable piece of information from ADVENT's clutches
-ActionRewardDisplayName=Infrastructure Data
-ActionRewardDetails=Using this, we will be able to strike against an alien <font color='#E52E11'>Dark Event</font> and neutralize it
-
-[Activity_CaptureInformant X2ActivityTemplate_Infiltration]
-strOverviewDescription=Neutralize ADVENT VIP
-ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="<font color='#27AAE1'>Datapad</font> (on Kill or Capture) and <font color='#27AAE1'>Intel Cache</font> (on Capture)"
-
-[Activity_FacilityInformant X2ActivityTemplate_Infiltration]
-strOverviewDescription=Neutralize AVATAR VIP
-ActionRewardDisplayName="Enemy Intelligence"
-ActionRewardDetails="<font color='#27AAE1'>Datapad</font> (on Kill or Capture) and <font color='#842015'>Facility Lead</font> (on Capture)"
-
-[Activity_IntelRescue X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue Resistance Courier
-ActionRewardDisplayName=<font color='#27AAE1'>Intercepted Intel</font>
-
-[Activity_SupplyRescue X2ActivityTemplate_Infiltration]
-strOverviewDescription=Rescue Resistance Convoy
-ActionRewardDisplayName=<font color='#CBB11F'>Intercepted Materiel</font>
-
-[Activity_GatherIntel X2ActivityTemplate_Assault]
-strOverviewDescription=Protect Resistance Datatap
-MissionPinLabel=Resistance Datatap
-
-[Activity_CounterDarkEvent X2ActivityTemplate_Assault]
-strOverviewDescription=Destroy ADVENT Infrastructure
-MissionPinLabel=Counter Dark Event
-
 [Activity_PreparePersonnel X2ActivityTemplate_CovertAction]
 strOverviewDescription=Find Missing Academics
-
-[Activity_PrepareCounterDE X2ActivityTemplate_CovertAction]
-strOverviewDescription=Investigate Dark Event
 
 [Activity_PrepareFactionJB X2ActivityTemplate_CovertAction]
 strOverviewDescription=Consult the Faction
@@ -384,7 +304,7 @@ strDescription="Seize enemy materiel from a vulnerable supply convoy."
 strObjective="hit an ADVENT <font color='#CBB11F'>supply convoy</font>"
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
-strTitle="Capture ADVENT VIP"
+strTitle="Capture ADVENT Collaborator"
 strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
 strObjective="capture a highly-placed <font color='#27AAE1'>ADVENT collaborator</font>"
 
@@ -414,7 +334,7 @@ strDescription="Rescue one of our abducted soldiers from the Chosen."
 strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
 
 [ActivityChain_GatherSupplies X2ActivityChainTemplate]
-strTitle="Extract Supplies"
+strTitle="Interrupt Supplies Transfer"
 strDescription="Interrupt an ADVENT supply transfer before reinforcements arrive to secure the site."
 
 [ActivityChain_GatherIntel X2ActivityChainTemplate]
@@ -428,7 +348,7 @@ strObjective="assault the <font color='#CBB11F'>alien UFO</font>"
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Acquire Facility Lead"
-strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them about their facilties' security protocols."
+strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them about their facilties."
 strObjective="capture an <font color='#842015'>AVATAR coordinator</font>"
 
 [ActivityChain_SupplyIntercept X2ActivityChainTemplate]
@@ -459,7 +379,7 @@ strCovertActionLoadoutHeader=Covert Actions
 strCovertActionLoadoutBody="<Bullet/> Covert Actions are the simplest type of activity. A team of soldiers is sent for a specified duration, and they return with rewards. The duration is determined by a base duration plus extra time based on the number of soldiers and equipment sent.<br/><Bullet/> Covert Actions will (usually) never result in tactical combat. Equipping the team with equipment such as specialized grenades or medikits is a waste of resources, unless there is a risk of ambush.<br/><Bullet/> However, upgraded weapons and armour will decrease the chance of risks triggering. A rough estimate of the trigger chance of each risk is shown on the right side of the squad select screen. A squad that is equipped with heavier or higher-tier items will be more likely to come home safe.<br/><Bullet/> As the aliens continue to improve their armies and bring in reinforcements from offworld, they will also ramp up their patrols and security efforts. Covert Action risk chances will steadily increase as time goes on, so at some point purely conventional gear isn't going to cut it.<br/>"
 
 strInfiltrationLoadoutHeader=Infiltration Missions
-strInfiltrationLoadoutBody="<Bullet/> Infiltration missions have you equipping a full squad in preparation for tactical combat. Once deployed, the squad will need to spend time at the mission site for a duration that depends on the number of soldiers and their gear.<br/><Bullet/>Generally, each type of item has the same infil duration no matter its tech level. Instead, choose lighter armour and smaller weapons to minimize the squad's infil duration. There are exceptions to these rules, such as Psi Amps or Disguises, which become better with tech level.<br/><Bullet/> Adding additional soldiers into the two optional slots will incur major penalties to the infil duration. These penalties can be removed through upgrades in the Guerilla Tactics School.<br/><Bullet/> To start tactical combat, the squad must prepare for at least the listed infiltration duration. However, a variety of bonuses can be gained through overinfiltration, where the squad prepares beyond 100% and up to 250% of the listed duration.<br/><Bullet/> Risks can NOT be reduced through fielding better gear, unlike Covert Actions. Instead, if a risk activates it can be removed later on through overinfiltration.<br/>"
+strInfiltrationLoadoutBody="<Bullet/> Infiltration missions have you equipping a full squad in preparation for tactical combat. Once deployed, the squad will need to spend time at the mission site for a duration that depends on the number of soldiers and their gear.<br/><Bullet/> Generally, each type of item has the same infil duration no matter its tech level. Instead, choose lighter armour and smaller weapons to minimize the squad's infil duration. There are exceptions to these rules, such as Psi Amps or Disguises, which become better with tech level.<br/><Bullet/> Adding additional soldiers into the two optional slots will incur major penalties to the infil duration. These penalties can be removed through upgrades in the Guerilla Tactics School.<br/><Bullet/> To start tactical combat, the squad must prepare for at least the listed infiltration duration. However, a variety of bonuses can be gained through overinfiltration, where the squad prepares beyond 100% and up to 250% of the listed duration.<br/><Bullet/> Risks can NOT be reduced through fielding better gear, unlike Covert Actions. Instead, if a risk activates it can be removed later on through overinfiltration.<br/>"
 
 strOverInfiltrationHeader=Overinfiltration
 strOverInfiltrationBody="<Bullet/> The infiltrating squad has prepared enough to launch the mission now. However, you are also able to overinfiltrate a mission, editing the mission's SITREPs after each additional 25% of infiltration up to 250%.<br/><Bullet/> Overinfiltration is recommended for difficult missions or inexperienced squads but isn't necessary to complete every mission.<br/><Bullet/> The chance that one of the Elders' Chosen will catch wind of our operation and show up to stop us will be reduced through continued infiltration.<br/><Bullet/> For more information about the squad's overinfiltration progress, click the yellow question mark button on the rightmost UI element.<br/><br/>BRADFORD'S RECOMMENDATION: <i>Commander, overinfiltration can be a worthwhile process for difficult missions. However, every day we spend waiting is one more day that the squad is unavailable for another operation. If we believe the squad can handle the mission as is, I recommend going in as soon as possible.</i>"
@@ -480,7 +400,7 @@ strActivityChainsHeader=Activity Chains
 strActivityChainsBody="<Bullet/> An Activity Chain is a set of activities that must be completed in sequence to gain a large reward at the end of the chain. These activities can include Assault Missions, Covert Infiltrations, and Covert Actions.<br/><Bullet/> While the main reward(s) are usually given at the end of the chain, the earlier missions are still beneficial for XP and loot and often include secondary rewards. <br/><Bullet/> Activity Chain stages are semi-randomized, the structure of each chain and the final stage is usually the same but the mission types and rewards of the prep stages will be varied.<br/><Bullet/> Activity Chains are discovered over time by Resistance Informants and presented to XCOM for analysis. For more info, click the View Chain button at the top of the screen.<br/><br/>BRADFORD'S RECOMMENDATION: <i>Commander, we don't have the luxury of hitting ADVENT's big targets right away. We'll need to gather intel and distract the enemy before moving in on our main objective.</i>"
 
 strResistanceInformantsHeader=Resistance Informants
-strResistanceInformantsBody="<Bullet/> In the top right corner of this screen, you can see the current number of Informants. These resistance sympathizers, hidden in ADVENT controlled areas, are the key to XCOM's global operations.<br/><Bullet/> Informants gather data and report back to XCOM, revealing new opportunities for our soldiers to investigate. With our current number, you can expect our informants to uncover a new activity chain about every two weeks.<br/><Bullet/> The ADVENT administration in this region is already completely penetrated. If you want to increase the number of resistance Informants at your disposal, you will need to contact new regions or build more radio relays.<br/><br/>BRADFORD'S RECOMMENDATION: <i>Commander, we should make extending the Resistance Network a high priority. Without ADVENT targets to hit, we will run low on essential supplies and deprive the troops of fighting experience.</i>"
+strResistanceInformantsBody="<Bullet/> In the top right corner of this screen, you can see the current number of informants. These resistance sympathizers, hidden in ADVENT controlled areas, are the key to XCOM's global operations.<br/><Bullet/> Informants gather data and report back to XCOM, revealing new opportunities for our soldiers to investigate. With our current number, you can expect our informants to uncover a new activity chain about every two weeks.<br/><Bullet/> The ADVENT administration in this region is already completely penetrated. If you want to increase the number of resistance informants at your disposal, you will need to contact new regions or build more radio relays.<br/><br/>BRADFORD'S RECOMMENDATION: <i>Commander, we should make extending the Resistance Network a high priority. Without ADVENT targets to hit, we will run low on essential supplies and deprive the troops of fighting experience.</i>"
 
 strFacilityAssaultsHeader=Assaulting Avatar Facilities
 strFacilityAssaultsBody="<Bullet/> Hidden facilities supporting the Avatar should be a major target for XCOM. However, a direct assault is suicide given the reinforcements ADVENT can bring to bear. Facilities must be jammed before they can be safely attacked.<br/><Bullet/> Actionable Leads are gained by researching Facility Leads, which can be acquired by capturing Avatar Coordinators, scanning sites, or random hack rewards. If you hold at least one Actionable Lead, any facility in the world can be targeted.<br/><Bullet/> Actionable Leads are spent to attempt, not unlock, facilities. If the assault fails, the Actionable Lead will still be consumed. If you are in dire need of an Actionable Lead, one is always available in the Black Market, but it will not show up again once purchased.<br/><Bullet/> Alternatively, there is another method to assault a facility. If a radio relay is built in the facility's region, that facility will be permanently unlocked. Simply contacting the region is not sufficient.<br/><Bullet/> The amount of Actionable Leads you currently possess can be seen in the top right of the screen when you click on an Avatar Facility (provided it is located in a region without a radio relay).<br/>"
@@ -509,15 +429,15 @@ strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while run
 
 [Complication_RewardInterception X2ComplicationTemplate]
 FriendlyName="Reward Interception"
-FriendlyDesc="The rewards from this chain have a chance to be halved, and made recoverable in a rescue mission.<br/><i>This operation is far from any Resistance havens. ADVENT may try to intercept our spoils of war on their way back home. We should have a squad on standby.</i>"
+FriendlyDesc="There is a chance for half of the rewards from this chain to be intercepted, and made recoverable in a rescue mission."
 
 [Complication_ChosenSurveillance X2ComplicationTemplate]
 FriendlyName="Chosen Surveillance"
-FriendlyDesc="Completing this chain has a chance to increase the Knowledge of a random Chosen.<br/><i>The Elders' champions are always watching. Lurking in the shadows, they study our operations and gather the clues that will lead them to the Avenger.</i>"
+FriendlyDesc="Completing this chain has a chance to increase the Knowledge of a random Chosen."
 
 [Complication_OpenProvocation X2ComplicationTemplate]
 FriendlyName="Open Provocation"
-FriendlyDesc="Completing this chain has a chance to decrease the Retaliation timer by one week.<br/><i>The operation we're planning will be an offense that ADVENT cannot ignore. They will be accelerating their plans for a counteroffensive against our havens.</i>"
+FriendlyDesc="Completing this chain has a chance to decrease the Retaliation timer by one week."
 
 [AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
 DisplayName=Enhanced Guerilla Training
@@ -529,12 +449,12 @@ strTrainNonRookieDialogText=<XGParam:StrValue3/!ExistingClass/> <XGParam:StrValu
 m_strStopTrainRookieDialogTitle=STOP GTS TRAINING?
 m_strStopTrainRookieDialogText=Do you want to stop %UNITNAME from training at the GTS?\n\nWARNING: All training progress will be lost.
 m_strNoSoldiersTooltip=There are no soldiers available for Guerrilla Tactics School training. 
-m_strSoldiersAvailableTooltip=Assign a rookie to train for a specific class or (if training is upgraded) a higher ranked soldier to gain promotions.
+m_strSoldiersAvailableTooltip=Assign a soldier below the Training Rank to gain promotions and, if a rookie, choose a specific class.
 
 [UIInfiltrationDetails]
 strHeader=INFILTRATION
 strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
-strChosenHelpText=The amount you infil will modify how likely the chosen is to appear
+strChosenHelpText="Overinfiltrating will reduce the chance of a Chosen intervention"
 
 strChosenProgressLeftLabel=Infil %
 strChosenModifierLeftLabel=Modifier
@@ -542,20 +462,23 @@ strChosenModifierLeftLabel=Modifier
 [UIInfiltrationDetails_Milestone]
 strHidden=HIDDEN
 
+[GenericBuff1 X2InfiltrationBonusMilestoneTemplate]
+strName=Opportune Moment II
+
 [SitRep1 X2InfiltrationBonusMilestoneTemplate]
-strName=SITREP 1
+strName=Random SITREP I
 
 [RiskRemoval X2InfiltrationBonusMilestoneTemplate]
-strName=Risk Removal
+strName=Negative SITREP Removal
 
 [SitRep2 X2InfiltrationBonusMilestoneTemplate]
-strName=SITREP 2
+strName=Random SITREP II
 
 [GenericBuff2 X2InfiltrationBonusMilestoneTemplate]
 strName=Opportune Moment II
 
 [SitRep3 X2InfiltrationBonusMilestoneTemplate]
-strName=SITREP 3
+strName=Random SITREP III
 
 [X2EventListener_Infiltration]
 strOneTimeMarketLeadDescription="We really had to pull some strings for this one, and we paid for it. Consider this your one favor, Bradford. We are not going to do this again."
