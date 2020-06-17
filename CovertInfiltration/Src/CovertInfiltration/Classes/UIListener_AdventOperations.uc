@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------
 //  AUTHOR:  Xymanek
 //  PURPOSE: Prevents UIAdventOperations from showing orders screen on month end if
-//           ring isn't built yet
+//           ring isn't built yet and shows a tutorial popup
 //---------------------------------------------------------------------------------------
 //  WOTCStrategyOverhaul Team
 //---------------------------------------------------------------------------------------
@@ -17,11 +17,15 @@ event OnInit (UIScreen Screen)
 
 	if (AdventOperations.bResistanceReport && `XCOMHQ.GetFacilityByName('ResistanceRing') == none)
 	{
-		AdventOperations.AddOnRemovedDelegate(DisableResiatnceReportMode);
+		AdventOperations.AddOnRemovedDelegate(DisableResistanceReportMode);
 	}
+	
+	AdventOperations.bHideOnLoseFocus = false;
+	class'UIUtilities_InfiltrationTutorial'.static.DarkEventPreview();
+	AdventOperations.bHideOnLoseFocus = true;
 }
 
-static protected function DisableResiatnceReportMode (UIPanel Panel)
+static protected function DisableResistanceReportMode (UIPanel Panel)
 {
 	local UIAdventOperations AdventOperations;
 
