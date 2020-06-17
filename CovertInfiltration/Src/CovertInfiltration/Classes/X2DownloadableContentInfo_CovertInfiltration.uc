@@ -226,6 +226,7 @@ static function ReplaceGatecrasher (XComGameState StartState)
 		StartState.RemoveStateObject(MissionState.ObjectID);
 
 		CreateStartingMission(StartState, StartingMissionLoc);
+		PopulatePureTacticalRewardDeck();
 
 		`CI_Trace("Gatecrasher Replaced!");
 	}
@@ -297,6 +298,36 @@ private static function AddTacticalTagToRewardUnit(XComGameState NewGameState, X
 	if (UnitState != none)
 	{
 		UnitState.TacticalTag = TacticalTag;
+	}
+}
+
+static function PopulatePureTacticalRewardDeck ()
+{
+	local X2CardManager CardManager;
+	local X2DataTemplate DataTemplate;
+	local X2HackRewardTemplateManager HackRewardTemplateManager;
+	local X2HackRewardTemplate HackRewardTemplate;
+
+	CardManager = class'X2CardManager'.static.GetCardManager();
+
+	HackRewardTemplateManager = class'X2HackRewardTemplateManager'.static.GetHackRewardTemplateManager();
+
+	foreach HackRewardTemplateManager.IterateTemplates(DataTemplate, None)
+	{
+		HackRewardTemplate = X2HackRewardTemplate(DataTemplate);
+
+		if( HackRewardTemplate.bIsNegativeTacticalReward && !HackRewardTemplate.bIsNegativeStrategyReward )
+		{
+			CardManager.AddCardToDeck('NegativePureTacticalHackRewards', string(HackRewardTemplate.DataName));
+		}
+
+		if( HackRewardTemplate.bIsTier1Reward || HackRewardTemplate.bIsTier2Reward )
+		{
+			if( HackRewardTemplate.bIsTacticalReward && !HackRewardTemplate.bIsStrategyReward )
+			{
+				CardManager.AddCardToDeck('PureTacticalHackRewards', string(HackRewardTemplate.DataName));
+			}
+		}
 	}
 }
 
