@@ -351,8 +351,8 @@ ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]=
 
 [GatecrasherCI X2MissionTemplate]
-DisplayName="Rescue VIPs from ADVENT Compound"
-Briefing="Rescue VIPs from ADVENT Compound"
+DisplayName="Operation Gatecrasher"
+Briefing="Break into ADVENT Compound and Rescue VIPs"
 PostMissionType="Operation Gatecrasher"
 BriefingImage="img:///UILibrary_Common.Xcom_default"
 ObjectiveTextPools[0]="Sweep the site and eliminate all hostiles"
