@@ -833,6 +833,7 @@ simulated function UpdateCovertActionInfo()
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_Reward RewardState;
 	local StateObjectReference RewardRef;
+	local int i;
 
 	ExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
 	CurrentAction = GetAction();
