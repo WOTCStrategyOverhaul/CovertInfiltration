@@ -215,10 +215,11 @@ DisplayName="Intel"
 
 [Reward_SmallIncreaseIncome X2RewardTemplate]
 DisplayName="Increase Region Income"
+RewardDetails="Region's income increased by <XGParam:IntValue0/> supplies"
 
 [Reward_FacilityDelay X2RewardTemplate]
 DisplayName="Delay Facility Construction"
-RewardDetails="Facility delayed by <XGParam:IntValue0/> days"
+RewardDetails="Next facility delayed by <XGParam:IntValue0/> days"
 
 [Reward_Rumor X2RewardTemplate]
 DisplayName="Resistance Rumor"

@@ -871,6 +871,11 @@ simulated function UpdateCovertActionInfo()
 
 		foreach MissionState.Rewards(RewardRef)
 		{
+			if (RewardRef != MissionState.Rewards[0])
+			{
+				strRewards = strRewards $ "<br/>";
+			}
+
 			RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 			
 			`CI_Trace("Reward: " $ RewardState.GetMyTemplateName());
@@ -884,8 +889,6 @@ simulated function UpdateCovertActionInfo()
 				strRewards = strRewards $ "<br/>";
 				strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D);
 			}
-
-			strRewards = strRewards $ "<br/>";
 		}
 		
 		ActionRewardText.SetHtmlText(strRewards);
