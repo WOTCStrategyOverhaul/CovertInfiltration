@@ -833,6 +833,7 @@ simulated function UpdateCovertActionInfo()
 	local XComGameState_MissionSiteInfiltration MissionState;
 	local XComGameState_Reward RewardState;
 	local StateObjectReference RewardRef;
+	local int i;
 
 	ExpirationManager = class'XComGameState_CovertActionExpirationManager'.static.GetExpirationManager();
 	CurrentAction = GetAction();
@@ -869,16 +870,26 @@ simulated function UpdateCovertActionInfo()
 
 		strRewards = "";
 
-		foreach MissionState.Rewards(RewardRef)
+		foreach MissionState.Rewards(RewardRef, i)
 		{
+			if (i != 0)
+			{
+				strRewards = strRewards $ "<br/>";
+			}
+
 			RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 			
 			`CI_Trace("Reward: " $ RewardState.GetMyTemplateName());
 			`CI_Trace("Reward Name: " $ RewardState.GetRewardString());
 			`CI_Trace("Reward Desc: " $ RewardState.GetRewardDetailsString());
 			
-			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardString(), bIsIn3D, true, true) $ "<br/>";
-			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D) $ "<br/>";
+			strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardString(), bIsIn3D, true, true);
+
+			if (RewardState.GetRewardDetailsString() != "")
+			{
+				strRewards = strRewards $ "<br/>";
+				strRewards = strRewards $ class'UIUtilities_Text'.static.AddFontInfo(RewardState.GetRewardDetailsString(), bIsIn3D);
+			}
 		}
 		
 		ActionRewardText.SetHtmlText(strRewards);
@@ -1143,13 +1154,15 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
+	local XComGameState_Activity ActivityState;
 	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_Activity ActivityState;
 	
 	bHideOnLoseFocus = false;
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(GetAction());
 
-	if (ActivityState != none)
+	// Don't trigger this tutorial on single stage chains
+	if (ActivityState != none && ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
 	{
 		if (ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
 		{

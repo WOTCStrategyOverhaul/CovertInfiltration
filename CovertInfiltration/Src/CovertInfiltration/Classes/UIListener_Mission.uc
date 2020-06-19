@@ -25,7 +25,7 @@ simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 
 	MissionScreen.SetTimer(1, false, nameof(DoSpawnViewChainButton), self);
 
-	// Tutorial
+	// Don't trigger this tutorial on single stage chains
 	if (ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.ActivityChains();

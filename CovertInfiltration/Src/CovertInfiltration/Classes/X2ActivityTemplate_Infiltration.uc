@@ -9,9 +9,6 @@ class X2ActivityTemplate_Infiltration extends X2ActivityTemplate_Mission config(
 
 var name CovertActionName;
 
-var localized string ActionRewardDisplayName;
-var localized string ActionRewardDetails;
-
 var string MissionReadySound;
 var string MilestoneSound;
 
@@ -226,7 +223,29 @@ static function string DefaultGetMissionImageInfiltration (XComGameState_Activit
 
 static function string DefaultGetRewardDetails (XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
 {
-	return X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).ActionRewardDetails;
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local XComGameStateHistory History;
+	local StateObjectReference RewardRef;
+	local string strRewards;
+	
+	History = `XCOMHISTORY;
+	MissionState = XComGameState_MissionSiteInfiltration(History.GetGameStateForObjectID(ActivityState.PrimaryObjectRef.ObjectID));
+
+	strRewards = "";
+
+	foreach MissionState.Rewards(RewardRef)
+	{
+		if (RewardRef != MissionState.Rewards[0])
+		{
+			strRewards = strRewards $ ", ";
+		}
+
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+
+		strRewards = strRewards $ RewardState.GetRewardString();
+	}
+
+	return strRewards;
 }
 
 static function string DefaultGetOverviewStatusInfiltration (XComGameState_Activity ActivityState)

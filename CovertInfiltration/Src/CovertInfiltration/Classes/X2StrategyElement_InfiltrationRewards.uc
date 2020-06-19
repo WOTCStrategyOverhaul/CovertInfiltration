@@ -132,7 +132,7 @@ static function X2DataTemplate CreateSmallIncreaseIncomeRewardTemplate()
 	Template.GenerateRewardFn = GenerateSmallIncomeReward;
 	Template.SetRewardFn = class'X2StrategyElement_DefaultRewards'.static.SetIncreaseIncomeReward;
 	Template.GiveRewardFn = class'X2StrategyElement_DefaultRewards'.static.GiveIncreaseIncomeReward;
-	Template.GetRewardDetailsStringFn = class'X2StrategyElement_DefaultRewards'.static.GetIncreaseIncomeRewardString;
+	Template.GetRewardDetailsStringFn = GetIncreaseIncomeRewardDetails;
 	Template.GetRewardStringFn = GetIncreaseIncomeRewardString;
 	Template.CleanUpRewardFn = class'X2StrategyElement_DefaultRewards'.static.CleanUpRewardWithoutRemoval;
 
@@ -174,6 +174,16 @@ static function int GetSmallIncomeReward()
 static function string GetIncreaseIncomeRewardString(XComGameState_Reward RewardState)
 {
 	return RewardState.GetMyTemplate().DisplayName;
+}
+
+static function string GetIncreaseIncomeRewardDetails(XComGameState_Reward RewardState)
+{
+	local XGParamTag kTag;
+
+	kTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	kTag.IntValue0 = RewardState.Quantity;
+
+	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().RewardDetails);
 }
 
 static function X2DataTemplate CreateFacilityDelayRewardTemplate()
@@ -413,19 +423,14 @@ static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_InfiltrationActivityProxy');
 	Template.IsRewardAvailableFn = RewardNotAvaliable;
-	Template.GetRewardPreviewStringFn = GetInfiltrationActionPreview;
-	Template.GetRewardDetailsStringFn = GetInfiltrationActionDetails;
+	Template.GetRewardPreviewStringFn = GetInfiltrationActionString;
+	Template.GetRewardDetailsStringFn = GetInfiltrationActionString;
 	Template.GenerateRewardFn = GenerateRewardDelegate;
 
 	return Template;
 }
 
-static function string GetInfiltrationActionPreview (XComGameState_Reward RewardState)
-{
-	return GetInfiltrationTemplateFromReward(RewardState).ActionRewardDisplayName;
-}
-
-static function string GetInfiltrationActionDetails (XComGameState_Reward RewardState)
+static function string GetInfiltrationActionString (XComGameState_Reward RewardState)
 {
 	return GetInfiltrationTemplateFromReward(RewardState).GetRewardDetailStringFn(class'XComGameState_Activity'.static.GetActivityFromSecondaryObjectID(RewardState.RewardObjectReference.ObjectID), RewardState);
 }
