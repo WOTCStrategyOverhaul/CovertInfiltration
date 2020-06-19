@@ -869,9 +869,9 @@ simulated function UpdateCovertActionInfo()
 
 		strRewards = "";
 
-		foreach MissionState.Rewards(RewardRef)
+		foreach MissionState.Rewards(RewardRef, i)
 		{
-			if (RewardRef != MissionState.Rewards[0])
+			if (i != 0)
 			{
 				strRewards = strRewards $ "<br/>";
 			}
