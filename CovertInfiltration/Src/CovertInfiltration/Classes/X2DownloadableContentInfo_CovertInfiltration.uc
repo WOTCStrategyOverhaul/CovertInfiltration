@@ -433,6 +433,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchNewRetaliationNarrative();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchAlienNetworkMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchItemStats();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadPOI();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadItem();

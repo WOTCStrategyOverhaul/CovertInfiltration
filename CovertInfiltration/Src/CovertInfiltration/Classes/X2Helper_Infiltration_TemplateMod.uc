@@ -433,6 +433,23 @@ static protected function int GetMissionDifficultyFromMonthPlusTemplate (XComGam
 	return Difficulty;
 }
 
+static function PatchAlienNetworkMissionSource ()
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2MissionSourceTemplate MissionSource;
+	local array<X2DataTemplate> DifficultyVariants;
+	local X2DataTemplate DataTemplate;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	StratMgr.FindDataTemplateAllDifficulties('MissionSource_AlienNetwork', DifficultyVariants);
+
+	foreach DifficultyVariants(DataTemplate)
+	{
+		MissionSource = X2MissionSourceTemplate(DataTemplate);
+		MissionSource.OnFailureFn = none; // The default one only disconnects the region
+	}
+}
+
 //////////////////
 /// Objectives ///
 //////////////////
