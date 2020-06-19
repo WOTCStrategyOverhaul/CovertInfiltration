@@ -1154,7 +1154,6 @@ simulated protected function UpdateExpirationBar()
 
 simulated protected function TriggerTutorialOnSelection ()
 {
-	local XComGameState_Activity ActivityState;
 	local XComGameState_HeadquartersResistance ResHQ;
 	local XComGameState_Activity ActivityState;
 	

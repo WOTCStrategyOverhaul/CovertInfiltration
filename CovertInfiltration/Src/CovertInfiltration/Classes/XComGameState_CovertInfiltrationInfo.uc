@@ -23,7 +23,6 @@ struct CharacterGroupKillCount
 // if (CurrentVersion > CIInfo.ModVersion) 
 var int ModVersion;
 
-// The mod version feature lands in beta 2, so put that as reference for now
 const CURRENT_MOD_VERSION = 00300000;
 
 /////////////////////
