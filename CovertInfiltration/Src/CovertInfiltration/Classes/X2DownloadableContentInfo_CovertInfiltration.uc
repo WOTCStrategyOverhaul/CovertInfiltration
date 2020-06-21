@@ -242,16 +242,11 @@ static function CreateStartingMission (XComGameState StartState, Vector Starting
 	local XComGameState_MissionSite					MissionState;
 	local XComGameState_WorldRegion					RegionState;
 	local XComGameState_Reward						RewardState;
-	local XComGameState_CovertAction				ActionState;
 	local X2RewardTemplate							RewardTemplate;
 	local X2StrategyElementTemplateManager			StratMgr;
 	local X2MissionSourceTemplate					MissionSource;
 	local array<XComGameState_Reward>				MissionRewards;
-	local array<XComGameState_WorldRegion>			ContactRegions;
-	local XComGameState_AdventChosen				ChosenState;
-	local XComGameState_HeadquartersAlien			AlienHQ;
 	local XComGameStateHistory						History;
-	local XComGameState_HeadquartersResistance		ResHQ;
 	local XComGameState_HeadquartersXCom			XComHQ;
 
 	History = `XCOMHISTORY;
