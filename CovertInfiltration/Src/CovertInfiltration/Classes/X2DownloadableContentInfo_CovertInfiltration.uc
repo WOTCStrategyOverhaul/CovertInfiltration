@@ -253,7 +253,6 @@ static function CreateStartingMission (XComGameState StartState, Vector Starting
 
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 	
 	RegionState = XComGameState_WorldRegion(StartState.GetGameStateForObjectID(XComHQ.StartingRegion.ObjectID));
 	v2Loc.X = StartingMissionLoc.X;
