@@ -310,6 +310,18 @@ static function BuildUIAlert_CovertInfiltration (
 	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicStringProperty(PropertySet, 'SoundToPlay', SoundToPlay);
 }
 
+static function RewardsIntercepted (StateObjectReference ContainerRef)
+{
+	local XComHQPresentationLayer HQPres;
+	local DynamicPropertySet PropertySet;
+
+	HQPres = `HQPRES;
+
+	BuildUIAlert_CovertInfiltration(PropertySet, 'eAlert_RewardsIntercepted', none, 'RewardsInterceptedPopup', "Geoscape_DoomIncrease");
+	class'X2StrategyGameRulesetDataStructures'.static.AddDynamicIntProperty(PropertySet, 'ContainerObjectID', ContainerRef.ObjectID);
+	HQPres.QueueDynamicPopup(PropertySet);
+}
+
 static function InfiltrationActionAvaliable(optional StateObjectReference ActionRef, optional XComGameState NewGameState)
 {
 	local XComHQPresentationLayer HQPres;

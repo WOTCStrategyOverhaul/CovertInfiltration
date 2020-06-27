@@ -757,6 +757,7 @@ static protected function HandleFacilityMissionExit ()
 static event OnExitPostMissionSequence ()
 {
 	PostMissionUpgradeItems();
+	TriggerComplicationsOnExitPostMissionSequence();
 }
 
 static function PostMissionUpgradeItems ()
@@ -785,6 +786,29 @@ static function PostMissionUpgradeItems ()
 
 	CIInfo.UnitsToConsiderUpgradingGearOnMissionExit.Length = 0;
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+}
+
+static protected function TriggerComplicationsOnExitPostMissionSequence ()
+{
+	local XComGameState_Complication ComplicationState;
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_Activity ActivityState;
+	local XComGameState_BattleData BattleData;
+	local StateObjectReference StateRef;
+	local XComGameStateHistory History;
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(BattleData.m_iMissionID);
+	if (ActivityState == none) return;
+
+	ChainState = ActivityState.GetActivityChain();
+	foreach ChainState.ComplicationRefs(StateRef)
+	{
+		ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(StateRef.ObjectID));
+		ComplicationState.OnExitPostMissionSequence();
+	}
 }
 
 static function bool DisplayQueuedDynamicPopup (DynamicPropertySet PropertySet)

@@ -337,41 +337,12 @@ static function GiveContainerReward(XComGameState NewGameState, XComGameState_Re
 static function string GetContainerString(XComGameState_Reward RewardState)
 {
 	local XComGameState_ResourceContainer ResourceContainerState;
-	local X2ItemTemplateManager ItemManager;
 	local XComGameStateHistory History;
-	local X2ItemTemplate ItemTemplate;
-	local ResourcePackage Package;
-	local string Result;
 	
-	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	History = `XCOMHISTORY;
-
 	ResourceContainerState = XComGameState_ResourceContainer(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 	
-	if(ResourceContainerState.Packages.Length == 0)
-		`CI_Log("No packages to read from!");
-
-	foreach ResourceContainerState.Packages(Package)
-	{
-		ItemTemplate = ItemManager.FindItemTemplate(Package.ItemType);
-		if(ItemTemplate != none)
-		{
-			`CI_Log("Reading package:" @ Package.ItemType);
-			if(Result == "")
-			{
-				Result = string(Package.ItemAmount) @ (Package.ItemAmount == 1 ? ItemTemplate.GetItemFriendlyName() : ItemTemplate.GetItemFriendlyNamePlural());
-			}
-			else
-			{
-				Result = Result $ "," @ string(Package.ItemAmount) @ (Package.ItemAmount == 1 ? ItemTemplate.GetItemFriendlyName() : ItemTemplate.GetItemFriendlyNamePlural());
-			}
-		}
-	}
-
-	if(Result == "")
-		`CI_Log("Something went wrong in reward string!");
-
-	return Result;
+	return ResourceContainerState.GetCommaSeparatedContents();
 }
 
 static function X2DataTemplate CreateDarkEventRewardTemplate()

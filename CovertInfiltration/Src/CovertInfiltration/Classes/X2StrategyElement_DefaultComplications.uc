@@ -39,6 +39,8 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	Template.OnChainComplete = SpawnRescueMission;
 	Template.CanBeChosen = SupplyAndIntelChains;
 
+	Template.OnExitPostMissionSequence = TriggerRewardInterceptionPopup;
+
 	return Template;
 }
 
@@ -128,6 +130,27 @@ static function bool IsInterceptableActivity(X2ActivityTemplate Template)
 static function bool IsInterceptableItem(name TemplateName)
 {
 	return default.InterceptableItems.Find(TemplateName) > INDEX_NONE;
+}
+
+static protected function TriggerRewardInterceptionPopup (XComGameState_Complication ComplicationState)
+{
+	local XComGameState_Complication_RewardInterception ActualComplicationState;
+	local XComGameState_ResourceContainer TotalResContainer;
+	local XComGameState NewGameState;
+
+	ActualComplicationState = XComGameState_Complication_RewardInterception(ComplicationState);
+	TotalResContainer = XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(ActualComplicationState.ResourceContainerRef.ObjectID));
+
+	// Do nothing if we didn't collect anything yet (e.g. non-last mission in chain)
+	if (TotalResContainer.Packages.Length < 1) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Combining intercepted loot for post mission popup");
+	TotalResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', TotalResContainer.ObjectID));
+	TotalResContainer.CombineLoot();
+	`SubmitGameState(NewGameState);
+	
+	// Queue the popup
+	class'UIUtilities_Infiltration'.static.RewardsIntercepted(TotalResContainer.GetReference());
 }
 
 static function X2DataTemplate CreateChosenSurveillanceTemplate()

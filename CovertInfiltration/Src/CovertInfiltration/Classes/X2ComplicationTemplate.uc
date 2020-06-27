@@ -44,6 +44,11 @@ delegate OnComplicationRemoval(XComGameState NewGameState, XComGameState_Complic
 // Note: the ComplicationState is already modified (tactical) one
 delegate OnEnlistStateIntoTactical(XComGameState StartGameState, XComGameState_Complication ComplicationState);
 
+// Called when exiting post-mission sequence from any mission that's associated with 
+// the same chain as the ComplicationState.
+// Note that there is no pending state passed - create your own state(s) if needed
+delegate OnExitPostMissionSequence(XComGameState_Complication ComplicationState);
+
 function bool ValidateTemplate (out string strError)
 {
 	if (MinChance > MaxChance)

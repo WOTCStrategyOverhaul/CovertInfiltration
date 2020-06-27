@@ -66,6 +66,17 @@ function OnEnlistStateIntoTactical (XComGameState StartGameState)
 	}
 }
 
+// See delegate for explanation
+function OnExitPostMissionSequence ()
+{
+	GetMyTemplate();
+
+	if (m_Template.OnExitPostMissionSequence != none)
+	{
+		m_Template.OnExitPostMissionSequence(self);
+	}
+}
+
 ///////////////
 /// Removal ///
 ///////////////
