@@ -4,7 +4,7 @@ Summary="The Resistance Ring allows the assignment of Resistance Orders on a mon
 
 [ResistanceRingStaffSlot X2StaffSlotTemplate]
 BonusEmptyText="Grants +1 wildcard order slot"
-BonusText="WILDCARD ORDERS +%AVENGERBONUS%"
+BonusText="WILDCARD ORDERS +%AVENGERBONUS"
 FilledText="%UNITNAME is assisting the Resistance in organization and logistics, allowing them to carry out more orders"
 
 [InfiltrationStaffSlot X2StaffSlotTemplate]
