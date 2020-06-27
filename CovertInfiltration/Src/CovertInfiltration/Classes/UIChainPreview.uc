@@ -25,7 +25,7 @@ var protectedwrite UIScrollingText ComplicationsNamesText;
 /// State vars ///
 //////////////////
 
-var protectedwrite StateObjectReference FocusedActivityReference;
+var protectedwrite StateObjectReference FocusedActivityRef;
 
 ////////////////
 /// Loc vars ///
@@ -67,4 +67,7 @@ simulated function InitChainPreview (optional name InitName)
 /// Helpers ///
 ///////////////
 
-//
+function XComGameState_Activity GetFocusedActivity ()
+{
+	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(FocusedActivityRef.ObjectID));
+}
