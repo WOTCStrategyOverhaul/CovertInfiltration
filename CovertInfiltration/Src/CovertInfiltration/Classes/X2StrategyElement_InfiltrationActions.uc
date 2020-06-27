@@ -32,9 +32,9 @@ static function X2DataTemplate CreateAlienCorpsesTemplate()
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
 
-	Template.Narratives.AddItem('CovertActionNarrative_AlienLoot_Skirmishers');
-	Template.Narratives.AddItem('CovertActionNarrative_AlienLoot_Reapers');
-	Template.Narratives.AddItem('CovertActionNarrative_AlienLoot_Templars');
+	Template.Narratives.AddItem('CovertActionNarrative_AlienCorpses_Skirmishers');
+	Template.Narratives.AddItem('CovertActionNarrative_AlienCorpses_Reapers');
+	Template.Narratives.AddItem('CovertActionNarrative_AlienCorpses_Templars');
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));

@@ -312,6 +312,24 @@ ActionObjective="Accelerate Research"
 [Reward_TechInspire X2RewardTemplate]
 DisplayName="Rush Research"
 
+[CovertAction_AlienCorpses X2CovertActionTemplate]
+ActionObjective="Recover Alien Corpses"
+
+[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Scavenge Alien Loot"
+ActionPreNarrative="Some of my kind stumbled upon an unprepared ADVENT post, and we have easily overrun their defenses. Come, share with us in the spoils of their defeat."
+ActionPostNarrative="Let us hope we find more to bolster our shared purpose."
+
+[CovertActionNarrative_AlienCorpses_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Scavenge Alien Loot"
+ActionPreNarrative="ADVENT sent a patrol through an area we just happened to be watching, needless to say they didn't make out very well. If you're interested, there are plenty of leftovers to go around."
+ActionPostNarrative="You sure you only want the gear? I've got my best cook stoking the fire as we speak."
+
+[CovertActionNarrative_AlienCorpses_Templars X2CovertActionNarrativeTemplate]
+ActionName="Scavenge Alien Loot"
+ActionPreNarrative="The Elders' servants fall before my followers like blades of grass in the wind. We have already taken our share of their equipment, you are welcome to all that remains here."
+ActionPostNarrative="Our cause grows stronger every day."
+
 [Reward_AlienCorpses X2RewardTemplate]
 DisplayName="Alien Corpses"
 
