@@ -7,6 +7,10 @@
 
 class UICovertActionsGeoscape extends UIScreen;
 
+// UI - background gradient
+var UIImage BackgroundGradientTop;
+var UIImage BackgroundGradientBottom;
+
 // UI - list
 var UIList ActionsList;
 
@@ -166,13 +170,32 @@ simulated function BuildScreen()
 {
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
+	BuildBackground();
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
 }
 
+simulated protected function BuildBackground ()
+{
+	BackgroundGradientTop = Spawn(class'UIImage', self);
+	BackgroundGradientTop.bAnimateOnInit = false;
+	BackgroundGradientTop.InitImage('BackgroundGradientTop', "img:///UILibrary_CovertInfiltration.gradient_top");
+	BackgroundGradientTop.SetPosition(0, 0);
+	BackgroundGradientTop.SetSize(Movie.UI_RES_X, 512);
+
+	BackgroundGradientBottom = Spawn(class'UIImage', self);
+	BackgroundGradientBottom.bAnimateOnInit = false;
+	BackgroundGradientBottom.InitImage('BackgroundGradientBottom', "img:///UILibrary_CovertInfiltration.gradient_bottom");
+	BackgroundGradientBottom.AnchorBottomLeft();
+	BackgroundGradientBottom.SetPosition(0, -512);
+	BackgroundGradientBottom.SetSize(Movie.UI_RES_X, 512);
+}
+
 simulated protected function BuildActionsList()
 {
+	local UIPanel BottomLine;
+
 	ActionsList = Spawn(class'UIList', self);
 	ActionsList.bStickyClickyHighlight = true;
 	ActionsList.bStickyHighlight = false;
@@ -185,6 +208,11 @@ simulated protected function BuildActionsList()
 		false, true
 	);
 	Navigator.SetSelected(ActionsList);
+
+	BottomLine = class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(ActionsList.BG,, 0);
+	BottomLine.bAnimateOnInit = false;
+	BottomLine.SetColor("6FAEA8");
+	BottomLine.SetAlpha(100);
 }
 
 simulated protected function BuildCenterSection()
@@ -303,6 +331,8 @@ simulated protected function BuildActionProgressBar()
 
 simulated protected function BuildActionReward()
 {
+	local UIPanel BottomLine;
+
 	ActionRewardContainer = Spawn(class'UIPanel', ActionInfoBottomContainer);
 	ActionRewardContainer.bAnimateOnInit = false;
 	ActionRewardContainer.InitPanel('ActionRewardContainer');
@@ -335,10 +365,17 @@ simulated protected function BuildActionReward()
 	//ActionRewardText.InitText('ActionRewardText');
 	ActionRewardText.SetPosition(0, 50);
 	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
+
+	BottomLine = class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(ActionRewardTextBG,, 0);
+	BottomLine.bAnimateOnInit = false;
+	BottomLine.SetColor("6FAEA8");
+	BottomLine.SetAlpha(100);
 }
 
 simulated protected function BuildActionSlots()
 {
+	local UIPanel BottomLine;
+
 	ActionSlotsContainer = Spawn(class'UIPanel', ActionInfoBottomContainer);
 	ActionSlotsContainer.bAnimateOnInit = false;
 	ActionSlotsContainer.InitPanel('ActionSlotsContainer');
@@ -378,6 +415,11 @@ simulated protected function BuildActionSlots()
 	ActionSlotRows.SetPosition(0, 50);
 	ActionSlotRows.SetSize(ActionSlotsContainer.Width, ActionSlotsContainer.Height - ActionSlotRows.Y);
 	ActionSlotRows.DisableNavigation();
+
+	BottomLine = class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(ActionSlotsTextBG,, 0);
+	BottomLine.bAnimateOnInit = false;
+	BottomLine.SetColor("6FAEA8");
+	BottomLine.SetAlpha(100);
 }
 
 simulated protected function BuildRightPane()
@@ -533,6 +575,8 @@ simulated protected function OnCloseScreenButtonSizeRealized()
 
 simulated protected function BuildRisks()
 {
+	local UIPanel BottomLine;
+
 	ActionRisksContainer = Spawn(class'UIPanel', RightPane);
 	ActionRisksContainer.bAnimateOnInit = false;
 	ActionRisksContainer.InitPanel('ActionRisksContainer');
@@ -565,6 +609,11 @@ simulated protected function BuildRisks()
 	ActionRisksList.InitList('ActionRisksList');
 	ActionRisksList.SetPosition(0, 50);
 	ActionRisksList.SetSize(ActionRisksContainer.Width, ActionRisksContainer.Height - ActionRisksList.Y);
+
+	BottomLine = class'UIUtilities_Controls'.static.CreateDividerLineBeneathControl(ActionRisksTextBG,, 0);
+	BottomLine.bAnimateOnInit = false;
+	BottomLine.SetColor("6FAEA8");
+	BottomLine.SetAlpha(100);
 }
 
 //////////////////
@@ -573,6 +622,11 @@ simulated protected function BuildRisks()
 
 simulated function AnimateIn(optional float Delay = 0.0)
 {
+	// BG Gradient
+
+	BackgroundGradientTop.AddTweenBetween("_alpha", 0, BackgroundGradientTop.Alpha, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	BackgroundGradientBottom.AddTweenBetween("_alpha", 0, BackgroundGradientBottom.Alpha, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+
 	// Left
 
 	ActionsList.AddTweenBetween("_x", 600, ActionsList.X, ANIMATE_IN_DURATION, Delay, "easeoutquad");
