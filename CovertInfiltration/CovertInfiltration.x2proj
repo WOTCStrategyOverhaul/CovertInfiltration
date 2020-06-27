@@ -116,6 +116,12 @@
     <Content Include="Src\CovertInfiltration\Classes\UIAlert_CovertInfiltration.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainPreview.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainPreview_Stage.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview.uc">
       <SubType>Content</SubType>
     </Content>
