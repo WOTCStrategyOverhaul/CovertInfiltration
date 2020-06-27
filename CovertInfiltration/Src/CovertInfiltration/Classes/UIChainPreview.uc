@@ -79,6 +79,23 @@ simulated protected function BuildCenter ()
 	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
 	OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
 
+	LeftExtraCountText = Spawn(class'UIText', CenterSection);
+	LeftExtraCountText.bAnimateOnInit = false;
+	LeftExtraCountText.InitText('LeftExtraCountText');
+	LeftExtraCountText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+2", "249182"), Screen.bIsIn3D, true,, 22)
+	);
+	LeftExtraCountText.SetPosition(168.5, 7);
+
+	RightExtraCountText = Spawn(class'UIText', CenterSection);
+	RightExtraCountText.bAnimateOnInit = false;
+	RightExtraCountText.InitText('RightExtraCountText');
+	RightExtraCountText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+5", "7A7A6E"), Screen.bIsIn3D, true,, 22)
+	);
+	RightExtraCountText.SetPosition(899.5, 7);
+
+
 	// TODO
 }
 
