@@ -32,3 +32,14 @@ static protected function DisableResistanceReportMode (UIPanel Panel)
 	AdventOperations = UIAdventOperations(Panel);
 	AdventOperations.bResistanceReport = false;
 }
+
+event OnReceiveFocus (UIScreen Screen)
+{
+	local UIAdventOperations AdventOperations;
+
+	AdventOperations = UIAdventOperations(Screen);
+	if (AdventOperations == none) return;
+
+	// Fix missing "continue" button after the DEs tutorial
+	AdventOperations.RefreshNav();
+}
