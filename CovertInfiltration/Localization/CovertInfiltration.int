@@ -474,3 +474,6 @@ strOneTimeMarketLeadDescription="We really had to pull some strings for this one
 [UIAlert_CovertInfiltration]
 strRewardsIntercepted_Title=REWARD INTERCEPTION
 strRewardsIntercepted_Description="Commander, part of the resistance team transporting the spoils of war back to base was intercepted! About half of the resources never made it, and the situation for the resistance team on the ground is looking grim. If we launch a recovery mission soon, we should be able to save the rest of our loot.<br/><br/>Rewards Intercepted: <XGParam:StrValue0>"
+
+[UIChainPreview]
+strSingleComplicationFluff=POTENTIAL COMPLICATION

@@ -78,4 +78,5 @@ protected function string GetArrowImageUrl ()
 defaultproperties
 {
 	Width = 230
+	bAnimateOnInit = false
 }

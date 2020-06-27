@@ -7,6 +7,8 @@
 
 class UICovertActionsGeoscape extends UIScreen;
 
+var UIChainPreview ChainPreview;
+
 // UI - background gradient
 var UIImage BackgroundGradientTop;
 var UIImage BackgroundGradientBottom;
@@ -174,6 +176,10 @@ simulated function BuildScreen()
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
+
+	// TODO: This is temp
+	ChainPreview = Spawn(class'UIChainPreview', self);
+	ChainPreview.InitChainPreview('ChainPreview');
 }
 
 simulated protected function BuildBackground ()

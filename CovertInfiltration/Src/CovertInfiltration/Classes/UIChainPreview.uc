@@ -41,8 +41,57 @@ var localized string strMultipleComplicationsFluff;
 simulated function InitChainPreview (optional name InitName)
 {
 	InitPanel(InitName);
+	AnchorTopCenter();
 
+	BuildCenter();
+	BuildComplications();
+}
+
+simulated protected function BuildCenter ()
+{
 	// TODO
+}
+
+simulated protected function BuildComplications ()
+{
+	ComplicationsSection = Spawn(class'UIPanel', self);
+	ComplicationsSection.bAnimateOnInit = false;
+	ComplicationsSection.InitPanel('ComplicationsSection');
+	ComplicationsSection.SetPosition(-843, 17);
+
+	ComplicationsBacklight = Spawn(class'UIImage', ComplicationsSection);
+	ComplicationsBacklight.bAnimateOnInit = false;
+	ComplicationsBacklight.InitImage('ComplicationsBacklight', "img:///UILibrary_CI_ChainPreview.complication_highlight");
+	ComplicationsBacklight.SetPosition(-201, -17);
+	ComplicationsBacklight.SetAlpha(40);
+
+	ComplicationsFluffHeader = Spawn(class'UIText', ComplicationsSection);
+	ComplicationsFluffHeader.bAnimateOnInit = false;
+	ComplicationsFluffHeader.InitText('ComplicationsFluffHeader');
+	ComplicationsFluffHeader.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Text'.static.GetColoredText(class'UIMission'.default.m_strChosenWarning, eUIState_Bad), Screen.bIsIn3D, true,, 18)
+	);
+	ComplicationsFluffHeader.SetPosition(0, 0);
+
+	ComplicationsWarnIcon = Spawn(class'UIImage', ComplicationsSection);
+	ComplicationsWarnIcon.bAnimateOnInit = false;
+	ComplicationsWarnIcon.InitImage('ComplicationsWarnIcon', "img:///UILibrary_CI_ChainPreview.warning_icon");
+	ComplicationsWarnIcon.SetPosition(83, 2); // TODO: Different lang size of ComplicationsFluffHeader
+
+	ComplicationsFluffDescription = Spawn(class'UIText', ComplicationsSection);
+	ComplicationsFluffDescription.bAnimateOnInit = false;
+	ComplicationsFluffDescription.InitText('ComplicationsFluffDescription');
+	ComplicationsFluffDescription.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Text'.static.GetColoredText(strSingleComplicationFluff, eUIState_Bad), Screen.bIsIn3D, true,, 18)
+	);
+	ComplicationsFluffDescription.SetPosition(112, 0);
+
+	ComplicationsNamesText = Spawn(class'UIScrollingText', ComplicationsSection);
+	ComplicationsNamesText.bAnimateOnInit = false;
+	ComplicationsNamesText.InitScrollingText('ComplicationsNamesText');
+	ComplicationsNamesText.SetTitle(class'UIUtilities_Text'.static.GetColoredText("Reward Interception", eUIState_Bad)); // TODO: Temp
+	ComplicationsNamesText.SetPosition(0, 28);
+	ComplicationsNamesText.SetWidth(330);
 }
 
 //////////////////////////
@@ -70,4 +119,13 @@ simulated function InitChainPreview (optional name InitName)
 function XComGameState_Activity GetFocusedActivity ()
 {
 	return XComGameState_Activity(`XCOMHISTORY.GetGameStateForObjectID(FocusedActivityRef.ObjectID));
+}
+
+/////////////////////////
+/// defaultproperties ///
+/////////////////////////
+
+defaultproperties
+{
+	bAnimateOnInit = false
 }
