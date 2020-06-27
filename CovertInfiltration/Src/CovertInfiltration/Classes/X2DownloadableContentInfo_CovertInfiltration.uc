@@ -1564,6 +1564,66 @@ exec function CIRecordAnalyticsMission (bool bMissionSuccess)
 	`SubmitGameState(NewGameState);
 }
 
+exec function AttachComplicationToFocusedChain (name ComplicationName, optional bool bActivated = true, optional int TriggerChance = 0)
+{
+	local UIListItemString ChainListItem;
+	local UIChainsOverview ChainsScreen;
+
+	local X2StrategyElementTemplateManager TemplateManager;
+	local XComGameState_Complication ComplicationState;
+	local X2ComplicationTemplate ComplicationTemplate;
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState NewGameState;
+
+	ChainsScreen = UIChainsOverview(`SCREENSTACK.GetCurrentScreen());
+	if (ChainsScreen == none)
+	{
+		`CI_Log("AttachComplicationToFocusedChain failed - not looking at chains overview screen");
+		return;
+	}
+
+	ChainListItem = UIListItemString(ChainsScreen.ChainsList.GetItem(ChainsScreen.ChainsList.SelectedIndex));
+	if (ChainListItem == none)
+	{
+		`CI_Log("AttachComplicationToFocusedChain failed - no chain selected");
+		return;
+	}
+
+	ChainState = XComGameState_ActivityChain(`XCOMHISTORY.GetGameStateForObjectID(ChainListItem.metadataInt));
+	if (ChainState == none) 
+	{
+		`CI_Log("AttachComplicationToFocusedChain failed - failed to fetch chain state");
+		return;
+	}
+
+	if (!ChainState.GetMyTemplate().bAllowComplications)
+	{
+		`CI_Log("AttachComplicationToFocusedChain failed - chain forbids complications");
+		return;
+	}
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ComplicationTemplate = X2ComplicationTemplate(TemplateManager.FindStrategyElementTemplate(ComplicationName));
+	if (ComplicationTemplate == none)
+	{
+		`CI_Log("AttachComplicationToFocusedChain failed - complication not found");
+		return;
+	}
+
+	// Ready to work
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: AttachComplicationToFocusedChain");
+	ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainState.ObjectID));
+
+	ComplicationState = ComplicationTemplate.CreateInstanceFromTemplate(NewGameState, ChainState, TriggerChance, bActivated);
+	ChainState.ComplicationRefs.AddItem(ComplicationState.GetReference());
+
+	`SubmitGameState(NewGameState);
+
+	// Refresh UI
+	ChainsScreen.ChainsList.SetSelectedIndex(ChainsScreen.ChainsList.SelectedIndex, true);
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

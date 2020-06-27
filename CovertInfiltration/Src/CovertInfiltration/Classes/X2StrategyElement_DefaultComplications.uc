@@ -69,6 +69,18 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 		return;
 	}
 
+	// At times we fail to collect anything :(
+	// If that happens, do not spawn the rescue chain/mission (it will be empty)
+	ActualComplicationState = XComGameState_Complication_RewardInterception(ComplicationState);
+	TotalResContainer = XComGameState_ResourceContainer(`XCOMHISTORY.GetGameStateForObjectID(ActualComplicationState.ResourceContainerRef.ObjectID));
+	if (TotalResContainer.Packages.Length < 1)
+	{
+		`RedScreen("Cannot spawn reward interception mission - nothing was intercepted");
+		return;	
+	}
+
+	// All checks passed - spawn the mission
+
 	if (ActivityTemplate.MissionRewards.Find('Reward_Intel') > INDEX_NONE || ActivityTemplate.MissionRewards.Find('Reward_SmallIntel') > INDEX_NONE)
 	{
 		ChainTemplate = X2ActivityChainTemplate(TemplateManager.FindStrategyElementTemplate('ActivityChain_IntelIntercept'));
@@ -82,10 +94,9 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 	SpawnedChainState.FactionRef = InterceptedChainState.FactionRef;
 	SpawnedChainState.PrimaryRegionRef = InterceptedChainState.PrimaryRegionRef;
 
-	ActualComplicationState = XComGameState_Complication_RewardInterception(ComplicationState);
-	TotalResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', ActualComplicationState.ResourceContainerRef.ObjectID));
-
+	TotalResContainer = XComGameState_ResourceContainer(NewGameState.ModifyStateObject(class'XComGameState_ResourceContainer', TotalResContainer.ObjectID));
 	TotalResContainer.CombineLoot();
+
 	SpawnedChainState.ChainObjectRefs.AddItem(TotalResContainer.GetReference());
 	SpawnedChainState.StartNextStage(NewGameState);
 }
