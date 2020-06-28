@@ -26,9 +26,9 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 
 	BGImage = Spawn(class'UIImage', self);
 	BGImage.bAnimateOnInit = false;
-	BGImage.InitImage('BGImage', "img:///UILibrary_CI_ChainPreview.chains_single_highlight");
+	BGImage.InitImage('BGImage', "img:///UILibrary_CI_ChainPreview.chains_single_highlight_short");
 	//BGImage.SetPosition(0, 0);
-	BGImage.SetAlpha(35);
+	BGImage.SetAlpha(30);
 
 	// TODO: Vertical text scroll
 	StageNameText = Spawn(class'UIText', self);

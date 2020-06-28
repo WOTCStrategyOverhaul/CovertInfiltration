@@ -36,6 +36,7 @@ simulated protected function DoSpawnViewChainButton ()
 {
 	local UIViewChainButton Button;
 	local UIMission MissionScreen;
+	local UIChainPreview ChainPreview;
 
 	MissionScreen = UIMission(`SCREENSTACK.GetFirstInstanceOf(class'UIMission'));
 	if (MissionScreen == none) return;
@@ -48,11 +49,17 @@ simulated protected function DoSpawnViewChainButton ()
 	Button.InitViewChainButton('ViewChainButton');
 	Button.AnchorTopCenter();
 	Button.SetPosition(0, 40);
+	
 
 	Button.RealizeContent();
 	Button.AnimateIn(0);
 
 	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);
+
+	// TODO: This is temp
+	ChainPreview = MissionScreen.Spawn(class'UIChainPreview', MissionScreen);
+	ChainPreview.InitChainPreview('ChainPreview');
+	Button.Hide();
 }
 
 simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)

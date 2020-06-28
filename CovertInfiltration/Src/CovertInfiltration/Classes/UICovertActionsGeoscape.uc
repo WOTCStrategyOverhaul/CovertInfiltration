@@ -173,13 +173,16 @@ simulated function BuildScreen()
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
 	BuildBackground();
+	
+	// TODO: This is temp
+	ChainPreview = Spawn(class'UIChainPreview', self);
+	ChainPreview.InitChainPreview('ChainPreview');
+	
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
 
-	// TODO: This is temp
-	ChainPreview = Spawn(class'UIChainPreview', self);
-	ChainPreview.InitChainPreview('ChainPreview');
+	
 }
 
 simulated protected function BuildBackground ()
