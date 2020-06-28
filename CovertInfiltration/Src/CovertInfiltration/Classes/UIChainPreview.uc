@@ -1,3 +1,10 @@
+// Note about the positioning: UE3 requires all textures to be power of 2, including the UI ones.
+// So, in order to avoid resizing (and losing quality), the textures are padded to closest
+// pow2 size with transparency. This works as long as the code doesn't call UIImage::SetSize
+// as that will resize including the extra transparency.
+// A side effect of the above is that the Width and Height properties on images are bogus
+// and ****can not be used for layouting****. If you need a reference, check the UI mockups
+
 class UIChainPreview extends UIPanel;
 
 ////////////////////
@@ -166,6 +173,130 @@ simulated protected function BuildComplications ()
 ////////////////
 
 //
+
+function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
+{
+	FocusedActivityRef = InFocusedActivityRef;
+
+	if (FocusedActivityRef.ObjectID != 0 && GetFocusedActivity() == none)
+	{
+		`RedScreen("UIChainPreview::SetFocusedActivity - bad ref passed. Setting to 0 (preview will be hidden)");
+		`RedScreen(GetScriptTrace());
+
+		FocusedActivityRef.ObjectID = 0;
+	}
+
+	UpdateStages();
+	UpdateComplications();
+}
+
+protected function UpdateStages ()
+{
+	local XComGameState_Activity FocusedActivityState, ActivityState;
+	local XComGameState_ActivityChain ChainState;
+
+	FocusedActivityState = GetFocusedActivity();
+	if (FocusedActivityState == none)
+	{
+		CenterSection.Hide();
+		return;
+	}
+
+	ChainState = ActivityState.GetActivityChain();
+	CenterSection.Show();
+
+	// The following code handles with figuring out which slots to assign to which stages.
+	// The general logic is to keep the focused (current) activity in the center, unless
+	// it is the first or the last one and moving it to a side will allow us to show more
+	// activities (instead of wasting a slot and using the extra indicators)
+
+	if (ChainState.StageRefs.Length == 1)
+	{
+		LeftExtraCountText.Hide();
+		RightExtraCountText.Hide();
+		
+		Stages[0].Hide();
+		Stages[2].Hide();
+
+		Stages[1].Show();
+		Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+	}
+	else if (ChainState.StageRefs.Length == 2)
+	{
+		LeftExtraCountText.Hide();
+		RightExtraCountText.Hide();
+
+		// TODO
+	}
+	else if (ChainState.StageRefs.Length == 3)
+	{
+		LeftExtraCountText.Hide();
+		RightExtraCountText.Hide();
+		
+		Stages[0].Show();
+		Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(0));
+
+		Stages[1].Show();
+		Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+
+		Stages[2].Show();
+		Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(2));
+	}
+	else // 4 and more
+	{
+		// TODO
+	}
+}
+
+protected function UpdateComplications ()
+{
+	local XComGameState_Complication ComplicationState;
+	local XComGameState_Activity FocusedActivityState;
+	local XComGameState_ActivityChain ChainState;
+	local StateObjectReference ComplicationRef;
+	local array<string> ComplicationsNames;
+	local XComGameStateHistory Histroy;
+	local string strComplications;
+	local int i;
+
+	FocusedActivityState = GetFocusedActivity();
+	if (FocusedActivityState == none)
+	{
+		ComplicationsSection.Hide();
+		return;
+	}
+
+	ChainState = FocusedActivityState.GetActivityChain();
+	if (ChainState.ComplicationRefs.Length < 1) 
+	{
+		ComplicationsSection.Hide();
+		return;
+	}
+
+	Histroy = `XCOMHISTORY;
+	ComplicationsNames.Length = ChainState.ComplicationRefs.Length;
+	
+	foreach ChainState.ComplicationRefs(ComplicationRef, i)
+	{
+		ComplicationState = XComGameState_Complication(Histroy.GetGameStateForObjectID(ComplicationRef.ObjectID));
+		ComplicationsNames[i] = ComplicationState.GetMyTemplate().FriendlyName;
+	}
+
+	ComplicationsFluffDescription.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			class'UIUtilities_Text'.static.GetColoredText(
+				ComplicationsNames.Length == 1 ? strSingleComplicationFluff : strMultipleComplicationsFluff,
+				eUIState_Bad
+			),
+			Screen.bIsIn3D, true,, 18
+		)
+	);
+
+	JoinArray(ComplicationsNames, strComplications, ", ");
+	ComplicationsNamesText.SetTitle(class'UIUtilities_Text'.static.GetColoredText(strComplications, eUIState_Bad));
+
+	ComplicationsSection.Show();
+}
 
 /////////////////
 /// Animation ///

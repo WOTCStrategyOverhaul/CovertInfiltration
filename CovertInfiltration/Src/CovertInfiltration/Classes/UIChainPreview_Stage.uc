@@ -4,7 +4,6 @@ var protectedwrite UIImage ArrowImage;
 var protectedwrite UIImage BGImage;
 var protectedwrite UITextContainerImproved StageNameTextContainer;
 
-var protectedwrite XComGameState_Activity ActivityState;
 var protectedwrite bool bSiblingLeft;
 var protectedwrite bool bSiblingRight;
 
@@ -54,16 +53,19 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 /// Updating ///
 ////////////////
 
-//
-
-protected function string GetArrowImageUrl ()
+function UpdateForActivity (XComGameState_Activity ActivityState)
 {
 	local string LeftState, MiddleState, RightState;
 	local XComGameState_ActivityChain ChainState;
+	local string strNameColour, strName;
 	local int StageIndex;
 
 	ChainState = ActivityState.GetActivityChain();
 	StageIndex = ActivityState.GetStageIndex();
+
+	///////////////////
+	/// Arrow image ///
+	///////////////////
 
 	// Left part
 	if (StageIndex == 0)
@@ -104,7 +106,42 @@ protected function string GetArrowImageUrl ()
 		else RightState = "LotsMore";
 	}
 
-	return "img:///UILibrary_CI_ChainPreview.Arrows." $ LeftState $ "_" $ MiddleState $ "_" $ RightState;
+	ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows." $ LeftState $ "_" $ MiddleState $ "_" $ RightState);
+
+	//////////
+	/// BG ///
+	//////////
+
+	BGImage.SetVisible(ChainState.iCurrentStage == StageIndex);
+
+	////////////
+	/// Text ///
+	////////////
+
+	if (ChainState.iCurrentStage > StageIndex) 
+	{
+		// Our stage is completed (left of ongoing)
+		strNameColour = "249182";
+	}
+	else if (ChainState.iCurrentStage == StageIndex)
+	{
+		// Our stage is ongoing
+		strNameColour = "3AE7CF";
+	}
+	else
+	{
+		// Our stage is not started (right of ongoing)
+		strNameColour = "7A7A6E";
+	}
+
+	strName = ActivityState.GetOverviewHeader();
+
+	strName = class'UIUtilities_Infiltration'.static.SetTextLeading(strName, -2);
+	strName = class'UIUtilities_Text'.static.AlignCenter(strName);
+	strName = class'UIUtilities_Infiltration'.static.ColourText(strName, strNameColour);
+	strName = class'UIUtilities_Text'.static.AddFontInfo(strName, Screen.bIsIn3D, true,, 22);
+
+	StageNameTextContainer.SetHTMLText(strName);
 }
 
 /////////////////////////
