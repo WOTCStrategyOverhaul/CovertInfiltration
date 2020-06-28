@@ -139,6 +139,11 @@ static function string MakeFirstCharCapOnly(string strValue)
 	return Caps(Left(strValue, 1)) $ Locs(Right(strValue, Len(strValue) - 1));
 }
 
+static function string SetTextLeading (string strValue, int Leading)
+{
+	return "<textformat leading='" $ string(Leading) $ "'>" $ strValue $ "</textformat>";
+}
+
 static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_CovertAction CovertAction)
 {
 	local X2StrategyElementTemplateManager StratMgr;

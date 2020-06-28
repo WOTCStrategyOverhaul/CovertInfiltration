@@ -95,8 +95,22 @@ simulated protected function BuildCenter ()
 	);
 	RightExtraCountText.SetPosition(899.5, 7);
 
+	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
+	Stages[0].InitChainStage('ChainStage0', false, true);
+	Stages[0].SetPosition(200, 0);
+	Stages[0].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.LotsBefore_Completed_More");
+	Stages[0].BGImage.Hide();
 
-	// TODO
+	Stages[1] = Spawn(class'UIChainPreview_Stage', CenterSection);
+	Stages[1].InitChainStage('ChainStage1', true, true);
+	Stages[1].SetPosition(428, 0);
+	Stages[1].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Current_More");
+
+	Stages[2] = Spawn(class'UIChainPreview_Stage', CenterSection);
+	Stages[2].InitChainStage('ChainStage2', true, false);
+	Stages[2].SetPosition(655, 0);
+	Stages[2].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Future_LotsMore");
+	Stages[2].BGImage.Hide();
 }
 
 simulated protected function BuildComplications ()
@@ -175,6 +189,7 @@ function XComGameState_Activity GetFocusedActivity ()
 defaultproperties
 {
 	bAnimateOnInit = false
+	bIsNavigable = false
 
 	strControllerIcon = "Icon_RT_R2" // Right trigger
 	ControllerIconWidthToHeight = 2 // The icon is 1:2 height:width
