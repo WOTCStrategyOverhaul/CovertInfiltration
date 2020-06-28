@@ -34,7 +34,7 @@ var UIPanel ActionBriefContainer;
 var UIBGBox ActionBriefBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
-var UITextContainer ActionDescription;
+var UITextContainerImproved ActionDescription;
 
 // UI - action info (bottom)
 var UIPanel ActionInfoBottomContainer;
@@ -44,7 +44,7 @@ var UIPanel ActionRewardContainer;
 var UIImage ActionRewardHeaderBG;
 var UIText ActionRewardHeader;
 var UIPanel ActionRewardTextBG;
-var UITextContainer ActionRewardText;
+var UITextContainerImproved ActionRewardText;
 
 // UI - progress bar
 var UIProgressBar ActionProgressBar;
@@ -307,10 +307,10 @@ simulated protected function BuildActionBrief()
 	ActionDisplayName.InitText('ActionDisplayName');
 	ActionDisplayName.SetSize(ActionBriefContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UITextContainer', ActionBriefContainer);
+	ActionDescription = Spawn(class'UITextContainerImproved', ActionBriefContainer);
 	ActionDescription.bAnimateOnInit = false;
 	ActionDescription.InitTextContainer('ActionDescription');
-	//ActionDescription.bAutoScroll = true; // Doesn't work properly for some reason
+	ActionDescription.bAutoScroll = true;
 	ActionDescription.SetPosition(0, 50);
 	ActionDescription.SetSize(ActionBriefContainer.Width, ActionBriefContainer.Height - ActionDescription.Y);
 }
@@ -368,10 +368,10 @@ simulated protected function BuildActionReward()
 	ActionRewardHeader.SetSize(ActionRewardContainer.Width, 55);
 	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRewardHeader, bIsIn3D, true));
 
-	ActionRewardText = Spawn(class'UITextContainer', ActionRewardContainer);
+	ActionRewardText = Spawn(class'UITextContainerImproved', ActionRewardContainer);
 	ActionRewardText.bAnimateOnInit = false;
 	ActionRewardText.InitTextContainer('ActionRewardText');
-	//ActionRewardText.InitText('ActionRewardText');
+	ActionRewardText.bAutoScroll = true;
 	ActionRewardText.SetPosition(0, 50);
 	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
 

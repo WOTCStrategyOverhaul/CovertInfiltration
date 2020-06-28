@@ -2,7 +2,7 @@ class UIChainPreview_Stage extends UIPanel;
 
 var protectedwrite UIImage ArrowImage;
 var protectedwrite UIImage BGImage;
-var protectedwrite UIText StageNameText;
+var protectedwrite UITextContainerImproved StageNameTextContainer;
 
 var protectedwrite XComGameState_Activity ActivityState;
 var protectedwrite bool bSiblingLeft;
@@ -30,14 +30,14 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 	//BGImage.SetPosition(0, 0);
 	BGImage.SetAlpha(30);
 
-	// TODO: Vertical text scroll
-	StageNameText = Spawn(class'UIText', self);
-	StageNameText.bAnimateOnInit = false;
-	StageNameText.InitText('StageNameText');
-	StageNameText.SetPosition(15, 37);
-	StageNameText.SetSize(200, 60);
+	StageNameTextContainer = Spawn(class'UITextContainerImproved', self);
+	StageNameTextContainer.bAnimateOnInit = false;
+	StageNameTextContainer.InitTextContainer('StageNameTextContainer');
+	StageNameTextContainer.bAutoScroll = true;
+	StageNameTextContainer.SetPosition(15, 37);
+	StageNameTextContainer.SetSize(200, 60);
 
-	StageNameText.SetHtmlText(
+	StageNameTextContainer.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Infiltration'.static.ColourText(
 				class'UIUtilities_Text'.static.AlignCenter(
