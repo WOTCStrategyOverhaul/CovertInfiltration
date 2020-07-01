@@ -873,15 +873,24 @@ simulated function UpdateButtons()
 simulated function UpdateViewChainButton ()
 {
 	local XComGameState_Activity ActivityState;
+	local StateObjectReference EmptyRef;
 
 	ViewChainButton.Hide();
-
+	
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
-	if (ActivityState == none) return;
+	if (ActivityState == none)
+	{
+		ChainPreview.SetFocusedActivity(EmptyRef);
+		return;
+	}
+
+	ChainPreview.SetFocusedActivity(ActivityState.GetReference());
 
 	ViewChainButton.ChainRef = ActivityState.ChainRef;
 	ViewChainButton.RealizeContent();
-	ViewChainButton.Show();
+	//ViewChainButton.Show();
+
+
 }
 
 simulated function UpdateCovertActionInfo()

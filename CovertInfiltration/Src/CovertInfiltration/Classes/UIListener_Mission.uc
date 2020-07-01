@@ -59,6 +59,7 @@ simulated protected function DoSpawnViewChainButton ()
 	// TODO: This is temp
 	ChainPreview = MissionScreen.Spawn(class'UIChainPreview', MissionScreen);
 	ChainPreview.InitChainPreview('ChainPreview');
+	ChainPreview.SetFocusedActivity(class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID).GetReference());
 	Button.Hide();
 }
 

@@ -149,15 +149,15 @@ simulated protected function BuildComplications ()
 	ComplicationsFluffDescription = Spawn(class'UIText', ComplicationsSection);
 	ComplicationsFluffDescription.bAnimateOnInit = false;
 	ComplicationsFluffDescription.InitText('ComplicationsFluffDescription');
-	ComplicationsFluffDescription.SetHtmlText(
+	/*ComplicationsFluffDescription.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Text'.static.GetColoredText(strSingleComplicationFluff, eUIState_Bad), Screen.bIsIn3D, true,, 18)
-	);
+	);*/
 	ComplicationsFluffDescription.SetPosition(112, 0);
 
 	ComplicationsNamesText = Spawn(class'UIScrollingText', ComplicationsSection);
 	ComplicationsNamesText.bAnimateOnInit = false;
 	ComplicationsNamesText.InitScrollingText('ComplicationsNamesText');
-	ComplicationsNamesText.SetTitle(class'UIUtilities_Text'.static.GetColoredText("Reward Interception", eUIState_Bad)); // TODO: Temp
+	//ComplicationsNamesText.SetTitle(class'UIUtilities_Text'.static.GetColoredText("Reward Interception", eUIState_Bad)); // TODO: Temp
 	ComplicationsNamesText.SetPosition(0, 28);
 	ComplicationsNamesText.SetWidth(330);
 }
@@ -171,8 +171,6 @@ simulated protected function BuildComplications ()
 ////////////////
 /// Updating ///
 ////////////////
-
-//
 
 function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 {
@@ -194,6 +192,7 @@ protected function UpdateStages ()
 {
 	local XComGameState_Activity FocusedActivityState, ActivityState;
 	local XComGameState_ActivityChain ChainState;
+	local int FocusedStageIndex;
 
 	FocusedActivityState = GetFocusedActivity();
 	if (FocusedActivityState == none)
@@ -202,7 +201,9 @@ protected function UpdateStages ()
 		return;
 	}
 
-	ChainState = ActivityState.GetActivityChain();
+	FocusedStageIndex = FocusedActivityState.GetStageIndex();
+	ChainState = FocusedActivityState.GetActivityChain();
+
 	CenterSection.Show();
 
 	// The following code handles with figuring out which slots to assign to which stages.
@@ -219,14 +220,33 @@ protected function UpdateStages ()
 		Stages[2].Hide();
 
 		Stages[1].Show();
-		Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+		Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(0));
 	}
 	else if (ChainState.StageRefs.Length == 2)
 	{
 		LeftExtraCountText.Hide();
 		RightExtraCountText.Hide();
 
-		// TODO
+		if (FocusedStageIndex == 0)
+		{
+			Stages[0].Hide();
+
+			Stages[1].Show();
+			Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(0));
+
+			Stages[2].Show();
+			Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+		}
+		else
+		{
+			Stages[0].Show();
+			Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(0));
+
+			Stages[1].Show();
+			Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+
+			Stages[2].Hide();
+		}
 	}
 	else if (ChainState.StageRefs.Length == 3)
 	{
