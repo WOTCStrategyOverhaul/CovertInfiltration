@@ -79,6 +79,7 @@ simulated protected function BuildCenter ()
 	OverviewScreenButton.InitButton('OverviewScreenButton');
 	//OverviewScreenButton.OnClickedDelegate = OnDetailsButtonClicked; // TODO
 	OverviewScreenButton.SetPosition(542, 101);
+	OverviewScreenButton.OnClickedDelegate = OpenOverview;
 
 	OverviewScreenControllerIcon = Spawn(class'UIImage', CenterSection);
 	OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
@@ -166,7 +167,10 @@ simulated protected function BuildComplications ()
 /// Player interaction ///
 //////////////////////////
 
-// On button click
+simulated function OpenOverview (UIButton Button)
+{
+	class'UIUtilities_Infiltration'.static.UIChainsOverview(GetFocusedActivity().ChainRef, false /* TODO */);
+}
 
 ////////////////
 /// Updating ///
