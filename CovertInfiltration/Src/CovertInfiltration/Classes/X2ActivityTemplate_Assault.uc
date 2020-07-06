@@ -209,6 +209,47 @@ static function string DefaultGetOverviewStatusAssault (XComGameState_Activity A
 	return DefaultGetOverviewStatus(ActivityState);
 }
 
+static function DefaultAssaultOverrideStrategyMapIconTooltip (XComGameState_Activity ActivityState, out string Title, out string Body)
+{
+	local XComGameState_Activity_Assault AssaultActivityState;
+	local string ExpirationValue, ExpirationLabel;
+
+	// Call "parent"
+	DefaultOverrideStrategyMapIconTooltip(ActivityState, Title, Body);
+
+	// Expiry. "Inspired" by Hours Instead of Days
+	AssaultActivityState = XComGameState_Activity_Assault(ActivityState);
+	if (AssaultActivityState != none && AssaultActivityState.bExpiring)
+	{
+		GetTimeLabelValue(AssaultActivityState.GetHoursRemaining(), ExpirationValue, ExpirationLabel);
+		Body $= ". Expires in" @ ExpirationValue @ ExpirationLabel;
+	}
+}
+
+// Copied from "Hours Instead of Days" mod by -bg-.
+// I would prefer that people use that mod directly,
+// unfortuantely it doesn't understand XCGS_A_A expiration
+static function GetTimeLabelValue (int Hours, out string TimeValue, out string TimeLabel)
+{	
+	if (Hours < 0 || Hours > 24 * 30 * 12) // Ignore year long missions
+	{
+		TimeValue = "";
+		TimeLabel = "";
+		return;
+	}
+	if (Hours > /*default.NUM_HOURS_TO_DAYS*/ 48)
+	{
+		Hours = FCeil(float(Hours) / 24.0f);
+		TimeValue = string(Hours);
+		TimeLabel = class'UIUtilities_Text'.static.GetDaysString(Hours);
+	}
+	else
+	{
+		TimeValue = string(Hours);
+		TimeLabel = class'UIUtilities_Text'.static.GetHoursString(Hours);
+	}
+}
+
 ////////////////////////////
 /// Private from XCGS_MS ///
 ////////////////////////////
@@ -355,6 +396,7 @@ defaultproperties
 	StateClass = class'XComGameState_Activity_Assault'
 	ActivityType = eActivityType_Assault
 	GetOverviewStatus = DefaultGetOverviewStatusAssault
+	OverrideStrategyMapIconTooltip = DefaultAssaultOverrideStrategyMapIconTooltip
 
 	SetupStage = DefaultAssaultSetup
 	SetupStageSubmitted = DefaultSetupStageSubmitted

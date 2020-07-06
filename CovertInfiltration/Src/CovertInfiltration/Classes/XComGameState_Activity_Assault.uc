@@ -83,3 +83,8 @@ protected function UpdateActivity ()
 		}
 	}
 }
+
+function int GetHoursRemaining()
+{
+	return class'X2StrategyGameRulesetDataStructures'.static.DifferenceInHours(ExpiryTimerEnd, GetCurrentTime());
+}
