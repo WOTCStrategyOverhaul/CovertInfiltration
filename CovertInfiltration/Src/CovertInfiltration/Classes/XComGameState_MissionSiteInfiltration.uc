@@ -376,6 +376,7 @@ function UpdateGameBoard()
 
 	// Check if we should give an overinfil bonus
 	// Do this before showing the screen to support max infil rewards
+	// Note that we don't check for geoscape here - it's ok to give bonuses and popup while the avenger is in flight
 
 	BonusTemplate = GetNextOverInfiltrationBonus();
 	
@@ -404,7 +405,7 @@ function UpdateGameBoard()
 		}
 	}
 
-	if (MustLaunch())
+	if (MustLaunch() && class'X2Helper_Infiltration'.static.GeoscapeReadyForUpdate())
 	{
 		EnablePreventTick();
 		MissionSelected();
