@@ -162,7 +162,8 @@ simulated function bool OnUnrealCommand (int cmd, int arg)
 			return true;
 	}
 
-	return super.OnUnrealCommand(cmd, arg);
+	//return super.OnUnrealCommand(cmd, arg);
+	return false; // No navigation on this screen
 }
 
 simulated event Removed()

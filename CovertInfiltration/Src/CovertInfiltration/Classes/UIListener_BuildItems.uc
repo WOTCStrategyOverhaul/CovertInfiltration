@@ -17,8 +17,15 @@ event OnInit(UIScreen Screen)
 
 	if (`XCOMHQ.IsTechResearched('MagnetizedWeapons') || `XCOMHQ.IsTechResearched('PlatedArmor'))
 	{
-		BuildItems.bHideOnLoseFocus = false;
+		//BuildItems.bHideOnLoseFocus = false;
 		class'UIUtilities_InfiltrationTutorial'.static.IndividualBuiltItems();
-		BuildItems.bHideOnLoseFocus = true;
+		//BuildItems.bHideOnLoseFocus = true;
+
+		// UIInventory hides the 3d display when losing focus, so restore it manually
+		if (!BuildItems.bIsVisible)
+		{
+			BuildItems.Show();
+			UIMovie_3D(BuildItems.Movie).ShowDisplay(BuildItems.DisplayTag);
+		}
 	}
 }
