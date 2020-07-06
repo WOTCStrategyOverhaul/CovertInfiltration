@@ -128,6 +128,8 @@ static function X2SitRepEffectTemplate CreateTacticalAnalysisAbilityTemplate()
 	`CREATE_X2TEMPLATE(class'X2SitRepEffect_GrantAbilities', Template, 'TacticalAnalysisAbility');
 
 	Template.AbilityTemplateNames.AddItem('TacticalAnalysis');
+	Template.Teams.AddItem(eTeam_Alien);
+	Template.Teams.AddItem(eTeam_TheLost);
 
 	return Template;
 }
