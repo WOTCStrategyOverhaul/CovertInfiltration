@@ -880,11 +880,11 @@ simulated function UpdateViewChainButton ()
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
 	if (ActivityState == none)
 	{
-		ChainPreview.SetFocusedActivity(EmptyRef);
+		//ChainPreview.SetFocusedActivity(EmptyRef);
 		return;
 	}
 
-	ChainPreview.SetFocusedActivity(ActivityState.GetReference());
+	//ChainPreview.SetFocusedActivity(ActivityState.GetReference());
 
 	ViewChainButton.ChainRef = ActivityState.ChainRef;
 	ViewChainButton.RealizeContent();

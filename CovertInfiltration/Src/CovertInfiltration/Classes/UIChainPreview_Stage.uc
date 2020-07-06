@@ -1,7 +1,6 @@
 class UIChainPreview_Stage extends UIPanel;
 
 var protectedwrite UIImage ArrowImage;
-var protectedwrite UIImage BGImage;
 var protectedwrite UITextContainerImproved StageNameTextContainer;
 
 var protectedwrite bool bSiblingLeft;
@@ -23,30 +22,24 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 	ArrowImage.InitImage('ArrowImage');
 	ArrowImage.SetPosition(0, 8);
 
-	BGImage = Spawn(class'UIImage', self);
-	BGImage.bAnimateOnInit = false;
-	BGImage.InitImage('BGImage', "img:///UILibrary_CI_ChainPreview.chains_single_highlight_short");
-	//BGImage.SetPosition(0, 0);
-	BGImage.SetAlpha(30);
-
 	StageNameTextContainer = Spawn(class'UITextContainerImproved', self);
 	StageNameTextContainer.bAnimateOnInit = false;
 	StageNameTextContainer.InitTextContainer('StageNameTextContainer');
 	StageNameTextContainer.bAutoScroll = true;
 	StageNameTextContainer.SetPosition(15, 37);
-	StageNameTextContainer.SetSize(200, 60);
+	StageNameTextContainer.SetSize(200, 50);
 
-	/*StageNameTextContainer.SetHtmlText(
+	StageNameTextContainer.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(
 			class'UIUtilities_Infiltration'.static.ColourText(
 				class'UIUtilities_Text'.static.AlignCenter(
-					class'UIUtilities_Infiltration'.static.SetTextLeading("Prepare UFO Takedown", -2)
+					class'UIUtilities_Infiltration'.static.SetTextLeading("Assault Assault Assault Assault Assault Assault Assault Assault", -2)
 				),
 				"3AE7CF"
 			),
 			Screen.bIsIn3D, true,, 22
 		)
-	);*/
+	);
 }
 
 ////////////////
@@ -107,12 +100,6 @@ function UpdateForActivity (XComGameState_Activity ActivityState)
 	}
 
 	ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows." $ LeftState $ "_" $ MiddleState $ "_" $ RightState);
-
-	//////////
-	/// BG ///
-	//////////
-
-	BGImage.SetVisible(ChainState.iCurrentStage == StageIndex);
 
 	////////////
 	/// Text ///

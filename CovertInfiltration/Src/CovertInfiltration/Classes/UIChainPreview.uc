@@ -13,14 +13,19 @@ class UIChainPreview extends UIPanel;
 
 var protectedwrite UIPanel CenterSection;
 var protectedwrite UIImage CenterBacklight;
+
+var protectedwrite UIText ChainNameText;
 var protectedwrite UIButton OverviewScreenButton;
 var protectedwrite UIImage OverviewScreenControllerIcon;
-var protectedwrite UIText LeftExtraCountText;
-var protectedwrite UIText RightExtraCountText;
+
+var protectedwrite UIDags ChainNameDagsLeft;
+var protectedwrite UIDags ChainNameDagsRight;
 
 // We support at most 3 now, any more we simply show the counts.
 // For sake of simplicity, all 3 are pre-created (and not created on-demand)
 var protectedwrite UIChainPreview_Stage Stages[3];
+var protectedwrite UIText LeftExtraCountText;
+var protectedwrite UIText RightExtraCountText;
 
 var protectedwrite UIPanel ComplicationsSection;
 var protectedwrite UIImage ComplicationsBacklight;
@@ -73,13 +78,21 @@ simulated protected function BuildCenter ()
 	CenterBacklight.bAnimateOnInit = false;
 	CenterBacklight.InitImage('CenterBacklight', "img:///UILibrary_CI_ChainPreview.chains_main_highlight");
 	CenterBacklight.SetPosition(178, 0);
+	CenterBacklight.SetAlpha(20);
+
+	ChainNameText = Spawn(class'UIText', CenterSection);
+	ChainNameText.bAnimateOnInit = false;
+	ChainNameText.InitText('ChainNameText');
+	ChainNameText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("Raid Alien UFO", "90BDBD"), Screen.bIsIn3D, false,, 28)
+	);
+	ChainNameText.SetPosition(469.5, 11);
 
 	OverviewScreenButton = Spawn(class'UIButton', CenterSection);
 	OverviewScreenButton.LibID = 'X2InfoButton';
 	OverviewScreenButton.InitButton('OverviewScreenButton');
-	//OverviewScreenButton.OnClickedDelegate = OnDetailsButtonClicked; // TODO
-	OverviewScreenButton.SetPosition(542, 101);
 	OverviewScreenButton.OnClickedDelegate = OpenOverview;
+	OverviewScreenButton.SetPosition(631, 16);
 
 	OverviewScreenControllerIcon = Spawn(class'UIImage', CenterSection);
 	OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
@@ -87,13 +100,33 @@ simulated protected function BuildCenter ()
 	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
 	OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
 
+	ChainNameDagsLeft = Spawn(class'UIDags', CenterSection);
+	ChainNameDagsLeft.bAnimateOnInit = false;
+	ChainNameDagsLeft.InitPanel('ChainNameDagsLeft');
+	ChainNameDagsLeft.SetColor("98C8C8");
+	ChainNameDagsLeft.SetAlpha(15);
+	ChainNameDagsLeft.SetPosition(316, 20);
+	ChainNameDagsLeft.SetWidth(142); // TODO
+	ChainNameDagsLeft.SetHeight(20);
+	ChainNameDagsLeft.SetDagsScaleX(60); // TODO: Reverse
+
+	ChainNameDagsRight = Spawn(class'UIDags', CenterSection);
+	ChainNameDagsRight.bAnimateOnInit = false;
+	ChainNameDagsRight.InitPanel('ChainNameDagsRight');
+	ChainNameDagsRight.SetColor("98C8C8");
+	ChainNameDagsRight.SetAlpha(15);
+	ChainNameDagsRight.SetPosition(644, 20);
+	ChainNameDagsRight.SetWidth(142); // TODO
+	ChainNameDagsRight.SetHeight(20);
+	ChainNameDagsRight.SetDagsScaleX(60);
+
 	LeftExtraCountText = Spawn(class'UIText', CenterSection);
 	LeftExtraCountText.bAnimateOnInit = false;
 	LeftExtraCountText.InitText('LeftExtraCountText');
 	LeftExtraCountText.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+2", "249182"), Screen.bIsIn3D, true,, 22)
 	);
-	LeftExtraCountText.SetPosition(168.5, 7);
+	LeftExtraCountText.SetPosition(168.5, 48);
 
 	RightExtraCountText = Spawn(class'UIText', CenterSection);
 	RightExtraCountText.bAnimateOnInit = false;
@@ -101,24 +134,22 @@ simulated protected function BuildCenter ()
 	RightExtraCountText.SetHtmlText(
 		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+5", "7A7A6E"), Screen.bIsIn3D, true,, 22)
 	);
-	RightExtraCountText.SetPosition(899.5, 7);
+	RightExtraCountText.SetPosition(899.5, 48);
 
 	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[0].InitChainStage('ChainStage0', false, true);
-	Stages[0].SetPosition(210, 0);
+	Stages[0].SetPosition(210, 41);
 	Stages[0].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.LotsBefore_Completed_More");
-	Stages[0].BGImage.Hide();
 
 	Stages[1] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[1].InitChainStage('ChainStage1', true, true);
-	Stages[1].SetPosition(438, 0);
+	Stages[1].SetPosition(438, 41);
 	Stages[1].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Current_More");
 
 	Stages[2] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[2].InitChainStage('ChainStage2', true, false);
-	Stages[2].SetPosition(665, 0);
+	Stages[2].SetPosition(665, 41);
 	Stages[2].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Future_LotsMore");
-	Stages[2].BGImage.Hide();
 }
 
 simulated protected function BuildComplications ()
