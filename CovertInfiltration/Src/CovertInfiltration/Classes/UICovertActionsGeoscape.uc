@@ -190,6 +190,7 @@ simulated protected function BuildBackground ()
 	BackgroundGradientTop = Spawn(class'UIImage', self);
 	BackgroundGradientTop.bAnimateOnInit = false;
 	BackgroundGradientTop.InitImage('BackgroundGradientTop', "img:///UILibrary_CovertInfiltration.gradient_top");
+	BackgroundGradientTop.AnchorTopLeft();
 	BackgroundGradientTop.SetPosition(0, 0);
 	BackgroundGradientTop.SetSize(Movie.UI_RES_X, 512);
 
@@ -880,11 +881,11 @@ simulated function UpdateViewChainButton ()
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
 	if (ActivityState == none)
 	{
-		//ChainPreview.SetFocusedActivity(EmptyRef);
+		ChainPreview.SetFocusedActivity(EmptyRef);
 		return;
 	}
 
-	//ChainPreview.SetFocusedActivity(ActivityState.GetReference());
+	ChainPreview.SetFocusedActivity(ActivityState.GetReference());
 
 	ViewChainButton.ChainRef = ActivityState.ChainRef;
 	ViewChainButton.RealizeContent();

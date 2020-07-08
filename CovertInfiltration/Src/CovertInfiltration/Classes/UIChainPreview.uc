@@ -54,6 +54,17 @@ var protectedwrite StateObjectReference FocusedActivityRef;
 var localized string strSingleComplicationFluff;
 var localized string strMultipleComplicationsFluff;
 
+////////////////////////
+/// Layout constants ///
+////////////////////////
+
+const ChainNameSectionMostLeft = 168.5;
+const ChainNameSectionMostRight = 933.5;
+const ChainNameSectionPreButtonSpacing = 10;
+const ChainNameSectionButtonWidth = 23;
+const ChainNameSectionPreIconSpacing = 7;
+const ChainNameSectionMargin = 20;
+
 ////////////
 /// Init ///
 ////////////
@@ -82,19 +93,19 @@ simulated protected function BuildCenter ()
 
 	ChainNameText = Spawn(class'UIText', CenterSection);
 	ChainNameText.bAnimateOnInit = false;
+	ChainNameText.OnTextSizeRealized = OnChainNameRealized;
 	ChainNameText.InitText('ChainNameText');
-	ChainNameText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("Raid Alien UFO", "90BDBD"), Screen.bIsIn3D, false,, 28)
-	);
-	ChainNameText.SetPosition(469.5, 11);
+	ChainNameText.SetY(11);
 
 	OverviewScreenButton = Spawn(class'UIButton', CenterSection);
+	OverviewScreenButton.bAnimateOnInit = false;
 	OverviewScreenButton.LibID = 'X2InfoButton';
 	OverviewScreenButton.InitButton('OverviewScreenButton');
 	OverviewScreenButton.OnClickedDelegate = OpenOverview;
-	OverviewScreenButton.SetPosition(631, 16);
+	OverviewScreenButton.SetY(16);
 
 	OverviewScreenControllerIcon = Spawn(class'UIImage', CenterSection);
+	OverviewScreenControllerIcon.bAnimateOnInit = false;
 	OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
 	OverviewScreenControllerIcon.SetPosition(OverviewScreenButton.X + 30, OverviewScreenButton.Y + 1);
 	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
@@ -105,8 +116,8 @@ simulated protected function BuildCenter ()
 	ChainNameDagsLeft.InitPanel('ChainNameDagsLeft');
 	ChainNameDagsLeft.SetColor("98C8C8");
 	ChainNameDagsLeft.SetAlpha(15);
-	ChainNameDagsLeft.SetPosition(316, 20);
-	ChainNameDagsLeft.SetWidth(142); // TODO
+	ChainNameDagsLeft.SetPosition(ChainNameSectionMostLeft, 20);
+	//ChainNameDagsLeft.SetWidth(142); // TODO
 	ChainNameDagsLeft.SetHeight(20);
 	ChainNameDagsLeft.SetDagsScaleX(60); // TODO: Reverse
 
@@ -115,8 +126,9 @@ simulated protected function BuildCenter ()
 	ChainNameDagsRight.InitPanel('ChainNameDagsRight');
 	ChainNameDagsRight.SetColor("98C8C8");
 	ChainNameDagsRight.SetAlpha(15);
-	ChainNameDagsRight.SetPosition(644, 20);
-	ChainNameDagsRight.SetWidth(142); // TODO
+	ChainNameDagsRight.SetY(20);
+	//ChainNameDagsRight.SetX(644);
+	//ChainNameDagsRight.SetWidth(142); // TODO
 	ChainNameDagsRight.SetHeight(20);
 	ChainNameDagsRight.SetDagsScaleX(60);
 
@@ -150,6 +162,54 @@ simulated protected function BuildCenter ()
 	Stages[2].InitChainStage('ChainStage2', true, false);
 	Stages[2].SetPosition(665, 41);
 	Stages[2].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Future_LotsMore");
+
+	
+}
+
+simulated protected function OnChainNameRealized ()
+{
+	local float RequiredSpace, DagsWidth;
+
+	// Text + button
+	RequiredSpace = ChainNameText.Width + ChainNameSectionPreButtonSpacing + ChainNameSectionButtonWidth;
+
+	// Add the controller hint icon
+	if (OverviewScreenControllerIcon != none)
+	{
+		RequiredSpace += ChainNameSectionPreIconSpacing + OverviewScreenControllerIcon.Width;
+	}
+
+	// Add side margin
+	RequiredSpace += ChainNameSectionMargin * 2;
+
+	// How wide are the dags?
+	DagsWidth = ChainNameSectionMostRight - ChainNameSectionMostLeft - RequiredSpace; 
+
+	// Distrubute dags on both sides
+	DagsWidth /= 2;
+
+	// Position dags
+	ChainNameDagsLeft.SetWidth(DagsWidth);
+	ChainNameDagsRight.SetWidth(DagsWidth);
+	ChainNameDagsRight.SetX(ChainNameSectionMostRight - DagsWidth);
+
+	// Position text
+	ChainNameText.SetX(ChainNameSectionMostLeft + DagsWidth + ChainNameSectionMargin);
+
+	// Position button
+	OverviewScreenButton.SetX(ChainNameText.X + ChainNameText.Width + ChainNameSectionPreButtonSpacing);
+
+	// Position controller hint icon
+	if (OverviewScreenControllerIcon != none)
+	{
+		OverviewScreenControllerIcon.SetX(OverviewScreenButton.X + ChainNameSectionButtonWidth + ChainNameSectionPreIconSpacing);
+	}
+
+	// Force everything we touched to update this frame
+	ChainNameText.MC.ProcessCommands(true);
+	if (ChainNameDagsLeft.bIsInited) ChainNameDagsLeft.MC.ProcessCommands(true);
+	if (ChainNameDagsRight.bIsInited) ChainNameDagsRight.MC.ProcessCommands(true);
+	if (OverviewScreenControllerIcon.bIsInited) OverviewScreenControllerIcon.MC.ProcessCommands(true);
 }
 
 simulated protected function BuildComplications ()
@@ -194,6 +254,15 @@ simulated protected function BuildComplications ()
 	ComplicationsNamesText.SetWidth(330);
 }
 
+simulated function OnInit ()
+{
+	super.OnInit();
+
+	ChainNameText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("Raid Alien UFO", "90BDBD"), Screen.bIsIn3D, false,, 28)
+	);
+}
+
 //////////////////////////
 /// Player interaction ///
 //////////////////////////
@@ -221,6 +290,16 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 
 	UpdateStages();
 	UpdateComplications();
+
+	ChainNameText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			class'UIUtilities_Infiltration'.static.ColourText(
+				GetFocusedActivity().GetActivityChain().GetOverviewTitle(),
+				"90BDBD"
+			),
+			Screen.bIsIn3D, false,, 28
+		)
+	);
 }
 
 protected function UpdateStages ()
