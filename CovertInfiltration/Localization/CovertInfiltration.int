@@ -234,7 +234,7 @@ strOverviewDescription="Rescue XCOM Personnel"
 strOverviewDescription="Capture ADVENT Collaborator"
 
 [Activity_IntelligenceAssault X2ActivityTemplate_Assault]
-strOverviewDescription="Hack ADVENT Datavault"
+strOverviewDescription="Protect Resistance Datatap"
 MissionPinLabel="Hack Information"
 
 [Activity_InformantAssault X2ActivityTemplate_Assault]
