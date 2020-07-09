@@ -131,6 +131,8 @@ simulated protected function BuildConfiguration()
 	else
 	{
 		Configuration.EnableLaunchLabelReplacement(class'UICovertActions'.default.CovertActions_LaunchAction, "");
+		Configuration.EnableLaunchConfirmation("Irrelevant Items Equipped", "The squad has unnecessary items equipped. This Covert Operation will not result in combat and these items are useless here. Are you sure you want to launch?", ShouldShowConfirm);
+		`Log("DIALOG SETUP!");
 	}
 	
 	Configuration.SetAugmentFakeMissionSiteFn(AugmentFakeMissionSite);
@@ -321,6 +323,11 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 simulated protected function bool CanClickLaunch()
 {
 	return GetAction().CanBeginAction();	
+}
+
+simulated protected function bool ShouldShowConfirm()
+{
+	return true;
 }
 
 simulated protected function OnLaunch()
