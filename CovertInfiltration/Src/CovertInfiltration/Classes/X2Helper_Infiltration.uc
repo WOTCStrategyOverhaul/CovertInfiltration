@@ -1500,3 +1500,82 @@ static function UpdateFacilityMissionLocks (optional XComGameState NewGameState)
 //	}
 }
 
+static function bool SquadHasIrrelevantItems (array<StateObjectReference> Soldiers)
+{
+	local StateObjectReference UnitRef;
+
+	`Log("Checking Squad");
+
+	foreach Soldiers(UnitRef)
+	{
+		if (UnitHasIrrelevantItems(UnitRef))
+		{
+			return true;
+		}
+	}
+
+	`Log("Validated Squad");
+
+	return false;
+}
+
+static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
+{
+	local XComGameStateHistory             History;
+	local XComGameState_Unit               UnitState;
+	local array<XComGameState_Item>        CurrentInventory;
+	local XComGameState_Item               InventoryItem;
+	local X2InfiltrationModTemplateManager InfilTemplateManager;
+	local X2InfiltrationModTemplate        InfilTemplate;
+
+	if (UnitRef.ObjectID <= 0) return false;
+	
+	History = `XCOMHISTORY;
+	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+
+	// loop through items
+	CurrentInventory = UnitState.GetAllInventoryItems();
+	foreach CurrentInventory(InventoryItem)
+	{
+		`Log("Evaluating " $ InventoryItem.GetMyTemplateName());
+
+		if (InventoryItem.GetMyTemplate().bInfiniteItem) continue;
+
+		// check item
+		InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
+
+		if (InfilTemplate != none)
+		{
+			`Log("Infil/Deter: " $ InfilTemplate.HoursAdded $ "/" $ InfilTemplate.Deterrence);
+			if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
+			{
+				`Log("Irrelevant Item!");
+				return true;
+			}
+		}
+		else
+		{
+			// check category
+			InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCategory(InventoryItem.GetMyTemplate());
+			
+			if (InfilTemplate != none)
+			{
+				`Log("Infil/Deter: " $ InfilTemplate.HoursAdded $ "/" $ InfilTemplate.Deterrence);
+				if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
+				{
+					`Log("Irrelevant Item!");
+					return true;
+				}
+			}
+			else
+			{
+				`Log("Infil/Deter: 0/0");
+				`Log("Irrelevant Item!");
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}

@@ -327,7 +327,7 @@ simulated protected function bool CanClickLaunch()
 
 simulated protected function bool ShouldShowConfirm()
 {
-	return true;
+	return class'X2Helper_Infiltration'.static.SquadHasIrrelevantItems(`XCOMHQ.Squad);
 }
 
 simulated protected function OnLaunch()
