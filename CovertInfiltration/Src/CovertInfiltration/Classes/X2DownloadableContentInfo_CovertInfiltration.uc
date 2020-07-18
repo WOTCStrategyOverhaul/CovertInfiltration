@@ -882,7 +882,6 @@ static function bool LoadingScreenOverrideTransitionMap(optional out string Over
 				case "Tunnels_Subway":
 					OverrideMapName = "CIN_Loading_Infiltration_Tunnels_Subway";
 					break;
-				// FIXME: Evalutate, create an Abandoned intro?
 				case "Abandoned":
 					OverrideMapName = "CIN_Loading_Infiltration_Abandoned";
 					break;
