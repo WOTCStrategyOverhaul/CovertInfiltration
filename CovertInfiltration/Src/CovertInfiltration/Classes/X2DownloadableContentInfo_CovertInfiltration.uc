@@ -865,20 +865,28 @@ static function bool LoadingScreenOverrideTransitionMap(optional out string Over
 			{
 				case "CityCenter":
 				case "Rooftops":
-				case "Slums":
 				case "Facility":
 					OverrideMapName = "CIN_Loading_Infiltration_CityCenter";
 					break;
 				case "Shanty":
+				case "Slums":
+					OverrideMapName = "CIN_Loading_Infiltration_Slums";
+					break;
 				case "SmallTown":
 				case "Wilderness":
 					OverrideMapName = "CIN_Loading_Infiltration_SmallTown";
 					break;
+				case "Tunnels_Sewer":
+					OverrideMapName = "CIN_Loading_Infiltration_Tunnels_Sewer";
+					break;
+				case "Tunnels_Subway":
+					OverrideMapName = "CIN_Loading_Infiltration_Tunnels_Subway";
+					break;
 				// FIXME: Evalutate, create an Abandoned intro?
 				case "Abandoned":
-				case "Tunnels_Sewer":
+					OverrideMapName = "CIN_Loading_Infiltration_Abandoned";
+					break;
 				case "Stronghold":
-				case "Tunnels_Subway":
 				default:
 					OverrideMapName = "CIN_Loading_Infiltration_CityCenter";
 					break;
