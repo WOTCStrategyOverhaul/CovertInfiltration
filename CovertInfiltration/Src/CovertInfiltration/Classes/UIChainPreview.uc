@@ -41,11 +41,16 @@ var protectedwrite UIScrollingText ComplicationsNamesText;
 var string strControllerIcon;
 var int ControllerIconWidthToHeight;
 
+var int iControllerButton;
+
+var protected bool bRegisteredInputHandler;
+
 //////////////////
 /// State vars ///
 //////////////////
 
 var protectedwrite StateObjectReference FocusedActivityRef;
+var bool bRestoreCamEarthViewOnOverviewClose;
 
 ////////////////
 /// Loc vars ///
@@ -101,7 +106,7 @@ simulated protected function BuildCenter ()
 	OverviewScreenButton.bAnimateOnInit = false;
 	OverviewScreenButton.LibID = 'X2InfoButton';
 	OverviewScreenButton.InitButton('OverviewScreenButton');
-	OverviewScreenButton.OnClickedDelegate = OpenOverview;
+	OverviewScreenButton.OnClickedDelegate = OnOverviewScreenButtonClicked;
 	OverviewScreenButton.SetY(16);
 
 	OverviewScreenControllerIcon = Spawn(class'UIImage', CenterSection);
@@ -162,8 +167,6 @@ simulated protected function BuildCenter ()
 	Stages[2].InitChainStage('ChainStage2', true, false);
 	Stages[2].SetPosition(665, 41);
 	Stages[2].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Future_LotsMore");
-
-	
 }
 
 simulated protected function OnChainNameRealized ()
@@ -210,6 +213,11 @@ simulated protected function OnChainNameRealized ()
 	if (ChainNameDagsLeft.bIsInited) ChainNameDagsLeft.MC.ProcessCommands(true);
 	if (ChainNameDagsRight.bIsInited) ChainNameDagsRight.MC.ProcessCommands(true);
 	if (OverviewScreenControllerIcon.bIsInited) OverviewScreenControllerIcon.MC.ProcessCommands(true);
+}
+
+simulated protected function OnOverviewScreenButtonClicked (UIButton Button)
+{
+	OpenOverview();
 }
 
 simulated protected function BuildComplications ()
@@ -263,13 +271,54 @@ simulated function OnInit ()
 	);
 }
 
+////////////////////////
+/// Controller input ///
+////////////////////////
+
+simulated function RegisterInputHandler ()
+{
+	if (bRegisteredInputHandler) return;
+
+	Screen.Movie.Stack.SubscribeToOnInputForScreen(Screen, OnScreenInput);
+	bRegisteredInputHandler = true;
+}
+
+simulated function UnregisterInputHandler ()
+{
+	if (!bRegisteredInputHandler) return;
+
+	Screen.Movie.Stack.UnsubscribeFromOnInputForScreen(Screen, OnScreenInput);
+	bRegisteredInputHandler = false;
+}
+
+simulated protected function bool OnScreenInput (UIScreen InputScreen, int iInput, int ActionMask)
+{
+	if (!CheckInputIsReleaseOrDirectionRepeat(iInput, ActionMask))
+	{
+		return false;
+	}
+
+	switch (iInput)
+	{
+		case iControllerButton:
+			if (bIsVisible && GetFocusedActivity() != none)
+			{
+				OpenOverview();
+				return true;
+			}
+		break;
+	}
+
+	return false;
+}
+
 //////////////////////////
 /// Player interaction ///
 //////////////////////////
 
-simulated function OpenOverview (UIButton Button)
+simulated function OpenOverview ()
 {
-	class'UIUtilities_Infiltration'.static.UIChainsOverview(GetFocusedActivity().ChainRef, false /* TODO */);
+	class'UIUtilities_Infiltration'.static.UIChainsOverview(GetFocusedActivity().ChainRef, bRestoreCamEarthViewOnOverviewClose);
 }
 
 ////////////////
@@ -439,6 +488,17 @@ protected function UpdateComplications ()
 //
 
 ///////////////
+/// Removal ///
+///////////////
+
+simulated event Removed ()
+{
+	UnregisterInputHandler();
+
+	super.Removed();
+}
+
+///////////////
 /// Helpers ///
 ///////////////
 
@@ -458,4 +518,6 @@ defaultproperties
 
 	strControllerIcon = "Icon_RT_R2" // Right trigger
 	ControllerIconWidthToHeight = 2 // The icon is 1:2 height:width
+
+	iControllerButton = 333 // FXS_BUTTON_RTRIGGER
 }
