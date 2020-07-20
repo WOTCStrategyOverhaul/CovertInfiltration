@@ -18,8 +18,8 @@ var protectedwrite UIText ChainNameText;
 var protectedwrite UIButton OverviewScreenButton;
 var protectedwrite UIImage OverviewScreenControllerIcon;
 
-var protectedwrite UIDags ChainNameDagsLeft;
-var protectedwrite UIDags ChainNameDagsRight;
+var protectedwrite UIImage ChainNameDagsLeft;
+var protectedwrite UIImage ChainNameDagsRight;
 
 // We support at most 3 now, any more we simply show the counts.
 // For sake of simplicity, all 3 are pre-created (and not created on-demand)
@@ -63,12 +63,11 @@ var localized string strMultipleComplicationsFluff;
 /// Layout constants ///
 ////////////////////////
 
-const ChainNameSectionMostLeft = 168.5;
-const ChainNameSectionMostRight = 933.5;
+const ChainNameSectionDagsWidth = 83;
 const ChainNameSectionPreButtonSpacing = 10;
 const ChainNameSectionButtonWidth = 23;
 const ChainNameSectionPreIconSpacing = 7;
-const ChainNameSectionMargin = 20;
+const ChainNameSectionMargin = 5;
 
 ////////////
 /// Init ///
@@ -116,26 +115,15 @@ simulated protected function BuildCenter ()
 	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
 	OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
 
-	ChainNameDagsLeft = Spawn(class'UIDags', CenterSection);
+	ChainNameDagsLeft = Spawn(class'UIImage', CenterSection);
 	ChainNameDagsLeft.bAnimateOnInit = false;
-	ChainNameDagsLeft.InitPanel('ChainNameDagsLeft');
-	ChainNameDagsLeft.SetColor("98C8C8");
-	ChainNameDagsLeft.SetAlpha(15);
-	ChainNameDagsLeft.SetPosition(ChainNameSectionMostLeft, 20);
-	//ChainNameDagsLeft.SetWidth(142); // TODO
-	ChainNameDagsLeft.SetHeight(20);
-	ChainNameDagsLeft.SetDagsScaleX(60); // TODO: Reverse
+	ChainNameDagsLeft.InitImage('ChainNameDagsLeft', "img:///UILibrary_CI_ChainPreview.ChainName_dags_l");
+	ChainNameDagsLeft.SetY(20);
 
-	ChainNameDagsRight = Spawn(class'UIDags', CenterSection);
+	ChainNameDagsRight = Spawn(class'UIImage', CenterSection);
 	ChainNameDagsRight.bAnimateOnInit = false;
-	ChainNameDagsRight.InitPanel('ChainNameDagsRight');
-	ChainNameDagsRight.SetColor("98C8C8");
-	ChainNameDagsRight.SetAlpha(15);
+	ChainNameDagsRight.InitImage('ChainNameDagsRight', "img:///UILibrary_CI_ChainPreview.ChainName_dags_r");
 	ChainNameDagsRight.SetY(20);
-	//ChainNameDagsRight.SetX(644);
-	//ChainNameDagsRight.SetWidth(142); // TODO
-	ChainNameDagsRight.SetHeight(20);
-	ChainNameDagsRight.SetDagsScaleX(60);
 
 	LeftExtraCountText = Spawn(class'UIText', CenterSection);
 	LeftExtraCountText.bAnimateOnInit = false;
@@ -171,7 +159,7 @@ simulated protected function BuildCenter ()
 
 simulated protected function OnChainNameRealized ()
 {
-	local float RequiredSpace, DagsWidth;
+	local float RequiredSpace;
 
 	// Text + button
 	RequiredSpace = ChainNameText.Width + ChainNameSectionPreButtonSpacing + ChainNameSectionButtonWidth;
@@ -182,22 +170,8 @@ simulated protected function OnChainNameRealized ()
 		RequiredSpace += ChainNameSectionPreIconSpacing + OverviewScreenControllerIcon.Width;
 	}
 
-	// Add side margin
-	RequiredSpace += ChainNameSectionMargin * 2;
-
-	// How wide are the dags?
-	DagsWidth = ChainNameSectionMostRight - ChainNameSectionMostLeft - RequiredSpace; 
-
-	// Distrubute dags on both sides
-	DagsWidth /= 2;
-
-	// Position dags
-	ChainNameDagsLeft.SetWidth(DagsWidth);
-	ChainNameDagsRight.SetWidth(DagsWidth);
-	ChainNameDagsRight.SetX(ChainNameSectionMostRight - DagsWidth);
-
 	// Position text
-	ChainNameText.SetX(ChainNameSectionMostLeft + DagsWidth + ChainNameSectionMargin);
+	ChainNameText.SetX(-CenterSection.X - RequiredSpace / 2);
 
 	// Position button
 	OverviewScreenButton.SetX(ChainNameText.X + ChainNameText.Width + ChainNameSectionPreButtonSpacing);
@@ -208,11 +182,15 @@ simulated protected function OnChainNameRealized ()
 		OverviewScreenControllerIcon.SetX(OverviewScreenButton.X + ChainNameSectionButtonWidth + ChainNameSectionPreIconSpacing);
 	}
 
+	// Position the dags
+	ChainNameDagsLeft.SetX(ChainNameText.X - ChainNameSectionDagsWidth - ChainNameSectionMargin);
+	ChainNameDagsRight.SetX(ChainNameText.X + RequiredSpace + ChainNameSectionMargin);
+
 	// Force everything we touched to update this frame
 	ChainNameText.MC.ProcessCommands(true);
 	if (ChainNameDagsLeft.bIsInited) ChainNameDagsLeft.MC.ProcessCommands(true);
 	if (ChainNameDagsRight.bIsInited) ChainNameDagsRight.MC.ProcessCommands(true);
-	if (OverviewScreenControllerIcon.bIsInited) OverviewScreenControllerIcon.MC.ProcessCommands(true);
+	if (OverviewScreenControllerIcon != none && OverviewScreenControllerIcon.bIsInited) OverviewScreenControllerIcon.MC.ProcessCommands(true);
 }
 
 simulated protected function OnOverviewScreenButtonClicked (UIButton Button)
