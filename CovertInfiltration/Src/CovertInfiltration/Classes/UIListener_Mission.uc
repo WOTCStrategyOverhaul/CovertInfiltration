@@ -7,7 +7,7 @@ event OnInit (UIScreen Screen)
 	MissionScreen = UIMission(Screen);
 	if (MissionScreen == none) return;
 
-	SpawnViewChainButton(MissionScreen);
+	SpawnChainPreview(MissionScreen);
 	CleanUpStrategyHudAlert(MissionScreen);
 
 	if (MissionScreen.IsA(class'UIMission_AlienFacility'.Name))
@@ -16,15 +16,14 @@ event OnInit (UIScreen Screen)
 	}
 }
 
-// TODO: Rename
-simulated protected function SpawnViewChainButton (UIMission MissionScreen)
+simulated protected function SpawnChainPreview (UIMission MissionScreen)
 {
 	local XComGameState_Activity ActivityState;
 	
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID);
 	if (ActivityState == none) return;
 
-	MissionScreen.SetTimer(1, false, nameof(DoSpawnViewChainButton), self);
+	MissionScreen.SetTimer(1, false, nameof(DoSpawnChainPreview), self);
 
 	// Don't trigger this tutorial on single stage chains
 	if (ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
@@ -33,7 +32,7 @@ simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 	}
 }
 
-simulated protected function DoSpawnViewChainButton ()
+simulated protected function DoSpawnChainPreview ()
 {
 	local UIMission MissionScreen;
 	local UIChainPreview ChainPreview;

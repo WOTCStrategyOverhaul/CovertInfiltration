@@ -7,11 +7,12 @@
 
 class UICovertActionsGeoscape extends UIScreen;
 
-var UIChainPreview ChainPreview;
-
 // UI - background gradient
 var UIImage BackgroundGradientTop;
 var UIImage BackgroundGradientBottom;
+
+// UI - chain preview
+var UIChainPreview ChainPreview;
 
 // UI - list
 var UIList ActionsList;
@@ -172,12 +173,7 @@ simulated function BuildScreen()
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
 	BuildBackground();
-	
-	// TODO: This is temp
-	ChainPreview = Spawn(class'UIChainPreview', self);
-	ChainPreview.InitChainPreview('ChainPreview');
-	ChainPreview.RegisterInputHandler();
-	
+	BuildChainPreview();
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
@@ -198,6 +194,13 @@ simulated protected function BuildBackground ()
 	BackgroundGradientBottom.AnchorBottomLeft();
 	BackgroundGradientBottom.SetPosition(0, -512);
 	BackgroundGradientBottom.SetSize(Movie.UI_RES_X, 512);
+}
+
+simulated protected function BuildChainPreview ()
+{
+	ChainPreview = Spawn(class'UIChainPreview', self);
+	ChainPreview.InitChainPreview('ChainPreview');
+	ChainPreview.RegisterInputHandler();
 }
 
 simulated protected function BuildActionsList()
@@ -779,7 +782,7 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	UpdateButtons();
-	UpdateViewChainButton();
+	UpdateChainPreview();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 	UpdateNavHelp();
@@ -857,8 +860,7 @@ simulated function UpdateButtons()
 	}
 }
 
-// TODO: Rename
-simulated function UpdateViewChainButton ()
+simulated function UpdateChainPreview ()
 {
 	local XComGameState_Activity ActivityState;
 	local StateObjectReference EmptyRef;
