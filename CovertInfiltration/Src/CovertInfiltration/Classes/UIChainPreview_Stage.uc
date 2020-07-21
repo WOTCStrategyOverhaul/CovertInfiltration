@@ -28,18 +28,6 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 	StageNameTextContainer.bAutoScroll = true;
 	StageNameTextContainer.SetPosition(15, 37);
 	StageNameTextContainer.SetSize(200, 50);
-
-	StageNameTextContainer.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(
-			class'UIUtilities_Infiltration'.static.ColourText(
-				class'UIUtilities_Text'.static.AlignCenter(
-					class'UIUtilities_Infiltration'.static.SetTextLeading("Assault Assault Assault Assault Assault Assault Assault Assault", -2)
-				),
-				"3AE7CF"
-			),
-			Screen.bIsIn3D, true,, 22
-		)
-	);
 }
 
 ////////////////

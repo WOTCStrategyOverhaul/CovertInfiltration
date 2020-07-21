@@ -128,33 +128,24 @@ simulated protected function BuildCenter ()
 	LeftExtraCountText = Spawn(class'UIText', CenterSection);
 	LeftExtraCountText.bAnimateOnInit = false;
 	LeftExtraCountText.InitText('LeftExtraCountText');
-	LeftExtraCountText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+2", "249182"), Screen.bIsIn3D, true,, 22)
-	);
 	LeftExtraCountText.SetPosition(168.5, 48);
 
 	RightExtraCountText = Spawn(class'UIText', CenterSection);
 	RightExtraCountText.bAnimateOnInit = false;
 	RightExtraCountText.InitText('RightExtraCountText');
-	RightExtraCountText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("+5", "7A7A6E"), Screen.bIsIn3D, true,, 22)
-	);
 	RightExtraCountText.SetPosition(899.5, 48);
 
 	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[0].InitChainStage('ChainStage0', false, true);
 	Stages[0].SetPosition(210, 41);
-	Stages[0].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.LotsBefore_Completed_More");
 
 	Stages[1] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[1].InitChainStage('ChainStage1', true, true);
 	Stages[1].SetPosition(438, 41);
-	Stages[1].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Current_More");
 
 	Stages[2] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[2].InitChainStage('ChainStage2', true, false);
 	Stages[2].SetPosition(665, 41);
-	Stages[2].ArrowImage.LoadImage("img:///UILibrary_CI_ChainPreview.Arrows.Following_Future_LotsMore");
 }
 
 simulated protected function OnChainNameRealized ()
@@ -227,26 +218,13 @@ simulated protected function BuildComplications ()
 	ComplicationsFluffDescription = Spawn(class'UIText', ComplicationsSection);
 	ComplicationsFluffDescription.bAnimateOnInit = false;
 	ComplicationsFluffDescription.InitText('ComplicationsFluffDescription');
-	/*ComplicationsFluffDescription.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Text'.static.GetColoredText(strSingleComplicationFluff, eUIState_Bad), Screen.bIsIn3D, true,, 18)
-	);*/
 	ComplicationsFluffDescription.SetPosition(112, 0);
 
 	ComplicationsNamesText = Spawn(class'UIScrollingText', ComplicationsSection);
 	ComplicationsNamesText.bAnimateOnInit = false;
 	ComplicationsNamesText.InitScrollingText('ComplicationsNamesText');
-	//ComplicationsNamesText.SetTitle(class'UIUtilities_Text'.static.GetColoredText("Reward Interception", eUIState_Bad)); // TODO: Temp
 	ComplicationsNamesText.SetPosition(0, 28);
 	ComplicationsNamesText.SetWidth(330);
-}
-
-simulated function OnInit ()
-{
-	super.OnInit();
-
-	ChainNameText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(class'UIUtilities_Infiltration'.static.ColourText("Raid Alien UFO", "90BDBD"), Screen.bIsIn3D, false,, 28)
-	);
 }
 
 ////////////////////////
@@ -332,8 +310,9 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 protected function UpdateStages ()
 {
 	local XComGameState_Activity FocusedActivityState, ActivityState;
+	local int FocusedStageIndex, LeftExtraCount, RightExtraCount;
 	local XComGameState_ActivityChain ChainState;
-	local int FocusedStageIndex;
+	local string strLeftExtra, strRightExtra;
 
 	FocusedActivityState = GetFocusedActivity();
 	if (FocusedActivityState == none)
@@ -405,7 +384,75 @@ protected function UpdateStages ()
 	}
 	else // 4 and more
 	{
-		// TODO
+		// Is the current first?
+		if (FocusedStageIndex == 0)
+		{
+			LeftExtraCount = 0;
+			RightExtraCount = Max(0, ChainState.StageRefs.Length - 3);
+
+			Stages[0].Show();
+			Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(0));
+
+			Stages[1].Show();
+			Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(1));
+
+			Stages[2].Show();
+			Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(2));
+		}
+		
+		// Is the current last?
+		else if (FocusedStageIndex == ChainState.StageRefs.Length - 1)
+		{
+			LeftExtraCount = Max(0, ChainState.StageRefs.Length - 3);
+			RightExtraCount = 0;
+
+			Stages[0].Show();
+			Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(ChainState.StageRefs.Length - 1 - 2));
+
+			Stages[1].Show();
+			Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(ChainState.StageRefs.Length - 1 - 1));
+
+			Stages[2].Show();
+			Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(ChainState.StageRefs.Length - 1 - 0));
+		}
+
+		// We are somewhere in the miss
+		else
+		{
+			LeftExtraCount = Max(0, FocusedStageIndex - 1);
+			RightExtraCount = Max(0, ChainState.StageRefs.Length - FocusedStageIndex - 2);
+
+			Stages[0].Show();
+			Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(FocusedStageIndex - 1));
+
+			Stages[1].Show();
+			Stages[1].UpdateForActivity(ChainState.GetActivityAtIndex(FocusedStageIndex));
+
+			Stages[2].Show();
+			Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(FocusedStageIndex + 1));
+		}
+		
+		if (LeftExtraCount < 1) LeftExtraCountText.Hide();
+		else
+		{
+			strLeftExtra = "+" $ LeftExtraCount;
+			strLeftExtra = class'UIUtilities_Infiltration'.static.ColourText(strLeftExtra, "249182");
+			strLeftExtra = class'UIUtilities_Text'.static.AddFontInfo(strLeftExtra, Screen.bIsIn3D, true,, 22);
+
+			LeftExtraCountText.Show();
+			LeftExtraCountText.SetHtmlText(strLeftExtra);
+		}
+		
+		if (RightExtraCount < 1) RightExtraCountText.Hide();
+		else
+		{
+			strRightExtra = "+" $ RightExtraCount;
+			strRightExtra = class'UIUtilities_Infiltration'.static.ColourText(strRightExtra, "7A7A6E");
+			strRightExtra = class'UIUtilities_Text'.static.AddFontInfo(strRightExtra, Screen.bIsIn3D, true,, 22);
+
+			RightExtraCountText.Show();
+			RightExtraCountText.SetHtmlText(strRightExtra);
+		}
 	}
 }
 
