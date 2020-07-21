@@ -137,15 +137,15 @@ simulated protected function BuildCenter ()
 
 	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[0].InitChainStage('ChainStage0', false, true);
-	Stages[0].SetPosition(210, 41);
+	Stages[0].SetPosition(206, 41);
 
 	Stages[1] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[1].InitChainStage('ChainStage1', true, true);
-	Stages[1].SetPosition(438, 41);
+	Stages[1].SetPosition(434, 41);
 
 	Stages[2] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[2].InitChainStage('ChainStage2', true, false);
-	Stages[2].SetPosition(665, 41);
+	Stages[2].SetPosition(661, 41);
 }
 
 simulated protected function OnChainNameRealized ()
