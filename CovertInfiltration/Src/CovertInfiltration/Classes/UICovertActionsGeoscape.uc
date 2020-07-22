@@ -165,6 +165,11 @@ simulated function OnInit()
 	bDontUpdateData = false;
 	UpdateData();
 
+	if (ChainPreview.FocusedActivityRef.ObjectID > 0)
+	{
+		ChainPreview.AnimateIn(0.2);
+	}
+
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
 

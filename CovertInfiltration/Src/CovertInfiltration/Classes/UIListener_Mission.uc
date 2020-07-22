@@ -45,6 +45,7 @@ simulated protected function DoSpawnChainPreview ()
 	ChainPreview.InitChainPreview('ChainPreview');
 	ChainPreview.SetFocusedActivity(class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID).GetReference());
 	ChainPreview.RegisterInputHandler();
+	ChainPreview.AnimateIn();
 }
 
 simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)

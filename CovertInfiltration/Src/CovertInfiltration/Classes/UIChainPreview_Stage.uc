@@ -119,6 +119,17 @@ function UpdateForActivity (XComGameState_Activity ActivityState)
 	StageNameTextContainer.SetHTMLText(strName);
 }
 
+/////////////////
+/// Animation ///
+/////////////////
+
+simulated function AnimateIn (optional float Delay = 0)
+{
+	// TODO: Scale in
+
+	AddTweenBetween("_alpha", 0, Alpha, 0.3, Delay, "easeoutquad");
+}
+
 /////////////////////////
 /// defaultproperties ///
 /////////////////////////
