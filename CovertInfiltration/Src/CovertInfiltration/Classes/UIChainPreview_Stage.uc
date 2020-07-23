@@ -1,8 +1,12 @@
 class UIChainPreview_Stage extends UIPanel;
 
 var protectedwrite UIPanel Container;
+
 var protectedwrite UIImage ArrowImage;
 var protectedwrite UITextContainerImproved StageNameTextContainer;
+
+var protectedwrite UIText LeftExtraCountText;
+var protectedwrite UIText RightExtraCountText;
 
 var protectedwrite bool bSiblingLeft;
 var protectedwrite bool bSiblingRight;
@@ -39,6 +43,24 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 	StageNameTextContainer.OriginCenter();
 	StageNameTextContainer.SetPosition(-100, -4);
 	StageNameTextContainer.SetSize(200, 54);
+
+	if (!bSiblingLeft)
+	{
+		LeftExtraCountText = Spawn(class'UIText', Container);
+		LeftExtraCountText.bAnimateOnInit = false;
+		LeftExtraCountText.InitText('LeftExtraCountText');
+		LeftExtraCountText.OriginCenter();
+		LeftExtraCountText.SetPosition(-150, -37);
+	}
+
+	if (!bSiblingRight)
+	{
+		RightExtraCountText = Spawn(class'UIText', Container);
+		RightExtraCountText.bAnimateOnInit = false;
+		RightExtraCountText.InitText('RightExtraCountText');
+		RightExtraCountText.OriginCenter();
+		RightExtraCountText.SetPosition(117, -37);
+	}
 }
 
 ////////////////
@@ -128,6 +150,46 @@ function UpdateForActivity (XComGameState_Activity ActivityState)
 	strName = class'UIUtilities_Text'.static.AddFontInfo(strName, Screen.bIsIn3D, true,, 22);
 
 	StageNameTextContainer.SetHTMLText(strName);
+}
+
+simulated function SetExtraCountLeft (int Count)
+{
+	if (LeftExtraCountText == none)
+	{
+		`Redscreen("CI: UIChainPreview_Stage" @ GetFuncName() $ ": LeftExtraCountText == none");
+		return;
+	}
+
+	SetExtraCount(LeftExtraCountText, Count, "249182");
+}
+
+simulated function SetExtraCountRight (int Count)
+{
+	if (RightExtraCountText == none)
+	{
+		`Redscreen("CI: UIChainPreview_Stage" @ GetFuncName() $ ": RightExtraCountText == none");
+		return;
+	}
+
+	SetExtraCount(RightExtraCountText, Count, "7A7A6E");
+}
+
+simulated protected function SetExtraCount (UIText Text, int Count, string Colour)
+{
+	local string strCount;
+
+	if (Count < 1)
+	{
+		Text.Hide();
+		return;
+	}
+
+	strCount = "+" $ Count;
+	strCount = class'UIUtilities_Infiltration'.static.ColourText(strCount, Colour);
+	strCount = class'UIUtilities_Text'.static.AddFontInfo(strCount, Screen.bIsIn3D, true,, 22);
+
+	Text.Show();
+	Text.SetHtmlText(strCount);
 }
 
 /////////////////

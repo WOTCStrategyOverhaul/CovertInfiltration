@@ -28,8 +28,6 @@ var protectedwrite UIImage ChainNameDagsRight; // Sliding animation
 // We support at most 3 now, any more we simply show the counts.
 // For sake of simplicity, all 3 are pre-created (and not created on-demand)
 var protectedwrite UIChainPreview_Stage Stages[3];
-var protectedwrite UIText LeftExtraCountText;
-var protectedwrite UIText RightExtraCountText;
 
 var protectedwrite UIPanel ComplicationsSection;
 var protectedwrite UIImage ComplicationsBacklight;
@@ -140,16 +138,6 @@ simulated protected function BuildCenter ()
 	ChainNameDagsRight = Spawn(class'UIImage', ChainNameDagsRightContainer);
 	ChainNameDagsRight.bAnimateOnInit = false;
 	ChainNameDagsRight.InitImage('ChainNameDagsRight', "img:///UILibrary_CI_ChainPreview.ChainName_dags_r");
-
-	LeftExtraCountText = Spawn(class'UIText', CenterSection);
-	LeftExtraCountText.bAnimateOnInit = false;
-	LeftExtraCountText.InitText('LeftExtraCountText');
-	LeftExtraCountText.SetPosition(168.5, 48);
-
-	RightExtraCountText = Spawn(class'UIText', CenterSection);
-	RightExtraCountText.bAnimateOnInit = false;
-	RightExtraCountText.InitText('RightExtraCountText');
-	RightExtraCountText.SetPosition(899.5, 48);
 
 	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[0].InitChainStage('ChainStage0', false, true);
@@ -330,7 +318,6 @@ protected function UpdateStages ()
 	local int FocusedStageIndex, LeftExtraCount, RightExtraCount;
 	local XComGameState_Activity FocusedActivityState;
 	local XComGameState_ActivityChain ChainState;
-	local string strLeftExtra, strRightExtra;
 
 	FocusedActivityState = GetFocusedActivity();
 	if (FocusedActivityState == none)
@@ -351,9 +338,6 @@ protected function UpdateStages ()
 
 	if (ChainState.StageRefs.Length == 1)
 	{
-		LeftExtraCountText.Hide();
-		RightExtraCountText.Hide();
-		
 		Stages[0].Hide();
 		Stages[2].Hide();
 
@@ -362,9 +346,6 @@ protected function UpdateStages ()
 	}
 	else if (ChainState.StageRefs.Length == 2)
 	{
-		LeftExtraCountText.Hide();
-		RightExtraCountText.Hide();
-
 		if (FocusedStageIndex == 0)
 		{
 			Stages[0].Hide();
@@ -388,9 +369,6 @@ protected function UpdateStages ()
 	}
 	else if (ChainState.StageRefs.Length == 3)
 	{
-		LeftExtraCountText.Hide();
-		RightExtraCountText.Hide();
-		
 		Stages[0].Show();
 		Stages[0].UpdateForActivity(ChainState.GetActivityAtIndex(0));
 
@@ -449,29 +427,10 @@ protected function UpdateStages ()
 			Stages[2].Show();
 			Stages[2].UpdateForActivity(ChainState.GetActivityAtIndex(FocusedStageIndex + 1));
 		}
-		
-		if (LeftExtraCount < 1) LeftExtraCountText.Hide();
-		else
-		{
-			strLeftExtra = "+" $ LeftExtraCount;
-			strLeftExtra = class'UIUtilities_Infiltration'.static.ColourText(strLeftExtra, "249182");
-			strLeftExtra = class'UIUtilities_Text'.static.AddFontInfo(strLeftExtra, Screen.bIsIn3D, true,, 22);
-
-			LeftExtraCountText.Show();
-			LeftExtraCountText.SetHtmlText(strLeftExtra);
-		}
-		
-		if (RightExtraCount < 1) RightExtraCountText.Hide();
-		else
-		{
-			strRightExtra = "+" $ RightExtraCount;
-			strRightExtra = class'UIUtilities_Infiltration'.static.ColourText(strRightExtra, "7A7A6E");
-			strRightExtra = class'UIUtilities_Text'.static.AddFontInfo(strRightExtra, Screen.bIsIn3D, true,, 22);
-
-			RightExtraCountText.Show();
-			RightExtraCountText.SetHtmlText(strRightExtra);
-		}
 	}
+
+	Stages[0].SetExtraCountLeft(LeftExtraCount);
+	Stages[2].SetExtraCountRight(RightExtraCount);
 }
 
 protected function UpdateComplications ()
