@@ -310,7 +310,7 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 		)
 	);
 
-	// TODO: Halt all ongoing animations
+	HaltAllAnimation();
 }
 
 protected function UpdateStages ()
@@ -495,8 +495,6 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	
 	StagesDelay = InitialDelay;
 	
-	// TODO: Extras
-
 	// Can't iterate fixed arrays
 	LocalStages.AddItem(Stages[0]);
 	LocalStages.AddItem(Stages[1]);
@@ -550,6 +548,54 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 
 	ChainNameDagsRight.AddTweenBetween("_alpha", 0, ChainNameDagsRight.Alpha, 0.5, DagsDelay, "easeoutquad");
 	ChainNameDagsRight.AddTweenBetween("_x", ChainNameDagsRight.X - 60, ChainNameDagsRight.X, 0.5, DagsDelay, "easeoutquad");
+}
+
+simulated protected function SetFinalAnimationValues ()
+{
+	CenterBacklight.MC.SetNum("_alpha", CenterBacklight.Alpha);
+
+	ChainNameContentContainer.MC.SetNum("_y", ChainNameContentContainer.Y);
+	ChainNameText.MC.SetNum("_alpha", ChainNameText.Alpha);
+	OverviewScreenButton.MC.SetNum("_alpha", OverviewScreenButton.Alpha);
+	if (OverviewScreenControllerIcon != none) OverviewScreenControllerIcon.MC.SetNum("_alpha", OverviewScreenControllerIcon.Alpha);
+
+	ChainNameDagsLeft.MC.SetNum("_alpha", ChainNameDagsLeft.Alpha);
+	ChainNameDagsLeft.MC.SetNum("_x", ChainNameDagsLeft.X);
+
+	ChainNameDagsRight.MC.SetNum("_alpha", ChainNameDagsRight.Alpha);
+	ChainNameDagsRight.MC.SetNum("_x", ChainNameDagsRight.X);
+
+	ComplicationsBacklight.MC.SetNum("_alpha", ComplicationsBacklight.Alpha);
+
+	ComplicationsFluffHeader.MC.SetNum("_alpha", ComplicationsFluffHeader.Alpha);
+	ComplicationsWarnIcon.MC.SetNum("_alpha", ComplicationsWarnIcon.Alpha);
+	ComplicationsFluffDescription.MC.SetNum("_alpha", ComplicationsFluffDescription.Alpha);
+	ComplicationsNamesText.MC.SetNum("_alpha", ComplicationsNamesText.Alpha);
+}
+
+simulated protected function HaltAllAnimation ()
+{
+	Stages[0].HaltAllAnimation();
+	Stages[1].HaltAllAnimation();
+	Stages[2].HaltAllAnimation();
+	
+	CenterBacklight.RemoveTweens();
+
+	ComplicationsBacklight.RemoveTweens();
+	ComplicationsFluffHeader.RemoveTweens();
+	ComplicationsWarnIcon.RemoveTweens();
+	ComplicationsFluffDescription.RemoveTweens();
+	ComplicationsNamesText.RemoveTweens();
+
+	ChainNameContentContainer.RemoveTweens();
+	ChainNameText.RemoveTweens();
+	OverviewScreenButton.RemoveTweens();
+	if (OverviewScreenControllerIcon != none) OverviewScreenControllerIcon.RemoveTweens();
+
+	ChainNameDagsLeft.RemoveTweens();
+	ChainNameDagsRight.RemoveTweens();
+
+	SetFinalAnimationValues();
 }
 
 ///////////////

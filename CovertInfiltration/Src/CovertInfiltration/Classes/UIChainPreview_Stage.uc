@@ -198,10 +198,25 @@ simulated protected function SetExtraCount (UIText Text, int Count, string Colou
 
 simulated function AnimateIn (optional float Delay = 0)
 {
-	Container.AddTweenBetween("_alpha", 0, Alpha, 0.3, Delay, "easeoutquad");
+	Container.AddTweenBetween("_alpha", 0, Container.Alpha, 0.3, Delay, "easeoutquad");
 
 	Container.AddTweenBetween("_xscale", 150, 100, 0.3, Delay, "easeoutquad");
 	Container.AddTweenBetween("_yscale", 150, 100, 0.3, Delay, "easeoutquad");
+}
+
+simulated protected function SetFinalAnimationValues ()
+{
+	Container.MC.SetNum("_alpha", Container.Alpha);
+
+	Container.MC.SetNum("_xscale", 100);
+	Container.MC.SetNum("_yscale", 100);
+}
+
+simulated function HaltAllAnimation ()
+{
+	Container.RemoveTweens();
+
+	SetFinalAnimationValues();
 }
 
 /////////////////////////
