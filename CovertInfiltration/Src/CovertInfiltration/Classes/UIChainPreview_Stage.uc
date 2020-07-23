@@ -1,5 +1,6 @@
 class UIChainPreview_Stage extends UIPanel;
 
+var protectedwrite UIPanel Container;
 var protectedwrite UIImage ArrowImage;
 var protectedwrite UITextContainerImproved StageNameTextContainer;
 
@@ -17,17 +18,27 @@ simulated function InitChainStage (name InitName, bool bInitSiblingLeft, bool bI
 	bSiblingLeft = bInitSiblingLeft;
 	bSiblingRight = bInitSiblingRight;
 
-	ArrowImage = Spawn(class'UIImage', self);
+	Container = Spawn(class'UIPanel', self);
+	Container.bAnimateOnInit = false;
+	Container.InitPanel('Container');
+	//Container.SetSize(227, 87);
+	Container.SetPosition(113.5, 43.5);
+
+	ArrowImage = Spawn(class'UIImage', Container);
 	ArrowImage.bAnimateOnInit = false;
 	ArrowImage.InitImage('ArrowImage');
-	ArrowImage.SetPosition(0, 8);
+	//ArrowImage.SetPosition(0, 8);
+	ArrowImage.OriginCenter();
+	ArrowImage.SetPosition(14, -20);
 
-	StageNameTextContainer = Spawn(class'UITextContainerImproved', self);
+	StageNameTextContainer = Spawn(class'UITextContainerImproved', Container);
 	StageNameTextContainer.bAnimateOnInit = false;
 	StageNameTextContainer.InitTextContainer('StageNameTextContainer');
 	StageNameTextContainer.bAutoScroll = true;
-	StageNameTextContainer.SetPosition(15, 37);
-	StageNameTextContainer.SetSize(200, 50);
+	//StageNameTextContainer.SetPosition(15, 37);
+	StageNameTextContainer.OriginCenter();
+	StageNameTextContainer.SetPosition(-100, -4);
+	StageNameTextContainer.SetSize(200, 54);
 }
 
 ////////////////
@@ -125,9 +136,10 @@ function UpdateForActivity (XComGameState_Activity ActivityState)
 
 simulated function AnimateIn (optional float Delay = 0)
 {
-	// TODO: Scale in
+	Container.AddTweenBetween("_alpha", 0, Alpha, 0.3, Delay, "easeoutquad");
 
-	AddTweenBetween("_alpha", 0, Alpha, 0.3, Delay, "easeoutquad");
+	Container.AddTweenBetween("_xscale", 150, 100, 0.3, Delay, "easeoutquad");
+	Container.AddTweenBetween("_yscale", 150, 100, 0.3, Delay, "easeoutquad");
 }
 
 /////////////////////////

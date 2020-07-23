@@ -153,7 +153,7 @@ simulated protected function BuildCenter ()
 
 	Stages[0] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[0].InitChainStage('ChainStage0', false, true);
-	Stages[0].SetPosition(206, 41);
+	Stages[0].SetPosition(207, 41);
 
 	Stages[1] = Spawn(class'UIChainPreview_Stage', CenterSection);
 	Stages[1].InitChainStage('ChainStage1', true, true);

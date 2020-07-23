@@ -178,10 +178,10 @@ simulated function BuildScreen()
 	// Note that bAnimateOnInit is set to false on most elements since we do custom animations
 
 	BuildBackground();
-	BuildChainPreview();
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
+	BuildChainPreview();
 }
 
 simulated protected function BuildBackground ()
@@ -878,6 +878,7 @@ simulated function UpdateChainPreview ()
 	}
 
 	ChainPreview.SetFocusedActivity(ActivityState.GetReference());
+	// TODO: Reset text scroll
 }
 
 simulated function UpdateCovertActionInfo()
