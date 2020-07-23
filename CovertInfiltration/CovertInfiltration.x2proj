@@ -58,6 +58,9 @@
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\GeoscapeMesh_CI.upk">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\CIN_Loading_Infiltration_CityCenter.umap">
       <SubType>Content</SubType>
     </Content>
