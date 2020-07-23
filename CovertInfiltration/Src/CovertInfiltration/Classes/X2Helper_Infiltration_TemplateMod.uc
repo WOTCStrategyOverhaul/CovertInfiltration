@@ -450,6 +450,30 @@ static function PatchAlienNetworkMissionSource ()
 	}
 }
 
+static function PatchSabotageMonumentMissionSchedules ()
+{
+	local XComTacticalMissionManager MissionManager;
+	local int i;
+
+	MissionManager = `TACTICALMISSIONMGR;
+
+	for (i = 0; i < MissionManager.arrMissions.Length; i++)
+	{
+		if (MissionManager.arrMissions[i].sType == "SabotageCC")
+		{
+			MissionManager.arrMissions[i].MissionSchedules.Length = 0;
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D1_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D2_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D3_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D4_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D5_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D6_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_D7_Standard');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Guerilla_DX_Horde');
+		}
+	}
+}
+
 //////////////////
 /// Objectives ///
 //////////////////
