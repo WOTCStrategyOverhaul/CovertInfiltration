@@ -512,24 +512,8 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	// The backlight takes same amount of time as the stages
 	CenterBacklight.AddTweenBetween("_alpha", 0, CenterBacklight.Alpha, StagesDelay - InitialDelay, StagesDelay, "easeoutquad");
 
-	// TODO: Complications after the chain name
-	if (ComplicationsSection.bIsVisible)
-	{
-		ComplicationsDelay = StagesDelay + 0.2;
-		TitleDelay = ComplicationsDelay + 0.3;
-		
-		ComplicationsBacklight.AddTweenBetween("_alpha", 0, ComplicationsBacklight.Alpha, 0.5, ComplicationsDelay, "easeOutBounce");
-
-		ComplicationsContentDelay = ComplicationsDelay + 0.1;
-		ComplicationsFluffHeader.AddTweenBetween("_alpha", 0, ComplicationsFluffHeader.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
-		ComplicationsWarnIcon.AddTweenBetween("_alpha", 0, ComplicationsWarnIcon.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
-		ComplicationsFluffDescription.AddTweenBetween("_alpha", 0, ComplicationsFluffDescription.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
-		ComplicationsNamesText.AddTweenBetween("_alpha", 0, ComplicationsNamesText.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
-	}
-	else
-	{
-		TitleDelay = StagesDelay + 0.2;
-	}
+	TitleDelay = StagesDelay + 0.2;
+	DagsDelay = TitleDelay + 0.3;
 
 	ChainNameContentContainer.AddTweenBetween("_y", ChainNameContentContainer.Y - 30, ChainNameContentContainer.Y, 0.5, TitleDelay, "easeoutquad");
 
@@ -541,13 +525,24 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 		OverviewScreenControllerIcon.AddTweenBetween("_alpha", 0, OverviewScreenControllerIcon.Alpha, 0.5, TitleDelay, "easeoutquad");
 	}
 
-	DagsDelay = TitleDelay + 0.3;
-
 	ChainNameDagsLeft.AddTweenBetween("_alpha", 0, ChainNameDagsLeft.Alpha, 0.5, DagsDelay, "easeoutquad");
 	ChainNameDagsLeft.AddTweenBetween("_x", ChainNameDagsLeft.X + 60, ChainNameDagsLeft.X, 0.5, DagsDelay, "easeoutquad");
 
 	ChainNameDagsRight.AddTweenBetween("_alpha", 0, ChainNameDagsRight.Alpha, 0.5, DagsDelay, "easeoutquad");
 	ChainNameDagsRight.AddTweenBetween("_x", ChainNameDagsRight.X - 60, ChainNameDagsRight.X, 0.5, DagsDelay, "easeoutquad");
+
+	if (ComplicationsSection.bIsVisible)
+	{
+		ComplicationsDelay = DagsDelay + 0.6;
+		
+		ComplicationsBacklight.AddTweenBetween("_alpha", 0, ComplicationsBacklight.Alpha, 1, ComplicationsDelay, "easeOutBack");
+
+		ComplicationsContentDelay = ComplicationsDelay + 0.1;
+		ComplicationsFluffHeader.AddTweenBetween("_alpha", 0, ComplicationsFluffHeader.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
+		ComplicationsWarnIcon.AddTweenBetween("_alpha", 0, ComplicationsWarnIcon.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
+		ComplicationsFluffDescription.AddTweenBetween("_alpha", 0, ComplicationsFluffDescription.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
+		ComplicationsNamesText.AddTweenBetween("_alpha", 0, ComplicationsNamesText.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
+	}
 }
 
 simulated protected function SetFinalAnimationValues ()
