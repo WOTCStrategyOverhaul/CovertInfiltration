@@ -14,6 +14,7 @@ class UIChainPreview extends UIPanel;
 var protectedwrite UIPanel CenterSection;
 var protectedwrite UIImage CenterBacklight;
 
+var protectedwrite UIPanel ChainNameContentContainer;
 var protectedwrite UIText ChainNameText;
 var protectedwrite UIButton OverviewScreenButton;
 var protectedwrite UIImage OverviewScreenControllerIcon;
@@ -95,20 +96,24 @@ simulated protected function BuildCenter ()
 	CenterBacklight.SetPosition(178, 0);
 	CenterBacklight.SetAlpha(20);
 
-	ChainNameText = Spawn(class'UIText', CenterSection);
+	ChainNameContentContainer = Spawn(class'UIPanel', CenterSection);
+	ChainNameContentContainer.bAnimateOnInit = false;
+	ChainNameContentContainer.InitPanel('ChainNameContentContainer');
+
+	ChainNameText = Spawn(class'UIText', ChainNameContentContainer);
 	ChainNameText.bAnimateOnInit = false;
 	ChainNameText.OnTextSizeRealized = OnChainNameRealized;
 	ChainNameText.InitText('ChainNameText');
 	ChainNameText.SetY(11);
 
-	OverviewScreenButton = Spawn(class'UIButton', CenterSection);
+	OverviewScreenButton = Spawn(class'UIButton', ChainNameContentContainer);
 	OverviewScreenButton.bAnimateOnInit = false;
 	OverviewScreenButton.LibID = 'X2InfoButton';
 	OverviewScreenButton.InitButton('OverviewScreenButton');
 	OverviewScreenButton.OnClickedDelegate = OnOverviewScreenButtonClicked;
 	OverviewScreenButton.SetY(16);
 
-	OverviewScreenControllerIcon = Spawn(class'UIImage', CenterSection);
+	OverviewScreenControllerIcon = Spawn(class'UIImage', ChainNameContentContainer);
 	OverviewScreenControllerIcon.bAnimateOnInit = false;
 	OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
 	OverviewScreenControllerIcon.SetPosition(OverviewScreenButton.X + 30, OverviewScreenButton.Y + 1);
@@ -305,6 +310,8 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 			Screen.bIsIn3D, false,, 28
 		)
 	);
+
+	// TODO: Halt all ongoing animations
 }
 
 protected function UpdateStages ()
@@ -553,16 +560,14 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 		TitleDelay = StagesDelay + 0.2;
 	}
 
-	ChainNameText.AddTweenBetween("_alpha", 0, ChainNameText.Alpha, 0.5, TitleDelay, "easeoutquad");
-	ChainNameText.AddTweenBetween("_y", ChainNameText.Y - 60, ChainNameText.Y, 1, TitleDelay, "easeoutquad");
+	ChainNameContentContainer.AddTweenBetween("_y", ChainNameContentContainer.Y - 30, ChainNameContentContainer.Y, 0.5, TitleDelay, "easeoutquad");
 
+	ChainNameText.AddTweenBetween("_alpha", 0, ChainNameText.Alpha, 0.5, TitleDelay, "easeoutquad");
 	OverviewScreenButton.AddTweenBetween("_alpha", 0, OverviewScreenButton.Alpha, 0.5, TitleDelay, "easeoutquad");
-	OverviewScreenButton.AddTweenBetween("_y", OverviewScreenButton.Y - 60, OverviewScreenButton.Y, 0.5, TitleDelay, "easeoutquad");
 
 	if (OverviewScreenControllerIcon != none)
 	{
 		OverviewScreenControllerIcon.AddTweenBetween("_alpha", 0, OverviewScreenControllerIcon.Alpha, 0.5, TitleDelay, "easeoutquad");
-		OverviewScreenControllerIcon.AddTweenBetween("_y", OverviewScreenControllerIcon.Y - 60, OverviewScreenControllerIcon.Y, 0.5, TitleDelay, "easeoutquad");
 	}
 
 	DagsDelay = TitleDelay + 0.3;
