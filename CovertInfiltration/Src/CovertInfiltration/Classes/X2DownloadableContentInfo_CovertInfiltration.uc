@@ -873,8 +873,10 @@ static function bool LoadingScreenOverrideTransitionMap(optional out string Over
 					OverrideMapName = "CIN_Loading_Infiltration_Slums";
 					break;
 				case "SmallTown":
-				case "Wilderness":
 					OverrideMapName = "CIN_Loading_Infiltration_SmallTown";
+					break;
+				case "Wilderness":
+					OverrideMapName = "CIN_Loading_Infiltration_Wilderness";
 					break;
 				case "Tunnels_Sewer":
 					OverrideMapName = "CIN_Loading_Infiltration_Tunnels_Sewer";
