@@ -19,8 +19,11 @@ var protectedwrite UIText ChainNameText;
 var protectedwrite UIButton OverviewScreenButton;
 var protectedwrite UIImage OverviewScreenControllerIcon;
 
-var protectedwrite UIImage ChainNameDagsLeft;
-var protectedwrite UIImage ChainNameDagsRight;
+var protectedwrite UIPanel ChainNameDagsLeftContainer; // Actual position
+var protectedwrite UIImage ChainNameDagsLeft; // Sliding animation
+
+var protectedwrite UIPanel ChainNameDagsRightContainer; // Actual position
+var protectedwrite UIImage ChainNameDagsRight; // Sliding animation
 
 // We support at most 3 now, any more we simply show the counts.
 // For sake of simplicity, all 3 are pre-created (and not created on-demand)
@@ -120,15 +123,23 @@ simulated protected function BuildCenter ()
 	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
 	OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
 
-	ChainNameDagsLeft = Spawn(class'UIImage', CenterSection);
+	ChainNameDagsLeftContainer = Spawn(class'UIPanel', CenterSection);
+	ChainNameDagsLeftContainer.bAnimateOnInit = false;
+	ChainNameDagsLeftContainer.InitPanel('ChainNameDagsLeftContainer');
+	ChainNameDagsLeftContainer.SetY(20);
+
+	ChainNameDagsLeft = Spawn(class'UIImage', ChainNameDagsLeftContainer);
 	ChainNameDagsLeft.bAnimateOnInit = false;
 	ChainNameDagsLeft.InitImage('ChainNameDagsLeft', "img:///UILibrary_CI_ChainPreview.ChainName_dags_l");
-	ChainNameDagsLeft.SetY(20);
 
-	ChainNameDagsRight = Spawn(class'UIImage', CenterSection);
+	ChainNameDagsRightContainer = Spawn(class'UIPanel', CenterSection);
+	ChainNameDagsRightContainer.bAnimateOnInit = false;
+	ChainNameDagsRightContainer.InitPanel('ChainNameDagsRightContainer');
+	ChainNameDagsRightContainer.SetY(20);
+
+	ChainNameDagsRight = Spawn(class'UIImage', ChainNameDagsRightContainer);
 	ChainNameDagsRight.bAnimateOnInit = false;
 	ChainNameDagsRight.InitImage('ChainNameDagsRight', "img:///UILibrary_CI_ChainPreview.ChainName_dags_r");
-	ChainNameDagsRight.SetY(20);
 
 	LeftExtraCountText = Spawn(class'UIText', CenterSection);
 	LeftExtraCountText.bAnimateOnInit = false;
@@ -179,13 +190,13 @@ simulated protected function OnChainNameRealized ()
 	}
 
 	// Position the dags
-	ChainNameDagsLeft.SetX(ChainNameText.X - ChainNameSectionDagsWidth - ChainNameSectionMargin);
-	ChainNameDagsRight.SetX(ChainNameText.X + RequiredSpace + ChainNameSectionMargin);
+	ChainNameDagsLeftContainer.SetX(ChainNameText.X - ChainNameSectionDagsWidth - ChainNameSectionMargin);
+	ChainNameDagsRightContainer.SetX(ChainNameText.X + RequiredSpace + ChainNameSectionMargin);
 
 	// Force everything we touched to update this frame
 	ChainNameText.MC.ProcessCommands(true);
 	if (ChainNameDagsLeft.bIsInited) ChainNameDagsLeft.MC.ProcessCommands(true);
-	if (ChainNameDagsRight.bIsInited) ChainNameDagsRight.MC.ProcessCommands(true);
+	if (ChainNameDagsRightContainer.bIsInited) ChainNameDagsRightContainer.MC.ProcessCommands(true);
 	if (OverviewScreenControllerIcon != none && OverviewScreenControllerIcon.bIsInited) OverviewScreenControllerIcon.MC.ProcessCommands(true);
 }
 
@@ -316,8 +327,8 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 
 protected function UpdateStages ()
 {
-	local XComGameState_Activity FocusedActivityState, ActivityState;
 	local int FocusedStageIndex, LeftExtraCount, RightExtraCount;
+	local XComGameState_Activity FocusedActivityState;
 	local XComGameState_ActivityChain ChainState;
 	local string strLeftExtra, strRightExtra;
 
@@ -525,6 +536,8 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	
 	StagesDelay = InitialDelay;
 	
+	// TODO: Extras
+
 	// Can't iterate fixed arrays
 	LocalStages.AddItem(Stages[0]);
 	LocalStages.AddItem(Stages[1]);
@@ -542,6 +555,7 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	// The backlight takes same amount of time as the stages
 	CenterBacklight.AddTweenBetween("_alpha", 0, CenterBacklight.Alpha, StagesDelay - InitialDelay, StagesDelay, "easeoutquad");
 
+	// TODO: Complications after the chain name
 	if (ComplicationsSection.bIsVisible)
 	{
 		ComplicationsDelay = StagesDelay + 0.2;
@@ -573,7 +587,10 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	DagsDelay = TitleDelay + 0.3;
 
 	ChainNameDagsLeft.AddTweenBetween("_alpha", 0, ChainNameDagsLeft.Alpha, 0.5, DagsDelay, "easeoutquad");
+	ChainNameDagsLeft.AddTweenBetween("_x", ChainNameDagsLeft.X + 60, ChainNameDagsLeft.X, 0.5, DagsDelay, "easeoutquad");
+
 	ChainNameDagsRight.AddTweenBetween("_alpha", 0, ChainNameDagsRight.Alpha, 0.5, DagsDelay, "easeoutquad");
+	ChainNameDagsRight.AddTweenBetween("_x", ChainNameDagsRight.X - 60, ChainNameDagsRight.X, 0.5, DagsDelay, "easeoutquad");
 }
 
 ///////////////
