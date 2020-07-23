@@ -110,6 +110,9 @@
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetAssociatedObjectiveObjects.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\SeqAct_GetUnitPawnTemplateName.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_SetInteractiveObjectHacked.uc">
       <SubType>Content</SubType>
     </Content>
