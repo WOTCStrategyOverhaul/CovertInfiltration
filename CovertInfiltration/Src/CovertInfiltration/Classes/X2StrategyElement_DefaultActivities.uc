@@ -105,12 +105,107 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.Difficulty = 1;
 	
 	ActivityAssault.ActivityTag = 'Tag_Informant';
+	ActivityAssault.bNeedsPOI = true;
+	ActivityAssault.SetupStage = InformantAssaultSetup;
+	ActivityAssault.OnSuccess = InformantAssaultOnSuccess;
+	ActivityAssault.OnFailure = InformantAssaultOnFailure;
+	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
 	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(ActivityAssault);
+}
+
+static function InformantAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_MissionSite MissionState;
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2RewardTemplate RewardTemplate;
+	local XComGameState_Reward RewardState;
+	local XComGameState_HeadquartersResistance ResHQ;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate('Reward_Soldier'));
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+
+	class'X2ActivityTemplate_Assault'.static.CreateMission(NewGameState, ActivityState);
+
+	foreach NewGameState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
+	{
+		break;
+	}
+
+	if (MissionState == none)
+	{
+		`REDSCREEN("COULD NOT FETCH MISSION FROM CREATION STATE");
+	}
+
+	if (MissionState.GeneratedMission.Mission.sType == "GatherSurvivors")
+	{
+		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
+		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardA');
+		MissionState.Rewards.AddItem(RewardState.GetReference());
+		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
+		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardB');
+		MissionState.Rewards.AddItem(RewardState.GetReference());
+	}
+
+	if (MissionState.GeneratedMission.Mission.sType == "RecoverExpedition")
+	{
+		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
+		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardA');
+		MissionState.Rewards.AddItem(RewardState.GetReference());
+	}
+
+	class'X2ActivityTemplate_Assault'.static.MarkMissionForStrategyMapAlert(NewGameState, ActivityState);
+}
+
+static function InformantAssaultOnSuccess (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local array<int> ExcludeIndices;
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	ExcludeIndices = class'X2StrategyElement_XPackMissionSources'.static.GetResOpExcludeRewards(MissionState);
+
+	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, true);
+	MissionState.RemoveEntity(NewGameState);
+	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkSuccess(NewGameState);
+	
+	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsCompleted');
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, true), false);
+}
+
+static function InformantAssaultOnFailure (XComGameState NewGameState, XComGameState_Activity ActivityState)
+{
+	local array<int> ExcludeIndices;
+	local XComGameState_MissionSite MissionState;
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	
+	// Even though the primary objective was failed, we still want to check if secondary objectives were completed and award those soldiers
+	ExcludeIndices = class'X2StrategyElement_XPackMissionSources'.static.GetResOpExcludeRewards(MissionState);
+	ExcludeIndices.AddItem(0); // Exclude the primary VIP
+	ExcludeIndices.AddItem(1); // Exclude the Intel reward
+	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
+	
+	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
+	MissionState.RemoveEntity(NewGameState);
+	
+	ActivityState = XComGameState_Activity(NewGameState.ModifyStateObject(class'XComGameState_Activity', ActivityState.ObjectID));
+	ActivityState.MarkFailed(NewGameState);
+	
+	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsFailed');
+	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
 }
 
 static function CreateInformantInfiltration (out array<X2DataTemplate> Templates)
@@ -597,7 +692,6 @@ static function string WaitGetOverviewStatus (XComGameState_Activity ActivitySta
 }
 
 // Copied from X2StrategyElement_DefaultCovertActions
-
 static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed = false)
 {
 	local CovertActionSlot SoldierSlot;
@@ -635,6 +729,18 @@ static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int
 	ActionCost.Reward = 'Reward_DecreaseRisk';
 	
 	return ActionCost;
+}
+
+// Copied from X2StrategyElement_XpackMissionSources
+private static function AddTacticalTagToRewardUnit(XComGameState NewGameState, XComGameState_Reward RewardState, name TacticalTag)
+{
+	local XComGameState_Unit UnitState;
+
+	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+	if (UnitState != none)
+	{
+		UnitState.TacticalTag = TacticalTag;
+	}
 }
 
 defaultproperties
