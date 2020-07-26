@@ -57,7 +57,7 @@ static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 	
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_IntelligenceAssault');
 	
-	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.RadioTower";
+	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
 	ActivityAssault.Difficulty = 1;
@@ -79,7 +79,7 @@ static function CreateIntelligenceInfiltration (out array<X2DataTemplate> Templa
 	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_IntelligenceInfiltrate', true);
-	ActivityInfil = CreateStandardInfilActivity(CovertAction, "IntelligenceInfiltrate", "RadioTower", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ");
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "IntelligenceInfiltrate", "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ");
 	
 	ActivityInfil.ActivityTag = 'Tag_Intelligence';
 	ActivityInfil.bNeedsPOI = true;
@@ -121,7 +121,7 @@ static function CreateInformantInfiltration (out array<X2DataTemplate> Templates
 	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_InformantInfiltrate', true);
-	ActivityInfil = CreateStandardInfilActivity(CovertAction, "InformantInfiltrate", "Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "InformantInfiltrate", "UI_3D.Overwold_Final.Council_VIP", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council");
 	
 	ActivityInfil.ActivityTag = 'Tag_Informant';
 	ActivityInfil.bNeedsPOI = true;
@@ -179,7 +179,7 @@ static function CreateDistractionInfiltration (out array<X2DataTemplate> Templat
 	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_DistractionInfiltrate', true);
-	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "DistractionInfiltrate", "UI_3D.Overwold_Final.GorillaOps", "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS");
 	
 	ActivityInfil.ActivityTag = 'Tag_Distraction';
 	ActivityInfil.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
@@ -217,7 +217,7 @@ static function CreateSabotageInfiltration (out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_SabotageInfiltrate', true);
-	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
+	ActivityInfil = CreateStandardInfilActivity(CovertAction, "SabotageInfiltrate", "UI_3D.Overwold_Final.Retribution", "img:///UILibrary_XPACK_Common.MissionIcon_Retribution");
 	
 	ActivityInfil.ActivityTag = 'Tag_Sabotage';
 	ActivityInfil.MissionRewards.AddItem('Reward_FacilityDelay');
@@ -333,7 +333,7 @@ static function CreateCaptureDVIP(out array<X2DataTemplate> Templates)
 	local X2CovertActionTemplate CovertAction;
 	
 	CovertAction = class'X2StrategyElement_InfiltrationActions'.static.CreateInfiltrationTemplate('CovertAction_CaptureDVIP', true);
-	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
+	Activity = CreateStandardInfilActivity(CovertAction, "CaptureDVIP", "UI_3D.Overwold_Final.EscapeAmbush", "img:///UILibrary_XPACK_Common.MissionIcon_EscapeAmbush");
 	
 	Activity.ActivityTag = 'Tag_DVIP';
 	Activity.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
@@ -453,13 +453,13 @@ static function X2ActivityTemplate_Infiltration CreateStandardInfilActivity (X2C
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Infiltration', Activity, name("Activity_" $ ActivityName));
 	
 	CovertAction.ChooseLocationFn = UseActivityPrimaryRegion;
-	CovertAction.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	CovertAction.OverworldMeshPath = MeshPath;
 	
 	CovertAction.Narratives.AddItem(name("CovertActionNarrative_" $ ActivityName));
 	CovertAction.Rewards.AddItem('Reward_InfiltrationActivityProxy');
 
 	Activity.CovertActionName = CovertAction.DataName;
-	Activity.OverworldMeshPath = "UI_3D.Overwold_Final." $ MeshPath;
+	Activity.OverworldMeshPath = MeshPath;
 	Activity.UIButtonIcon = MissionIcon;
 
 	return Activity;
