@@ -48,9 +48,9 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.CleanupChain = CleanupDarkEventChain;
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDarkEvent'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction',, 'Reward_DelayDarkEvent', eStageReward_Addition));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_DarkEvent'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_CounterDarkEvent', eStageReward_Override));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 	Template.GetNarrativeObjective = GetDarkEventObjective;
@@ -97,7 +97,7 @@ static function string CounterDarkEventGetOverviewDescription (XComGameState_Act
 static function ConnectDarkEventToChain (XComGameState NewGameState, XComGameState_Activity ActivityState, XComGameState_Reward RewardState)
 {
 	// If this is a dark event reward, and the chain has a dark event attached, connect the two
-	if (RewardState.GetMyTemplateName() == 'Reward_DarkEvent')
+	if (RewardState.GetMyTemplateName() == 'Reward_CounterDarkEvent' || RewardState.GetMyTemplateName() == 'Reward_DelayDarkEvent')
 	{
 		if (ActivityState.GetActivityChain().GetChainDarkEvent() != none)
 		{
@@ -656,7 +656,7 @@ static function StateObjectReference FindRegionWithRelay ()
 	return SelectedRegion;
 }
 
-static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward1 = '', optional name Reward2 = '')
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward = '', optional EStageReward RewardType = eStageReward_Override)
 {
 	local ChainStage Stage;
 
@@ -672,13 +672,16 @@ static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, o
 		Stage.ActivityTags.AddItem(Tag3);
 	}
 	
-	if (Reward1 != '')
+	if (Reward != '')
 	{
-		Stage.RewardOverrides.AddItem(Reward1);
-	}
-	if (Reward2 != '')
-	{
-		Stage.RewardOverrides.AddItem(Reward2);
+		if (RewardType == eStageReward_Addition)
+		{
+			Stage.RewardAdditions.AddItem(Reward);
+		}
+		if (RewardType == eStageReward_Override)
+		{
+			Stage.RewardOverrides.AddItem(Reward);
+		}
 	}
 
 	return Stage;

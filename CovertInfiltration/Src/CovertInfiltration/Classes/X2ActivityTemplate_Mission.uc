@@ -90,6 +90,18 @@ static function array<StateObjectReference> GenericInitializeMissionRewards (XCo
 				RewardRefs.AddItem(InitMissionReward(NewGameState, ActivityState, RewardTemplate));
 			}
 		}
+		if (StageDef.RewardAdditions.Length > 0)
+		{
+			foreach StageDef.RewardAdditions(RewardName)
+			{
+				RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate(RewardName));
+				if (RewardTemplate != none)
+				{
+					`CI_Trace("Initializing additional reward: " $ RewardName);
+					RewardRefs.AddItem(InitMissionReward(NewGameState, ActivityState, RewardTemplate));
+				}
+			}
+		}
 	}
 	
 	`CI_Trace("InitializeMissionRewards reports " $ RewardRefs.Length $ " rewards");

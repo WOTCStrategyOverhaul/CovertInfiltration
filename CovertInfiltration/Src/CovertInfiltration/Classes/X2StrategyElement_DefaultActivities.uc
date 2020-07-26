@@ -105,8 +105,6 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.Difficulty = 1;
 	
 	ActivityAssault.ActivityTag = 'Tag_Informant';
-	ActivityAssault.bNeedsPOI = true;
-	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
 	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
@@ -114,7 +112,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	
 	Templates.AddItem(ActivityAssault);
 }
-	
+
 static function CreateInformantInfiltration (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Infiltration ActivityInfil;
