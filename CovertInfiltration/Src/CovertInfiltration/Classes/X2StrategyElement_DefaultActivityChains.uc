@@ -656,7 +656,7 @@ static function StateObjectReference FindRegionWithRelay ()
 	return SelectedRegion;
 }
 
-static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward1 = '', optional name Reward2 = '')
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward = '', optional string RewardType = "REPLACE")
 {
 	local ChainStage Stage;
 
@@ -672,13 +672,16 @@ static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, o
 		Stage.ActivityTags.AddItem(Tag3);
 	}
 	
-	if (Reward1 != '')
+	if (Reward != '')
 	{
-		Stage.RewardOverrides.AddItem(Reward1);
-	}
-	if (Reward2 != '')
-	{
-		Stage.RewardOverrides.AddItem(Reward2);
+		if (RewardType == "ADD")
+		{
+			Stage.RewardAdditions.AddItem(Reward);
+		}
+		if (RewardType == "REPLACE")
+		{
+			Stage.RewardOverrides.AddItem(Reward);
+		}
 	}
 
 	return Stage;
