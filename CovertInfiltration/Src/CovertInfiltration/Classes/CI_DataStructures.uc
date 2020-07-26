@@ -143,3 +143,9 @@ struct ChainStage
 	var array<name> RewardOverrides;
 	var array<name> RewardAdditions;
 };
+
+enum EStageReward
+{
+	eStageReward_Override,
+	eStageReward_Addition
+};

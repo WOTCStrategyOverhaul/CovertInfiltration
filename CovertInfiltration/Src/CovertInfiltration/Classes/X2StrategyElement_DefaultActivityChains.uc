@@ -48,9 +48,9 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.CleanupChain = CleanupDarkEventChain;
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDarkEvent'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction',, 'Reward_DelayDarkEvent', "ADD"));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction',, 'Reward_DelayDarkEvent', eStageReward_Addition));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_CounterDarkEvent', "REPLACE"));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_CounterDarkEvent', eStageReward_Override));
 	
 	Template.GetOverviewDescription = CounterDarkEventGetOverviewDescription;
 	Template.GetNarrativeObjective = GetDarkEventObjective;
@@ -656,7 +656,7 @@ static function StateObjectReference FindRegionWithRelay ()
 	return SelectedRegion;
 }
 
-static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward = '', optional string RewardType = "REPLACE")
+static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, optional name Tag2 = '', optional name Tag3 = '', optional name Reward = '', optional EStageReward RewardType = eStageReward_Override)
 {
 	local ChainStage Stage;
 
@@ -674,11 +674,11 @@ static function ChainStage ConstructRandomStage(EActivityType Type, name Tag1, o
 	
 	if (Reward != '')
 	{
-		if (RewardType == "ADD")
+		if (RewardType == eStageReward_Addition)
 		{
 			Stage.RewardAdditions.AddItem(Reward);
 		}
-		if (RewardType == "REPLACE")
+		if (RewardType == eStageReward_Override)
 		{
 			Stage.RewardOverrides.AddItem(Reward);
 		}
