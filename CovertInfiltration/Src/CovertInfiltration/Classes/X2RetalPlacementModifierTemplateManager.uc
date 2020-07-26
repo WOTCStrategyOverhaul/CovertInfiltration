@@ -9,12 +9,15 @@ function int ScoreRegion (XComGameState NewGameState, XComGameState_WorldRegion 
 {
 	local X2RetalPlacementModifierTemplate ModTemplate;
 	local X2DataTemplate DataTemplate;
-	local int Score;
+	local int Score, Delta;
 
 	foreach IterateTemplates(DataTemplate)
 	{
 		ModTemplate = X2RetalPlacementModifierTemplate(DataTemplate);
-		Score += ModTemplate.GetDeltaForRegion(NewGameState, RegionState);
+		Delta = ModTemplate.GetDeltaForRegion(NewGameState, RegionState);
+		Score += Delta;
+
+		`CI_Trace("Region:" @ RegionState.GetMyTemplateName() $ "; Modifier:" @ ModTemplate.DataName $ "; Delta:" @ Delta $ "; Score:" @ Score);
 	}
 	
 	return Score;
