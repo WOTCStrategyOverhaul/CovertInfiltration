@@ -26,6 +26,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateMaterielRewardTemplate());
 	Rewards.AddItem(CreateProgressRewardTemplate());
 	Rewards.AddItem(CreatePromotionsRewardTemplate());
+	Rewards.AddItem(CreateCounterDarkEventRewardTemplate());
+	Rewards.AddItem(CreateDelayDarkEventRewardTemplate());
 	
 	// Activity rewards
 	Rewards.AddItem(CreateSmallIntelRewardTemplate());
@@ -33,7 +35,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateFacilityDelayRewardTemplate());
 	Rewards.AddItem(CreateDatapadRewardTemplate());
 	Rewards.AddItem(CreateContainerRewardTemplate());
-	Rewards.AddItem(CreateDarkEventRewardTemplate());
 
 	// CA rewards
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_AlienCorpses', 'AlienCorpses'));
@@ -345,12 +346,26 @@ static function string GetContainerString(XComGameState_Reward RewardState)
 	return ResourceContainerState.GetCommaSeparatedContents();
 }
 
-static function X2DataTemplate CreateDarkEventRewardTemplate()
+static function X2DataTemplate CreateCounterDarkEventRewardTemplate()
 {
 	local X2RewardTemplate Template;
 	
 	// This is a dummy reward, does nothing
-	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_DarkEvent');
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_CounterDarkEvent');
+	
+	Template.SetRewardFn = SetDarkEventReward;
+	Template.GetRewardStringFn = GetDarkEventRewardString;
+	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
+
+	return Template;
+}
+
+static function X2DataTemplate CreateDelayDarkEventRewardTemplate()
+{
+	local X2RewardTemplate Template;
+	
+	// This is a dummy reward, does nothing
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_DelayDarkEvent');
 	
 	Template.SetRewardFn = SetDarkEventReward;
 	Template.GetRewardStringFn = GetDarkEventRewardString;

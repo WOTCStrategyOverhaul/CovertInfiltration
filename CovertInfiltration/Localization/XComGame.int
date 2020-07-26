@@ -233,8 +233,11 @@ RewardDetails="Recover alien materials and supplies"
 DisplayName="Advance Chain"
 RewardDetails="Unlock the next mission in the chain"
 
-[Reward_DarkEvent X2RewardTemplate]
+[Reward_CounterDarkEvent X2RewardTemplate]
 DisplayName="Counter Dark Event: <XGParam:StrValue0/>"
+
+[Reward_DelayDarkEvent X2RewardTemplate]
+DisplayName="Delay Dark Event: <XGParam:StrValue0/>"
 
 [OTSStaffSlot X2StaffSlotTemplate]
 BonusEmptyText="Trains Soldiers as Specific Class"
