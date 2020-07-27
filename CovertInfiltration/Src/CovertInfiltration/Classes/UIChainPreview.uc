@@ -505,7 +505,7 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 		if (Stage.bIsVisible)
 		{
 			Stage.AnimateIn(StagesDelay);
-			StagesDelay += 0.3;
+			StagesDelay += 0.25; // 0.5 overlap
 		}
 	}
 
@@ -513,35 +513,37 @@ simulated function AnimateIn (optional float InitialDelay = 0)
 	CenterBacklight.AddTweenBetween("_alpha", 0, CenterBacklight.Alpha, StagesDelay - InitialDelay, StagesDelay, "easeoutquad");
 
 	TitleDelay = StagesDelay + 0.2;
-	DagsDelay = TitleDelay + 0.3;
+	DagsDelay = TitleDelay + 0.4;
 
-	ChainNameContentContainer.AddTweenBetween("_y", ChainNameContentContainer.Y - 30, ChainNameContentContainer.Y, 0.5, TitleDelay, "easeoutquad");
+	ChainNameContentContainer.AddTweenBetween("_y", ChainNameContentContainer.Y - 30, ChainNameContentContainer.Y, 0.6, TitleDelay, "easeoutquad");
+	ChainNameContentContainer.AddTweenBetween("_alpha", 0, ChainNameContentContainer.Alpha, 0.6, TitleDelay, "easeoutquad");
 
-	ChainNameText.AddTweenBetween("_alpha", 0, ChainNameText.Alpha, 0.5, TitleDelay, "easeoutquad");
-	OverviewScreenButton.AddTweenBetween("_alpha", 0, OverviewScreenButton.Alpha, 0.5, TitleDelay, "easeoutquad");
+	ChainNameDagsLeft.AddTweenBetween("_alpha", 0, ChainNameDagsLeft.Alpha, 0.6, DagsDelay, "easeOutCubic");
+	ChainNameDagsLeft.AddTweenBetween("_x", ChainNameDagsLeft.X + 60, ChainNameDagsLeft.X, 0.4, DagsDelay, "easeOutSine");
 
-	if (OverviewScreenControllerIcon != none)
-	{
-		OverviewScreenControllerIcon.AddTweenBetween("_alpha", 0, OverviewScreenControllerIcon.Alpha, 0.5, TitleDelay, "easeoutquad");
-	}
-
-	ChainNameDagsLeft.AddTweenBetween("_alpha", 0, ChainNameDagsLeft.Alpha, 0.5, DagsDelay, "easeoutquad");
-	ChainNameDagsLeft.AddTweenBetween("_x", ChainNameDagsLeft.X + 60, ChainNameDagsLeft.X, 0.5, DagsDelay, "easeoutquad");
-
-	ChainNameDagsRight.AddTweenBetween("_alpha", 0, ChainNameDagsRight.Alpha, 0.5, DagsDelay, "easeoutquad");
-	ChainNameDagsRight.AddTweenBetween("_x", ChainNameDagsRight.X - 60, ChainNameDagsRight.X, 0.5, DagsDelay, "easeoutquad");
+	ChainNameDagsRight.AddTweenBetween("_alpha", 0, ChainNameDagsRight.Alpha, 0.6, DagsDelay, "easeOutCubic");
+	ChainNameDagsRight.AddTweenBetween("_x", ChainNameDagsRight.X - 60, ChainNameDagsRight.X, 0.4, DagsDelay, "easeOutSine");
 
 	if (ComplicationsSection.bIsVisible)
 	{
-		ComplicationsDelay = DagsDelay + 0.6;
-		
-		ComplicationsBacklight.AddTweenBetween("_alpha", 0, ComplicationsBacklight.Alpha, 1, ComplicationsDelay, "easeOutBack");
+		//ComplicationsDelay = DagsDelay + 0.6;
+		ComplicationsDelay = TitleDelay;
 
-		ComplicationsContentDelay = ComplicationsDelay + 0.1;
+		ComplicationsContentDelay = ComplicationsDelay;
 		ComplicationsFluffHeader.AddTweenBetween("_alpha", 0, ComplicationsFluffHeader.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
 		ComplicationsWarnIcon.AddTweenBetween("_alpha", 0, ComplicationsWarnIcon.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
 		ComplicationsFluffDescription.AddTweenBetween("_alpha", 0, ComplicationsFluffDescription.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
 		ComplicationsNamesText.AddTweenBetween("_alpha", 0, ComplicationsNamesText.Alpha, 0.5, ComplicationsContentDelay, "easeoutquad");
+
+		ComplicationsDelay += 0.6;
+		ComplicationsBacklight.AddTweenBetween("_alpha", 0, 60, 0.6, ComplicationsDelay, "easeOutCubic");
+		ComplicationsDelay += 0.8;
+		
+		ComplicationsBacklight.AddTweenBetween("_alpha", 60, ComplicationsBacklight.Alpha, 0.8, ComplicationsDelay, "easeInOutCubic");
+		
+		// Set the alpha to starting of the first segement
+		// while we are waiting for the thing to start
+		ComplicationsBacklight.MC.SetNum("_alpha", 0);
 	}
 }
 
@@ -550,9 +552,7 @@ simulated protected function SetFinalAnimationValues ()
 	CenterBacklight.MC.SetNum("_alpha", CenterBacklight.Alpha);
 
 	ChainNameContentContainer.MC.SetNum("_y", ChainNameContentContainer.Y);
-	ChainNameText.MC.SetNum("_alpha", ChainNameText.Alpha);
-	OverviewScreenButton.MC.SetNum("_alpha", OverviewScreenButton.Alpha);
-	if (OverviewScreenControllerIcon != none) OverviewScreenControllerIcon.MC.SetNum("_alpha", OverviewScreenControllerIcon.Alpha);
+	ChainNameContentContainer.MC.SetNum("_alpha", ChainNameContentContainer.Alpha);
 
 	ChainNameDagsLeft.MC.SetNum("_alpha", ChainNameDagsLeft.Alpha);
 	ChainNameDagsLeft.MC.SetNum("_x", ChainNameDagsLeft.X);
