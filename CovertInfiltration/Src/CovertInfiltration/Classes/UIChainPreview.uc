@@ -114,12 +114,15 @@ simulated protected function BuildCenter ()
 	OverviewScreenButton.OnClickedDelegate = OnOverviewScreenButtonClicked;
 	OverviewScreenButton.SetY(16);
 
-	OverviewScreenControllerIcon = Spawn(class'UIImage', ChainNameContentContainer);
-	OverviewScreenControllerIcon.bAnimateOnInit = false;
-	OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
-	OverviewScreenControllerIcon.SetPosition(OverviewScreenButton.X + 30, OverviewScreenButton.Y + 1);
-	OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
-	OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
+	if (`ISCONTROLLERACTIVE)
+	{
+		OverviewScreenControllerIcon = Spawn(class'UIImage', ChainNameContentContainer);
+		OverviewScreenControllerIcon.bAnimateOnInit = false;
+		OverviewScreenControllerIcon.InitImage('OverviewScreenControllerIcon', "img:///gfxGamepadIcons." $ class'UIUtilities_Input'.static.GetGamepadIconPrefix() $ strControllerIcon);
+		OverviewScreenControllerIcon.SetPosition(OverviewScreenButton.X + 30, OverviewScreenButton.Y + 1);
+		OverviewScreenControllerIcon.SetHeight(25); // 2px smaller than the OverviewScreenButton
+		OverviewScreenControllerIcon.SetWidth(OverviewScreenControllerIcon.Height * ControllerIconWidthToHeight);
+	}
 
 	ChainNameDagsLeftContainer = Spawn(class'UIPanel', CenterSection);
 	ChainNameDagsLeftContainer.bAnimateOnInit = false;
