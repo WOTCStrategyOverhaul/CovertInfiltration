@@ -122,6 +122,12 @@
     <Content Include="Src\CovertInfiltration\Classes\UIAlert_CovertInfiltration.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainPreview.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIChainPreview_Stage.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIChainsOverview.uc">
       <SubType>Content</SubType>
     </Content>
@@ -245,6 +251,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMap_CAButton.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UITextContainerImproved.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UITutorialBoxLarge.uc">
       <SubType>Content</SubType>
     </Content>
@@ -285,9 +294,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIViewChainButton.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_SitRepAbilitySet_CI.uc">

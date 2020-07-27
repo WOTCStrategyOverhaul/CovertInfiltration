@@ -11,6 +11,9 @@ class UICovertActionsGeoscape extends UIScreen;
 var UIImage BackgroundGradientTop;
 var UIImage BackgroundGradientBottom;
 
+// UI - chain preview
+var UIChainPreview ChainPreview;
+
 // UI - list
 var UIList ActionsList;
 
@@ -20,7 +23,6 @@ var UIMask CenterSectionMask; // Used to animate in
 var UIPanel RightPane;
 
 // UI - action info (top)
-var UIViewChainButton ViewChainButton;
 var UIPanel ActionInfoTopContainer;
 
 // UI - action image
@@ -32,7 +34,7 @@ var UIPanel ActionBriefContainer;
 var UIBGBox ActionBriefBG;
 var UIImage ActionDisplayNameBG;
 var UIText ActionDisplayName;
-var UITextContainer ActionDescription;
+var UITextContainerImproved ActionDescription;
 
 // UI - action info (bottom)
 var UIPanel ActionInfoBottomContainer;
@@ -42,7 +44,7 @@ var UIPanel ActionRewardContainer;
 var UIImage ActionRewardHeaderBG;
 var UIText ActionRewardHeader;
 var UIPanel ActionRewardTextBG;
-var UITextContainer ActionRewardText;
+var UITextContainerImproved ActionRewardText;
 
 // UI - progress bar
 var UIProgressBar ActionProgressBar;
@@ -163,6 +165,11 @@ simulated function OnInit()
 	bDontUpdateData = false;
 	UpdateData();
 
+	if (ChainPreview.FocusedActivityRef.ObjectID > 0)
+	{
+		ChainPreview.AnimateIn(0.2);
+	}
+
 	`XSTRATEGYSOUNDMGR.PlayPersistentSoundEvent("UI_CovertOps_Open");
 }
 
@@ -174,6 +181,7 @@ simulated function BuildScreen()
 	BuildActionsList();
 	BuildCenterSection();
 	BuildRightPane();
+	BuildChainPreview();
 }
 
 simulated protected function BuildBackground ()
@@ -181,6 +189,7 @@ simulated protected function BuildBackground ()
 	BackgroundGradientTop = Spawn(class'UIImage', self);
 	BackgroundGradientTop.bAnimateOnInit = false;
 	BackgroundGradientTop.InitImage('BackgroundGradientTop', "img:///UILibrary_CovertInfiltration.gradient_top");
+	BackgroundGradientTop.AnchorTopLeft();
 	BackgroundGradientTop.SetPosition(0, 0);
 	BackgroundGradientTop.SetSize(Movie.UI_RES_X, 512);
 
@@ -190,6 +199,13 @@ simulated protected function BuildBackground ()
 	BackgroundGradientBottom.AnchorBottomLeft();
 	BackgroundGradientBottom.SetPosition(0, -512);
 	BackgroundGradientBottom.SetSize(Movie.UI_RES_X, 512);
+}
+
+simulated protected function BuildChainPreview ()
+{
+	ChainPreview = Spawn(class'UIChainPreview', self);
+	ChainPreview.InitChainPreview('ChainPreview');
+	ChainPreview.RegisterInputHandler();
 }
 
 simulated protected function BuildActionsList()
@@ -241,20 +257,8 @@ simulated protected function BuildActionInfoTop()
 	ActionInfoTopContainer.SetPosition(0, 150);
 	ActionInfoTopContainer.SetSize(960, 195);
 
-	ViewChainButton = Spawn(class'UIViewChainButton', CenterSection);
-	ViewChainButton.bAnimateOnInit = false;
-	ViewChainButton.OnLayoutRealized = OnViewChainButtonRealized;
-	ViewChainButton.InitViewChainButton('ViewChainButton');
-	ViewChainButton.AnchorTopCenter();
-	ViewChainButton.SetPosition(0, 40);
-
 	BuildActionImage();
 	BuildActionBrief();
-}
-
-simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
-{
-	ViewChainButton.SetX(-ViewChainButton.Width / 2);
 }
 
 simulated protected function BuildActionImage()
@@ -298,10 +302,10 @@ simulated protected function BuildActionBrief()
 	ActionDisplayName.InitText('ActionDisplayName');
 	ActionDisplayName.SetSize(ActionBriefContainer.Width, 55);
 
-	ActionDescription = Spawn(class'UITextContainer', ActionBriefContainer);
+	ActionDescription = Spawn(class'UITextContainerImproved', ActionBriefContainer);
 	ActionDescription.bAnimateOnInit = false;
 	ActionDescription.InitTextContainer('ActionDescription');
-	//ActionDescription.bAutoScroll = true; // Doesn't work properly for some reason
+	ActionDescription.bAutoScroll = true;
 	ActionDescription.SetPosition(0, 50);
 	ActionDescription.SetSize(ActionBriefContainer.Width, ActionBriefContainer.Height - ActionDescription.Y);
 }
@@ -359,10 +363,10 @@ simulated protected function BuildActionReward()
 	ActionRewardHeader.SetSize(ActionRewardContainer.Width, 55);
 	ActionRewardHeader.SetCenteredText(class'UIUtilities_Text'.static.AddFontInfo(strRewardHeader, bIsIn3D, true));
 
-	ActionRewardText = Spawn(class'UITextContainer', ActionRewardContainer);
+	ActionRewardText = Spawn(class'UITextContainerImproved', ActionRewardContainer);
 	ActionRewardText.bAnimateOnInit = false;
 	ActionRewardText.InitTextContainer('ActionRewardText');
-	//ActionRewardText.InitText('ActionRewardText');
+	ActionRewardText.bAutoScroll = true;
 	ActionRewardText.SetPosition(0, 50);
 	ActionRewardText.SetSize(ActionRewardContainer.Width, ActionRewardContainer.Height - ActionRewardText.Y);
 
@@ -783,7 +787,7 @@ simulated function UpdateData()
 
 	FocusCameraOnCurrentAction();
 	UpdateButtons();
-	UpdateViewChainButton();
+	UpdateChainPreview();
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 	UpdateNavHelp();
@@ -861,18 +865,20 @@ simulated function UpdateButtons()
 	}
 }
 
-simulated function UpdateViewChainButton ()
+simulated function UpdateChainPreview ()
 {
 	local XComGameState_Activity ActivityState;
-
-	ViewChainButton.Hide();
+	local StateObjectReference EmptyRef;
 
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(ActionRef.ObjectID);
-	if (ActivityState == none) return;
+	if (ActivityState == none)
+	{
+		ChainPreview.SetFocusedActivity(EmptyRef);
+		return;
+	}
 
-	ViewChainButton.ChainRef = ActivityState.ChainRef;
-	ViewChainButton.RealizeContent();
-	ViewChainButton.Show();
+	ChainPreview.SetFocusedActivity(ActivityState.GetReference());
+	// TODO: Reset text scroll
 }
 
 simulated function UpdateCovertActionInfo()
@@ -1553,14 +1559,6 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	case class'UIUtilities_Input'.const.FXS_R_MOUSE_DOWN:
 		CloseScreen();
 		return true;
-
-	case class'UIUtilities_Input'.const.FXS_BUTTON_RTRIGGER:
-		if (ViewChainButton.bIsVisible)
-		{
-			ViewChainButton.OpenScreen();
-			return true;
-		}
-		break;
 	}
 
 	return super.OnUnrealCommand(cmd, arg);

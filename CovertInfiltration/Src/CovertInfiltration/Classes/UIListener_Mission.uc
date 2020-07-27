@@ -7,7 +7,7 @@ event OnInit (UIScreen Screen)
 	MissionScreen = UIMission(Screen);
 	if (MissionScreen == none) return;
 
-	SpawnViewChainButton(MissionScreen);
+	SpawnChainPreview(MissionScreen);
 	CleanUpStrategyHudAlert(MissionScreen);
 
 	if (MissionScreen.IsA(class'UIMission_AlienFacility'.Name))
@@ -16,14 +16,14 @@ event OnInit (UIScreen Screen)
 	}
 }
 
-simulated protected function SpawnViewChainButton (UIMission MissionScreen)
+simulated protected function SpawnChainPreview (UIMission MissionScreen)
 {
 	local XComGameState_Activity ActivityState;
 	
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID);
 	if (ActivityState == none) return;
 
-	MissionScreen.SetTimer(1, false, nameof(DoSpawnViewChainButton), self);
+	MissionScreen.SetTimer(1, false, nameof(DoSpawnChainPreview), self);
 
 	// Don't trigger this tutorial on single stage chains
 	if (ActivityState.GetActivityChain().GetMyTemplate().Stages.Length > 1)
@@ -32,62 +32,20 @@ simulated protected function SpawnViewChainButton (UIMission MissionScreen)
 	}
 }
 
-simulated protected function DoSpawnViewChainButton ()
+simulated protected function DoSpawnChainPreview ()
 {
-	local UIViewChainButton Button;
 	local UIMission MissionScreen;
+	local UIChainPreview ChainPreview;
 
 	MissionScreen = UIMission(`SCREENSTACK.GetFirstInstanceOf(class'UIMission'));
 	if (MissionScreen == none) return;
 
-	Button = MissionScreen.Spawn(class'UIViewChainButton', MissionScreen);
-	Button.bAnimateOnInit = false;
-	Button.ChainRef = class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID).ChainRef;
-	Button.bRestoreCamEarthViewOnOverviewClose = true;
-	Button.OnLayoutRealized = OnViewChainButtonRealized;
-	Button.InitViewChainButton('ViewChainButton');
-	Button.AnchorTopCenter();
-	Button.SetPosition(0, 40);
-
-	Button.RealizeContent();
-	Button.AnimateIn(0);
-
-	MissionScreen.Movie.Stack.SubscribeToOnInputForScreen(MissionScreen, OnMissionScreenInput);
-}
-
-simulated protected function OnViewChainButtonRealized (UIViewChainButton Button)
-{
-	Button.SetX(-Button.Width / 2);
-}
-
-simulated protected function bool OnMissionScreenInput (UIScreen Screen, int iInput, int ActionMask)
-{
-	local UIViewChainButton ViewChainButton;
-
-	if (!Screen.CheckInputIsReleaseOrDirectionRepeat(iInput, ActionMask))
-	{
-		return false;
-	}
-
-	ViewChainButton = UIViewChainButton(Screen.GetChildByName('ViewChainButton'));
-	if (ViewChainButton == none)
-	{
-		`Redscreen("Handling input for UIMission but unable to find ViewChainButton");
-		return false;
-	}
-
-	switch (iInput)
-	{
-	case class'UIUtilities_Input'.const.FXS_BUTTON_RTRIGGER:
-		if (ViewChainButton.bIsVisible)
-		{
-			ViewChainButton.OpenScreen();
-			return true;
-		}
-		break;
-	}
-
-	return false;
+	ChainPreview = MissionScreen.Spawn(class'UIChainPreview', MissionScreen);
+	ChainPreview.bRestoreCamEarthViewOnOverviewClose = true;
+	ChainPreview.InitChainPreview('ChainPreview');
+	ChainPreview.SetFocusedActivity(class'XComGameState_Activity'.static.GetActivityFromObjectID(MissionScreen.MissionRef.ObjectID).GetReference());
+	ChainPreview.RegisterInputHandler();
+	ChainPreview.AnimateIn();
 }
 
 simulated protected function CleanUpStrategyHudAlert (UIMission MissionScreen)
