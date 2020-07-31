@@ -122,18 +122,25 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 {
 	local XComGameState_MissionSite MissionState;
 	local X2StrategyElementTemplateManager TemplateManager;
-	local X2RewardTemplate RewardTemplate;
+	local X2RewardTemplate SoldierRewardTemplate;
 	local XComGameState_Reward RewardState;
 	local XComGameState_HeadquartersResistance ResHQ;
 
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	RewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate('Reward_Soldier'));
+	SoldierRewardTemplate = X2RewardTemplate(TemplateManager.FindStrategyElementTemplate('Reward_Soldier'));
 	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 
 	class'X2ActivityTemplate_Assault'.static.CreateMission(NewGameState, ActivityState);
 
 	foreach NewGameState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
 	{
+		if (MissionState.ObjectID != ActivityState.PrimaryObjectRef.ObjectID)
+		{
+			MissionState = none;
+			continue;
+		}
+		
+		// Found the correct one
 		break;
 	}
 
@@ -144,11 +151,11 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 
 	if (MissionState.GeneratedMission.Mission.sType == "GatherSurvivors")
 	{
-		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState = SoldierRewardTemplate.CreateInstanceFromTemplate(NewGameState);
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardA');
 		MissionState.Rewards.AddItem(RewardState.GetReference());
-		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState = SoldierRewardTemplate.CreateInstanceFromTemplate(NewGameState);
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardB');
 		MissionState.Rewards.AddItem(RewardState.GetReference());
@@ -156,7 +163,7 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 
 	if (MissionState.GeneratedMission.Mission.sType == "RecoverExpedition")
 	{
-		RewardState = RewardTemplate.CreateInstanceFromTemplate(NewGameState);
+		RewardState = SoldierRewardTemplate.CreateInstanceFromTemplate(NewGameState);
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardA');
 		MissionState.Rewards.AddItem(RewardState.GetReference());
