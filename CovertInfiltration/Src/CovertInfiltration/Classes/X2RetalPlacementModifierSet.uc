@@ -126,12 +126,17 @@ static protected function bool AllContinentContacted_IsRelevantToRegion (XComGam
 
 static protected function bool Only1LiveConnection_IsRelevantToRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState)
 {
-	// Also include starting region (0 contacted)
-	return GetNumLiveLinks(NewGameState, RegionState) <= 1;
+	// Disable this mod for starting region
+	if (StartingRegion_IsRelevantToRegion(NewGameState, RegionState)) return false;
+
+	return GetNumLiveLinks(NewGameState, RegionState) == 1;
 }
 
 static protected function bool Only2LiveConnections_IsRelevantToRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState)
 {
+	// Disable this mod for starting region
+	if (StartingRegion_IsRelevantToRegion(NewGameState, RegionState)) return false;
+	
 	return GetNumLiveLinks(NewGameState, RegionState) == 2;
 }
 
@@ -172,6 +177,10 @@ static protected function bool OnlyContactedChosenRegion_IsRelevantToRegion (XCo
 	local XComGameStateHistory History;
 	
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+
+	// Skip this check if the chosen are not activated
+	if (!AlienHQ.bChosenActive) return false;
+
 	AliveChosen = AlienHQ.GetAllChosen(NewGameState, true);
 
 	foreach AliveChosen(ChosenState)
