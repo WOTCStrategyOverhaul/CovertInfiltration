@@ -7,6 +7,12 @@
 
 class X2Helper_Infiltration_TemplateMod extends Object config(Game);
 
+struct RegionScoringPair
+{
+	var XComGameState_WorldRegion RegionState;
+	var int Score;
+};
+
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
 var config(GameData) array<name> arrSabotagesToRemove;
@@ -262,8 +268,10 @@ static function PatchRetailationMissionSource()
 	foreach DifficultyVariants(DataTemplate)
 	{
 		MissionSource = X2MissionSourceTemplate(DataTemplate);
+
 		MissionSource.SpawnMissionsFn = SpawnRetaliationMission;
 		MissionSource.GetSitrepsFn = class'X2Helper_Infiltration'.static.GetSitrepsForRetaliationMission;
+		MissionSource.GetMissionRegionFn = GetRetaliationRegion;
 
 		MissionSource.DifficultyValue = 3;
 		MissionSource.GetMissionDifficultyFn = GetMissionDifficultyFromMonthPlusTemplate;
@@ -354,6 +362,66 @@ static protected function SpawnRetaliationMission(XComGameState NewGameState, in
 	}
 
 	`XEVENTMGR.TriggerEvent('RetaliationMissionSpawned', MissionState, MissionState, NewGameState);
+}
+
+static protected function array<XComGameState_WorldRegion> GetRetaliationRegion (XComGameState NewGameState)
+{
+	local array<XComGameState_WorldRegion> CandidateRegionStates;
+	local X2RetalPlacementModifierTemplateManager ModManager;
+	local int i, MinScore, Adjustment, TotalScore, Roll;
+	local array<RegionScoringPair> RegionScores;
+
+	ModManager = class'X2RetalPlacementModifierTemplateManager'.static.GetRetalPlacementModifierTemplateManager();
+	CandidateRegionStates = class'X2StrategyElement_DefaultMissionSources'.static.GetAllContactedRegions();
+
+	RegionScores.Length = CandidateRegionStates.Length;
+	for (i = 0; i < CandidateRegionStates.Length; i++)
+	{
+		RegionScores[i].RegionState = CandidateRegionStates[i];
+		RegionScores[i].Score = ModManager.ScoreRegion(NewGameState, CandidateRegionStates[i]);
+
+		if (
+			i == 0 ||
+			RegionScores[i].Score < MinScore
+		)
+		{
+			MinScore = RegionScores[i].Score;
+		}
+	}
+
+	// Move the values so they are [0; max]
+	Adjustment = Max(-MinScore, 0);
+	`CI_Trace("GetRetaliationRegions Adjustment" @ Adjustment);
+
+	for (i = 0; i < RegionScores.Length; i++)
+	{
+		RegionScores[i].Score += Adjustment;
+		TotalScore += RegionScores[i].Score;
+
+		`CI_Trace("Region:" @ RegionScores[i].RegionState.GetMyTemplateName() $ "; Score:" @ RegionScores[i].Score $ "; TotalScore:" @ TotalScore);
+	}
+
+	Roll = `SYNC_RAND_STATIC(TotalScore + 1);
+	`CI_Trace("GetRetaliationRegions Roll" @ Roll);
+
+	TotalScore = 0;
+	for (i = 0; i < RegionScores.Length; i++)
+	{
+		TotalScore += RegionScores[i].Score;
+
+		if (TotalScore >= Roll)
+		{
+			CandidateRegionStates.Length = 0;
+			CandidateRegionStates.AddItem(RegionScores[i].RegionState);
+			
+			return CandidateRegionStates;
+		}
+	}
+
+	`RedScreen("CI: GetRetaliationRegions: Roll outside of total score, returning random contacted region");
+	
+	CandidateRegionStates.Length = 1;
+	return CandidateRegionStates;
 }
 
 static function PatchNewRetaliationNarrative()
