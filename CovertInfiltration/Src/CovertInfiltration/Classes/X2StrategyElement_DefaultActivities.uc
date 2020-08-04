@@ -146,7 +146,7 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 
 	if (MissionState == none)
 	{
-		`REDSCREEN("COULD NOT FETCH MISSION FROM CREATION STATE");
+		`REDSCREEN("CI InformantAssaultSetup: Could not fetch mission from creation state for chain " $ ActivityState.GetActivityChain().GetMyTemplateName());
 	}
 
 	if (MissionState.GeneratedMission.Mission.sType == "GatherSurvivors")
