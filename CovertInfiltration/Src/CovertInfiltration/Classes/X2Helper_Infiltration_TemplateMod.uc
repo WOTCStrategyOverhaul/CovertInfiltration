@@ -542,6 +542,23 @@ static function PatchSabotageMonumentMissionSchedules ()
 	}
 }
 
+static function PatchSupplyExtractionMissionFamily ()
+{
+	local XComTacticalMissionManager MissionManager;
+	local int i;
+
+	MissionManager = `TACTICALMISSIONMGR;
+
+	for (i = 0; i < MissionManager.arrMissions.Length; i++)
+	{
+		if (MissionManager.arrMissions[i].sType == "SupplyExtraction"
+		 || MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
+		{
+			MissionManager.arrMissions[i].MissionFamily = "SupplyExtraction_CI";
+		}
+	}
+}
+
 //////////////////
 /// Objectives ///
 //////////////////
