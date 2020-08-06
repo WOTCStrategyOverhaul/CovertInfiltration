@@ -542,9 +542,10 @@ static function PatchSabotageMonumentMissionSchedules ()
 	}
 }
 
-static function PatchSupplyExtractionMissionFamily ()
+static function PatchSupplyExtractionMission ()
 {
 	local XComTacticalMissionManager MissionManager;
+	local MissionObjectiveDefinition ExtractObjective;
 	local int i;
 
 	MissionManager = `TACTICALMISSIONMGR;
@@ -554,7 +555,14 @@ static function PatchSupplyExtractionMissionFamily ()
 		if (MissionManager.arrMissions[i].sType == "SupplyExtraction"
 		 || MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
 		{
+			ExtractObjective.ObjectiveName = 'ExtractAll';
+			ExtractObjective.bIsTacticalObjective = false;
+			ExtractObjective.bIsStrategyObjective = true;
+			ExtractObjective.bIsTriadObjective = true;
+
 			MissionManager.arrMissions[i].MissionFamily = "SupplyExtraction_CI";
+			MissionManager.arrMissions[i].MapNames[0] = "Obj_SupplyExtraction_CI";
+			MissionManager.arrMissions[i].MissionObjectives[1] = ExtractObjective;
 		}
 	}
 }
