@@ -40,6 +40,7 @@ simulated protected function PostScreenInit()
 {
 	local UISS_TerrainDisplay TerrainDisplay;
 	local UISS_CovertActionInfo ActionInfo;
+	local UISS_ItemWarning ItemWarning;
 
 	ActionInfo = SquadSelect.Spawn(class'UISS_CovertActionInfo', SquadSelect);
 	ActionInfo.bAnimateOnInit = false;
@@ -57,6 +58,11 @@ simulated protected function PostScreenInit()
 	{
 		TerrainDisplay = SquadSelect.Spawn(class'UISS_TerrainDisplay', SquadSelect);
 		TerrainDisplay.InitTerrainDisplay(GetAction());
+	}
+	else
+	{
+		ItemWarning = SquadSelect.Spawn(class'UISS_ItemWarning', SquadSelect);
+		ItemWarning.InitItemWarning(GetAction());
 	}
 
 	bCreatedUIElements = true;

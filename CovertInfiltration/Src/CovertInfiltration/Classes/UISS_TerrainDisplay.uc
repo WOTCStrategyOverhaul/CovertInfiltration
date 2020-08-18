@@ -56,7 +56,7 @@ simulated function string GenerateDisplayedText (XComGameState_CovertAction Acti
 
 	PlotType = class'X2Helper_Infiltration'.static.GetMissionSiteFromAction(Action).GeneratedMission.Plot.strType;
 
-	return "Plot type:" @ GetPlotFriendlyName(PlotType);
+	return "Plot Type:" @ GetPlotFriendlyName(PlotType);
 }
 
 simulated function string GetPlotFriendlyName (string PlotString)
