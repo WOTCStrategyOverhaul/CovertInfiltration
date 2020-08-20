@@ -87,6 +87,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('BlackMarketGoodsReset', BlackMarketGoodsReset, ELD_Immediate, 99);
 	Template.AddCHEvent('BlackMarketPurchase', BlackMarketPurchase_OSS, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('AddResource', AddResource_OSS, ELD_OnStateSubmitted, 99);
+	Template.AddCHEvent('rjSquadSelect_ExtraInfo', AddSquadSelectSlotNotes, ELD_Immediate, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
@@ -1088,6 +1089,50 @@ static protected function EventListenerReturn AddResource_OSS (Object EventData,
 	}
 
 	 return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn AddSquadSelectSlotNotes(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local LWTuple Tuple;
+	local int SlotIndex;
+
+	local SSAAT_SlotNote Note;
+	local LWTuple NoteTuple;
+	local LWTValue Value;
+	local int i;
+
+	Tuple = LWTuple(EventData);
+	
+	// Check that we are interested in actually doing something
+	if (Tuple == none || Tuple.Id != 'rjSquadSelect_ExtraInfo') return ELR_NoInterrupt;
+
+	// TODO: check for covert action and not infiltration somehow
+	// class'X2Helper_Infiltration'.static.IsInfiltrationAction(???)
+
+	SlotIndex = Tuple.Data[0].i;
+
+	if (!class'X2Helper_Infiltration'.static.UnitHasIrrelevantItems(`XCOMHQ.Squad[SlotIndex])) return ELR_NoInterrupt;
+
+	Note = class'UISSManager_CovertAction'.static.CreateIrrelevantNote();
+
+    Value.kind = LWTVObject;
+
+    NoteTuple = new class'LWTuple';
+	NoteTuple.Data.Length = 3;
+
+    NoteTuple.Data[0].kind = LWTVString;
+    NoteTuple.Data[0].s = Note.Text;
+        
+	NoteTuple.Data[1].kind = LWTVString;
+    NoteTuple.Data[1].s = Note.TextColor;
+        
+	NoteTuple.Data[2].kind = LWTVString;
+    NoteTuple.Data[2].s = Note.BGColor;
+
+    Value.o = NoteTuple;
+    Tuple.Data.AddItem(Value);
+    
+	return ELR_NoInterrupt;
 }
 
 ////////////////

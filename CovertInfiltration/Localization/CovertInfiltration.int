@@ -18,6 +18,7 @@ strInProgressHeader="In Progress"
 [UISSManager_CovertAction]
 strSlotOptionalNote="Optional"
 strSlotPenaltyNote="Overload Penalty"
+strSlotIrrelevantNote="Irrelevant Item"
 strSlotRequiredPrefix="Required:"
 strConfirmInfiltration="CONFIRM INFILTRATION"
 

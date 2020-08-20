@@ -21,6 +21,7 @@ var protected UISS_CostSlotsContainer CostSlots;
 
 var localized string strSlotOptionalNote;
 var localized string strSlotPenaltyNote;
+var localized string strSlotIrrelevantNote;
 var localized string strSlotRequiredPrefix;
 var localized string strConfirmInfiltration;
 
@@ -40,7 +41,6 @@ simulated protected function PostScreenInit()
 {
 	local UISS_TerrainDisplay TerrainDisplay;
 	local UISS_CovertActionInfo ActionInfo;
-	local UISS_ItemWarning ItemWarning;
 
 	ActionInfo = SquadSelect.Spawn(class'UISS_CovertActionInfo', SquadSelect);
 	ActionInfo.bAnimateOnInit = false;
@@ -58,11 +58,6 @@ simulated protected function PostScreenInit()
 	{
 		TerrainDisplay = SquadSelect.Spawn(class'UISS_TerrainDisplay', SquadSelect);
 		TerrainDisplay.InitTerrainDisplay(GetAction());
-	}
-	else
-	{
-		ItemWarning = SquadSelect.Spawn(class'UISS_ItemWarning', SquadSelect);
-		ItemWarning.InitItemWarning(GetAction());
 	}
 
 	bCreatedUIElements = true;
@@ -247,6 +242,17 @@ static function SSAAT_SlotNote CreateRankNote(int Rank, name SoldierClassName)
 	Note.Text = default.strSlotRequiredPrefix @ class'X2ExperienceConfig'.static.GetRankName(Rank, SoldierClassName);
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreateIrrelevantNote()
+{
+	local SSAAT_SlotNote Note;
+	
+	Note.Text = default.strSlotIrrelevantNote;
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.BAD_HTML_COLOR;
 
 	return Note;
 }
