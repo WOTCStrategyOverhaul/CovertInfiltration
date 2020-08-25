@@ -1500,25 +1500,6 @@ static function UpdateFacilityMissionLocks (optional XComGameState NewGameState)
 //	}
 }
 
-static function bool SquadHasIrrelevantItems (array<StateObjectReference> Soldiers)
-{
-	local StateObjectReference UnitRef;
-
-	`Log("Checking Squad");
-
-	foreach Soldiers(UnitRef)
-	{
-		if (UnitHasIrrelevantItems(UnitRef))
-		{
-			return true;
-		}
-	}
-
-	`Log("Validated Squad");
-
-	return false;
-}
-
 static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 {
 	local XComGameStateHistory             History;
@@ -1538,8 +1519,6 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		`Log("Evaluating " $ InventoryItem.GetMyTemplateName());
-
 		if (InventoryItem.GetMyTemplate().bInfiniteItem) continue;
 
 		// check item
@@ -1547,10 +1526,8 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 
 		if (InfilTemplate != none)
 		{
-			`Log("Infil/Deter: " $ InfilTemplate.HoursAdded $ "/" $ InfilTemplate.Deterrence);
 			if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 			{
-				`Log("Irrelevant Item!");
 				return true;
 			}
 		}
@@ -1561,21 +1538,45 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 			
 			if (InfilTemplate != none)
 			{
-				`Log("Infil/Deter: " $ InfilTemplate.HoursAdded $ "/" $ InfilTemplate.Deterrence);
 				if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 				{
-					`Log("Irrelevant Item!");
 					return true;
 				}
 			}
 			else
 			{
-				`Log("Infil/Deter: 0/0");
-				`Log("Irrelevant Item!");
 				return true;
 			}
 		}
 	}
 	
+	return false;
+}
+
+static function bool ActionHasAmbushRisk (XComGameState_CovertAction CovertAction)
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2CovertActionRiskTemplate RiskTemplate;
+	local array<CovertActionRisk> Risks;
+	local CovertActionRisk Risk;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	Risks = CovertAction.Risks;
+
+	foreach Risks(Risk)
+	{
+		RiskTemplate = X2CovertActionRiskTemplate(StratMgr.FindStrategyElementTemplate(Risk.RiskTemplateName));
+
+		// if an active uncountered ambush risk
+		if (RiskTemplate != none
+		 && Risk.RiskTemplateName == 'CovertActionRisk_Ambush'
+		 && CovertAction.NegatedRisks.Find(Risk.RiskTemplateName) == INDEX_NONE
+		 && Risk.ChanceToOccur + Risk.ChanceToOccurModifier > 0)
+		{
+			return true;
+		}
+	}
+
 	return false;
 }

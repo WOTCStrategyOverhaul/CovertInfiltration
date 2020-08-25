@@ -1093,6 +1093,11 @@ static protected function EventListenerReturn AddResource_OSS (Object EventData,
 
 static protected function EventListenerReturn AddSquadSelectSlotNotes(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
+	local UIAvengerHUD AvengerHUD;
+	local UIScreenStack ScreenStack;
+	local UIScreen CurrentScreen;
+	local UICovertActionsGeoscape CovertActions;
+
 	local LWTuple Tuple;
 	local int SlotIndex;
 
@@ -1105,9 +1110,18 @@ static protected function EventListenerReturn AddSquadSelectSlotNotes(Object Eve
 	
 	// Check that we are interested in actually doing something
 	if (Tuple == none || Tuple.Id != 'rjSquadSelect_ExtraInfo') return ELR_NoInterrupt;
+	
+	AvengerHUD = `HQPRES.m_kAvengerHUD;
+	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
+	CurrentScreen = ScreenStack.GetCurrentScreen();
 
-	// TODO: check for covert action and not infiltration somehow
-	// class'X2Helper_Infiltration'.static.IsInfiltrationAction(???)
+	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
+	
+	if (CovertActions == none) return ELR_NoInterrupt;
+	
+	// don't show warning if the activity will result in combat either through infiltration or ambush
+	if (class'X2Helper_Infiltration'.static.IsInfiltrationAction(CovertActions.SSManager.GetAction())) return ELR_NoInterrupt;
+	if (class'X2Helper_Infiltration'.static.ActionHasAmbushRisk(CovertActions.SSManager.GetAction())) return ELR_NoInterrupt;
 
 	SlotIndex = Tuple.Data[0].i;
 
