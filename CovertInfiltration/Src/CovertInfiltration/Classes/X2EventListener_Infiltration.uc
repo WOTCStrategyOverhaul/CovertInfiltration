@@ -1093,7 +1093,6 @@ static protected function EventListenerReturn AddResource_OSS (Object EventData,
 
 static protected function EventListenerReturn AddSquadSelectSlotNotes(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local UIAvengerHUD AvengerHUD;
 	local UIScreenStack ScreenStack;
 	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
@@ -1111,8 +1110,7 @@ static protected function EventListenerReturn AddSquadSelectSlotNotes(Object Eve
 	// Check that we are interested in actually doing something
 	if (Tuple == none || Tuple.Id != 'rjSquadSelect_ExtraInfo') return ELR_NoInterrupt;
 	
-	AvengerHUD = `HQPRES.m_kAvengerHUD;
-	ScreenStack = AvengerHUD.Movie.Pres.ScreenStack;
+	ScreenStack = `SCREENSTACK;
 	CurrentScreen = ScreenStack.GetCurrentScreen();
 
 	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
@@ -1128,24 +1126,23 @@ static protected function EventListenerReturn AddSquadSelectSlotNotes(Object Eve
 	if (!class'X2Helper_Infiltration'.static.UnitHasIrrelevantItems(`XCOMHQ.Squad[SlotIndex])) return ELR_NoInterrupt;
 
 	Note = class'UISSManager_CovertAction'.static.CreateIrrelevantNote();
-
-    Value.kind = LWTVObject;
-
-    NoteTuple = new class'LWTuple';
+	
+	Value.kind = LWTVObject;
+	NoteTuple = new class'LWTuple';
 	NoteTuple.Data.Length = 3;
+	
+	NoteTuple.Data[0].kind = LWTVString;
+	NoteTuple.Data[0].s = Note.Text;
 
-    NoteTuple.Data[0].kind = LWTVString;
-    NoteTuple.Data[0].s = Note.Text;
-        
 	NoteTuple.Data[1].kind = LWTVString;
-    NoteTuple.Data[1].s = Note.TextColor;
-        
+	NoteTuple.Data[1].s = Note.TextColor;
+  
 	NoteTuple.Data[2].kind = LWTVString;
-    NoteTuple.Data[2].s = Note.BGColor;
+	NoteTuple.Data[2].s = Note.BGColor;
 
-    Value.o = NoteTuple;
-    Tuple.Data.AddItem(Value);
-    
+	Value.o = NoteTuple;
+	Tuple.Data.AddItem(Value);
+	
 	return ELR_NoInterrupt;
 }
 
