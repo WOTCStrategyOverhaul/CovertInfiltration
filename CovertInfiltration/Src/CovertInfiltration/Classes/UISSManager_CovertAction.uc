@@ -21,6 +21,7 @@ var protected UISS_CostSlotsContainer CostSlots;
 
 var localized string strSlotOptionalNote;
 var localized string strSlotPenaltyNote;
+var localized string strSlotIrrelevantNote;
 var localized string strSlotRequiredPrefix;
 var localized string strConfirmInfiltration;
 
@@ -241,6 +242,17 @@ static function SSAAT_SlotNote CreateRankNote(int Rank, name SoldierClassName)
 	Note.Text = default.strSlotRequiredPrefix @ class'X2ExperienceConfig'.static.GetRankName(Rank, SoldierClassName);
 	Note.TextColor = "000000";
 	Note.BGColor = class'UIUtilities_Colors'.const.WARNING_HTML_COLOR;
+
+	return Note;
+}
+
+static function SSAAT_SlotNote CreateIrrelevantNote()
+{
+	local SSAAT_SlotNote Note;
+	
+	Note.Text = default.strSlotIrrelevantNote;
+	Note.TextColor = "000000";
+	Note.BGColor = class'UIUtilities_Colors'.const.BAD_HTML_COLOR;
 
 	return Note;
 }
