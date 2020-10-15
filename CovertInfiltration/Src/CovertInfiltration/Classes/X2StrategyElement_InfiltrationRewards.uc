@@ -46,6 +46,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateTechInspireRewardTemplate());
 
 	Rewards.AddItem(CreateMultiPOIRewardTemplate());
+	Rewards.AddItem(CreateBlackMarketRewardTemplate());
 	
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 	Rewards.AddItem(CreateActivityChainProxyReward());
@@ -788,6 +789,26 @@ static function X2DataTemplate CreateBlackMarketRewardTemplate()
 	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
 
 	return Template;
+}
+
+static function SetBlackMarketReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.RewardObjectReference = RewardObjectRef;
+	RewardState.Quantity = Amount;
+}
+
+static function GiveBlackMarketReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	local XComGameState_BlackMarket BlackMarketState;
+
+	`CI_Log("Spawning Black Market");
+
+	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
+
+	if (!BlackMarketState.ShowBlackMarket(NewGameState))
+	{
+		`CI_Warn("Failed to reveal the Black Market when the reward was granted!");
+	}
 }
 
 static function array<XComGameState_Tech> GetCandidatesForTechRush()

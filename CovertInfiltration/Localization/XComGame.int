@@ -357,6 +357,27 @@ ActionName="Patrol Wilderness"
 ActionPreNarrative="My followers are attuned to this earth and the energy that flows through it. We can sense there are many secrets left uncovered... and we can show you."
 ActionPostNarrative="Our patrol found several interesting locations that warrant further investigation."
 
+[CovertAction_BlackMarket X2CovertActionTemplate]
+ActionObjective="Uncover the Black Market"
+
+[Reward_BlackMarket X2RewardTemplate]
+DisplayName="Black Market"
+
+[CovertActionNarrative_BlackMarket_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Help the Smugglers"
+ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
+ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+
+[CovertActionNarrative_BlackMarket_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Help the Smugglers"
+ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
+ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+
+[CovertActionNarrative_BlackMarket_Templars X2CovertActionNarrativeTemplate]
+ActionName="Help the Smugglers"
+ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
+ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+
 [UIAlert]
 m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:StrValue0/!WorldRegionName/> will increase their monthly collection to +<XGParam:IntValue0/> supplies. The contact cost of nearby regions will also be reduced, Advanced Activity Chains will begin to spawn here, and any Avatar Facilities will be unlocked.
 
