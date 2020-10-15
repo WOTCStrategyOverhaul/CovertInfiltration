@@ -17,6 +17,9 @@ var config array<int> SmallIncomeIncreaseRewardMax;
 var config array<int> FacilityDelayRewardMin;
 var config array<int> FacilityDelayRewardMax;
 
+var config array<int> ScanSitesRewardMin;
+var config array<int> ScanSitesRewardMax;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Rewards;
@@ -41,6 +44,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_UtilityItems', 'UtilityItems'));
 	Rewards.AddItem(CreateLootTableRewardTemplate('Reward_ExperimentalItem', 'ExperimentalItem'));
 	Rewards.AddItem(CreateTechInspireRewardTemplate());
+
+	Rewards.AddItem(CreateMultiPOIRewardTemplate());
 	
 	Rewards.AddItem(CreateInfiltrationActivityProxyReward());
 	Rewards.AddItem(CreateActivityChainProxyReward());
@@ -710,6 +715,79 @@ static function string GetTechInspireRewardImage(XComGameState_Reward RewardStat
 	TechState = XComGameState_Tech(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 
 	return TechState.GetMyTemplate().strImage;
+}
+
+static function X2DataTemplate CreateMultiPOIRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_MultiPOI');
+
+	Template.SetRewardFn = SetMultiPOIReward;
+	Template.GiveRewardFn = GiveMultiPOIReward;
+	Template.GenerateRewardFn = GenerateMultiPOIReward;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+
+	return Template;
+}
+
+static function SetMultiPOIReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
+{
+	RewardState.RewardObjectReference = RewardObjectRef;
+	RewardState.Quantity = Amount;
+}
+
+static function GiveMultiPOIReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
+{
+	local XComGameStateHistory History;
+	local XComGameState_PointOfInterest POIState;
+	local XComGameState_HeadquartersResistance ResHQ;
+	local int idx;
+
+	History = `XCOMHISTORY;
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+
+	`CI_LOG("Spawning POIs: " $ RewardState.Quantity);
+
+	for (idx = 0; idx < RewardState.Quantity; idx++)
+	{
+		POIState = XComGameState_PointOfInterest(History.GetGameStateForObjectID(ResHQ.ChoosePOI(NewGameState).ObjectID));
+
+		if (POIState != none)
+		{
+			POIState = XComGameState_PointOfInterest(NewGameState.ModifyStateObject(class'XComGameState_PointOfInterest', POIState.ObjectID));
+			POIState.Spawn(NewGameState);
+		}
+	}
+}
+
+static function GenerateMultiPOIReward (XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference AuxRef)
+{
+	RewardState.SetReward(, GetMultiPOIReward());
+}
+
+static function int GetMultiPOIReward()
+{
+	local int SitesMin;
+	local int SitesMax;
+	
+	SitesMin = `ScaleStrategyArrayInt(default.ScanSitesRewardMin);
+	SitesMax = `ScaleStrategyArrayInt(default.ScanSitesRewardMax);
+	
+	return SitesMin + `SYNC_RAND_STATIC(SitesMax - SitesMin);
+}
+
+static function X2DataTemplate CreateBlackMarketRewardTemplate()
+{
+	local X2RewardTemplate Template;
+
+	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_BlackMarket');
+
+	Template.SetRewardFn = SetBlackMarketReward;
+	Template.GiveRewardFn = GiveBlackMarketReward;
+	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
+
+	return Template;
 }
 
 static function array<XComGameState_Tech> GetCandidatesForTechRush()
