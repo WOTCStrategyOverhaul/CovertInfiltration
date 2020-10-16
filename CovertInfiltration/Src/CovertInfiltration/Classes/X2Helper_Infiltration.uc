@@ -1064,64 +1064,6 @@ static function bool IsDLCLoaded (coerce string DLCName)
 	return DLCs.Find(DLCName) != INDEX_NONE;
 }
 
-static function SetBlackMarketSpawningBegun (XComGameState NewGameState, bool Value)
-{
-	local XComGameState_CovertInfiltrationInfo CIInfo;
-	
-	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
-
-	CIInfo.bBlackMarketSpawningBegun = Value;
-}
-
-static function SpawnBlackMarketCovertAction ()
-{
-	local XComGameStateHistory History;
-	local XComGameState NewGameState;
-	local XComGameState_CovertInfiltrationInfo CIInfo;
-	local XComGameState_BlackMarket BlackMarketState;
-	local XComGameState_WorldRegion RegionState;
-	local XComGameState_ResistanceFaction FactionState;
-	local X2StrategyElementTemplateManager StratMgr;
-	local X2CovertActionTemplate ActionTemplate;
-	local array<name> ActionExclusionList;
-	
-	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
-
-	if (BlackMarketState.bIsOpen || BlackMarketState.bForceClosed || BlackMarketState.bNeedsScan) return;
-	
-	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
-
-	if (CIInfo.bBlackMarketSpawningBegun) return;
-
-	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	ActionTemplate = X2CovertActionTemplate(StratMgr.FindStrategyElementTemplate('CovertAction_BlackMarket'));
-
-	if (ActionTemplate == none)
-	{
-		`REDSCREEN("Cannot spawn black market covert action - invalid template name");
-		return;
-	}
-
-	History = `XCOMHISTORY;
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Create Black Market Covert Action");
-
-	// Find starting faction
-	RegionState = XComGameState_WorldRegion(History.GetGameStateForObjectID(`XCOMHQ.StartingRegion.ObjectID));		
-	FactionState = RegionState.GetResistanceFaction();
-	FactionState = XComGameState_ResistanceFaction(NewGameState.ModifyStateObject(class'XComGameState_ResistanceFaction', FactionState.ObjectID));
-	
-	if (FactionState == none)
-	{
-		`REDSCREEN("Cannot spawn black market covert action - invalid faction template name");
-		History.CleanupPendingGameState(NewGameState);
-	}
-	else
-	{
-		FactionState.AddCovertAction(NewGameState, ActionTemplate, ActionExclusionList);
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-}
-
 ///////////////
 /// Kill XP ///
 ///////////////

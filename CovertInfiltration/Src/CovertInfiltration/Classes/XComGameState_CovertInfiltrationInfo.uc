@@ -35,7 +35,7 @@ var bool bPopupNewActionOnGeoscapeEntrance; // Used after completing P1s
 var array<StateObjectReference> MissionsToShowAlertOnStrategyMap; // Used to highlight new missions after spawning one to avoid full screen popups
 var array<StateObjectReference> CovertActionsToRemove; // Used to mark outdated CAs for removal when the player next enters the geoscape screen
 var bool bBlackMarketLeadPurchased; // True when the player first puchases an actionable facility lead from the BM. Prevents it from spawning again
-var bool bBlackMarketSpawningBegun; // True when the player has launched the covert action to reveal the black market. Prevents it from spawning again
+
 var array<name> TutorialStagesShown; // Template names of CI's tutorial stages that have been shown already
 var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is built and we are waiting for Geoscape control to return to the player to show the tutorial
 

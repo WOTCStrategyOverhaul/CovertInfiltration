@@ -234,8 +234,6 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 		class'UIUtilities_InfiltrationTutorial'.static.AdvancedChains();
 	}
 	
-	class'X2Helper_Infiltration'.static.SpawnBlackMarketCovertAction();
-
 	return ELR_NoInterrupt;
 }
 

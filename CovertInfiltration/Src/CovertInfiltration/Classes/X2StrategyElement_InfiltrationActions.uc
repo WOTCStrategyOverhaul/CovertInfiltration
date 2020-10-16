@@ -182,6 +182,7 @@ static function X2DataTemplate CreateBlackMarketTemplate()
 
 	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+	Template.bGoldenPath = true;
 
 	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Skirmishers');
 	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Reapers');

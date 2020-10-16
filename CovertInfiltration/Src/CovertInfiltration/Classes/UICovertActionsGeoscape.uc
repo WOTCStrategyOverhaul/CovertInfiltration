@@ -1517,7 +1517,6 @@ simulated function ConfirmAbortPopup()
 simulated function ConfirmAbortPopupCallback(Name eAction)
 {
 	local XComGameState_CovertAction CovertAction;
-	local XComGameState NewGameState;
 
 	if (eAction == 'eUIAction_Accept')
 	{
@@ -1528,15 +1527,6 @@ simulated function ConfirmAbortPopupCallback(Name eAction)
 		
 		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(CovertAction));
 		
-		if (CovertAction.GetMyTemplateName() == 'CovertAction_BlackMarket')
-		{
-			NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Mark black market covert action aborted");
-
-			class'X2Helper_Infiltration'.static.SetBlackMarketSpawningBegun(NewGameState, false);
-
-			`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-		}
-
 		CloseScreen();
 	}
 }
