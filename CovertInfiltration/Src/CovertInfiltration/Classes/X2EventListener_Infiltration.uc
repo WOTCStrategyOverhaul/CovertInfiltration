@@ -548,6 +548,15 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	
+	if (ActionState.GetMyTemplateName() == 'CovertAction_BlackMarket')
+	{
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Mark black market covert action begun");
+
+		class'X2Helper_Infiltration'.static.SetBlackMarketSpawningBegun(NewGameState, true);
+
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
 
 	return ELR_NoInterrupt;
 }
@@ -557,9 +566,13 @@ static protected function EventListenerReturn PostEndOfMonth (Object EventData, 
 	local XComGameState NewGameState;
 
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Handling post end of month");
+
 	class'XComGameState_ActivityChainSpawner'.static.SpawnCounterDarkEvents(NewGameState);
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	
+	class'X2Helper_Infiltration'.static.SpawnBlackMarketCovertAction();
+
 	return ELR_NoInterrupt;
 }
 

@@ -748,8 +748,6 @@ static function GiveMultiPOIReward(XComGameState NewGameState, XComGameState_Rew
 	History = `XCOMHISTORY;
 	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 
-	`CI_LOG("Spawning POIs: " $ RewardState.Quantity);
-
 	for (idx = 0; idx < RewardState.Quantity; idx++)
 	{
 		POIState = XComGameState_PointOfInterest(History.GetGameStateForObjectID(ResHQ.ChoosePOI(NewGameState).ObjectID));
@@ -800,8 +798,6 @@ static function SetBlackMarketReward(XComGameState_Reward RewardState, optional 
 static function GiveBlackMarketReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
 {
 	local XComGameState_BlackMarket BlackMarketState;
-
-	`CI_Log("Spawning Black Market");
 
 	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
 
