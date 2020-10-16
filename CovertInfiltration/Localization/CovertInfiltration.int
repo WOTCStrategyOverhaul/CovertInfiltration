@@ -31,7 +31,7 @@ strBondModifierTitle="BOND MODIFIER:"
 strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strPlusDaysAndHours="+<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
 strMinusDaysAndHours="-<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
-strMaxAllowedInfil="Maximum Infil: <XGParam:IntValue0>"
+strMaxAllowedInfil="Maximum Infil: <XGParam:IntValue0>%"
 
 [UISS_TerrainDisplay]
 strAbandoned=Abandoned
