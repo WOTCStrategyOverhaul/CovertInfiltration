@@ -85,7 +85,29 @@ static function X2DataTemplate CreatePromotionsRewardTemplate()
 	// This is a dummy reward, does nothing
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_Promotions');
 
+	Template.IsRewardAvailableFn = IsPromotionsRewardAvailable;
+
 	return Template;
+}
+
+static function bool IsPromotionsRewardAvailable(optional XComGameState NewGameState, optional StateObjectReference AuxRef)
+{
+	local X2CovertActionTemplate ActionTemplate;
+	local X2StrategyElementTemplateManager TemplateManager;
+
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate('CovertAction_ExhaustiveTraining'));
+
+	if (ActionTemplate != none)
+	{
+		return ActionTemplate.Slots[0].Rewards.Length > 0;
+	}
+	else
+	{
+		`Redscreen("CI: Promotions reward is not available because the covert action template was not found");
+	}
+
+	return false;
 }
 
 static function X2DataTemplate CreateSmallIntelRewardTemplate()
