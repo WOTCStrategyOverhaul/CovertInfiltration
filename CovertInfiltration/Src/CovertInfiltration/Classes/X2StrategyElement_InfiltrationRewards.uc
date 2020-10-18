@@ -854,11 +854,14 @@ static function GiveBlackMarketReward(XComGameState NewGameState, XComGameState_
 	local XComGameState_BlackMarket BlackMarketState;
 
 	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
+	BlackMarketState = XComGameState_BlackMarket(NewGameState.ModifyStateObject(class'XComGameState_BlackMarket', BlackMarketState.ObjectID));
 
-	if (!BlackMarketState.ShowBlackMarket(NewGameState))
-	{
-		`CI_Warn("Failed to reveal the Black Market when the reward was granted!");
-	}
+	BlackMarketState.bNeedsScan = true;
+	BlackMarketState.bForceClosed = false;
+	BlackMarketState.bNeedsAppearedPopup = true;
+	BlackMarketState.SetScanHoursRemaining(`ScaleStrategyArrayInt(BlackMarketState.default.MinScanDays), `ScaleStrategyArrayInt(BlackMarketState.default.MaxScanDays));
+	BlackMarketState.SetContinent();
+	BlackMarketState.ResetBlackMarketGoods(NewGameState);
 }
 
 static function bool IsBlackMarketRewardAvailable(optional XComGameState NewGameState, optional StateObjectReference AuxRef)
