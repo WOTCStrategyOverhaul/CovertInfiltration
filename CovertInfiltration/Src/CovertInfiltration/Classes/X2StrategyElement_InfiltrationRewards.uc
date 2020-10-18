@@ -102,10 +102,8 @@ static function bool IsPromotionsRewardAvailable(optional XComGameState NewGameS
 	{
 		return ActionTemplate.Slots[0].Rewards.Length > 0;
 	}
-	else
-	{
-		`Redscreen("CI: Promotions reward is not available because the covert action template was not found");
-	}
+
+	`Redscreen("CI: Promotions reward is not available because the covert action template was not found");
 
 	return false;
 }
