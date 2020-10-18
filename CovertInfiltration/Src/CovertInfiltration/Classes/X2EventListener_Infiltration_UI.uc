@@ -233,7 +233,7 @@ static protected function EventListenerReturn OnGeoscapeEntry(Object EventData, 
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.AdvancedChains();
 	}
-	
+
 	return ELR_NoInterrupt;
 }
 

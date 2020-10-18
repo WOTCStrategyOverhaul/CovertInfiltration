@@ -548,7 +548,7 @@ static protected function EventListenerReturn CovertActionStarted (Object EventD
 	}
 
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	
+
 	return ELR_NoInterrupt;
 }
 
