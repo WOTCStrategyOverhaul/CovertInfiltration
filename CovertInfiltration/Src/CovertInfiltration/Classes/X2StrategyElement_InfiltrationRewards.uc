@@ -856,12 +856,8 @@ static function GiveBlackMarketReward(XComGameState NewGameState, XComGameState_
 	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
 	BlackMarketState = XComGameState_BlackMarket(NewGameState.ModifyStateObject(class'XComGameState_BlackMarket', BlackMarketState.ObjectID));
 
-	BlackMarketState.bNeedsScan = true;
+	BlackMarketState.ShowBlackMarket(NewGameState, true);
 	BlackMarketState.bForceClosed = false;
-	BlackMarketState.bNeedsAppearedPopup = true;
-	BlackMarketState.SetScanHoursRemaining(`ScaleStrategyArrayInt(BlackMarketState.default.MinScanDays), `ScaleStrategyArrayInt(BlackMarketState.default.MaxScanDays));
-	BlackMarketState.SetContinent();
-	BlackMarketState.ResetBlackMarketGoods(NewGameState);
 }
 
 static function bool IsBlackMarketRewardAvailable(optional XComGameState NewGameState, optional StateObjectReference AuxRef)
