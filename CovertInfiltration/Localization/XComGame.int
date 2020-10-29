@@ -374,8 +374,8 @@ ConsoleObjectiveTextPools[1]=
 
 [DefaultSabotageCC X2MissionNarrativeTemplate]
 ObjectiveTextPools[0]="Unused"
-ObjectiveTextPools[1]="Extract all XCOM soldiers"
-ObjectiveTextPools[2]="Plant X4 charges on the monument"
+ObjectiveTextPools[1]="Plant X4 charges on the monument"
+ObjectiveTextPools[2]="Extract all XCOM soldiers"
 
 [GatecrasherCI X2MissionTemplate]
 DisplayName="Operation Gatecrasher"
