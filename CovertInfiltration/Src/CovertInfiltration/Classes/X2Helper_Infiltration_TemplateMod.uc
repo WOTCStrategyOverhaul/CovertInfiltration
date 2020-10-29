@@ -553,7 +553,7 @@ static function PatchMissionDefinitions ()
 	for (i = 0; i < MissionManager.arrMissions.Length; i++)
 	{
 		if (MissionManager.arrMissions[i].sType == "SupplyExtraction"
-		 || MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
+		 && MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
 		{
 			ExtractObjective.ObjectiveName = 'ExtractAll';
 			ExtractObjective.bIsTacticalObjective = false;
@@ -566,7 +566,7 @@ static function PatchMissionDefinitions ()
 		}
 
 		if (MissionManager.arrMissions[i].sType == "SabotageCC"
-		 || MissionManager.arrMissions[i].MissionName == 'SabotageAdventMonument')
+		 && MissionManager.arrMissions[i].MissionName == 'SabotageAdventMonument')
 		{
 			SweepObjective.ObjectiveName = 'Sweep';
 			SweepObjective.bIsTacticalObjective = true;
