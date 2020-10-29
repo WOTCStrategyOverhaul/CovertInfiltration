@@ -337,7 +337,7 @@ strObjective="assault the <font color='#CBB11F'>alien UFO</font>"
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Acquire Facility Lead"
-strDescription="Capture a human collaborator assisting with the Avatar Project and politely ask them about their facilties."
+strDescription="Capture a human collaborator assisting with the Avatar Project and gain a facility lead after a polite chat with our interrogators."
 strObjective="capture an <font color='#842015'>AVATAR coordinator</font>"
 
 [ActivityChain_SupplyIntercept X2ActivityChainTemplate]
