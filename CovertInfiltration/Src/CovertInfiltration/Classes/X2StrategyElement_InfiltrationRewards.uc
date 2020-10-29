@@ -376,6 +376,7 @@ static function X2DataTemplate CreateCounterDarkEventRewardTemplate()
 	Template.SetRewardFn = SetDarkEventReward;
 	Template.GetRewardStringFn = GetDarkEventRewardString;
 	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
+	Template.CleanUpRewardFn = CleanUpDarkEventReward;
 
 	return Template;
 }
@@ -390,6 +391,7 @@ static function X2DataTemplate CreateDelayDarkEventRewardTemplate()
 	Template.SetRewardFn = SetDarkEventReward;
 	Template.GetRewardStringFn = GetDarkEventRewardString;
 	Template.GetRewardPreviewStringFn = GetDarkEventRewardString;
+	Template.CleanUpRewardFn = CleanUpDarkEventReward;
 
 	return Template;
 }
@@ -421,6 +423,14 @@ static function string GetDarkEventRewardString(XComGameState_Reward RewardState
 	ParamTag.StrValue0 = DarkEventState.GetDisplayName();
 
 	return `XEXPAND.ExpandString(RewardState.GetMyTemplate().DisplayName);
+}
+
+static protected function CleanUpDarkEventReward(XComGameState NewGameState, XComGameState_Reward RewardState)
+{
+	// Do literary nothing. Literary.
+
+	// This callback prevents the default behaviour of removing RewardState.RewardObjectReference.ObjectID
+	// which in this case is XCGS_DE which are supposed to live the entire campaign
 }
 
 static function X2DataTemplate CreateInfiltrationActivityProxyReward ()
