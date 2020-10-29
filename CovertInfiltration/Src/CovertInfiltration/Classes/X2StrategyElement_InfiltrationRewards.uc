@@ -427,7 +427,7 @@ static function string GetDarkEventRewardString(XComGameState_Reward RewardState
 
 static protected function CleanUpDarkEventReward(XComGameState NewGameState, XComGameState_Reward RewardState)
 {
-	// Do literary nothing. Literary.
+	// Do literally nothing. Literally.
 
 	// This callback prevents the default behaviour of removing RewardState.RewardObjectReference.ObjectID
 	// which in this case is XCGS_DE which are supposed to live the entire campaign

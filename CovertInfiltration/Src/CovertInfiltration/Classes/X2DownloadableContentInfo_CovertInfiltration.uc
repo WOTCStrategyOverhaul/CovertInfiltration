@@ -397,12 +397,72 @@ static function OnLoadedSavedGameWithDLCExisting ()
 	// State fix-up changes go here
 	`CI_Log("OnLoadedSavedGameWithDLCExisting running");
 
+	if (CIInfo.ModVersion < 00300003) FixEatenDEs(NewGameState);
+
 	// Save that the state was updated.
 	// Do this last, so that the state update code can access the previous version
 	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
 	CIInfo.ModVersion = class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION;
 
 	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
+}
+
+// See commit 2649f9c for details
+static protected function FixEatenDEs (XComGameState NewGameState)
+{
+	local array<X2StrategyElementTemplate> DarkEventTemplates;
+	local X2StrategyElementTemplate StrategyTemplate;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_DarkEvent DarkEventState;
+	local XComGameStateHistory History;
+	local array<name> ExistingDEs;
+	local int idx;
+
+	History = `XCOMHISTORY;
+
+	// First clear the broken DEs from the AlienHQ tracking
+
+	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+	AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
+	
+	for (idx = 0; idx < AlienHQ.ChosenDarkEvents.Length; idx++)
+	{
+		DarkEventState = XComGameState_DarkEvent(History.GetGameStateForObjectID(AlienHQ.ChosenDarkEvents[idx].ObjectID));
+	
+		if (DarkEventState == None)
+		{
+			AlienHQ.ChosenDarkEvents.Remove(idx, 1);
+			idx--;
+		}
+	}
+
+	for (idx = 0; idx < AlienHQ.ActiveDarkEvents.Length; idx++)
+	{
+		DarkEventState = XComGameState_DarkEvent(History.GetGameStateForObjectID(AlienHQ.ActiveDarkEvents[idx].ObjectID));
+	
+		if (DarkEventState == None)
+		{
+			AlienHQ.ActiveDarkEvents.Remove(idx, 1);
+			idx--;
+		}
+	}
+
+	// Next, resurrect the eaten DEs
+
+	foreach History.IterateByClassType(class'XComGameState_DarkEvent', DarkEventState)
+	{
+		ExistingDEs.AddItem(DarkEventState.GetMyTemplateName());
+	}
+
+	DarkEventTemplates = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager()
+		.GetAllTemplatesOfClass(class'X2DarkEventTemplate');
+
+	foreach DarkEventTemplates(StrategyTemplate)
+	{
+		if (ExistingDEs.Find(StrategyTemplate.DataName) != INDEX_NONE) continue;
+
+		NewGameState.CreateNewStateObject(class'XComGameState_DarkEvent', StrategyTemplate);
+	}
 }
 
 /////////////////

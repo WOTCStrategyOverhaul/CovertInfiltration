@@ -23,7 +23,7 @@ struct CharacterGroupKillCount
 // if (CurrentVersion > CIInfo.ModVersion) 
 var int ModVersion;
 
-const CURRENT_MOD_VERSION = 00300000;
+const CURRENT_MOD_VERSION = 00300003;
 
 /////////////////////
 /// Strategy vars ///
