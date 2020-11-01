@@ -294,7 +294,7 @@ strObjective="hit an ADVENT <font color='#CBB11F'>supply convoy</font>"
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Capture ADVENT Collaborator"
-strDescription="Bring a human collaborator in for 'questioning' to reveal what they know about ADVENT."
+strDescription="Bring a human collaborator in for 'questioning' to gain a wealth of intel about ADVENT's operations."
 strObjective="capture a highly-placed <font color='#27AAE1'>ADVENT collaborator</font>"
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
@@ -337,7 +337,7 @@ strObjective="assault the <font color='#CBB11F'>alien UFO</font>"
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Acquire Facility Lead"
-strDescription="Capture a human collaborator assisting with the Avatar Project and gain a facility lead after a polite chat with our interrogators."
+strDescription="Capture a human collaborator assisting with the Avatar Project to gain a facility lead after a polite chat with our interrogators."
 strObjective="capture an <font color='#842015'>AVATAR coordinator</font>"
 
 [ActivityChain_SupplyIntercept X2ActivityChainTemplate]
