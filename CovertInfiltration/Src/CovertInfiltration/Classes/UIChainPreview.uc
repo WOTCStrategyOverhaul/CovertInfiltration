@@ -300,23 +300,13 @@ function SetFocusedActivity (StateObjectReference InFocusedActivityRef)
 		FocusedActivityRef.ObjectID = 0;
 	}
 
-	UpdateStages();
+	UpdateCenterSection();
 	UpdateComplications();
-
-	ChainNameText.SetHtmlText(
-		class'UIUtilities_Text'.static.AddFontInfo(
-			class'UIUtilities_Infiltration'.static.ColourText(
-				GetFocusedActivity().GetActivityChain().GetOverviewTitle(),
-				"90BDBD"
-			),
-			Screen.bIsIn3D, false,, 28
-		)
-	);
 
 	HaltAllAnimation();
 }
 
-protected function UpdateStages ()
+protected function UpdateCenterSection ()
 {
 	local int FocusedStageIndex, LeftExtraCount, RightExtraCount;
 	local XComGameState_Activity FocusedActivityState;
@@ -333,6 +323,16 @@ protected function UpdateStages ()
 	ChainState = FocusedActivityState.GetActivityChain();
 
 	CenterSection.Show();
+
+	ChainNameText.SetHtmlText(
+		class'UIUtilities_Text'.static.AddFontInfo(
+			class'UIUtilities_Infiltration'.static.ColourText(
+				GetFocusedActivity().GetActivityChain().GetOverviewTitle(),
+				"90BDBD"
+			),
+			Screen.bIsIn3D, false,, 28
+		)
+	);
 
 	// The following code handles with figuring out which slots to assign to which stages.
 	// The general logic is to keep the focused (current) activity in the center, unless

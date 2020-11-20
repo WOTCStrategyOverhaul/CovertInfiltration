@@ -678,7 +678,7 @@ static function string GetLootTableRewardDetailsString(XComGameState_Reward Rewa
 		ItemTemplate = ItemManager.FindItemTemplate(PossibleItems[i]);
 		if (ItemTemplate == none) continue;
 
-		PossibleItemsLoc[i] = ItemTemplate.FriendlyName;
+		PossibleItemsLoc[i] = ItemTemplate.FriendlyNamePlural;
 	}
 
 	JoinArray(PossibleItemsLoc, Result, ", ");
