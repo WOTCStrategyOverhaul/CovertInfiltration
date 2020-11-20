@@ -65,7 +65,32 @@ simulated function OpenCovertActionScreen()
 	}
 	else
 	{
-		class'UIMapToCovertActionsForcer'.static.ForceCAOnNextMapTick(ActionRef);
+		// Do not open the CA screen if the first faction reveal wasn't seen
+		// The screen will open before the faction reveal triggers and therefore their CAs will not be visible in the list
+		if (HasSeenStartingFactionReveal())
+		{
+			class'UIMapToCovertActionsForcer'.static.ForceCAOnNextMapTick(ActionRef);
+		}
+
 		XComHQPresentationLayer(Movie.Pres).m_kAvengerHUD.NavHelp.HotlinkToGeoscape();
 	}
+}
+
+protected static function bool HasSeenStartingFactionReveal ()
+{
+	local array<XComGameState_ResistanceFaction> AllFactions;
+	local XComGameState_ResistanceFaction FactionState;
+
+	AllFactions = class'UIUtilities_Strategy'.static.GetResistanceHQ().GetAllFactions();
+
+	foreach AllFactions(FactionState)
+	{
+		if (FactionState.bFirstFaction) 
+		{
+			return FactionState.bSeenFactionHQReveal;
+		}
+	}
+
+	`RedScreen("CI: Failed to find starting faction - this should not be possible. Assuming the reveal was seen already");
+	return true;
 }
