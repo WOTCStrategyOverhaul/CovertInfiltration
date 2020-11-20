@@ -576,6 +576,7 @@ static function X2DataTemplate CreateLootTableRewardTemplate (name RewardName, n
 	
 	Template.GiveRewardFn = GiveLootTableReward;
 	Template.GetRewardStringFn = GetLootTableRewardString;
+	Template.GetRewardDetailsStringFn = GetLootTableRewardDetailsString;
 
 	return Template;
 }
@@ -636,6 +637,79 @@ static function GiveLootTableReward(XComGameState NewGameState, XComGameState_Re
 static function string GetLootTableRewardString(XComGameState_Reward RewardState)
 {
 	return RewardState.RewardString;
+}
+
+static function string GetLootTableRewardDetailsString(XComGameState_Reward RewardState)
+{
+	local array<LootReference> GlobalLootReferences;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local X2ItemTemplateManager ItemManager;
+	local X2LootTableManager LootManager;
+	local array<string> PossibleItemsLoc;
+	local X2ItemTemplate ItemTemplate;
+	local LootReference LootReference;
+	local array<name> PossibleItems;
+	local string Result;
+	local int i;
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	LootManager = class'X2LootTableManager'.static.GetLootTableManager();
+	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	i = LootManager.FindGlobalLootCarrier(RewardState.GetMyTemplate().rewardObjectTemplateName);
+	if (i == INDEX_NONE) return "";
+
+	GlobalLootReferences = LootManager.GlobalLootCarriers[i].LootReferences;
+
+	foreach GlobalLootReferences(LootReference)
+	{
+		// From LootReference.ForceLevel:
+		//  alien force level must be >= this number for the LootReference to be valid
+		if (AlienHQ.ForceLevel >= LootReference.ForceLevel)
+		{
+			CollectPossibleItems(LootReference.LootTableName, LootManager, PossibleItems);
+		}
+	}
+
+	PossibleItemsLoc.Length = PossibleItems.Length;
+
+	for (i = 0; i < PossibleItems.Length; i++)
+	{
+		ItemTemplate = ItemManager.FindItemTemplate(PossibleItems[i]);
+		if (ItemTemplate == none) continue;
+
+		PossibleItemsLoc[i] = ItemTemplate.FriendlyName;
+	}
+
+	JoinArray(PossibleItemsLoc, Result, ", ");
+	return Result;
+}
+
+static protected function CollectPossibleItems (name TableName, X2LootTableManager LootManager, out array<name> PossibleItems)
+{
+	local array<LootTableEntry> Loots;
+	local int iLootTable, iLoot;
+
+	iLootTable = LootManager.LootTables.Find('TableName', TableName);
+	if (iLootTable == INDEX_NONE) return;
+
+	Loots = LootManager.LootTables[iLootTable].Loots;
+
+	for (iLoot = 0; iLoot < Loots.Length; iLoot++)
+	{
+		if (Loots[iLoot].TemplateName != '')
+		{
+			if (PossibleItems.Find(Loots[iLoot].TemplateName) == INDEX_NONE)
+			{
+				PossibleItems.AddItem(Loots[iLoot].TemplateName);
+			}
+		}
+		else
+		{
+			// Let's assume that the native code validates that there is no circular references
+			CollectPossibleItems(Loots[iLoot].TableRef, LootManager, PossibleItems);
+		}
+	}
 }
 
 static function X2DataTemplate CreateTechInspireRewardTemplate()
