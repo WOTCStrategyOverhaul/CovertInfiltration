@@ -523,7 +523,6 @@ function CounterChainDarkEvent(XComGameState NewGameState)
 	DarkEventState = GetChainDarkEvent();
 	AlienHQ = class'X2StrategyElement_DefaultMissionSources'.static.GetAndAddAlienHQ(NewGameState);
 
-	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, DarkEventState.GetPostMissionText(true), false);
 	AlienHQ.CancelDarkEvent(NewGameState, DarkEventState.GetReference());
 }
 

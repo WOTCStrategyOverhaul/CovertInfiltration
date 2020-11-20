@@ -64,6 +64,7 @@ static function SetupDarkEventChain(XComGameState NewGameState, XComGameState_Ac
 	ChainState.PreventChainDarkEventFromCompleting(NewGameState);
 }
 
+// Keep in sync with X2EventListener_Infiltration::PreCompleteStrategyFromTacticalTransfer_ForceRevealCounteredDE
 static function CleanupDarkEventChain(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	if (ChainState.IsCompleted() && ChainState.GetLastActivity().CompletionStatus == eActivityCompletion_Success)

@@ -918,6 +918,14 @@ static protected function bool CanChosenAppear (XComGameState NewGameState)
 
 static protected function EventListenerReturn PreCompleteStrategyFromTacticalTransfer (Object EventData, Object EventSource, XComGameState NullGameState, Name Event, Object CallbackData)
 {
+	PreCompleteStrategyFromTacticalTransfer_RewardInterception();
+	PreCompleteStrategyFromTacticalTransfer_ForceRevealCounteredDE();
+
+	return ELR_NoInterrupt;
+}
+
+static protected function PreCompleteStrategyFromTacticalTransfer_RewardInterception ()
+{
 	local XComGameState_ActivityChain ChainState;
 	local XComGameState_Activity ActivityState;
 	
@@ -936,15 +944,15 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	
 	XComHQ = `XCOMHQ;
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(XComHQ.MissionRef.ObjectID);
-	if (ActivityState == none) return ELR_NoInterrupt;
+	if (ActivityState == none) return;
 	
 	ChainState = ActivityState.GetActivityChain();
-	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return ELR_NoInterrupt;
+	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return;
 	
 	ComplicationState = XComGameState_Complication_RewardInterception(ChainState.FindComplication('Complication_RewardInterception'));
-	if (ComplicationState == none) return ELR_NoInterrupt;
+	if (ComplicationState == none) return;
 
-	if (!ComplicationState.bTriggered) return ELR_NoInterrupt;
+	if (!ComplicationState.bTriggered) return;
 
 	// All checks have passed, we are good to do our magic
 	`CI_Log("Processing Reward Interception");
@@ -991,8 +999,38 @@ static protected function EventListenerReturn PreCompleteStrategyFromTacticalTra
 	{
 		History.CleanupPendingGameState(NewGameState);
 	}
+}
 
-	return ELR_NoInterrupt;
+// Note: we cannot use the activity status since this code runs before the mission callbacks are triggered.
+// Such earliness is needed since the reward text is cached before the mission callbacks are triggered.
+// As such, need to manually keep in sync with X2StrategyElement_DefaultActivityChains::CleanupDarkEventChain.
+static protected function PreCompleteStrategyFromTacticalTransfer_ForceRevealCounteredDE ()
+{
+	local XComGameState_ActivityChain ChainState;
+	local XComGameState_DarkEvent DarkEventState;
+	local XComGameState_Activity ActivityState;
+	local XComGameState_BattleData BattleData;
+	local XComGameState NewGameState;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(`XCOMHQ.MissionRef.ObjectID);
+	if (ActivityState == none) return;
+	
+	ChainState = ActivityState.GetActivityChain();
+	if (ChainState.GetMyTemplateName() != 'ActivityChain_CounterDarkEvent') return;
+	if (ChainState.GetLastActivity().ObjectID != ActivityState.ObjectID) return;
+
+	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+	if (!BattleData.bLocalPlayerWon) return;
+
+	DarkEventState = ChainState.GetChainDarkEvent();
+	if (!DarkEventState.bSecretEvent) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Force reveal DE");
+	DarkEventState = XComGameState_DarkEvent(NewGameState.ModifyStateObject(class'XComGameState_DarkEvent', DarkEventState.ObjectID));
+
+	DarkEventState.bSecretEvent = false;
+
+	`SubmitGameState(NewGameState);
 }
 
 static protected function EventListenerReturn BlackMarketGoodsReset (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
