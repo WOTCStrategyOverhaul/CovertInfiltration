@@ -188,7 +188,7 @@ ExperimentalRolloutFriendlyDesc="All enemy units have +<Ability:EXPERIMENTALROLL
 [X2EventListener_Infiltration_UI]
 strInfiltrationReady="Mission Ready"
 strCanWaitForBonusOrLaunch="Squad can Assault now or Overinfiltrate"
-strAcademyTrainingRank="TARGET TRAINING RANK"
+strAcademyTrainingMaxRank="MAX TRAINING RANK"
 strReadySoldiers="READY"
 strTiredSoldiers="TIRED"
 strInformantsTitle="INFORMANTS"

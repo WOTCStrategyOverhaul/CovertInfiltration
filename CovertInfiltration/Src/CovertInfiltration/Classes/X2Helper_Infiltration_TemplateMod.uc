@@ -975,7 +975,7 @@ static protected function bool IsUnitValidForAcademySlot (XComGameState_StaffSlo
 	return Unit.CanBeStaffed()
 		&& Unit.IsSoldier()
 		&& Unit.IsActive()
-		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank()
+		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingMaxRank()
 		&& !Unit.CanRankUpSoldier()
 		&& SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE;
 }

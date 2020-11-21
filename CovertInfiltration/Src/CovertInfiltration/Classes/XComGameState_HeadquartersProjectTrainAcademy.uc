@@ -25,7 +25,7 @@ function SetProjectFocus (StateObjectReference FocusRef, optional XComGameState 
 	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', ProjectFocus.ObjectID));
 	UnitState.SetStatus(eStatus_Training);
 
-	RanksToAdd = Max(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank() - UnitState.GetSoldierRank(), 0);
+	RanksToAdd = Max(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(ProjectFocus) - UnitState.GetSoldierRank(), 0);
 	UpdateWorkPerHour(NewGameState);
 
 	if (MakingProgress())
