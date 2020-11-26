@@ -171,11 +171,27 @@ static function X2DataTemplate CreateChosenSurveillanceTemplate()
 function bool IfChosenActivated(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_AdventChosen ChosenState;
+	local StateObjectReference ChosenRef;
 	
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-	
-	// then add this complication to the chain
-	return AlienHQ.bChosenActive;
+
+	if (AlienHQ.bChosenActive)
+	{
+		foreach AlienHQ.AdventChosen(ChosenRef)
+		{
+			ChosenState = XComGameState_AdventChosen(`XCOMHISTORY.GetGameStateForObjectID(ChosenRef.ObjectID));
+			
+			if (ChosenState.bDefeated)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 function IncreaseRandomChosenKnowledge(XComGameState NewGameState, XComGameState_Complication ComplicationState)
