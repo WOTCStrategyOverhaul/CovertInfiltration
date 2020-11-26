@@ -542,10 +542,10 @@ static function PatchSabotageMonumentMissionSchedules ()
 	}
 }
 
-static function PatchSupplyExtractionMission ()
+static function PatchMissionDefinitions ()
 {
 	local XComTacticalMissionManager MissionManager;
-	local MissionObjectiveDefinition ExtractObjective;
+	local MissionObjectiveDefinition ExtractObjective, SweepObjective, DestroyObjective;
 	local int i;
 
 	MissionManager = `TACTICALMISSIONMGR;
@@ -553,7 +553,7 @@ static function PatchSupplyExtractionMission ()
 	for (i = 0; i < MissionManager.arrMissions.Length; i++)
 	{
 		if (MissionManager.arrMissions[i].sType == "SupplyExtraction"
-		 || MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
+		 && MissionManager.arrMissions[i].MissionName == 'SupplyExtraction')
 		{
 			ExtractObjective.ObjectiveName = 'ExtractAll';
 			ExtractObjective.bIsTacticalObjective = false;
@@ -564,6 +564,59 @@ static function PatchSupplyExtractionMission ()
 			MissionManager.arrMissions[i].MapNames[0] = "Obj_SupplyExtraction_CI";
 			MissionManager.arrMissions[i].MissionObjectives[1] = ExtractObjective;
 		}
+
+		if (MissionManager.arrMissions[i].sType == "SabotageCC"
+		 && MissionManager.arrMissions[i].MissionName == 'SabotageAdventMonument')
+		{
+			SweepObjective.ObjectiveName = 'Sweep';
+			SweepObjective.bIsTacticalObjective = true;
+			SweepObjective.bIsStrategyObjective = false;
+			SweepObjective.bIsTriadObjective = false;
+
+			DestroyObjective.ObjectiveName = 'Destroy';
+			DestroyObjective.bIsTacticalObjective = false;
+			DestroyObjective.bIsStrategyObjective = true;
+			DestroyObjective.bIsTriadObjective = true;
+			
+			MissionManager.arrMissions[i].MapNames[0] = "Obj_SabotageCC_CI";
+			MissionManager.arrMissions[i].MissionObjectives[0] = SweepObjective;
+			MissionManager.arrMissions[i].MissionObjectives[1] = DestroyObjective;
+		}
+	}
+}
+
+static function PatchSabotageMissionNarrative ()
+{
+	local X2MissionNarrativeTemplateManager TemplateManager;
+	local X2MissionNarrativeTemplate        Template;
+
+	TemplateManager = class'X2MissionNarrativeTemplateManager'.static.GetMissionNarrativeTemplateManager();
+	Template = TemplateManager.FindMissionNarrativeTemplate("SabotageCC");
+
+	if (Template != none)
+	{
+		// Old
+		Template.NarrativeMoments[0]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_BombDetonated";
+		Template.NarrativeMoments[1]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_HeavyLossesIncurred";
+		Template.NarrativeMoments[2]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_TacIntro";
+		Template.NarrativeMoments[3]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_BombSpotted";
+		Template.NarrativeMoments[4]="X2NarrativeMoments.TACTICAL.General.GenTactical_SquadWipe";
+		Template.NarrativeMoments[5]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_CompletionNag";
+		Template.NarrativeMoments[6]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_AllEnemiesDefeated";
+		Template.NarrativeMoments[9]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_BombPlantedContinue";
+
+		// Replaced
+		//Template.NarrativeMoments[7]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_AreaSecuredMissionEnd";
+		Template.NarrativeMoments[7]="X2NarrativeMoments.TACTICAL.Sabotage.Sabotage_AllEnemiesDefeatedObjCompleted";
+		//Template.NarrativeMoments[8]="X2NarrativeMoments.TACTICAL.SabotageCC.SabotageCC_BombPlantedEnd";
+		Template.NarrativeMoments[8]="X2NarrativeMoments.TACTICAL.Sabotage.Sabotage_BombPlantedNoRNF";
+
+		// New
+		Template.NarrativeMoments[10]="X2NarrativeMoments.TACTICAL.General.GenTactical_PartialEVAC";
+		Template.NarrativeMoments[11]="X2NarrativeMoments.TACTICAL.General.GenTactical_FullEVAC";
+		Template.NarrativeMoments[12]="X2NarrativeMoments.TACTICAL.General.GenTactical_MissionExtroFailure";
+		Template.NarrativeMoments[13]="X2NarrativeMoments.TACTICAL.Sabotage.Sabotage_SignalJammed";
+		Template.NarrativeMoments[14]="X2NarrativeMoments.TACTICAL.Sabotage.Sabotage_RNFIncoming";
 	}
 }
 

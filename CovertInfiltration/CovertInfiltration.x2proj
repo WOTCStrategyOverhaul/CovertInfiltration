@@ -76,6 +76,9 @@
     <Content Include="Content\Maps\Missions\Obj_Gatecrasher_CI.umap">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Content\Maps\Missions\Obj_SabotageCC_CI.umap">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
       <SubType>Content</SubType>
     </Content>

@@ -372,6 +372,11 @@ ObjectiveTextPools[3]="Prisoners Must Survive"
 ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]=
 
+[DefaultSabotageCC X2MissionNarrativeTemplate]
+ObjectiveTextPools[0]="Unused"
+ObjectiveTextPools[1]="Plant X4 charges on the monument"
+ObjectiveTextPools[2]="Extract all XCOM soldiers"
+
 [GatecrasherCI X2MissionTemplate]
 DisplayName="Operation Gatecrasher"
 Briefing="Break into ADVENT Compound and Rescue VIPs"
