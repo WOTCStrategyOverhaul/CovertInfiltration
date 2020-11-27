@@ -37,6 +37,8 @@ var config(GameData) int NumDarkEventsThirdMonth;
 var config(GameBoard) float RiskChancePercentMultiplier;
 var config(GameBoard) float RiskChancePercentPerForceLevel;
 
+var config(Missions) bool SupplyExtraction_HoldResponseUntilSquadReveal;
+
 var config array<StrategyCost> OneTimeMarketLeadCost;
 
 var localized string strOneTimeMarketLeadDescription;
@@ -1309,6 +1311,7 @@ static function EventListenerReturn CallReinforcementsOnSupplyExtraction(Object 
 
 	// Hold until the player squad is revealed
 	if (
+		default.SupplyExtraction_HoldResponseUntilSquadReveal &&
 		Event == 'ScamperEnd' &&
 		class'XComGameState_Player'.static.GetPlayerState(eTeam_XCom).bSquadIsConcealed
 	)
