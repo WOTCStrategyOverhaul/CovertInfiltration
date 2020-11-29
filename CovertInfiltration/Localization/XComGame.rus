@@ -1,0 +1,390 @@
+[ResistanceRing X2FacilityTemplate]
+CompletedSummary="Доступны приказы Сопротивления!\nДосупен слотлснала - дает +1 слот для приказов"
+Summary="Центр Тайных Операций позволяет назначать приказы Сопротивлению на ежемесячной основе."
+
+[ResistanceRingStaffSlot X2StaffSlotTemplate]
+BonusEmptyText="Дает +1 слот для приказов"
+BonusText="КАРТЫ ПРИКАЗОВ +%AVENGERBONUS"
+FilledText="%UNITNAME оказывает содействие Сопротивлению в организации и логистике, позволяя им выполнять больше приказов"
+
+[InfiltrationStaffSlot X2StaffSlotTemplate]
+EmptyText="СОЛДАТ"
+BonusText="ПРОНИКАЕТ"
+
+[CovertActionNarrative_IntelligenceInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Взломать хранилище данных \"Адвента\""
+ActionPreNarrative="Наш лучший шанс <XGParam:StrValue4/> - это взломать этот хранилище данных. В дополнение к информации о нашей цели, в нем также должны также содержаться другие сведения, которые мы можем использовать."
+ActionPostNarrative=""
+
+[CovertActionNarrative_InformantInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Спасти информатора Сопротивления"
+ActionPreNarrative="Информатор Сопротивления изучал решения для <XGParam:StrValue4/>, но был захвачен в процессе. Прямой прорыв - наш единственный шанс узнать, что обнаружил информатор."
+ActionPostNarrative=""
+
+[CovertActionNarrative_DistractionInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Отвлечь гарнизон \"Адвента\""
+ActionPreNarrative="Если мы хотим <XGParam:StrValue4/>, нам нужно будет отвлечь силы \"Адвента\" в этом районе. Атака на хорошо видимую цель должна сделать это, и мы также одержим значительную пропагандистскую победу"
+ActionPostNarrative=""
+
+[CovertActionNarrative_SabotageInfiltrate X2CovertActionNarrativeTemplate]
+ActionName="Саботировать инфраструктуру \"Адвента\""
+ActionPreNarrative="Разрушение инфраструктуры \"Адвента\" в этом регионе - лучший способ <XGParam:StrValue4/>. Если мы правильно выберем наши цели, мы также можем вызвать серьезные сбои в коммуникационной сети \"Адвента\"."
+ActionPostNarrative=""
+
+[CovertActionNarrative_PersonnelRescue X2CovertActionNarrativeTemplate]
+ActionName="Спасение персонала XCOM"
+ActionPreNarrative="Наконец-то мы готовы вырвать <XGParam:StrValue4/> из когтей \"Адвента\". Даже если мы воспользуемся всеми известными нам слепыми пятнами в системе безопасности, добраться до камеры по прежнему будет сложно."
+ActionPostNarrative=""
+
+[CovertActionNarrative_CaptureDVIP X2CovertActionNarrativeTemplate]
+ActionName="Захват коллаборациониста \"Адвента\""
+ActionPreNarrative="Вот и все, у нас есть шанс захватить <XGParam:StrValue4/>. Он(а) собирается посетить объект \"Адвента\" в одном из городских центров, и мы планируем перехватить коллаборациониста на обратном пути, когда рядом с ним(ей) будет меньше охраны."
+ActionPostNarrative=""
+
+[CovertActionNarrative_PreparePersonnel X2CovertActionNarrativeTemplate]
+ActionName="Расследование сообщения о измене"
+ActionPreNarrative="Наши информаторы сообщают, что недавно \"Адвент\" арестовал известного ученого за \"непатриотические мысли\". Для того чтобы заиметь такого специалиста как <XGParam:StrValue4/>, нам нужно найти, где \"Адвент\" держит ученого."
+ActionPostNarrative="Нашим оперативникам удалось найти высокопоставленного заключенного, а еще лучше - слепое пятно в системе безопасности тюрьмы. Мы можем нанести удар прямо сейчас и потенциально освободить пленника!"
+
+[CovertActionNarrative_PrepareFactionJB X2CovertActionNarrativeTemplate]
+ActionName="Консультация с Фракцией"
+ActionPreNarrative="Мы могли бы воспользоваться дополнительной полевой поддержкой со стороны <XGParam:StrValue0/>. Если мы пошлем делегацию, они могут быть готовы отправить еще одного солдата в ряды XCOM."
+ActionPostNarrative="Хорошая новость: <XGParam:StrValue0/> согласились с нашим предложением. Плохая новость: солдат, присягнувший нашему делу, недавно был захвачен в плен. Если нам нужна их поддержка, нам придется устроить побег из тюрьмы."
+
+[CovertActionNarrative_PrepareUFO X2CovertActionNarrativeTemplate]
+ActionName="Заставить НЛО приземлиться"
+ActionPreNarrative="С кодами команд в руках мы можем обмануть борткомпьютер НЛО, чтобы <font color='#CBB11F'>заставить его экстренно приземлиться</font>. Затем мы должны установить сеть помех, чтобы задержать его сигналы о помощи, как только главный штурмовой отряд войдет. У нас не будет другого шанса."
+ActionPostNarrative="Командир, мы добились ошеломляющего успеха! Корабль пришельцев приземлился, и сеть помех установлена. Я думаю, что пришельцы начинают что-то подозревать, так что мы должны ударить немедленно."
+
+[CovertActionNarrative_PrepareFacility X2CovertActionNarrativeTemplate]
+ActionName="Поиск Координаторов \"Аватара\""
+ActionPreNarrative="Инопланетяне довольно глубоко зарыли информацию, связанную с <font color='#842015'>объектами проекта \"Аватар\"</font> но должен быть хотя бы один человек знающий о них. По крайней мере, одно слабое звено. Мы просто должны найти его."
+ActionPostNarrative="Командир, после \"заимствования\" некоторых записей \"Адвента\", моя команда нашла одного человека из верхушки Коалиции, который был вовлечен в строительство <font color='#842015'>объектов проекта \"Аватар\"</font>. Даже лучше, мы знаем, где они находятся."
+
+[InfiltrationSize1 X2SoldierUnlockTemplate]
+DisplayName="Размер Инфильтрации I"
+Summary="Отряды из 5 солдат больше не несет штрафов за время проникновения и может достигать 250% проникновения."
+
+[InfiltrationSize2 X2SoldierUnlockTemplate]
+DisplayName="Размер Инфильтрации II"
+Summary="Отряды из 6 солдат больше не несет штрафов за время проникновения и может достигать 250% проникновения."
+
+[UpdatedFirewalls X2SitRepTemplate]
+FriendlyName="Обнавленные файрволы"
+Description="Техническая защита врага увеличена на <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> и вышки не могут быть взломаны"
+
+[MentalReadiness X2SitRepTemplate]
+FriendlyName="Психологическая готовность"
+Description="Отряд получает +<Ability:MENTAL_READINESS_VALUE/> уклонению, взлому и пси-силе"
+
+[LightningStrike X2SitRepTemplate]
+FriendlyName="Молниеносный удар
+Description="Бойцы XCOM получают +<Ability:LIGHTNINGSTRIKEMOVEBONUS/> к мобильности во время первых <Ability:LIGHTNINGSTRIKEDURATIONACTUAL/> ходов когда отряд замаскирован."
+
+[AdventPatrols X2SitRepTemplate]
+FriendlyName="Демонстрация силы"
+Description="Отряды \"Адвента\" включают одного дополнительного врага"
+
+[GunneryEmplacements X2SitRepTemplate]
+FriendlyName="Огневые точки"
+Description="\"Адвент\" развернул дополнительные турели в этом месте"
+
+[Phalanx_CI X2SitRepTemplate]
+FriendlyName="Фаланга"
+Description="Все отряды врага включают Щитоносца"
+
+[Congregation X2SitRepTemplate]
+FriendlyName="Конгрегация"
+Description="Все отряды врага включают Жреца"
+
+[ShoddyIntel X2SitRepTemplate]
+FriendlyName="Дрянная разведка"
+Description="Таймер миссии уменьшен на 1"
+
+[WellRehearsed X2SitRepTemplate]
+FriendlyName="Хорошая разведка"
+Description="Таймер миссии увеличен на 1"
+
+[VolunteerArmy X2SitRepTemplate]
+FriendlyName="Добровольческая армия"
+Description="Солдат Сопротивления присоединяется к отряду для этой операции"
+
+[IntelligenceLeak X2SitRepTemplate]
+FriendlyName="Утечка информации"
+Description="Отряд не начинает замаскированным, а дальность обнаружения увеличивается на 33%"
+
+[Foxholes X2SitRepTemplate]
+FriendlyName="Лисьи норы"
+Description="+<Ability:FOXHOLES_MOBILITY/> мобильности и +<Ability:FOXHOLES_DEFENSE/> защите в низком укрытии"
+
+[TacticalAnalysis X2SitRepTemplate]
+FriendlyName="Тактический анализ"
+Description="Враги активизировавшиеся во время хода XCOM, теряют одно действие в свой следующий ход"
+
+[AdventAirPatrols X2SitRepTemplate]
+FriendlyName="Воздушные патрули"
+Description="Дополнительные подкрепления \"Адвента\" будут сброшены в этот район как только отряд будет обнаружен"
+
+[CommsJamming X2SitRepTemplate]
+FriendlyName="Помехи связи"
+Description="Первый десантный корабль \"Адвента\" с подкреплениями будет задержан"
+
+[OpportuneMoment1 X2SitRepTemplate]
+FriendlyName="Подходящий Момент"
+Description="-<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% радиус обнаружения, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% шанс критического урона"
+
+[OpportuneMoment2 X2SitRepTemplate]
+FriendlyName="Подходящий Момент II"
+Description="-<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% радиус обнаружения, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% шанс критического урона"
+
+[MessyInsertion X2SitRepTemplate]
+FriendlyName="Столкновение"
+Description="Отряд начинает миссию <Ability:MESSYINSERTION_WILLLOSS/>% уставшим и один из солдат будет <Ability:MESSYINSERTION_HEALTHLOSS/>% ранен"
+
+[RestrictedAirspace X2SitRepTemplate]
+FriendlyName="Заблокированное воздушное пространство"
+Description="Рейнджер не сможет эвакуировать отряд, пока территория не будет полностью зачищена"
+
+[ExperimentalRollout X2SitRepTemplate]
+FriendlyName="Экспериментальное развертывание"
+Description="Все враги имеют <Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/> критическую защиту и <Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% сопротивление урону от взрывов когда имеют полное здоровье"
+
+[EquipmentCache X2SitRepTemplate]
+FriendlyName="Схрон с оборудованием"
+Description="Каждый солдат в отряде получит дополнительный базовый предмет "
+
+[CovertActionRisk_IntelligenceLeak X2CovertActionRiskTemplate]
+RiskName="Утечка информации"
+
+[CovertActionRisk_AdventAirPatrols X2CovertActionRiskTemplate]
+RiskName="Воздушные патрули"
+
+[CovertActionRisk_ShoddyIntel X2CovertActionRiskTemplate]
+RiskName="Дрянная разведка"
+
+[CovertActionRisk_UpdatedFirewalls X2CovertActionRiskTemplate]
+RiskName="Обновленный файрвол"
+
+[CovertActionRisk_Phalanx_CI X2CovertActionRiskTemplate]
+RiskName="Фаланга"
+
+[CovertActionRisk_Congregation X2CovertActionRiskTemplate]
+RiskName="Конгрегация"
+
+[CovertActionRisk_MessyInsertion X2CovertActionRiskTemplate]
+RiskName="Столкновение"
+
+[CovertActionRisk_RestrictedAirspace X2CovertActionRiskTemplate]
+RiskName="Заблокированное воздушное пространство"
+
+[CovertActionRisk_ExperimentalRollout X2CovertActionRiskTemplate]
+RiskName="Экспериментальное развертывание"
+
+[NoSquadConcealmentEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Без маскировки"
+Description="\"Адвент\" каким-то образом узнал о нашей операции - солдаты не будут замаскированы в начале задания"
+
+[IntelligenceLeakDebuffEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Повышенный радиус обнаружения"
+Description="Гарнизон \"Адвента\" находится в состоянии повышенной готовности - наших бойцов будут легче обнаружить"
+
+[MessyInsertionEffect X2SitRepEffect_ModifyTacticalStartState]
+FriendlyName="Ранение"
+Description="Наша команда столкнулась с патрулем \"Адвента\" по пути к месту миссии - они устали, и один член отряда был ранен"
+
+[EquipmentCacheEffect X2SitRepEffect_GrantAbilities]
+FriendlyName="Дополнительные предметы"
+Description="У Сопротивления был схрон в этом районе, которым воспользовалась наша команда - у них есть некоторые дополнительные предметы, которые могут пригодиться"
+
+[X2StrategyGameRulesetDataStructures]
+CovertActionRiskLabels[0]="Легкое"
+CovertActionRiskLabels[1]="Простое"
+CovertActionRiskLabels[2]="Обычное"
+CovertActionRiskLabels[3]="Среднее"
+CovertActionRiskLabels[4]="Сложное"
+CovertActionRiskLabels[5]="Экстремальное"
+
+[XComGameState_HeadquartersXCom]
+;CovertActionsSelectOp="SELECT OPERATION" **Vanilla option for reference**
+; We don't care if the ring is built or not, always show the same message
+CovertActionsGoToRing="ВЫБЕРИТЕ ОПЕРАЦИЮ"
+CovertActionsBuildRing="ВЫБЕРИТЕ ОПЕРАЦИЮ"
+
+[Reward_SmallIntel X2RewardTemplate]
+DisplayName="Разведданные"
+
+[Reward_SmallIncreaseIncome X2RewardTemplate]
+DisplayName="Повышение дохода"
+RewardDetails="Доход региона повышается на <XGParam:IntValue0/> материалов"
+
+[Reward_FacilityDelay X2RewardTemplate]
+DisplayName="Отложить Строительство Объекта"
+RewardDetails="Строительство следующего объекта отложено на <XGParam:IntValue0/> дней"
+
+[Reward_Rumor X2RewardTemplate]
+DisplayName="Слухи Сопротивления"
+RewardDetails="Просканируйте зону на Глобусе"
+
+[Reward_Materiel X2RewardTemplate]
+DisplayName="Материалы врага"
+RewardDetails="Добыть материалы пришельцев"
+
+[Reward_Progress X2RewardTemplate]
+DisplayName="Прогресс цепи"
+RewardDetails="Разблокировать следующую миссию в цепи"
+
+[Reward_CounterDarkEvent X2RewardTemplate]
+DisplayName="Предотвратить Темное Событие: <XGParam:StrValue0/>"
+
+[Reward_DelayDarkEvent X2RewardTemplate]
+DisplayName="Отложить Темное Событие: <XGParam:StrValue0/>"
+
+[OTSStaffSlot X2StaffSlotTemplate]
+BonusEmptyText="Начать тренировку солдата"
+
+[ResCard_LiveFireTraining X2StrategyCardTemplate]
+SummaryText="Обучение ШПТ повысит солдат до звания <XGParam:IntValue0/>"
+
+[Reward_UtilityItems X2RewardTemplate]
+DisplayName="Базовые Предметы"
+
+[CovertAction_UtilityItems X2CovertActionTemplate]
+ActionObjective="Получить полезные предметы"
+
+[CovertActionNarrative_UtilityItems_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Реактивация фабрики"
+ActionPreNarrative="Мой вид нашел несуществующий заводской комплекс из Старого Мира. С вашими старыми кодами команд XCOM и несколькими руками помощи мы могли бы снова заставить его работать и уйти с трофеями до того, как \"Адвент\" обнаружит нас."
+ActionPostNarrative="Успех! Благодаря вашей помощи мы смогли сделать несколько производственных циклов и выйти до того, как \"Адвент\" обнаружил группу."
+
+[CovertActionNarrative_UtilityItems_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Реактивация фабрики"
+ActionPreNarrative="Мои люди обнаружили довоенный заводской комплекс.  С вашими старыми кодами команд XCOM и нашими умелыми инженерами, мы могли бы заставить его работать снова и уйти с трофеями, прежде чем \"Адвент\" обнаружит нас."
+ActionPostNarrative="Успех! Благодаря вашей помощи мы смогли сделать несколько производственных циклов и выйти до того, как \"Адвент\" обнаружил группу."
+
+[CovertActionNarrative_UtilityItems_Templars X2CovertActionNarrativeTemplate]
+ActionName="Реактивация фабрики"
+ActionPreNarrative="Мои последователи почувствовали заводской комплекс из Старого Света. С вашими старыми командными кодами XCOM и несколькими руками помощи мы могли бы снова заставить его работать и уйти с дарами до того, как \"Адвент\" обнаружит нас."
+ActionPostNarrative="Успех! Благодаря вашей помощи мы смогли сделать несколько производственных циклов и выйти до того, как \"Адвент\" обнаружил группу."
+
+[Reward_ExperimentalItem X2RewardTemplate]
+DisplayName="Экспериментальный предмет"
+
+[CovertAction_ExperimentalItem X2CovertActionTemplate]
+ActionObjective="Получить экспериментальный предмет" 
+
+[CovertActionNarrative_ExperimentalItem_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Теперь наш эксперимент"
+ActionPreNarrative="Мой вид когда-то знал о исследовательском аванпосте \"Адвента\", на который с тех пор обитают Сгинувшие. Кто знает, может быть, ложные боги забыли разгромить это место, когда отступали. Мы могли бы вернуться туда и посмотреть, не уцелело ли что-нибудь."
+ActionPostNarrative="Удача сегодня с нами. \"Адвент\" успел лишь частично обрушить подземные секции, прежде чем их заняли Драк-тен, и в завалах мы нашли нечто особенное."
+
+[CovertActionNarrative_ExperimentalItem_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Теперь наш эксперимент"
+ActionPreNarrative="Мои люди наткнулись на исследовательский аванпост \"Адвента\", на который с тех пор обитают Сгинувшие.  Кто знает, может быть, шлемоголовые забыли подорвать основание, когда отступали. Мы могли бы вернуться туда и посмотреть, уцелело ли что-нибудь."
+ActionPostNarrative="Нам сегодня крупно повезло. Полицаям пришельцев не удалось обрушить все подземные секции, а оставшие не были полностью заняты Сгинувшими, в одной из них нам удалось кое-что найти."
+
+[CovertActionNarrative_ExperimentalItem_Templars X2CovertActionNarrativeTemplate]
+ActionName="Теперь наш эксперимент"
+ActionPreNarrative="Мои последователи рассказали мне исследовательском аванпосте \"Адвента\", ныне населенном Сгинувшими. Кто знает, может быть, рабы Старейшин забыли очистить территорию, когда отступали. Мы могли бы вернуться туда и посмотреть, уцелело ли что-нибудь."
+ActionPostNarrative="Сегодня удача была на нашей стороне. Прихвостням Старейшин не удалось полностью обрушить подземные секции, а Сгинушие, обитавшие в уцелевших секторах, пали от рук моих последователей. Возможно, найденный ими предмет заинтересует вас."
+
+[Reward_Promotions X2RewardTemplate]
+DisplayName="Повышения"
+RewardDetails="Недавние улучшения наших солдат не останутся незамеченными."
+
+[CovertAction_ExhaustiveTraining X2CovertActionTemplate]
+ActionObjective="Интенсивная тренировка"
+
+[CovertActionNarrative_ExhaustiveTraining_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Обмен опытом"
+ActionPreNarrative="Обучение Заступников - лучшее на этой планете или за ее пределами. Почему бы вам не прислать сюда кого-нибудь из ваших людей, и мы покажем им, как это делается. Надеюсь, никто не сломается."
+ActionPostNarrative="Должна признаться, ваши солдаты произвели на меня сильное впечатление. Я верю, что все наши люди стали сильнее и готовы принять бой с \"Адвентом\"."
+
+[CovertActionNarrative_ExhaustiveTraining_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Обмен опытом"
+ActionPreNarrative="Жнецы подвергаются только самым суровым тренировокам. Я думаю, что ваши люди могли бы научиться кое-чему - давайте посмотрим, смогут ли они пережить этот опыт."
+ActionPostNarrative="Я никогда не сомневался в ваших людях, и, похоже, моя вера была вознаграждена. Они покинут нас почетными Жнецами."
+
+[CovertActionNarrative_ExhaustiveTraining_Templars X2CovertActionNarrativeTemplate]
+ActionName="Обмен опытом"
+ActionPreNarrative="Моими последователями могут быть только те, кто обладает сильной волей, сформированной моей рукой, чтобы стать истинными Храмовниками. Ваши солдаты могли бы извлечь выгоду из такой подготовки... при условии, что они достойны."
+ActionPostNarrative="Оказалось, что ваши кандидаты обладают сильным характером. Если бы они не были нужны где-то еще, я бы уже ввел их в свои ряды."
+
+[CovertAction_TechRush X2CovertActionTemplate]
+ActionObjective="Ускорение исследования"
+
+[Reward_TechInspire X2RewardTemplate]
+DisplayName="Исследование ускорено"
+
+[CovertAction_AlienCorpses X2CovertActionTemplate]
+ActionObjective="Добыть трупы инопланетян"
+
+[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate]
+ActionName="Инопланетная добыча"
+ActionPreNarrative="Некоторые из моих соплеменников наткнулись на неподготовленный аванпост \"Адвента\", и мы легко преодолели их оборону. Приходите и разделите с нами добычу их поражения."
+ActionPostNarrative="Будем надеяться, что мы найдем больше, чтобы поддержать нашу общую цель."
+
+[CovertActionNarrative_AlienCorpses_Reapers X2CovertActionNarrativeTemplate]
+ActionName="Инопланетная добыча"
+ActionPreNarrative="\"Адвент\" послал патруль через район, который мы наблюдали, излишне говорить об их участи. Если вам интересно, есть несколько уцелевших трупов, которые мои люди не унесли с собой."
+ActionPostNarrative="Вы уверены, что нужно только снаряжение? Мой лучший повар разжигает огонь пока мы разговариваем."
+
+[CovertActionNarrative_AlienCorpses_Templars X2CovertActionNarrativeTemplate]
+ActionName="Инопланетная добыча"
+ActionPreNarrative="Слуги Старейшин падают перед моими последователями, как травинки на ветру. Мы уже забрали свою долю их оборудования, можете взять все, что здесь осталось."
+ActionPostNarrative="Наше дело становится сильнее с каждым днем."
+
+[Reward_AlienCorpses X2RewardTemplate]
+DisplayName="Трупы пришельцев"
+
+[UIAlert]
+m_strOutpostBody=Как только ретранслятор будет установлен, Сопротивление в регионе <XGParam:StrValue0/!WorldRegionName/> увеличит ежемесячные поставки на +<XGParam:IntValue0/> единиц(ы) ресурсов. Стоимость контакта с соседними регионами также будет снижена, здесь начнут появляться продвинутые цепочки активности, а любые объекты проекта \"Аватар\" будут разблокированы.
+
+[UIStrategyPolicy]
+LockedSlotLabel=ПОВЫШЕНИЕ ВЛИЯНИЯ ЧЕРЕЗ ТАЙНЫЕ ОПЕРАЦИИ
+
+[ActionableFacilityLead X2ItemTemplate]
+FriendlyName="Расшифрованные данные"
+FriendlyNamePlural="Расшифрованные данные"
+BriefSummary="Теперь, когда данные по этому следу были расшифрованы, мы знаем частоты, используемые объектами \"Адвента\", и можем использовать глушители сигнала, чтобы безопасно атаковать один из них. Но только один - выиграть или проиграть, \"Адвент\" будет реагировать, чтобы убедиться, что их оставшиеся активы защищены, и данные здесь будут бесполезны."
+
+[FacilityLeadItem X2ItemTemplate]
+BriefSummary="Ценный запас информации о безопасности удаленных объектов \"Адвента\". Наша исследовательская группа может использовать их, чтобы найти способ развернуть глушители и безопасно штурмовать объект, но это потребует времени и разведданных."
+
+[Tech_AlienFacilityLead X2TechTemplate]
+DisplayName="Данные об объекте"
+Summary="Наши силы недавно обнаружили ценную информацию о удаленных объектах \"Адвента\". Если нам удастся успешно расшифровать восстановленные данные, это позволит нанести тактический удар." 
+CodeName="Проницательность"
+LongDescription="Хотя это был трудоемкий процесс, я смог успешно расшифровать данные \"Адвента\", которые мы недавно получили. Как и ожидалось, данные включают спецификации протоколов безопасности для всех удаленных объектов \"Адвента\". Имея эти знания в руках, мы в состоянии развернуть глушители сигналов и послать ударную группу для штурма и уничтожения объекта. Однако \"Адвент\" наверняка переключит свои методы шифрования, как только они выяснят, что происходит. Эта информация полезна нам только для одного удара. Но я не сомневаюсь, что если нам удастся это осуществить, то потеря объекта нанесет значительный удар по проекту \"Аватар\". Р. Тайган."
+UnlockedDescription="Данные об объекте конвертированы в Расшифрованные данные"
+
+; Note: the double header is required. Does NOT work without it
+[XComGame.UIMission_AlienFacility]
+[UIMission_AlienFacility]
+m_strLockedHelp="Мы должны добыть Расшифрованные данные или построить ретранслятор в этом районе, прежде чем мы сможем атаковать и уничтожить этот объект!"
+
+[DefaultGatecrasherCI X2MissionNarrativeTemplate]
+ObjectiveTextPools[0]="THIS_IS_A_BUG"
+ObjectiveTextPools[1]="Спасите пленников"
+ObjectiveTextPools[2]="Уничтожьте всех противников"
+ObjectiveTextPools[3]="ВИПы должны выжить"
+
+; Ignore this, game throws warnings if it doesn't exist
+ConsoleObjectiveTextPools[0]=
+ConsoleObjectiveTextPools[1]=
+
+[GatecrasherCI X2MissionTemplate]
+DisplayName="Операция \"Незванный Гость\""
+Briefing="Ворвитесь в тюремный комплекс \"Адвента\" и спасите ВИПов"
+PostMissionType="Операция \"Незванный Гость\""
+BriefingImage="img:///UILibrary_Common.Xcom_default"
+ObjectiveTextPools[0]="Зачистите территорию и уничтожьте всех противников"
+ObjectiveTextPools[1]="Спасите пленников из камер"
+ObjectiveTextPools[2]="ВИПы должны выжить"
+PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.SabotageCC.T_SabotageCC_Narrative_Wrappers_04"
+
+[MissionSource_GatecrasherCI X2MissionSourceTemplate]
++BattleOpName="Операция \"Незванный Гость\""
+
+; The player shouldn't ever see this, but just in case
+[GatecrasherCI X2MissionFlavorTextTemplate]
+FlavorText="THIS_IS_A_BUG"

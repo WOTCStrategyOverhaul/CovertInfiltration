@@ -1,0 +1,479 @@
+[UIStrategyMap_CAButton]
+strLabel=ТАЙНЫЕ ОПЕРАЦИИ
+
+[UICovertActionsGeoscape]
+strRewardHeader=Награда
+strSlotsHeader="Дополнительные Затраты"
+strInfiltration="ИНФИЛЬТРАЦИОННАЯ МИССИЯ"
+strExfilLabel="ЦЕНА ЭКСФИЛЬТРАЦИЯ:"
+strExpirLabel="ИСТЕЧЕТ ЧЕРЕЗ:"
+strOpenLoadout="Перейти к экрану выбора отряда"
+strAbortAction="Отменить Операцию"
+strCloseScreen="Закрыть Окно Операций"
+strRisksHeader=Риски
+strDialogDataTitle="ОТМЕНИТЬ СЕКРЕТНУЮ ОПЕРАЦИЮ"
+strDialogDataText="Отряд находится в глубоком прикрытии, и открытие линии связи потребует от нас <XGParam:StrValue0>, и затраты будут только увеличиваться по мере приближения к цели. Возможно, лучший выбор -дать отряду продолжить. Если мы их вытащим, то возможность будет потеряна навсегда. Вы уверены, Командир?"
+strInProgressHeader="В Прогрессе"
+
+[UISSManager_CovertAction]
+strSlotOptionalNote="Опцианально"
+strSlotPenaltyNote="Штраф За Перегрузку"
+strSlotRequiredPrefix="Требуется:"
+strConfirmInfiltration="ПОДТВЕРДИТЬ ИНФИЛЬТРАЦИЮ"
+
+[UISS_InfiltrationReadout]
+strTotalDurationTitle="ОБЩАЯ ДЛИТЕЛЬНОСТЬ:"
+strBaseDurationTitle="БАЗОВАЯ ДЛИТЕЛЬНОСТЬ:"
+strSquadDurationTitle="МОДИФИКАТОРЫ ИНФИЛЬТРАЦИИ:"
+strOverloadPenaltyTitle="ШТРАФ ЗА ПЕРЕГРУЗКУ:"
+strBondModifierTitle="МОДИФИКАТОР ВЗАИМОСВЯЗИ:"
+strDaysAndHours="<XGParam:IntValue0> Дней, <XGParam:IntValue1> Часов"
+strPlusDaysAndHours="+<XGParam:IntValue0> Дней, <XGParam:IntValue1> Часов"
+strMinusDaysAndHours="-<XGParam:IntValue0> Дней, <XGParam:IntValue1> Часов"
+strMaxAllowedInfil="Максимальная инфильрауия: <XGParam:IntValue0>"
+
+[UISS_TerrainDisplay]
+strAbandoned=Заброшенный город
+strAbandoned_Indoors=Заброшенный город, внутри
+strAbandoned_Occluded=Заброшенный город, периметр
+strCityCenter=Городской Центр
+strDerelictFacility=Комплекс Доктора Вален
+strLostTower=Заброшенные Башни
+strFacility=Комплекс \"Адвента\"
+strRooftops=Крыши
+strSarcophagusRoom=Убежище Избранного
+strSlums=Трущобы
+strShanty=Поселение
+strSmallTown=Городок
+strStronghold=Цитадель Избранного
+strWilderness=Лес
+strTunnels_Reverb=Тоннели под городом
+strTunnels_Sewer=Канализация
+strTunnels_Subway=Метро
+
+[X2EventListener_Infiltration_SitReps]
+strReinforcementDelayBannerMessage="Помехи связи..."
+strReinforcementDelayBannerSubtitle="Подкрепления \"Адвента\" отложены на:"
+strReinforcementDelayBannerValue="1 Ход"
+
+[X2Helper_Infiltration]
+strChainEffect_Finished="'<XGParam:StrValue0>' Цепь Завершена"
+strChainEffect_InProgress="'<XGParam:StrValue0>' Цепь Продолжается"
+strChainEffect_Halted="'<XGParam:StrValue0>' Цепь Провалена"
+
+[X2Helper_Infiltration_TemplateMod]
+strSoldiers=Солдаты
+strReady=Готов
+strTired=Устал
+strWounded=Ранен
+strInfiltrating=Проникает
+strOnCovertAction=На Секретной Операции
+strUnavailable=Недоступен
+
+strInfilLabel=ЧАСЫ ПРОНИКОНОВЕНИЯ
+strDeterLabel=ПРОЦЕНТ СДЕРЖИВАНИЯ
+
+strAcademyProjectStatusGTS=ШПТ
+
+[UIFacility_ResitanceRing]
+strAssingOrdersOverlay=Назначить Приказы
+
+[UIStrategyMapItem_OpportunityCI]
+strProgress=Прогресс
+strCovertAction=Тайная Операция
+strCovertInfiltration=Инфильтрация
+
+[UIListener_ModConfigMenu]
+PageTitle="Covert Infiltration"
+VariousSettingsTitle="Различные настройки"
+TipsTitle="Советы и Пояснения"
+OverInfiltrationTitle="Сверхнфильтрация"
+DaysToHoursDesc="Часы вместо дней"
+DaysToHoursTooltip="Отображение часов вместо дней в очереди событий как только оставшееся время достигнет определенного порога"
+DaysBeforeHoursDesc="Порог от дней до часов"
+DaysBeforeHoursTooltip="При таком количестве оставшихся дней вместо дней будут отображаться часы"
+SuppressSkulljackNagIfDeployedDesc="Отключить напоминание о Черепном Буре, когда он уже экипирован"
+SuppressSkulljackNagIfDeployedTooltip="Если кто-либо из ваших проникающих в настоящее время солдат имеет экипированный Черепной Бур, отключите напоминание Шэнь, о необходимости его экипировки"
+WarnBeforeExpirationDesc="Предупреждение о истичении времени"
+WarnBeforeExpirationTooltip="Показывать предупреждение до истечения времни миссии"
+HoursBeforeWarningDesc="Часов до предупреждения"
+HoursBeforeWarningTooltip="Предупреждение об истечении времени миссии появится за много часов до истечения времени"
+EnableTutorialDesc="Включить Туториал"
+EnableTutorialTooltip="Показать внутриигровые объяснения и советы относительно изменений и новых функций/механик"
+LowSoldiersWarningDesc="Включить предупреждение о недостатке солдат"
+LowSoldiersWarningTooltip="Брэдфорд предупредит вас, когда в казармах останется менее 6 готовых к бою солдат"
+PauseOnMilestone100Desc="Пауза на 100% инфильтрации (Миссия Готова)"
+PauseOnMilestone100Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 100%"
+PauseOnMilestone125Desc="Пауза на 125% инфильтрации (Бафф уровня 1)"
+PauseOnMilestone125Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 125%"
+PauseOnMilestone150Desc="Пауза на 150% инфильтрации (Случайный Sitrep 1-го уровня)"
+PauseOnMilestone150Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 150%"
+PauseOnMilestone175Desc="Пауза на 175% инфильтрации (Негативный Sitrep убран)"
+PauseOnMilestone175Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 175%"
+PauseOnMilestone200Desc="Пауза на 200% инфильтрации (Случайный Sitrep 2-го уровня)"
+PauseOnMilestone200Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 200%"
+PauseOnMilestone225Desc="Пауза на 225% инфильтрации (Бафф уровня 2)"
+PauseOnMilestone225Tooltip="Если включено любое сканирование на глобусе остановиться, если инфильтрация достигнет 225%"
+
+[UIUtilities_Infiltration]
+strReinforcementsBodyWarning="Через <XGParam:StrValue0> Ход(ов)"
+strReinforcementsBodyImminent="Неизбежно"
+strOpportunityAvaliableUnknownLocation=Неизвестная локация
+strAssaultAvaliableHeader=Новая штурмовая миссия
+strAssaultExpiringHeader=Штурмовая миссия исчезает через
+strInfiltrationAvaliableHeader=Инфильтрационная миссия
+strInfiltrationExpiringHeader=Инфильтрационная миссия исчезает через
+strCovertActionAvaliableHeader=Новая Тайная Операция
+strCovertActionExpiringHeader=Тайная Операция исчезает через
+
+strCompletionStatusLabel_NotReached=Не Достигнута
+strCompletionStatusLabel_NotCompleted=Еще Не Достигнута
+strCompletionStatusLabel_Expired=Истекла
+strCompletionStatusLabel_Failure=Провалена
+strCompletionStatusLabel_PartialSuccess=Частичный Успех
+strCompletionStatusLabel_Success=Успех
+
+strCompletionStatusLabel_Available=Доступна
+strCompletionStatusLabel_Ongoing=Текущая
+strCompletionStatusLabel_Infiltrating=Инфиация
+
+strChainStatusPrefix="(<XGParam:IntValue0>/<XGParam:IntValue1>)"
+
+strActionableLeadUsed="Один из наших пакетов расшифрованных данных был использован."
+strLastActionableLeadUsed="Был использован последний из наших пакетов расшифрованных данных!"
+
+[UISkyrangerExfiltrate]
+strBody="\"Рейнджер\" достиг места высадки. Ждем приказов."
+strSkyrangerExfiltrateSubtitle="ГОТОВЫ К ЭКСФИЛЬТРАЦИИ"
+strConfirmExfiltration="ОТМЕНИТЬ ОПЕРАЦИЮ И НАЧАТЬ ЭКСФИЛЬТРАЦИЮ"
+
+[UIMission_Infiltrated]
+strOverInfiltrationHeader="Сверхинфильтрация"
+strOverInfiltrationNextBonus="Следующий Бонус"
+strMissionReady="МИССИЯ ГОТОВА"
+strMustLaunch="НАЧАТЬ ОПЕРАЦИЮ"
+strInfiltration="ИНФИЛЬТРАЦИЯ - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
+strWait="ЖДАТЬ"
+strReturnToAvenger="ВЕРНУТЬСЯ НА \"МСТИТЕЛЬ\""
+strChosenAppearenceChance="Присутствие"
+strChosenAppearenceChanceLabels[0]="Крайне низкая вероятность"
+strChosenAppearenceChanceLabels[1]="Низкая вероятность"
+strChosenAppearenceChanceLabels[2]="Средняя вероятность"
+strChosenAppearenceChanceLabels[3]="Высокая вероятность"
+strChosenAppearenceChanceLabels[4]="Крайне высокая вероятность" 
+
+[OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
+BonusName="Убрать негативный SitRep"
+BonusDescription="Subvert the risk-added sitrep, removing its effects on the mission"
+
+[X2Ability_SitRepAbilitySet_CI]
+MentalReadinessFriendlyName="Психологическая готовность"
+MentalReadinessFriendlyDesc="Отряд получает +<Ability:MENTAL_READINESS_VALUE/> уклонению, взлому и пси-силе"
+
+IntelligenceLeakFriendlyName="Утечка информации"
+IntelligenceLeakFriendlyDesc="Отряд не начинает замаскированным, а дальность обнаружения замаскированных солдат увеличена"
+
+FoxholesFriendlyName="Лисьи норы"
+FoxholesFriendlyDesc="Отряд получает +<Ability:FOXHOLES_MOBILITY/> мобильности и +<Ability:FOXHOLES_DEFENSE/> защиты в низком укрытии"
+
+OpportuneMoment1FriendlyName="Подходящий момент"
+OpportuneMoment1FriendlyDesc="-<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% радиус обнаружения, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% шанс критического урона"
+OpportuneMoment2FriendlyName="Подходящий момент II"
+OpportuneMoment2FriendlyDesc="-<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% радиус обнаружения, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% шанс критического урона"
+
+ExperimentalRolloutFriendlyName="Эксперементальная броня"
+ExperimentalRolloutFriendlyDesc="Все враги имеют +<Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% сопротивлению урону от взрывов и -<Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/>% к шансу получить критический урон, пока у них полное здоровье"
+
+[X2EventListener_Infiltration_UI]
+strInfiltrationReady="Миссия Готова"
+strCanWaitForBonusOrLaunch="Отряд может начать операцию сейчас или продолжить проникновение"
+strAcademyTrainingRank="TARGET TRAINING RANK"
+strReadySoldiers="ГОТОВ"
+strTiredSoldiers="УСТАЛ"
+strInformantsTitle="ИНФОРМАТОРЫ"
+
+[XComGameState_MissionSiteInfiltration]
+strBannerBonusGained="Бонус Получен (<XGParam:IntValue0>%)"
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Обучение отключено при игре с Covert Infiltration"
+strDisabledNarrativeContentTooltip="Операция \"Потерянные и заблудшие\" отключена при игре с Covert Infiltration"
+
+[X2ActivityTemplate_CovertAction]
+strOverviewHeader=ТАЙНАЯ ОПЕРАЦИЯ
+
+[X2ActivityTemplate_Infiltration]
+strOverviewHeader=ИНФИЛЬТРАЦИЯ
+
+[X2ActivityTemplate_Assault]
+strOverviewHeader=ШТУРМ
+
+[UIListener_AvengerHUD]
+ChainsOverview_Label=Цепи Активностей
+
+[UIChainsOverview]
+strOngoing=ТЕКУЩАЯ
+strEnded=ЗАВЕРШЕНА
+
+[Activity_IntelligenceInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Взломать хранилище данных \"Адвента\""
+
+[Activity_InformantInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Спасти информатора Сопротивления"
+
+[Activity_DistractionInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Отвлечь гарнизон \"Адвента\""
+
+[Activity_SabotageInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Саботировать инфраструктуру \"Адвента\""
+
+[Activity_PersonnelRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription="Спасение персонала XCOM"
+
+[Activity_CaptureDVIP X2ActivityTemplate_Infiltration]
+strOverviewDescription="Захват коллаборациониста \"Адвента\""
+
+[Activity_IntelligenceAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Защитить устройство Сопротивления"
+MissionPinLabel="Взломать Информацию"
+
+[Activity_InformantAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Rescue Resistance Informant"
+MissionPinLabel="Rescue Informant"
+
+[Activity_DistractionAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Distract ADVENT Garrison"
+MissionPinLabel="Distract ADVENT"
+
+[Activity_SabotageAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Саботировать инфраструктуру \"Адвента\""
+MissionPinLabel="Саботируйте Коммуникации"
+
+[Activity_SupplyConvoy X2ActivityTemplate_Assault]
+strOverviewDescription="Рейд На Конвой"
+MissionPinLabel="Конвой С Материалами"
+
+[Activity_SupplyExtract X2ActivityTemplate_Assault]
+strOverviewDescription="Прервать Трансфер Материалов"
+MissionPinLabel="Трансфер Материалов"
+
+[Activity_SecureUFO X2ActivityTemplate_Assault]
+strOverviewDescription="Охранять НЛО"
+MissionPinLabel="Приземлившееся НЛО"
+
+[Activity_WaitGeneric X2ActivityTemplate]
+strOverviewHeader="ЖДАТЬ"
+strOverviewDescription="Мы должны быть терпеливы и ждать, пока цель станет уязвимой"
+
+[Activity_WaitDarkEvent X2ActivityTemplate]
+strOverviewHeader="ЖДАТЬ"
+strOverviewDescription="Наши друзья в Сопротивлении пронюхали о проекте \"Адвента\" и изучают решения"
+
+[Activity_PreparePersonnel X2ActivityTemplate_CovertAction]
+strOverviewDescription=Найти пропавшего академика
+
+[Activity_PrepareFactionJB X2ActivityTemplate_CovertAction]
+strOverviewDescription=Консультация с Фракцией
+
+[Activity_PrepareFacility X2ActivityTemplate_CovertAction]
+strOverviewDescription=Засечь Координатора \"Аватара\"
+
+[Activity_PrepareUFO X2ActivityTemplate_CovertAction]
+strOverviewDescription=Саботаж Приземлившегося НЛО
+
+[ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
+strTitle="Предотвратить Темное Событие"
+strDescription="Разрушение инфраструктуры, критически важной для операций \"Адвента\" против XCOM."
+strObjective="остановить проект <font color='#E52E11'><XGParam:StrValue0/></font>"
+
+[ActivityChain_SupplyRaid X2ActivityChainTemplate]
+strTitle="Рейд На Конвой"
+strDescription="Захватите вражеские материалы из уязвимого конвоя снабжения."
+strObjective="нанести удар по <font color='#CBB11F'>конвою снабжения</font>"
+
+[ActivityChain_CaptureInformant X2ActivityChainTemplate]
+strTitle="Захватите коллаборациониста \"Адвента\""
+strDescription="Захватите человека-коллаборациониста для \"допроса\", чтобы узнать, что они знают о \"Адвенте\"."
+strObjective="захватить важного <font color='#27AAE1'>коллаборациониста \"Адвента\"</font>"
+
+[ActivityChain_RescueScientist X2ActivityChainTemplate]
+strTitle="Спасти ученого"
+strDescription="Вытащить ученого-диссидента из тюрьмы \"Адвента\"."
+strObjective="спасти <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_RescueEngineer X2ActivityChainTemplate]
+strTitle="Спасти инженера"
+strDescription="Вытащить ученого-инженера из тюрьмы \"Адвента\"."
+strObjective="спасти <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakFactionSoldier X2ActivityChainTemplate]
+strTitle="Спасти солдата фракции"
+strDescription="Спасти оперативника фракции из тюрьмы \"Адвента\"."
+strObjective="спасти <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakCapturedSoldier X2ActivityChainTemplate]
+strTitle="Спасти солдата"
+strDescription="Спасти пойманного солдата из тюрьмы \"Адвента\"."
+strObjective="спасти <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakChosenSoldier X2ActivityChainTemplate]
+strTitle="Спасти солдата от Избранного"
+strDescription="Спасти одного из наших похищенных солдат из плена Избранного."
+strObjective="спасти <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_GatherSupplies X2ActivityChainTemplate]
+strTitle="Преврать Доставку Материалов"
+strDescription="Прервать доставкуматериалов \"Адвента\" до прибытия подкреплений."
+
+[ActivityChain_GatherIntel X2ActivityChainTemplate]
+strTitle="Защитить устройство"
+strDescription="Защитите пост прослушивания Сопротивления, который недавно перехватил важные данные из передач \"Адвента\"."
+
+[ActivityChain_LandedUFO X2ActivityChainTemplate]
+strTitle="Нападите на НЛО"
+strDescription="Заставьте НЛО приземлиться, ликвидируйте экипаж и очистите площадку, прежде чем они узнают кто нанес удар."
+strObjective="штурмуйте <font color='#CBB11F'>НЛО</font>"
+
+[ActivityChain_DestroyFacility X2ActivityChainTemplate]
+strTitle="Получите данные об объекте"
+strDescription="Захватите сотрудника, помогающего с проектом \"Аватар\", и добудьте информацию об их объектах."
+strObjective="захватите <font color='#842015'>координатора \"Аватара\"</font>"
+
+[ActivityChain_SupplyIntercept X2ActivityChainTemplate]
+strTitle="Вернуть Перехваченные Припасы"
+strDescription="Отрежьте коммуникации сил перехвата \"Адвента\", чтобы Cопротивление могло вернуть материалы."
+strObjective="верните <font color='#CBB11F'>перехваченные припасы</font>"
+
+[ActivityChain_IntelIntercept X2ActivityChainTemplate]
+strTitle="Вернуть Перехваченные Данные"
+strDescription="Защитить важного курьера Сопротивления, загнанного в угол войсками \"Адвента\"."
+strObjective="верните <font color='#27AAE1'>перехваченные данные</font>"
+
+[X2StrategyElement_DefaultActivityChains]
+strCounterDarkEventDescription="В Сопротивлении ходят слухи о проекте <font color='#E52E11'>'<XGParam:StrValue0/>'</font>. Если вы считаете это необходимым, Командир, мы можем послать команду, чтобы сорвать его."
+strCounterHiddenDarkEventDescription="В Сопротивлении ходят слухи о <font color='#E52E11'>секретном проекте \"Адвента\"</font>. Мы не знаем подробностей, но если \"Адвент\" что-то прячет, то это не сулит ничего хорошего."
+
+[UIViewChainButton]
+strLabel=Посмотреть Цепь
+
+[UIUtilities_InfiltrationTutorial]
+strGeoscapeEntryHeader=Активное Развертывание
+strGeoscapeEntryBody="<Bullet/> В моде Covert Infiltration, большинство миссий больше не будут автоматически появляться на глобусе. Вместо этого в меню \"Тайные операции\" появятся возможности, доступные по кнопке внизу экрана.<br/><Bullet/> Вы можете отправлять отряды на столько операций, сколько пожелаете, но имейте в виду, что новые возможности могут появиться в любой момент, и что \"Адвент\" может и будет инициировать ответные действия против ваших убежищ!<br/><Bullet/> Не забывайте, что в операции "Незваный Гость" ваш отряд спас Инженера и Ученого из тюрьмы \"Адвента\". Их можно сразу же запускать в работу.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, как Ваш стратегический советник, я бы рекомендовал немедленно отправить несколько команд для выполнения любых операций. Однако, не переусердствуйте. Мы всегда должны держать пару команд в резерве, чтобы справиться с непредвиденными ситуациями!</i>"
+
+strCrewLimitHeader=Лимит Экипажп
+strCrewLimitBody="<Bullet/> На борту \"Мстителя\" пространство ценно, но для оптимального выздоровления каждому необходима своя кровать. Вы ограничены в количестве персонала, которое может поддерживаться экипажем одновременно.<br/><Bullet/> Каждый солдат, ученый и инженер считает до предела - другие члены экипажа не учитываются. Роботизированные единицы, такие как ИСКРА или некоторые единицы из других модов, не засчитываются в лимит.<br/><Bullet/> Для каждого человека, превышающего лимит, время восстановления будет увеличено на 10% для всех солдат. Этот штраф может быстро стать деструктивными, и необходимо приложить все усилия, чтобы избежать превышения лимита.<br/><Bullet/> Лимит экипажа может быть увеличен путем улучшения в Жилых Комнат (комната под Комнатой Командира).Эти обновления ресурсо- и энергоемкие.<br/><Bullet/> Текущее состояние лимита экипажа видно в правом верхнем углу экрана в Жилых Каютах и на Глобусе.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА : <i>Командир, последствия для перегрузки на \"Мстителе\" тяжелые.  Мы должны планировать заранее, чтобы у каждого человека была своя койка по мере того, как мы расширяем наши силы.</i>".
+
+strCovertActionLoadoutHeader=Тайные Операции
+strCovertActionLoadoutBody="<Bullet/> Тайные Операции - самый простой вид деятельности. Команда солдат отправляется на заданный срок, и они возвращаются с наградами. Длительность определяется базовой длительностью и дополнительным временем, исходя из количества посланных солдат и техники.<br/><Bullet/> Тайные действия никогда не приведут (обычно) к тактическому бою. Оснащение команды снаряжением, таким как специализированные гранаты или медикаменты, является пустой тратой ресурсов, если только нет риска засады.<br/><Bullet/> Однако, модернизированные вооружение и броня снизят шансы на спровоцирование рисков. Примерная оценка шанса срабатывания каждого риска показана на правой стороне экрана выбора отряда. Отряд, оснащённый более тяжёлыми или высокоуровневыми предметами, с большей вероятностью вернётся домой в целости и сохранности.<br/><Bullet/> Поскольку пришельцы продолжают совершенствовать свои армии и привозить подкрепления из других миров, они также увеличат свои патрули и усилия по обеспечению безопасности. Риски на тайных операциях будут неуклонно возрастать с течением времени, поэтому в какой-то момент обычное снаряжение не будет его сокращать.<br/>"
+
+strInfiltrationLoadoutHeader=Инфильтрационные Миссии
+strInfiltrationLoadoutBody="<Bullet/> Инфильтрационные миссии заставляют вас снаряжать полный отряд для подготовки к тактическому бою. После развертывания отряд должен будет проводить время на месте выполнения миссии в течение времени, которое зависит от количества солдат и их снаряжения.<br/><Bullet/> Как правило, каждый тип предмета имеет одинаковую продолжительность инфильтрации независимо от уровня техники. Вместо этого выбирайте более легкую броню и меньшее оружие, чтобы свести к минимуму продолжительность инфильтрации в отряде. Существуют исключения из этих правил, такие как Пси-усилители или маскировка, которые становятся лучше с техническим уровнем.<br/><Bullet/><Bullet/> Добавление дополнительных солдат в два необязательных слота влечет за собой серьезные штрафы к длительности инфильтрации. Эти наказания могут быть удалены с помощью обновлений в школе партизанской тактики.<br/><Bullet/> Для начала тактического боя отряд должен подготовиться, по крайней мере, к указанной длительности проникновения. Однако, различные бонусы могут быть получены за счет сверхинфильтрации, когда отряд готовится за 100% и до 250% от указанной продолжительности.<br/><Bullet/> Риски НЕ могут быть уменьшены за счет лучшего снаряжения, в отличие от Тайных Операций. Вместо этого, если риск активируется, он может быть устранен позже сверхинфильтрации.<br/>"
+
+strOverInfiltrationHeader=Сверхинфильтрация
+strOverInfiltrationBody="<Bullet/> Проникающий отряд достаточно подготовился, чтобы запустить миссию сейчас. Однако, вы также можете продолжить проникновение, редактируя SITREPы миссии после каждых дополнительных 25% проникновения до 250%.<br/><Bullet/><Bullet/> Сверхинфильтрация рекомендуется для сложных миссий или неопытных отрядов, но не обязательна для выполнения каждой миссии. <br/><Бюллетень/> Вероятность того, что один из Избранный Старейшин узнает о нашей операции и появится, чтобы остановить нас, будет снижена за счет продолжения инфильтрации.<br/><Бюллетень/> Для получения дополнительной информации о ходе сверхинфильтрации отряда, нажмите желтую кнопку с вопросительным знаком на самом правом элементе пользовательского интерфейса.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, сверхинфильтрация может быть стоящим процессом для трудных миссий. Однако каждый день, который мы проводим в ожидании, это еще один день, когда отряд недоступен для выполнения другой операции. Если мы считаем, что отряд может справиться с заданием как есть, я рекомендую начать действовать как можно быстрее.</i>"
+
+strAssaultLoadoutHeader=Штурмовые Миссии
+strAssaultLoadoutBody="<Bullet/> Штурмовые миссии - это то, к чему вы привыкли в базовой XCOM 2, где отряд летит в Рейнджере на тактический бой, а затем сразу же возвращается.<br/><Bullet/> В отличие от инфильтрационных миссий и Тайных Операций, время проникновения и снижение риска в игре не играют роли.<br/><br/><Bullet/>. Вы можете взять с собой столько солдат и столько снаряжения, сколько Рейнджер может нести без штрафов.<br/><Bullet/> Остерегайтесь, штурмовые миссии, как правило, сложнее, чем обычное проникновение. Будет больше врагов, и отряд не будет иметь контроля над модификаторами SitRep в зоне проведения миссии.<br/>"
+
+strCovertActionFinishedHeader=Усталость от Тайных Операций
+strCovertActionFinishedBody="<Bullet/> Как и задания, Тайные Операции повлияют на силу воли ваших солдат. Если они потеряют слишком много воли и в конце концов устанут, они не смогут участвовать в другой Тайной Операции, пока не восстановятся.<br/><Bullet/> Хотя Тайные Операции могут быть легким способом получения наград, следует быть внимательными к тому, сколько вы пытаетесь сделать попыток в любой момент времени. Не все Тайные Операции стоят того, чтобы рисковать.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, нам нужно тщательно выбирать цели. Развертывание большого количества солдат оставит нас незамеченными, когда появятся другие, более критичные по времени, миссии.</i>"
+
+strFacilityRingHeader=Изменения Центра Тайных Операций
+strFacilityRingBody="<Bullet/> Центр Тайных Операций больше не нужен для подготовки Тайных Операций - вместо этого, его постройка разблокирует Приказы Сопротивления и различные улучшения.<br/><Bullet/> Когда Центр будет построен, вы сможете мгновенно отдавать приказы. Это можно сделать только один раз и после этого вам придется ждать поставки материалов, как обычно.<br/><Bullet/> Школа Партизанской Тактики также была доработана, но ее основная функция остается нетронутой. Обучение, чтобы объяснить больше появится, когда вы построите ее.<br/>"
+
+strFacilityGTSHeader=Изменения Школы Партизанской Тактики
+strFacilityGTSBody="<Bullet/> Школа Партизанской Тактики теперь имеет 2 тренировочных места, и вместо того, чтобы тренировать новичков в отрядах, она теперь имеет значение Тренировки звания. Любой солдат в этом звании может быть укомплектован для обучения до звания, доступного в школе. Текущее звание можно посмотреть в верхнем правом углу.<br/><Bullet/> Время, необходимое для обучения солдата, умножается в зависимости от того, сколько званий под рангом обучения они имеют.<br/><Bullet/> Если укомплектованный солдат является новичком, то Вы можете выбрать, какой класс он получит при повышении. Обучение солдата от новичка до рядового занимает немного больше времени, чем другие повышения в звании.<br/><Bullet/> Звания  начинаются с рядового, но могут быть повышены до капрала и сержанта с помощью приказа Сопротивлении и улучшения Школы Партизанской Тактики.<br/>"
+
+strActivityChainsHeader=Цепи Активности
+strActivityChainsBody="<Bullet/> Цепь Активности - это набор миссий операций, которые должны быть выполнены последовательно, чтобы получить большое вознаграждение в конце цепи. Эти действия могут включать штурмовые миссии, инфильтрационные миссии и Тайные Операции.<br/><Bullet/> Хотя основная(ые) награда(ы) обычно дается в конце цепи, более ранние миссии все еще полезны для получения опыта и наград и часто включают в себя вторичные награды. <br/><Bullet/>Этапы цепи действий полурандомизированы, структура каждой цепи и заключительного этапа обычно одинаковы, но типы миссий и наград на подготовительных этапах будут разными.<br/><Bullet/> Цепи действий обнаруживаются со временем информаторами Сопротивления и представляются XCOM для анализа. Для получения дополнительной информации нажмите кнопку \"Просмотр цепочки\" в верхней части экрана или посетите Комнату Командира, чтобы открыть обзор цепочки.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, мы не имеем роскоши поражать важные цели \"Адвента\" сразу же. Нам нужно будет собрать информацию и отвлечь противника, прежде чем двигаться к нашей главной цели.</i>"
+
+strResistanceInformantsHeader=Информаторы Сопротивления
+strResistanceInformantsBody="<Bullet/> В правом верхнем углу этого экрана отображается текущее количество информаторов. Эти сторонники сопротивления, скрытые в областях, контролируемых \"Адвентом\", являются ключом к глобальным операциям XCOM.<br/><Bullet/>Информаторы собирают данные и отчитываются перед XCOM, открывая новые возможности для наших солдат в расследовании. С нашим текущим количеством вы можете ожидать, что наши информанты обнаружат новую цепочку деятельности примерно раз в две недели.<br/><Bullet/><Bullet/> Большое количество чиновников Администрации \"Адвент\" в вашем стартовом регионе уже находятся на стороне XCOM. Если Вы хотите увеличить количество информаторов Сопротивления в вашем распоряжении, вам нужно будет связаться с новыми регионами или построить больше ретрансляторов.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, мы должны сделать расширение сети Сопротивления высокоприоритетным направлением. Без уничтожения целей \"Адвента\" мы будем испытывать дефицит материалов и лишим войска боевого опыта.</i>"
+
+strFacilityAssaultsHeader=Штурм объектов \"Аватара\"
+strFacilityAssaultsBody="<Bullet/> Скрытые объекты, поддерживающие проект \"Аватар\", должны стать основной целью XCOM. Однако, прямое нападение - это самоубийство, учитывая, что подкрепление, которое может отправить \"Адвент\". Объекты должны быть заглушены, прежде чем на них можно будет безопасно напасть.<br/><Bullet/><Bullet/>Расшифрованные Данные получают путем исследования Данных об объектах, которые могут быть получены путем захвата Координаторов \"Аватара\", сканирования зон или случайных наград за взлом. Если у Вас есть хотя бы один пакет Расшифрованных Данных, то целью может стать любой объект в мире.<br/><Bullet/> Расшифрованные Данные тратится на попытку, а не на разблокировку объектов. Если атака не удастся, Расшифрованные Данные все равно будут использованы. Если вы остро нуждаетесь в Расшифрованных Данных, они всегда доступны на черном рынке, но при этом не появятся снова после покупки.<br/><Bullet/> Кроме того, существует и другой способ атаки на объект. Если в районе объекта построен ретранслятор, то он будет постоянно разблокирован. Просто связаться с регионом недостаточно.<br/><Bullet/> Количество Расшифрованных Данных которыми вы обладаете в настоящее время, можно увидеть в верхней правой части экрана при нажатии на объект \"Аватар\" (при условии, что он расположен в регионе без ретранслятора).<br/>"
+
+strAdvancedChainsHeader=Расширение Сопротивления
+strAdvancedChainsBody="<Bullet/> Инопланетяне постоянно совершенствуют свои силы. Чтобы XCOM не отставала, им нужен постоянный поток ресурсов, который может быть трудно получить с помощью миссий по захвату материалов, а также часто встречающихся мелких наград разведданными .<br/><Bullet/> Постройка, по крайней мере, одной ретранслятора в любом регионе, с которым они связываются, откроет новые расширенные цепочки, которые позволят XCOM запускать весьма полезные атаки на конвои снабжения и Коллаборационистов \"Адвента\".<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, мы не можем победить в этой войне с помощью мелких атак. Нам нужно нанести удар по самому больному места \"Адвента\", а это означает расширение сети Сопротивления через контакты и ретрансляторы, как можно скорее.</i>"
+
+strDarkEventsHeader=Предотвращение Темных событий
+strDarkEventsBody="<Bullet/> \"Адвент\" только начал свои операции по борьбе с повстанцами. Хотя в этом месяце есть только одно Темное Событие, \"Адвента\" ускорит свои усилия и в конечном итоге начнет разработку трех проектов каждый месяц.<br/><Bullet/> Сопротивление будет исследовать и готовить цепи активности, чтобы нейтрализовать каждое Темное Событие, но их интеллект ограничен. Каждого региона, с которым вы связались, будет достаточно, чтобы обнаружить одно случайное Темное Событие каждый месяц.<br/><Bullet/>  Это означает, что если вы контролируете два региона, а \"Адвент\" готовит три Темных События, вы сможете предотвратить только два из них. Кроме того, эти два события могут быть не теми, кому вы хотите предотвратить. <br/><Bullet/> Цепи активности на стадии подготовки можно отслеживать с помощью обзорного экрана цепей в Каюте Командира.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, теперь, когда \"Адвент\" знает, что мы обладаем \"Мстителем\", они будут наращивать усилия, чтобы уничтожить нас. Мы должны расширить сеть Сопротивления так, чтобы мы могли обнаружить и нейтрализовать любую вражескую операцию.</i>"
+
+strCovertOpsAbortHeader=Отмена Секретных Операций
+strCovertOpsAbortBody="<Bullet/> Как только тайная операция началась, команда вступает в радиомолчание, чтобы избежать обнаружения пришельцами. Связаться с ними и вернуть их домой будет тем труднее, чем глубже они углубятся на территорию Адвента. После определенного момента стоимость разведданных для обнаружения и извлечения команды может стать достаточно высокой, чтобы вы просто позволили им завершить свою миссию и вернуться домой. В случае скрытого проникновения иногда лучший курс действий-позволить им проникнуть на 100% и начать миссию, а затем отправить Рейнджер, чтобы эвакуировать их. Однако этот метод не всегда жизнеспособен, так как зона захвата заранее устанавливается в некоторых типах миссий.<br/><br/>РЕКОМЕНДАЦИЯ БРЭДФОРДА: <i>Командир, мы должны думать заранее при рассмотрении наших развертываний. Если нам вдруг понадобится отряд в чрезвычайной ситуации, дешевле отменить операцию, которая находится на ранних стадиях, по сравнению с той, которая уже продолжается некоторое время.</i>"
+
+strSupplyExtractHeader=Изменения Извлечения Материалов  
+strSupplyExtractBody="\"Адвент\" находится в середине передачи материалов на один из их отдаленных аванпостов. Подкрепление с вражеских авиабаз может легко добраться до этого места и начнет действовать, как только отряд будет замечен. Установить транспондеры больше, чем на несколько ящиков, будет чрезвычайно трудно. Хватайте все, что сможете, и убирайтесь, пока вас не окружили со всех сторон."
+
+strAvatarCaptureHeader=Координаторы \"Аватара\"
+strAvatarCaptureBody="Цель этой операции - человек, который, как мы подозреваем, участвует в проекте \"Аватар\". Единственный способ найти след на объекта инопланетян - взять его(ее) живыми. Убив его(ее), вы ничего не добьетесь, кроме небольшой задержки строительства."
+
+strIndividualBuiltItemsHeader=Индивидуально Производящиеся Предметы
+strIndividualBuiltItemsBody="<Bullet/> При игре с Covert Infiltration, предметы создаются индивидуально, а не универсально. Это имеет несколько последствий для вашей стратегии в будущем с точки зрения того, какие цели вы выбираете и как вы оснащаете свои силы. Правильное оснащение нескольких отрядов оперативников новейшим снаряжением может оказаться непростой задачей. Сверхинфильтрация может помочь недостаточно оснащенным отрядам получить преимущество над своими противниками, в то время как хорошо оснащенные отряды могут захотеть проникнуть быстрее, чтобы их снаряжение можно было вращать чаще.<br/><Bullet/> Помните, что предметы могут быть проданы на Черном Рынке за материалы, но сплавы и использованный элерий не могут быть возвращены. Создание слишком большого количества предметов уровня 2 может привести к тому, что вы разоритесь, когда предметы уровня 3 будут разблокированы.<br/>"
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Обучение отключено при игре с Covert Infiltration"
+strDisabledNarrativeContentTooltip="Операция \"Потерянные и Заблудшие\" отключена при игре с Covert Infiltration"
+
+[Complication_RewardInterception X2ComplicationTemplate]
+FriendlyName="Перехват Награды"
+FriendlyDesc="Есть шанс, что половина наград из этой цепи будет перехвачена и восстановлена в спасательной миссии."
+
+[Complication_ChosenSurveillance X2ComplicationTemplate]
+FriendlyName="Наблюдение Избранного"
+FriendlyDesc="Завершение этой цепи имеет шанс увеличить знания случайного Избранного."
+
+[Complication_OpenProvocation X2ComplicationTemplate]
+FriendlyName="Открытая Провокация"
+FriendlyDesc="Завершение этой цепи имеет шанс уменьшить таймер карательной операции на одну неделю."
+
+[AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
+DisplayName=Продвинутая тренировка Партизан
+Summary=Увеличивает максимальный ранг в ШПТ до <XGParam:IntValue0>
+
+[UIFacility_AcademySlot_CI]
+strTrainNonRookieDialogTitle=ТРЕНИРОВКА СОЛДАТА
+strTrainNonRookieDialogText=<XGParam:StrValue3/!ExistingClass/> <XGParam:StrValue0/!UnitName/> может пройти специализированную подготовку в Школе Партизанской Тактики, обучаясь на <XGParam:StrValue1/!Ранг Name/>, но он(а) будут недоступен(на) для боя во время учебного процесса. Вы хотите продолжить?<br/><br/>Длительность обучения: <XGParam:StrValue2/!Duration/>
+m_strStopTrainRookieDialogTitle=ОСТАНОВИТЬ ОБУЧЕНИЕ?
+m_strStopTrainRookieDialogText=Вы хотите остановить обучение %UNITNAME в ШПТ?\n\nWARNING: Прогресс обучения будет потерян.
+m_strNoSoldiersTooltip=Для обучения в Школе Партизанской Тактики нет свободных солдат. 
+m_strSoldiersAvailableTooltip=Назначьте солдата ниже учебного звания, чтобы получить повышение, и если он новичок, выберите определенный класс.
+
+[UIInfiltrationDetails]
+strHeader=ИНФИЛЬТРАЦИЯ
+strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
+strChosenHelpText="Чрезмерная фильтрация изменит вероятность вмешательства Избранного. Скрытый базовый шанс крайне низкий, если Избранный был обнаружен недавно."
+
+strChosenProgressLeftLabel=Инфильт %
+strChosenModifierLeftLabel=Модификатор
+
+[UIInfiltrationDetails_Milestone]
+strHidden=СКРЫТ
+
+[GenericBuff1 X2InfiltrationBonusMilestoneTemplate]
+strName=Подходящий момент I
+
+[SitRep1 X2InfiltrationBonusMilestoneTemplate]
+strName=Случайный SITREP I
+
+[RiskRemoval X2InfiltrationBonusMilestoneTemplate]
+strName=Негатиный SITREP убран
+
+[SitRep2 X2InfiltrationBonusMilestoneTemplate]
+strName=Случайный SITREP II
+
+[GenericBuff2 X2InfiltrationBonusMilestoneTemplate]
+strName=Подходящий Момент II
+
+[SitRep3 X2InfiltrationBonusMilestoneTemplate]
+strName=Случайный SITREP III
+
+[X2EventListener_Infiltration]
+strOneTimeMarketLeadDescription="Нам действительно пришлось потянуть за кое-какие ниточки, и мы заплатили за это. Считай, что это твое единственное одолжение, Брэдфорд. Мы не собираемся делать это снова."
+
+[UIAlert_CovertInfiltration]
+strRewardsIntercepted_Title=ПЕРЕХВАТ НАГРАДЫ
+strRewardsIntercepted_Description="Командир, часть группы Сопротивления, перевозившая военные трофеи обратно на базу, была перехвачена! Около половины ресурсов так и не удалось собрать, и ситуация для команды Сопротивления на местах выглядит мрачной. Если мы скоро запустим миссию по возвращению, то сможем спасти оставшуюся добычу.<br/><br/>Награды перехвачены: <XGParam:StrValue0>"
+
+[UIChainPreview]
+strSingleComplicationFluff=ПОТЕНЦИАЛЬНОЕ ОСЛОЖНЕНИЕ
