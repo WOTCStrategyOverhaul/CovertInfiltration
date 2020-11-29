@@ -303,7 +303,7 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 
 		if (DarkEventState == none)
 		{
-			DarkEventRefs.RemoveItem(DarkEventRef);
+			DarkEventRefs.Remove(i, 1);
 			i--;
 			continue;
 		}
@@ -311,7 +311,7 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		// Chosen-initiated DEs cannot be countered
 		if (DarkEventState.bChosenActionEvent)
 		{
-			DarkEventRefs.RemoveItem(DarkEventRef);
+			DarkEventRefs.Remove(i, 1);
 			i--;
 			continue;
 		}
