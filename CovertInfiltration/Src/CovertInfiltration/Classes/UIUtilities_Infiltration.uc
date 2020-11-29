@@ -483,14 +483,18 @@ static function bool SetCountdownTextAndColor(int Turns, XComLWTuple Tuple)
 	return true;
 }
 
-static function string GetAcademyTargetRank (optional XComGameState_Unit UnitState)
+static function string GetAcademyTargetRank (XComGameState_Unit UnitState)
 {
-	if (UnitState != none)
-	{
-		return UnitState.GetSoldierRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank());
-	}
+	return UnitState.GetSoldierRankName(
+		class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(
+			UnitState.GetReference()
+		)
+	);
+}
 
-	return class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank(), '');
+static function string GetAcademyMaxRank ()
+{
+	return class'X2ExperienceConfig'.static.GetRankName(class'X2Helper_Infiltration'.static.GetAcademyTrainingMaxRank(), '');
 }
 
 static function string GetLabelForActivityCompletionStatus (EActivityCompletion eCompletion)

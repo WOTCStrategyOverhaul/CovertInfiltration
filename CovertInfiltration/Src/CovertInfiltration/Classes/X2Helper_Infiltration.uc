@@ -930,9 +930,23 @@ static function SelectEnviromentalSitreps (XComGameState_MissionSite MissionStat
 	}
 }
 
-static function int GetAcademyTrainingTargetRank ()
+// Note that originally the units were promoted to the max training rank
+// so the code looks a bit weird currently
+
+static function int GetAcademyTrainingMaxRank ()
 {
 	return 1 + `XCOMHQ.BonusTrainingRanks;
+}
+
+static function int GetAcademyTrainingTargetRank (StateObjectReference UnitRef)
+{
+	local XComGameState_Unit UnitState;
+	local int UnitRank;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
+	UnitRank = UnitState.GetSoldierRank();
+
+	return GetAcademyTrainingMaxRank() > UnitRank ? UnitRank + 1 : UnitRank;
 }
 
 static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
@@ -944,7 +958,7 @@ static function int GetAcademyTrainingHours (StateObjectReference UnitRef)
 	
 	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
 	
-	for (IterationRank = UnitState.GetSoldierRank(); IterationRank < GetAcademyTrainingTargetRank(); IterationRank++)
+	for (IterationRank = UnitState.GetSoldierRank(); IterationRank < GetAcademyTrainingTargetRank(UnitRef); IterationRank++)
 	{
 		IterationHours = default.ACADEMY_HOURS_PER_RANK;
 		Multiplier = 1;

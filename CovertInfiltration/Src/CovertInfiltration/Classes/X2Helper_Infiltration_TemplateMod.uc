@@ -15,6 +15,7 @@ struct RegionScoringPair
 
 var config(GameData) array<name> arrRemoveFactionCard;
 var config(GameData) int LiveFireTrainingRanksIncrease;
+var config(GameData) bool bPermitPsiOpInAcademy;
 var config(GameData) array<name> arrSabotagesToRemove;
 var config(GameData) array<name> arrPointsOfInterestToRemove;
 var config(GameData) array<name> arrAllowPromotionReward;
@@ -1028,8 +1029,9 @@ static protected function bool IsUnitValidForAcademySlot (XComGameState_StaffSlo
 	return Unit.CanBeStaffed()
 		&& Unit.IsSoldier()
 		&& Unit.IsActive()
-		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingTargetRank()
+		&& Unit.GetRank() < class'X2Helper_Infiltration'.static.GetAcademyTrainingMaxRank()
 		&& !Unit.CanRankUpSoldier()
+		&& (default.bPermitPsiOpInAcademy || !Unit.IsPsiOperative())
 		&& SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE;
 }
 

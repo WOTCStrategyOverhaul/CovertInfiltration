@@ -11,7 +11,7 @@ var localized string strInfiltrationReady;
 var localized string strCanWaitForBonusOrLaunch;
 var localized string strReadySoldiers;
 var localized string strTiredSoldiers;
-var localized string strAcademyTrainingRank;
+var localized string strAcademyTrainingMaxRank;
 var localized string strInformantsTitle;
 
 static function array<X2DataTemplate> CreateTemplates()
@@ -561,8 +561,8 @@ static function EventListenerReturn UpdateResources(Object EventData, Object Eve
 	if (ScreenStack.GetFirstInstanceOf(AcademyTemplate.UIFacilityClass) != none)
 	{
 		AvengerHUD.AddResource(
-			default.strAcademyTrainingRank,
-			class'UIUtilities_Infiltration'.static.GetAcademyTargetRank()
+			default.strAcademyTrainingMaxRank,
+			class'UIUtilities_Infiltration'.static.GetAcademyMaxRank()
 		);
 
 		AvengerHUD.ShowResources();
