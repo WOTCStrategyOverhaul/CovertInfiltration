@@ -141,7 +141,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	CreateGoldenPathActions(StartState);
 	ForceObjectivesCompleted(StartState);
 	CreateActionableLeadResourceState(StartState);
-	ReplaceGatecrasher(StartState);
+	AddGatecrasherRewards(StartState);
 
 	PatchDebugStart(StartState);
 }
@@ -205,82 +205,48 @@ static function ForceObjectivesCompleted (XComGameState NewGameState)
 	}
 }
 
-static function ReplaceGatecrasher (XComGameState StartState)
+static function AddGatecrasherRewards (XComGameState StartState)
 {
+	local X2StrategyElementTemplateManager StratMgr;
 	local XComGameState_MissionSite MissionState;
-	local Vector StartingMissionLoc;
+	local XComGameState_WorldRegion RegionState;
+	local XComGameState_Reward RewardState;
+	local X2RewardTemplate RewardTemplate;
 
-	`CI_Trace("Replacing Gatecrasher!");
+	`CI_Trace("Adjusting Gatecrasher");
 
 	foreach StartState.IterateByClassType(class'XComGameState_MissionSite', MissionState)
 	{
 		if (MissionState.Source == 'MissionSource_Start')
+		{
 			break;
+		}
 	}
 
-	if (MissionState != none)
+	if (MissionState == none)
 	{
-		StartingMissionLoc.X = MissionState.Location.X;
-		StartingMissionLoc.Y = MissionState.Location.Y;
-
-		StartState.RemoveStateObject(MissionState.ObjectID);
-
-		CreateStartingMission(StartState, StartingMissionLoc);
-		PopulatePureTacticalRewardDeck();
-
-		`CI_Trace("Gatecrasher Replaced!");
+		`RedScreen("Failed to find existing Gatecrasher");
+		return;
 	}
-	else
-	{
-		`RedScreen("Failed to find existing Gatecrasher!");
-	}
-}
-
-static function CreateStartingMission (XComGameState StartState, Vector StartingMissionLoc)
-{
-	local Vector2D									v2Loc;
-	local XComGameState_MissionSite					MissionState;
-	local XComGameState_WorldRegion					RegionState;
-	local XComGameState_Reward						RewardState;
-	local X2RewardTemplate							RewardTemplate;
-	local X2StrategyElementTemplateManager			StratMgr;
-	local X2MissionSourceTemplate					MissionSource;
-	local array<XComGameState_Reward>				MissionRewards;
-	local XComGameStateHistory						History;
-	local XComGameState_HeadquartersXCom			XComHQ;
-
-	History = `XCOMHISTORY;
-
+	
 	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	
-	RegionState = XComGameState_WorldRegion(StartState.GetGameStateForObjectID(XComHQ.StartingRegion.ObjectID));
-	v2Loc.X = StartingMissionLoc.X;
-	v2Loc.Y = StartingMissionLoc.Y;
+	RegionState = MissionState.GetWorldRegion();
 
-	MissionRewards.Length = 0;
-
-	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_None'));
-	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
-	RewardState.GenerateReward(StartState,, RegionState.GetReference());
-	MissionRewards.AddItem(RewardState);
-	
 	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Engineer'));
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
 	RewardState.GenerateReward(StartState, 1.0, RegionState.GetReference());
 	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_00');
-	MissionRewards.AddItem(RewardState);
+	MissionState.Rewards.AddItem(RewardState.GetReference());
 	
 	RewardTemplate = X2RewardTemplate(StratMgr.FindStrategyElementTemplate('Reward_Scientist'));
 	RewardState = RewardTemplate.CreateInstanceFromTemplate(StartState);
 	RewardState.GenerateReward(StartState, 1.0, RegionState.GetReference());
 	AddTacticalTagToRewardUnit(StartState, RewardState, 'Prisoner_01');
-	MissionRewards.AddItem(RewardState);
+	MissionState.Rewards.AddItem(RewardState.GetReference());
 
-	MissionSource = X2MissionSourceTemplate(StratMgr.FindStrategyElementTemplate('MissionSource_GatecrasherCI'));
+	PopulatePureTacticalRewardDeck();
 
-	MissionState = XComGameState_MissionSite(StartState.CreateNewStateObject(class'XComGameState_MissionSite'));
-	MissionState.BuildMission(MissionSource, v2Loc, RegionState.GetReference(), MissionRewards, true);
+	`CI_Trace("Gatecrasher adjusted!");
 }
 
 // Copied from X2StrategyElement_XpackMissionSources
@@ -487,6 +453,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchRetailationMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchNewRetaliationNarrative();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchQuestItems();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchStartMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchAlienNetworkMissionSource();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchSabotageMonumentMissionSchedules();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchMissionDefinitions();

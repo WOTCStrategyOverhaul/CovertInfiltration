@@ -502,6 +502,23 @@ static protected function int GetMissionDifficultyFromMonthPlusTemplate (XComGam
 	return Difficulty;
 }
 
+static function PatchStartMissionSource ()
+{
+	local X2StrategyElementTemplateManager StratMgr;
+	local X2MissionSourceTemplate MissionSource;
+	local array<X2DataTemplate> DifficultyVariants;
+	local X2DataTemplate DataTemplate;
+
+	StratMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	StratMgr.FindDataTemplateAllDifficulties('MissionSource_Start', DifficultyVariants);
+
+	foreach DifficultyVariants(DataTemplate)
+	{
+		MissionSource = X2MissionSourceTemplate(DataTemplate);
+		MissionSource.DifficultyValue = 2;
+	}
+}
+
 static function PatchAlienNetworkMissionSource ()
 {
 	local X2StrategyElementTemplateManager StratMgr;
@@ -579,6 +596,7 @@ static function PatchMissionDefinitions ()
 			DestroyObjective.bIsStrategyObjective = true;
 			DestroyObjective.bIsTriadObjective = true;
 			
+			MissionManager.arrMissions[i].MissionFamily = "SabotageCC_CI";
 			MissionManager.arrMissions[i].MapNames[0] = "Obj_SabotageCC_CI";
 			MissionManager.arrMissions[i].MissionObjectives[0] = SweepObjective;
 			MissionManager.arrMissions[i].MissionObjectives[1] = DestroyObjective;
