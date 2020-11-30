@@ -292,25 +292,47 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 	RegionRefs = GetContactedRegions();
 	DarkEventRefs = AlienHQ.ChosenDarkEvents;
 
+	`CI_Trace("Initial Events:" @ DarkEventRefs.Length);
+	
 	for (i = 0; i < DarkEventRefs.Length; i++)
 	{
-		// No regions left to assign DEs, skip the rest of them
-		if (RegionRefs.Length == 0) break;
+		DarkEventRef = DarkEventRefs[i];
+		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
 		
-		if (DarkEventRefs.Length == 0)
+		`CI_Trace("Evaluating:" @ DarkEventState.GetMyTemplateName());
+
+		if (DarkEventState == none)
 		{
-			`RedScreen("CI: Dark Events array empty when it should be filled");
-			break;
+			DarkEventRefs.Remove(i, 1);
+			i--;
+			continue;
 		}
+
+		// Chosen-initiated DEs cannot be countered
+		if (DarkEventState.bChosenActionEvent)
+		{
+			DarkEventRefs.Remove(i, 1);
+			i--;
+			continue;
+		}
+		
+		`CI_Trace("Cleared:" @ DarkEventState.GetMyTemplateName());
+	}
+	
+	`CI_Trace("Loop Begins!");
+	
+	while (DarkEventRefs.Length > 0 && RegionRefs.Length > 0)
+	{
+		`CI_Trace("Regions:" @ RegionRefs.Length);
+		`CI_Trace("Events:" @ DarkEventRefs.Length);
+		`CI_Trace("Spawns:" @ SpawnedChains.Length);
 
 		DarkEventRef = DarkEventRefs[`SYNC_RAND_STATIC(DarkEventRefs.Length)];
 		DarkEventRefs.RemoveItem(DarkEventRef);
 
 		DarkEventState = XComGameState_DarkEvent(`XCOMHISTORY.GetGameStateForObjectID(DarkEventRef.ObjectID));
-		if (DarkEventState == none) continue;
-
-		// Chosen-initiated DEs cannot be countered
-		if (DarkEventState.bChosenActionEvent) continue;
+		
+		`CI_Trace("Spawning:" @ DarkEventState.GetMyTemplateName());
 
 		ChainObjectRefs.Length = 0;
 		ChainObjectRefs.AddItem(DarkEventRef);
@@ -325,6 +347,12 @@ static function SpawnCounterDarkEvents (XComGameState NewGameState)
 		
 		SpawnedChains.AddItem(ChainState);
 	}
+	
+	`CI_Trace("Regions:" @ RegionRefs.Length);
+	`CI_Trace("Events:" @ DarkEventRefs.Length);
+	`CI_Trace("Spawns:" @ SpawnedChains.Length);
+	
+	`CI_Trace("Loop Broken!");
 
 	// If we didn't manage to make any chains, don't bother with the timing
 	if (SpawnedChains.Length == 0) return;
