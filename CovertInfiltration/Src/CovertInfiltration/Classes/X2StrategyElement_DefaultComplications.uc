@@ -182,13 +182,13 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 		{
 			ChosenState = XComGameState_AdventChosen(`XCOMHISTORY.GetGameStateForObjectID(ChosenRef.ObjectID));
 			
-			if (ChosenState.bDefeated)
+			if (!ChosenState.bDefeated)
 			{
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	return false;
