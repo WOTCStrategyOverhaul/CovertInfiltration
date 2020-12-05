@@ -831,7 +831,7 @@ static protected function DisableChosenSurveillance ()
 	local XComGameState NewGameState;
 	local XComGameState_Complication ComplicationState;
 	local StateObjectReference ComplicationRef;
-	local bool bClearComplication, bDirty;
+	local bool bClearComplication;
 
 	History = `XCOMHISTORY;
 	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
@@ -861,26 +861,31 @@ static protected function DisableChosenSurveillance ()
 
 	foreach History.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
 	{
-		if (ChainState == none) continue;
 		if (ChainState.bEnded) continue;
 		if (ChainState.ComplicationRefs.Length == 0) continue;
 
 		foreach ChainState.ComplicationRefs(ComplicationRef)
 		{
 			ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRef.ObjectID));
-			if (ComplicationState.GetMyTemplateName() == 'Complication_ChosenSurveillance') bClearComplication = true;
+			if (ComplicationState.GetMyTemplateName() == 'Complication_ChosenSurveillance')
+			{
+				bClearComplication = true;
+				break;
+			}
 		}
 
 		if (!bClearComplication) continue;
 		
 		`CI_Log("DisableChosenSurveillance on chain" @ ChainState.GetMyTemplateName());
 
+		if (NewGameState == none) NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionDisableSurviellance");
+
 		ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainState.ObjectID));
 		ChainState.ComplicationRefs.RemoveItem(ComplicationRef);
-		bDirty = true;
+		NewGameState.RemoveStateObject(ComplicationRef.ObjectID);
 	}
 	
-	if (bDirty) `SubmitGameState(NewGameState);
+	if (NewGameState != none) `SubmitGameState(NewGameState);
 }
 
 static event OnExitPostMissionSequence ()
