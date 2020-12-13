@@ -187,8 +187,6 @@ function bool IfChosenActivated(XComGameState NewGameState, XComGameState_Activi
 				return true;
 			}
 		}
-
-		return false;
 	}
 
 	return false;

@@ -714,7 +714,7 @@ static event OnPostMission ()
 	ResetInfiltrationChosenRoll();
 	TriggerMissionExitEvents();
 	HandleFacilityMissionExit();
-	DisableChosenSurveillance();
+	PostChosenStronghold();
 
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
 }
@@ -817,21 +817,11 @@ static protected function HandleFacilityMissionExit ()
 	`SubmitGameState(NewGameState);
 }
 
-static protected function DisableChosenSurveillance ()
+static protected function PostChosenStronghold ()
 {
-	local XComGameState_MissionSite MissionState;
-	local XComGameState_BattleData BattleData;
 	local XComGameStateHistory History;
-	
-	local XComGameState_HeadquartersAlien AlienHQ;
-	local XComGameState_AdventChosen ChosenState;
-	local StateObjectReference ChosenRef;
-
-	local XComGameState_ActivityChain ChainState;
-	local XComGameState NewGameState;
-	local XComGameState_Complication ComplicationState;
-	local StateObjectReference ComplicationRef;
-	local bool bClearComplication;
+	local XComGameState_BattleData BattleData;
+	local XComGameState_MissionSite MissionState;
 
 	History = `XCOMHISTORY;
 	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
@@ -842,50 +832,7 @@ static protected function DisableChosenSurveillance ()
 	// Do nothing if we came back from some other mission
 	if (MissionState.Source != 'MissionSource_ChosenStronghold') return;
 	
-	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-	
-	`CI_Log("DisableChosenSurveillance exited stronghold");
-
-	// Do nothing if any chosen is still alive and kicking
-	foreach AlienHQ.AdventChosen(ChosenRef)
-	{
-		ChosenState = XComGameState_AdventChosen(`XCOMHISTORY.GetGameStateForObjectID(ChosenRef.ObjectID));
-			
-		if (!ChosenState.bDefeated)
-		{
-			return;
-		}
-	}
-	
-	`CI_Log("DisableChosenSurveillance chosen are dead");
-
-	foreach History.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
-	{
-		if (ChainState.bEnded) continue;
-		if (ChainState.ComplicationRefs.Length == 0) continue;
-
-		foreach ChainState.ComplicationRefs(ComplicationRef)
-		{
-			ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRef.ObjectID));
-			if (ComplicationState.GetMyTemplateName() == 'Complication_ChosenSurveillance')
-			{
-				bClearComplication = true;
-				break;
-			}
-		}
-
-		if (!bClearComplication) continue;
-		
-		`CI_Log("DisableChosenSurveillance on chain" @ ChainState.GetMyTemplateName());
-
-		if (NewGameState == none) NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionDisableSurviellance");
-
-		ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainState.ObjectID));
-		ChainState.ComplicationRefs.RemoveItem(ComplicationRef);
-		NewGameState.RemoveStateObject(ComplicationRef.ObjectID);
-	}
-	
-	if (NewGameState != none) `SubmitGameState(NewGameState);
+	DisableChosenSurveillance();
 }
 
 static event OnExitPostMissionSequence ()
@@ -1815,9 +1762,20 @@ exec function DefeatAllChosen()
 	`SubmitGameState(NewGameState);
 }
 
-exec function ForceDisableChosenSurveillance ()
+exec function DisableChosenSurveillanceDebug ()
 {
-	local XComGameStateHistory History;	
+	`CI_Log("DisableChosenSurveillance activated from console command");
+
+	DisableChosenSurveillance();
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+static function DisableChosenSurveillance ()
+{
+	local XComGameStateHistory History;
 	local XComGameState_HeadquartersAlien AlienHQ;
 	local XComGameState_AdventChosen ChosenState;
 	local StateObjectReference ChosenRef;
@@ -1827,12 +1785,11 @@ exec function ForceDisableChosenSurveillance ()
 	local XComGameState_Complication ComplicationState;
 	local StateObjectReference ComplicationRef;
 	local bool bClearComplication;
-
-	History = `XCOMHISTORY;
 	
+	History = `XCOMHISTORY;
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
 	
-	`CI_Log("ForceDisableChosenSurveillance called");
+	`CI_Log("DisableChosenSurveillance called");
 
 	// Do nothing if any chosen is still alive and kicking
 	foreach AlienHQ.AdventChosen(ChosenRef)
@@ -1845,40 +1802,28 @@ exec function ForceDisableChosenSurveillance ()
 		}
 	}
 	
-	`CI_Log("ForceDisableChosenSurveillance chosen are dead");
+	`CI_Log("DisableChosenSurveillance passed");
 
 	foreach History.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
 	{
 		if (ChainState.bEnded) continue;
 		if (ChainState.ComplicationRefs.Length == 0) continue;
 
-		foreach ChainState.ComplicationRefs(ComplicationRef)
-		{
-			ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(ComplicationRef.ObjectID));
-			if (ComplicationState.GetMyTemplateName() == 'Complication_ChosenSurveillance')
-			{
-				bClearComplication = true;
-				break;
-			}
-		}
+		ComplicationState = ChainState.FindComplication('Complication_ChosenSurveillance');
 
-		if (!bClearComplication) continue;
+		if (ComplicationState == none) continue;
 		
-		`CI_Log("ForceDisableChosenSurveillance on chain" @ ChainState.GetMyTemplateName());
+		`CI_Log("DisableChosenSurveillance on chain" @ ChainState.GetMyTemplateName());
 
-		if (NewGameState == none) NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: ForceDisableSurviellance");
-
+		if (NewGameState == none) NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionDisableSurviellance");
+		
 		ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainState.ObjectID));
 		ChainState.ComplicationRefs.RemoveItem(ComplicationRef);
-		NewGameState.RemoveStateObject(ComplicationRef.ObjectID);
+		ComplicationState.RemoveComplication(NewGameState);
 	}
 	
 	if (NewGameState != none) `SubmitGameState(NewGameState);
 }
-
-///////////////
-/// Helpers ///
-///////////////
 
 static function X2DownloadableContentInfo_CovertInfiltration GetCDO()
 {
