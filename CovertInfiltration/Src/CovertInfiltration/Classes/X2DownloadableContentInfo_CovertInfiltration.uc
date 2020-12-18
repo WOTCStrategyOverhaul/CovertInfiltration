@@ -1783,7 +1783,6 @@ static function DisableChosenSurveillance ()
 	local XComGameState_ActivityChain ChainState;
 	local XComGameState NewGameState;
 	local XComGameState_Complication ComplicationState;
-	local StateObjectReference ComplicationRef;
 	local bool bClearComplication;
 	
 	History = `XCOMHISTORY;
@@ -1818,7 +1817,7 @@ static function DisableChosenSurveillance ()
 		if (NewGameState == none) NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: PostMissionDisableSurviellance");
 		
 		ChainState = XComGameState_ActivityChain(NewGameState.ModifyStateObject(class'XComGameState_ActivityChain', ChainState.ObjectID));
-		ChainState.ComplicationRefs.RemoveItem(ComplicationRef);
+		ChainState.ComplicationRefs.RemoveItem(ComplicationState.GetReference());
 		ComplicationState.RemoveComplication(NewGameState);
 	}
 	
