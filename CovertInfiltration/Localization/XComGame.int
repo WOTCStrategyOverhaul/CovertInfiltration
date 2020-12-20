@@ -366,17 +366,17 @@ DisplayName="Black Market"
 [CovertActionNarrative_BlackMarket_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Help the Smugglers"
 ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
-ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+ActionPostNarrative="We saved our smuggler friends from an ADVENT sweep, but we lost them in the fighting. We'll need the Avenger's scanners to locate them again."
 
 [CovertActionNarrative_BlackMarket_Reapers X2CovertActionNarrativeTemplate]
 ActionName="Help the Smugglers"
 ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
-ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+ActionPostNarrative="We saved our smuggler friends from an ADVENT sweep, but we lost them in the fighting. We'll need the Avenger's scanners to locate them again."
 
 [CovertActionNarrative_BlackMarket_Templars X2CovertActionNarrativeTemplate]
 ActionName="Help the Smugglers"
 ActionPreNarrative="The Black Market was sent packing by an ADVENT anti-smuggling operation a few weeks ago. We should send a squad to help them get back on their feet."
-ActionPostNarrative="Our smuggler friends have set up shop again, and they want our business."
+ActionPostNarrative="We saved our smuggler friends from an ADVENT sweep, but we lost them in the fighting. We'll need the Avenger's scanners to locate them again."
 
 [UIAlert]
 m_strOutpostBody=Once a radio relay is installed, the Resistance in <XGParam:StrValue0/!WorldRegionName/> will increase their monthly collection to +<XGParam:IntValue0/> supplies. The contact cost of nearby regions will also be reduced, Advanced Activity Chains will begin to spawn here, and any Avatar Facilities will be unlocked.
