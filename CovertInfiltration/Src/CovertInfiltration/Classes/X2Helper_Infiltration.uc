@@ -75,6 +75,9 @@ var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE;
 // of leads will stop showing up. E.g. chain, hack reward, etc
 var config int CasualFacilityLeadGainCap;
 
+// Which inventory slots will be checked for useless items during Covert Action loadouts
+var array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -1529,11 +1532,25 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
 	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
+	`CI_Trace("BEGINNING IRRELEVANT ITEMS CHECK");
+
 	// loop through items
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if (InventoryItem.GetMyTemplate().bInfiniteItem) continue;
+		`CI_Trace("  - ANALYZING ITEM: " $ InventoryItem.GetMyTemplateName());
+
+		if (default.IRRELEVANT_ITEM_SLOTS.Find(InventoryItem.InventorySlot) == INDEX_NONE)
+		{
+			`CI_Trace("  -   - ITEM IS NOT IN VALID SLOT");
+			continue;
+		}
+
+		if (InventoryItem.GetMyTemplate().bInfiniteItem)
+		{
+			`CI_Trace("  -   - ITEM IS INFINITE");
+			continue;
+		}
 
 		// check item
 		InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
@@ -1542,6 +1559,7 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 		{
 			if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 			{
+				`CI_Trace("  -   - IRRELEVANT ITEM");
 				return true;
 			}
 		}
@@ -1554,16 +1572,20 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 			{
 				if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 				{
+					`CI_Trace("  -   - IRRELEVANT CATEGORY");
 					return true;
 				}
 			}
 			else
 			{
+				`CI_Trace("  -   - IRRELEVANT UNKNOWN");
 				return true;
 			}
 		}
 	}
 	
+	`CI_Trace("  - UNIT CLEARED OF IRRELEVANT ITEMS");
+
 	return false;
 }
 
