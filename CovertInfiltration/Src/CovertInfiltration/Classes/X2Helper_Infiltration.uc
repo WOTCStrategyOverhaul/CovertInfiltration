@@ -75,6 +75,9 @@ var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE;
 // of leads will stop showing up. E.g. chain, hack reward, etc
 var config int CasualFacilityLeadGainCap;
 
+// Which inventory slots will be checked for useless items during Covert Action loadouts
+var array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -1537,9 +1540,9 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 	{
 		`CI_Trace("  - ANALYZING ITEM: " $ InventoryItem.GetMyTemplateName());
 
-		if (InventoryItem.InventorySlot != eInvSlot_Utility)
+		if (default.IRRELEVANT_ITEM_SLOTS.Find(InventoryItem.InventorySlot) == INDEX_NONE)
 		{
-			`CI_Trace("  -   - ITEM IS NOT IN UTILITY SLOT");
+			`CI_Trace("  -   - ITEM IS NOT IN VALID SLOT");
 			continue;
 		}
 
