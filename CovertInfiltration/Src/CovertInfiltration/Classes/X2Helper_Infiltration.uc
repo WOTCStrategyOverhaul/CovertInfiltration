@@ -1529,11 +1529,25 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
 	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
 
+	`CI_Trace("BEGINNING IRRELEVANT ITEMS CHECK");
+
 	// loop through items
 	CurrentInventory = UnitState.GetAllInventoryItems();
 	foreach CurrentInventory(InventoryItem)
 	{
-		if (InventoryItem.GetMyTemplate().bInfiniteItem) continue;
+		`CI_Trace("  - ANALYZING ITEM: " $ InventoryItem.GetMyTemplateName());
+
+		if (InventoryItem.InventorySlot != eInvSlot_Utility)
+		{
+			`CI_Trace("  -   - ITEM IS NOT IN UTILITY SLOT");
+			continue;
+		}
+
+		if (InventoryItem.GetMyTemplate().bInfiniteItem)
+		{
+			`CI_Trace("  -   - ITEM IS INFINITE");
+			continue;
+		}
 
 		// check item
 		InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(InventoryItem.GetMyTemplate());
@@ -1542,6 +1556,7 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 		{
 			if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 			{
+				`CI_Trace("  -   - IRRELEVANT ITEM");
 				return true;
 			}
 		}
@@ -1554,16 +1569,20 @@ static function bool UnitHasIrrelevantItems (StateObjectReference UnitRef)
 			{
 				if (InfilTemplate.HoursAdded >= 0 && InfilTemplate.Deterrence <= 0)
 				{
+					`CI_Trace("  -   - IRRELEVANT CATEGORY");
 					return true;
 				}
 			}
 			else
 			{
+				`CI_Trace("  -   - IRRELEVANT UNKNOWN");
 				return true;
 			}
 		}
 	}
 	
+	`CI_Trace("  - UNIT CLEARED OF IRRELEVANT ITEMS");
+
 	return false;
 }
 
