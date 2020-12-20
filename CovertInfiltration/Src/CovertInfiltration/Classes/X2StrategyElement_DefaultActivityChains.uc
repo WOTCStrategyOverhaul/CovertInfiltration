@@ -404,7 +404,7 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_DestroyFacility');
 	
 	Template.ChooseFaction = ChooseMetFaction;
-	Template.ChooseRegions = ChooseFacilityRegion;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
 	Template.SpawnInDeck = true;
 	Template.NumInDeck = 1;
 	Template.DeckReq = IsFacilityChainAvailable;
@@ -419,11 +419,6 @@ static function X2DataTemplate CreateDestroyFacilityTemplate()
 	return Template;
 }
 
-static function ChooseFacilityRegion (XComGameState_ActivityChain ChainState, out StateObjectReference PrimaryRegionRef, out StateObjectReference SecondaryRegionRef)
-{
-	PrimaryRegionRef = FindRegionForFacilityChain();
-}
-
 static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 {
 	local array<XComGameState_MissionSite> Missions;
@@ -432,7 +427,7 @@ static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 
 	// Do not spawn the chain if there is no place for it
 	// Eg. due to ongoing chains
-	if (FindRegionForFacilityChain().ObjectID == 0) return false;
+	if (FacilityChainAlreadyExists()) return false;
 
 	// Check if we reached the relevant part of the game
 	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
@@ -451,61 +446,19 @@ static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 	return TotalFacilityDoom >= default.FacilityChainMinGlobalFacilityDoom;
 }
 
-static function StateObjectReference FindRegionForFacilityChain ()
+static function bool FacilityChainAlreadyExists ()
 {
-	local array<StateObjectReference> PreferredRegionsRefs, ValidRegionsRefs;
-	local array<XComGameState_MissionSite> Missions;
-	local XComGameState_MissionSite FacilityMission;
 	local XComGameState_ActivityChain ChainState;
-	local StateObjectReference EmptyRef;
-	local XComGameStateHistory History;
-	local bool bOngoingChain;
-	
-	Missions = class'UIUtilities_Strategy'.static.GetAlienHQ().GetValidFacilityDoomMissions(false);
-	History = `XCOMHISTORY;
 
-	foreach Missions(FacilityMission)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
 	{
-		bOngoingChain = false;
-
-		foreach History.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
+		if (ChainState.GetMyTemplateName() == 'ActivityChain_DestroyFacility' && ChainState.bEnded == false)
 		{
-			if (ChainState.GetMyTemplateName() == 'ActivityChain_DestroyFacility' && ChainState.PrimaryRegionRef == FacilityMission.Region)
-			{
-				bOngoingChain = true;
-				break;
-			}
-		}
-
-		if (!bOngoingChain)
-		{
-			// Give preference to missions that require a lead
-			if (class'X2Helper_Infiltration'.static.DoesFacilityRequireLead(FacilityMission))
-			{
-				if (PreferredRegionsRefs.Find('ObjectID', FacilityMission.Region.ObjectID) == INDEX_NONE)
-				{
-					PreferredRegionsRefs.AddItem(FacilityMission.Region);
-				}
-			}
-
-			if (ValidRegionsRefs.Find('ObjectID', FacilityMission.Region.ObjectID) == INDEX_NONE)
-			{
-				ValidRegionsRefs.AddItem(FacilityMission.Region);
-			}
+			return true;
 		}
 	}
 
-	if (PreferredRegionsRefs.Length > 0)
-	{
-		return PreferredRegionsRefs[`SYNC_RAND_STATIC(PreferredRegionsRefs.Length)];
-	}
-
-	if (ValidRegionsRefs.Length > 0)
-	{
-		return ValidRegionsRefs[`SYNC_RAND_STATIC(ValidRegionsRefs.Length)];
-	}
-
-	return EmptyRef;
+	return false;
 }
 
 static function X2DataTemplate CreateIntelInterceptionTemplate()
