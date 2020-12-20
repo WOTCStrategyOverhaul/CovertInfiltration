@@ -19,6 +19,7 @@ var config int OPPORTUNE_MOMENT_2_CRIT_BONUS;
 var config float OPPORTUNE_MOMENT_2_DETECTION_MODIFIER;
 
 var config array<name> EQUIPMENTCACHE_ITEMS;
+var config array<name> EQUIPMENTCACHE_CHARACTERS;
 
 var config int EXPERIMENTALROLLOUT_CRITMODIFIER;
 var config float EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE;
@@ -274,7 +275,8 @@ static function X2AbilityTemplate EquipmentCacheItem ()
     Template.bIsPassive = true;
 
 	ItemEffect = new class'X2Effect_AddRandomUtilityItem';
-	ItemEffect.DataNames = default.EQUIPMENTCACHE_ITEMS;
+	ItemEffect.ItemNames = default.EQUIPMENTCACHE_ITEMS;
+	ItemEffect.ValidCharacters = default.EQUIPMENTCACHE_CHARACTERS;
 	Template.AddTargetEffect(ItemEffect);
 
     Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
