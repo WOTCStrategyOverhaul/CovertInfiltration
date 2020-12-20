@@ -7,7 +7,8 @@ class X2Effect_AddRandomUtilityItem extends X2Effect_Persistent;
 // Effect properties //
 ///////////////////////
 
-var array<name> DataNames;
+var array<name> ItemNames;
+var array<name> ValidCharacters;
 var int BaseCharges;
 var bool bUseHighestAvailableUpgrade;
 
@@ -26,10 +27,13 @@ simulated protected function OnEffectAdded(const out EffectAppliedData ApplyEffe
 	if (NewUnit == none)
 		return;
 
-	if (DataNames.Length <= 0)
+	if (ValidCharacters.Find(NewUnit.GetMyTemplateName()) == INDEX_NONE)
 		return;
 
-	DataName = DataNames[`SYNC_RAND_STATIC(DataNames.Length)];
+	if (ItemNames.Length <= 0)
+		return;
+
+	DataName = ItemNames[`SYNC_RAND_STATIC(ItemNames.Length)];
 
 	ItemTemplateMgr = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	ItemTemplate = ItemTemplateMgr.FindItemTemplate(DataName);
