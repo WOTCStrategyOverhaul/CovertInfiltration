@@ -17,7 +17,6 @@ struct ArmorUtilitySlotsModifier
 var config(Engine) bool SuppressTraceLogs;
 
 var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
-var config(Plots) array<string> arrAdditionalPlotsForCovertEscape;
 var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
 // Cheats
@@ -476,25 +475,6 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchHangar();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchEvacAbility();
-
-	// These aren't actually template changes, but's this is still a convenient place to do it - before the game fully loads
-	MarkPlotsForCovertEscape();
-}
-
-static protected function MarkPlotsForCovertEscape()
-{
-	local XComParcelManager ParcelManager;
-	local int i;
-
-	ParcelManager = `PARCELMGR;
-
-	for (i = 0; i < ParcelManager.arrPlots.Length; i++)
-	{
-		if (default.arrAdditionalPlotsForCovertEscape.Find(ParcelManager.arrPlots[i].MapName) != INDEX_NONE)
-		{
-			ParcelManager.arrPlots[i].ObjectiveTags.AddItem("CovertEscape");
-		}
-	}
 }
 
 ///////////
