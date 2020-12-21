@@ -99,7 +99,7 @@ function bool ValidateTemplate (out string strError)
 
 defaultproperties
 {
-	ActivityType = -1
+	ActivityType = eActivityType_MAX
 	StateClass = class'XComGameState_Activity'
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus

@@ -1751,7 +1751,6 @@ static function DisableChosenSurveillance ()
 	local XComGameState NewGameState;
 	local XComGameState_ActivityChain ChainState;
 	local XComGameState_Complication ComplicationState;
-	local bool bClearComplication;
 	
 	History = `XCOMHISTORY;
 	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));

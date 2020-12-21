@@ -1134,7 +1134,6 @@ static protected function EventListenerReturn AddResource_OSS (Object EventData,
 static protected function EventListenerReturn AddSquadSelectSlotNotes(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local UIScreenStack ScreenStack;
-	local UIScreen CurrentScreen;
 	local UICovertActionsGeoscape CovertActions;
 
 	local LWTuple Tuple;
@@ -1143,7 +1142,6 @@ static protected function EventListenerReturn AddSquadSelectSlotNotes(Object Eve
 	local SSAAT_SlotNote Note;
 	local LWTuple NoteTuple;
 	local LWTValue Value;
-	local int i;
 
 	Tuple = LWTuple(EventData);
 	
@@ -1151,8 +1149,6 @@ static protected function EventListenerReturn AddSquadSelectSlotNotes(Object Eve
 	if (Tuple == none || Tuple.Id != 'rjSquadSelect_ExtraInfo') return ELR_NoInterrupt;
 	
 	ScreenStack = `SCREENSTACK;
-	CurrentScreen = ScreenStack.GetCurrentScreen();
-
 	CovertActions = UICovertActionsGeoscape(ScreenStack.GetFirstInstanceOf(class'UICovertActionsGeoscape'));
 	
 	if (CovertActions == none) return ELR_NoInterrupt;
