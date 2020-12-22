@@ -142,6 +142,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	ForceObjectivesCompleted(StartState);
 	CreateActionableLeadResourceState(StartState);
 	AddGatecrasherRewards(StartState);
+	ForceCloseBlackMarket(StartState);
 
 	PatchDebugStart(StartState);
 }
@@ -318,6 +319,14 @@ static protected function CreateActionableLeadResourceState (XComGameState NewGa
 	{
 		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 	}
+}
+
+static protected function ForceCloseBlackMarket (XComGameState StartState)
+{
+	local XComGameState_BlackMarket BlackMarketState;
+	BlackMarketState = XComGameState_BlackMarket(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BlackMarket'));
+	BlackMarketState = XComGameState_BlackMarket(StartState.ModifyStateObject(class'XComGameState_BlackMarket', BlackMarketState.ObjectID));
+	BlackMarketState.ForceCloseBlackMarket(StartState);
 }
 
 static protected function PatchDebugStart (XComGameState StartState)

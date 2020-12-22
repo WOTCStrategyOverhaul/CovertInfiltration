@@ -1253,7 +1253,7 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 				MissionState.PickPOI(NewGameState);
 				`CI_Warn(ActivityState.GetMyTemplateName() $ " has no POI and is marked as requiring one! Spawning replacement");
 			}
-		
+
 			class'X2StrategyElement_DefaultMissionSources'.static.SpawnPointOfInterest(NewGameState, MissionState);
 		}
 		else

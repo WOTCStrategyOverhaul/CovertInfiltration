@@ -19,6 +19,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	CovertActions.AddItem(CreateExperimentalItemTemplate());
 	CovertActions.AddItem(CreateExhaustiveTrainingTemplate());
 	CovertActions.AddItem(CreateTechnologyRushTemplate());
+	CovertActions.AddItem(CreatePatrolWildernessTemplate());
+	CovertActions.AddItem(CreateBlackMarketTemplate());
 	
 	return CovertActions;
 }
@@ -144,6 +146,52 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
 	Template.Rewards.AddItem('Reward_TechInspire');
+
+	return Template;
+}
+
+static function X2DataTemplate CreatePatrolWildernessTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_PatrolWilderness');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+
+	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Skirmishers');
+	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Reapers');
+	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Templars');
+
+	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+
+	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
+
+	Template.Rewards.AddItem('Reward_MultiPOI');
+
+	return Template;
+}
+
+static function X2DataTemplate CreateBlackMarketTemplate()
+{
+	local X2CovertActionTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_BlackMarket');
+
+	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
+	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
+	Template.bGoldenPath = true;
+
+	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Skirmishers');
+	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Reapers');
+	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Templars');
+
+	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+
+	Template.Rewards.AddItem('Reward_BlackMarket');
 
 	return Template;
 }

@@ -1526,6 +1526,7 @@ simulated function ConfirmAbortPopupCallback(Name eAction)
 		OnRemoveRestoreResistanceNetwork();
 		
 		class'XComGameState_SquadPickupPoint'.static.PreparePickupSite(CovertAction, class'X2Helper_Infiltration'.static.GetExfiltrationStrategyCost(CovertAction));
+		
 		CloseScreen();
 	}
 }
