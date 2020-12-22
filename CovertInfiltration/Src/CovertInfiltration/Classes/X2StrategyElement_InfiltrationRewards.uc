@@ -835,18 +835,11 @@ static function X2DataTemplate CreateBlackMarketRewardTemplate()
 
 	`CREATE_X2Reward_TEMPLATE(Template, 'Reward_BlackMarket');
 
-	Template.SetRewardFn = SetBlackMarketReward;
 	Template.GiveRewardFn = GiveBlackMarketReward;
 	Template.GetRewardIconFn = class'X2StrategyElement_DefaultRewards'.static.GetGenericRewardIcon;
 	Template.IsRewardAvailableFn = IsBlackMarketRewardAvailable;
 
 	return Template;
-}
-
-static function SetBlackMarketReward(XComGameState_Reward RewardState, optional StateObjectReference RewardObjectRef, optional int Amount)
-{
-	RewardState.RewardObjectReference = RewardObjectRef;
-	RewardState.Quantity = Amount;
 }
 
 static function GiveBlackMarketReward(XComGameState NewGameState, XComGameState_Reward RewardState, optional StateObjectReference AuxRef, optional bool bOrder = false, optional int OrderHours = -1)
