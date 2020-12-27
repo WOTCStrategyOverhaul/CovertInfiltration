@@ -357,6 +357,7 @@ static protected function ForceAllFactionsMet (XComGameState StartState)
 	}
 }
 
+// This implementation is currently ignorant of the ceveat regarding update in a middle of a tactical battle. oops. #627
 static function OnLoadedSavedGameWithDLCExisting ()
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
