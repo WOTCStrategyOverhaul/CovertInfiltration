@@ -76,7 +76,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertAction_AllowResActivityRecord', CovertAction_AllowResActivityRecord, ELD_Immediate, 99);
-	Template.AddCHEvent('AllowOnCoverActionCompleteAnalytics', AllowOnCoverActionCompleteAnalytics, ELD_Immediate, 99);
+	Template.AddCHEvent('AllowOnCovertActionCompleteAnalytics', AllowOnCovertActionCompleteAnalytics, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertActionStarted', CovertActionStarted, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('PostEndOfMonth', PostEndOfMonth, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate, 99);
@@ -507,8 +507,7 @@ static protected function EventListenerReturn CovertAction_AllowResActivityRecor
 	return ELR_NoInterrupt;
 }
 
-// Yes, FXS misspelled it (AnalyticsManager::OnCoverActionComplete)
-static protected function EventListenerReturn AllowOnCoverActionCompleteAnalytics (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+static protected function EventListenerReturn AllowOnCovertActionCompleteAnalytics (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_CovertAction Action;
 	local XComLWTuple Tuple;
