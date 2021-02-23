@@ -76,7 +76,7 @@ var config array<XpMissionStartingEnemiesOverride> XP_STARTING_ENEMIES_OVERRIDE;
 var config int CasualFacilityLeadGainCap;
 
 // Which inventory slots will be checked for useless items during Covert Action loadouts
-var array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
+var config array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
 
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
