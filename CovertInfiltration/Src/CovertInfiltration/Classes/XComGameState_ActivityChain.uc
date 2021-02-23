@@ -15,6 +15,12 @@ enum EActivityChainEndReason
 	eACER_ProgressBlocked, // X2ActivityTemplate::ShouldProgressChain returned false. Check current stage for why that happened
 };
 
+struct StageActivityCandidate
+{
+	var name ActivityName;
+	var int Weight;
+};
+
 var protected name m_TemplateName;
 var protected X2ActivityChainTemplate m_Template;
 
@@ -120,7 +126,7 @@ function SetupChain (XComGameState NewGameState)
 
 	foreach m_Template.Stages(StageDef, i)
 	{
-		ActivityTemplateName = GetActivityFromStage(StageDef);
+		ActivityTemplateName = PickActivityForStage(StageDef);
 		ActivityTemplate = X2ActivityTemplate(TemplateManager.FindStrategyElementTemplate(ActivityTemplateName));
 
 		if (ActivityTemplate != none)
@@ -640,16 +646,19 @@ function XComGameState_WorldRegion GetSecondaryRegion ()
 	return XComGameState_WorldRegion(`XCOMHISTORY.GetGameStateForObjectID(SecondaryRegionRef.ObjectID));
 }
 
-static protected function name GetActivityFromStage(ChainStage StageDef)
+static protected function name PickActivityForStage (ChainStage StageDef)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2ActivityTemplate ActivityTemplate;
 	local X2DataTemplate DataTemplate;
-	local array<name> SelectedActivities;
+	
+	local StageActivityCandidate Candidate, EmptyCandidate;
+	local array<StageActivityCandidate> Candidates;
+	local int Weight, iMod, TotalWeight, Roll;
 	
 	if (StageDef.PresetActivity != '')
 	{
-		`CI_Trace("Stage is preset");
+		`CI_Trace("Stage is preset -" @ StageDef.PresetActivity);
 		return StageDef.PresetActivity;
 	}
 	else
@@ -662,23 +671,77 @@ static protected function name GetActivityFromStage(ChainStage StageDef)
 	foreach TemplateManager.IterateTemplates(DataTemplate)
 	{
 		ActivityTemplate = X2ActivityTemplate(DataTemplate);
+		if (ActivityTemplate == none) continue;
 
-		if (ActivityTemplate != none
-		 && StageDef.ActivityType == ActivityTemplate.ActivityType
-		 && StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) != INDEX_NONE)
+		if (StageDef.ActivityType != ActivityTemplate.ActivityType) continue;
+		if (StageDef.ActivityTags.Find(ActivityTemplate.ActivityTag) == INDEX_NONE) continue;
+
+		`CI_Trace("Activity Cadidate:" @ ActivityTemplate.DataName);
+
+		Weight = ActivityTemplate.GetRandWeight(ActivityTemplate);
+		`CI_Trace("Weight:" @ Weight);
+
+		iMod = StageDef.ActivityWeightMods.Find('ActivityTag', ActivityTemplate.ActivityTag);
+		if (iMod == INDEX_NONE)
 		{
-			`CI_Trace("Activity Selection: " $ ActivityTemplate.DataName);
-			SelectedActivities.AddItem(ActivityTemplate.DataName);
+			`CI_Trace("No weight mod");
 		}
+		else
+		{
+			`CI_Trace("Weight mod:" @ StageDef.ActivityWeightMods[iMod].ModType @ StageDef.ActivityWeightMods[iMod].Value);
+			
+			switch (StageDef.ActivityWeightMods[iMod].ModType)
+			{
+				case eCSAWMT_Ovveride:
+					Weight = StageDef.ActivityWeightMods[iMod].Value;
+				break;
+
+				case eCSAWMT_Add:
+					Weight += StageDef.ActivityWeightMods[iMod].Value;
+				break;
+			}
+
+			`CI_Trace("Weight after mod:" @ Weight);
+		}
+
+		if (Weight <= 0)
+		{
+			`CI_Trace("Weight <= 0, skpping");
+			continue;
+		}
+
+		Candidate = EmptyCandidate;
+		Candidate.ActivityName = ActivityTemplate.DataName;
+		Candidate.Weight = Weight;
+
+		Candidates.AddItem(Candidate);
+		TotalWeight += Weight;
+
+		`CI_Trace("Candidate complete - " $ ActivityTemplate.DataName $ ". Weight = " $ Weight $ ". TotalWeight = " $ TotalWeight);
 	}
 	
-	if (SelectedActivities.Length == 0)
+	if (Candidates.Length == 0)
 	{
 		`Redscreen("Failed to find any activities for this stage");
 		return '';
 	}
 
-	return SelectedActivities[`SYNC_RAND_STATIC(SelectedActivities.Length)];
+	Roll = `SYNC_RAND_STATIC(TotalWeight);
+	TotalWeight = 0;
+
+	foreach Candidates(Candidate)
+	{
+		TotalWeight += Candidate.Weight;
+		
+		if (Roll < TotalWeight)
+		{
+			`CI_Trace("Candidate selected - " $ Candidate.ActivityName $ ". Current TotalWeight = " $ TotalWeight $ ". Roll = " $ Roll);
+			return Candidate.ActivityName;
+		}
+	}
+
+	`RedScreen(nameof(PickActivityForStage) @ "internal error during weighted roll");
+	`CI_Warn("Code should not reach here. TotalWeight = " $ TotalWeight $ ". Roll = " $ Roll);
 }
 
 ///////////

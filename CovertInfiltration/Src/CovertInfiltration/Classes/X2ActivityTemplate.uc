@@ -32,6 +32,11 @@ delegate string GetOverviewStatus (XComGameState_Activity ActivityState);
 /// Lifecycle ///
 /////////////////
 
+// When selecting which activity to pick for a randomized stage, this delegate will be used to get the weight of the stage
+// Higher weight - higher chance to get selected
+// Returning 0 or less will make the activity ineligible for selection (unless the per-stage modifiers bring the value above 0)
+delegate int GetRandWeight(X2ActivityTemplate Template);
+
 // Called right after the activity is instantiated - CANNOT rely on other activites in chain being instantiated yet
 delegate SetupChainEarly(XComGameState NewGameState, XComGameState_Activity ActivityState);
 
@@ -82,6 +87,11 @@ static function string DefaultGetOverviewStatus (XComGameState_Activity Activity
 	return class'UIUtilities_Infiltration'.static.GetLabelForActivityCompletionStatus(ActivityState.CompletionStatus);
 }
 
+static function int DefaultRandWeight (X2ActivityTemplate Template)
+{
+	return 1;
+}
+
 function bool ValidateTemplate (out string strError)
 {
 	if (ActivityType == eActivityType_Action
@@ -99,9 +109,12 @@ function bool ValidateTemplate (out string strError)
 
 defaultproperties
 {
-	ActivityType = eActivityType_MAX
 	StateClass = class'XComGameState_Activity'
+	ActivityType = eActivityType_MAX
+	AvailableSound = "Play_SoldierPromotion"
+
 	GetOverviewDescription = DefaultGetOverviewDescription
 	GetOverviewStatus = DefaultGetOverviewStatus
-	AvailableSound = "Play_SoldierPromotion"
+
+	GetRandWeight = DefaultRandWeight
 }

@@ -78,6 +78,11 @@ var config int CasualFacilityLeadGainCap;
 // Which inventory slots will be checked for useless items during Covert Action loadouts
 var array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
 
+// Whether to weight X2ActivityTemplate_Missions by default using the count of eligible mission families or types
+// Note that individual actitives may override this behaviour
+// False = use the count of families
+var config bool bMissionActivityDefaultBiasUsesTypes;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
