@@ -21,6 +21,7 @@ static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
 	
+	CreateDatatapAssault(Templates);
 	CreateIntelligenceAssault(Templates);
 	CreateIntelligenceInfiltration(Templates);
 	CreateInformantAssault(Templates);
@@ -51,6 +52,28 @@ static function array<X2DataTemplate> CreateTemplates()
 /// Random Activities ///
 /////////////////////////
 
+static function CreateDatatapAssault (out array<X2DataTemplate> Templates)
+{
+	local X2ActivityTemplate_Assault ActivityAssault;
+	
+	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_Assault', ActivityAssault, 'Activity_DatatapAssault');
+	
+	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
+	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
+	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
+	ActivityAssault.Difficulty = 1;
+	
+	ActivityAssault.ActivityTag = 'Tag_Datatap';
+	ActivityAssault.bNeedsPOI = true;
+	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
+	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
+	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
+	ActivityAssault.WasMissionSuccessful = class'X2StrategyElement_DefaultMissionSources'.static.OneStrategyObjectiveCompleted;
+	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
+	
+	Templates.AddItem(ActivityAssault);
+}
+
 static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Assault ActivityAssault;
@@ -72,7 +95,7 @@ static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 	
 	Templates.AddItem(ActivityAssault);
 }
-	
+
 static function CreateIntelligenceInfiltration (out array<X2DataTemplate> Templates)
 {
 	local X2ActivityTemplate_Infiltration ActivityInfil;

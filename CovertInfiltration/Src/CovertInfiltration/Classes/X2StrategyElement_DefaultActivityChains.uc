@@ -48,7 +48,7 @@ static function X2DataTemplate CreateCounterDarkEventTemplate()
 	Template.CleanupChain = CleanupDarkEventChain;
 
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitDarkEvent'));
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Informant', 'Tag_Distraction',, 'Reward_DelayDarkEvent', eStageReward_Addition));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence', 'Tag_Informant', 'Tag_Distraction', 'Reward_DelayDarkEvent', eStageReward_Addition));
 	Template.Stages.AddItem(ConstructPresetStage('Activity_WaitGeneric'));
 	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Sabotage',,, 'Reward_CounterDarkEvent', eStageReward_Override));
 	
@@ -359,7 +359,7 @@ static function X2DataTemplate CreateGatherIntelTemplate()
 	Template.NumInDeck = 1;
 	Template.ChainRewards.AddItem('Reward_Intel');
 	
-	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Intelligence',,, 'Reward_ChainProxy'));
+	Template.Stages.AddItem(ConstructRandomStage(eActivityType_Assault, 'Tag_Datatap',,, 'Reward_ChainProxy'));
 
 	return Template;
 }
