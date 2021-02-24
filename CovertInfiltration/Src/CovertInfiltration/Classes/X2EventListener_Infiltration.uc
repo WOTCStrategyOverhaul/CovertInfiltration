@@ -82,6 +82,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('AllowActionToSpawnRandomly', AllowActionToSpawnRandomly, ELD_Immediate, 99);
 	Template.AddCHEvent('AfterActionModifyRecoveredLoot', AfterActionModifyRecoveredLoot, ELD_Immediate, 99);
 	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierInfiltrationToStrategyUpgradeGear, ELD_Immediate, 99);
+	Template.AddCHEvent('SoldierTacticalToStrategy', SoldierTacticalToStrategy_CheckStartedTired, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideDarkEventCount', OverrideDarkEventCount, ELD_Immediate, 99);
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
@@ -725,6 +726,134 @@ static protected function EventListenerReturn SoldierInfiltrationToStrategyUpgra
 	return ELR_NoInterrupt;	
 }
 
+// This needs to be ELD_OnStateSubmitted as XCGSC_SGR limits how many units can get shaken/traits - we want to bypass all of those checks
+static protected function EventListenerReturn SoldierTacticalToStrategy_CheckStartedTired (Object EventData, Object EventSource, XComGameState EventGameState, Name Event, Object CallbackData)
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_Unit UnitState, PrevUnitState;
+	local XComGameStateHistory History;
+	local StateObjectReference ItemRef;
+	local XComGameState_Item ItemState;
+	local XComGameState NewGameState;
+
+	local int MaxWill, MinWill, Roll, Diff, HalfDiff;
+	local array<name> ValidTraits, GenericTraits;
+	local bool bMindShieldFound, bAddTrait;
+	local name TraitName;
+
+	// TODO: Check if the system is enabled
+
+	UnitState = XComGameState_Unit(EventSource);
+	if (UnitState == none) return ELR_NoInterrupt;
+
+	// Make sure the unit fully came back to avenger
+	// Since we are in ELD_OSS, this will take care of things like death and capture (see XCGSC_SGR)
+	if (`XCOMHQ.Crew.Find(UnitState.GetReference()) == INDEX_NONE)
+	{
+		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "is not part of HQ crew, skipping");
+		return ELR_NoInterrupt;
+	}
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
+	History = `XCOMHISTORY;
+
+	if (CIInfo.UnitsStartedMissionBelowReadyWill.Find(UnitState.GetReference()) == INDEX_NONE)
+	{
+		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "did not start mission below ready will, skipping");
+		return ELR_NoInterrupt;
+	}
+
+	// Check the entire inventory - we don't care in which slot the item is present
+	// This also supports mod-added items that have MS's effects
+	foreach UnitState.InventoryItems(ItemRef)
+	{
+		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+		if (ItemState == none) continue;
+
+		if (ItemState.GetMyTemplateName() == 'MindShield') // TODO: Config array
+		{
+			bMindShieldFound = true;
+			break;
+		}
+	}
+
+	if (!bMindShieldFound)
+	{
+		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "started below ready will but has no mindshield item, skipping");
+		return ELR_NoInterrupt;
+	}
+
+	`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": applying penalty to unit" @ UnitState.ObjectID);
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Applying tired mindshield penatly to unit" @ UnitState.ObjectID);
+	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+
+	// Part 1 - set unit to shaken if not shaken already
+	if (UnitState.GetMentalState() == eMentalState_Shaken)
+	{
+		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "is already shaken");
+	}
+	else
+	{
+		MaxWill = UnitState.GetMaxWillForMentalState(eMentalState_Shaken);
+		MinWill = UnitState.GetMinWillForMentalState(eMentalState_Shaken);
+
+		Diff = MaxWill - MinWill;
+		HalfDiff = Diff / 2; // int division is correct here
+
+		Roll = `SYNC_RAND_STATIC(HalfDiff);
+
+		UnitState.SetCurrentStat(eStat_Will, MinWill + HalfDiff + Roll);
+		UnitState.UpdateMentalState();
+
+		// TODO: Logs
+	}
+
+	// Part 2 - add a negative trait
+	bAddTrait = true;
+
+	if (true) // TODO: Config var
+	{
+		// Get the unit state from before SquadTacticalToStrategyTransfer was applied to it
+		PrevUnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitState.ObjectID,, EventGameState.HistoryIndex - 1));
+
+		if (UnitState.NegativeTraits.Length > PrevUnitState.NegativeTraits.Length)
+		{
+			bAddTrait = false;
+			`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "already got a negative trait from this mission");
+		}
+	}
+
+	if (bAddTrait)
+	{
+		GenericTraits = class'X2TraitTemplate'.static.GetAllGenericTraitNames();
+
+		foreach GenericTraits(TraitName)
+		{
+			if (UnitState.AcquiredTraits.Find(TraitName) == INDEX_NONE && UnitState.PendingTraits.Find(TraitName) == INDEX_NONE)
+			{
+				`AddUniqueItemToArray(ValidTraits, TraitName);
+			}
+		}
+
+		if (ValidTraits.Length < 1)
+		{
+			`RedScreen(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": found no valid traits for unit" @ UnitState.ObjectID);
+		}
+		else
+		{
+			TraitName = ValidTraits[`SYNC_RAND_STATIC(ValidTraits.Length)];
+
+			UnitState.AddAcquiredTrait(NewGameState, TraitName);
+			`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "got trait" @ TraitName);
+		}
+	}
+
+	`SubmitGameState(NewGameState);
+
+	return ELR_NoInterrupt;
+}
+
 static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
 	local XComLWTuple Tuple;
@@ -1199,6 +1328,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostAliensSpawned', PostAliensSpawned, ELD_Immediate, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PreSupplyExtract, ELD_OnVisualizationBlockStarted, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PostSupplyExtract, ELD_OnVisualizationBlockCompleted, 99);
+	Template.AddCHEvent('OnUnitBeginPlay', OnUnitBeginPlay_CheckTired, ELD_Immediate, 99);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -1566,4 +1696,52 @@ static protected function TrySetSupplyExtractorATTVisibility (bool bNewVisible, 
 			break;
 		}
 	}
+}
+
+static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+{
+	// Do not check whether the system is enabled here - we care about the difficulty only at return to strategy
+
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState_BattleData BattleDataState;
+	local XComGameState_Unit UnitState;
+
+	// Ensure we have the pending unit state
+	UnitState = XComGameState_Unit(EventSource);
+	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
+
+	if (UnitState == none)
+	{
+		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) @ "failed to get pending unit state, bailing");
+		return ELR_NoInterrupt;
+	}
+
+	if (!UnitState.UsesWillSystem())
+	{
+		return ELR_NoInterrupt;
+	}
+
+	// Check that it's the first time that the unit is begining play (relevant for multi-part missions)
+	// Logic adapted from CHL#44
+	BattleDataState = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	if (
+		BattleDataState.DirectTransferInfo.IsDirectMissionTransfer &&
+		BattleDataState.DirectTransferInfo.TransferredUnitStats.Find('UnitStateRef', UnitState.GetReference()) != INDEX_NONE
+	)
+	{
+		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "was transferred from tactical, skipping");
+		return ELR_NoInterrupt;
+	}
+
+	if (!UnitState.BelowReadyWillState())
+	{
+		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "is not tired, skipping");
+		return ELR_NoInterrupt;
+	}
+
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	CIInfo.UnitsStartedMissionBelowReadyWill.AddItem(UnitState.GetReference());
+
+	`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "recorded as below ready will");
 }
