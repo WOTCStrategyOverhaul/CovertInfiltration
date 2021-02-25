@@ -813,7 +813,12 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 		UnitState.SetCurrentStat(eStat_Will, MinWill + HalfDiff + Roll);
 		UnitState.UpdateMentalState();
 
-		// TODO: Logs
+		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": set unit" @ UnitState.ObjectID @ "to shaken");
+		`CI_Trace(`showvar(MinWill));
+		`CI_Trace(`showvar(MaxWill));
+		`CI_Trace(`showvar(Diff));
+		`CI_Trace(`showvar(HalfDiff));
+		`CI_Trace(`showvar(Roll));
 	}
 
 	// Part 2 - add a negative trait
