@@ -43,9 +43,6 @@ var bool bAlienFacilityBuiltTutorialPending; // Set when the first facility is b
 // This way we can upgrade their gear when exiting from post mission sequence, ensuring that soldiers don't have magically upgraded items when exiting the skyranger
 var array<StateObjectReference> UnitsToConsiderUpgradingGearOnMissionExit;
 
-// TODO: Description
-var array<StateObjectReference> UnitsStartedMissionBelowReadyWill;
-
 /////////////////////
 /// Tactical vars ///
 /////////////////////
@@ -57,6 +54,13 @@ var bool bSupplyExtractionRnfsStarted;
 // Kill XP scaling system
 var int NumEnemiesAtMissionStart;
 var protected array<CharacterGroupKillCount> CharacterGroupsKillTracker;
+
+/////////////////
+/// Misc vars ///
+/////////////////
+
+// TODO: Description
+var array<StateObjectReference> UnitsStartedMissionBelowReadyWill;
 
 ////////////////////////
 /// Tactical helpers ///
@@ -76,7 +80,17 @@ static function ResetPreMission (XComGameState StartGameState)
 	NewInfo.NumEnemiesAtMissionStart = default.NumEnemiesAtMissionStart;
 	NewInfo.CharacterGroupsKillTracker.Length = 0;
 
-	// TODO: Clean UnitsStartedMissionBelowReadyWill
+	// It's supposed to be cleaned by this point, but make sure that's the case
+	NewInfo.ResetUnitsStartedMissionBelowReadyWill();
+}
+
+////////////////////
+/// Misc helpers ///
+////////////////////
+
+function ResetUnitsStartedMissionBelowReadyWill ()
+{
+	UnitsStartedMissionBelowReadyWill.Length = 0;
 }
 
 /////////////////

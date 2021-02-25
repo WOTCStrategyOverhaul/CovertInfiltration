@@ -41,6 +41,10 @@ var config(Missions) bool SupplyExtraction_HoldResponseUntilSquadReveal;
 
 var config array<StrategyCost> OneTimeMarketLeadCost;
 
+var config array<bool> MindShieldOnTiredNerf_Enabled; // Whether the system is enabled by difficluty
+var config array<name> MindShieldOnTiredNerf_Items; // Items that will trigger the penalty
+var config bool MindShieldOnTiredNerf_PermitTraitStacking; // If enabled, a negative trait will be added even if one (or more) is already recieved from the mission by the unit
+
 var localized string strOneTimeMarketLeadDescription;
 
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
@@ -741,14 +745,17 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 	local bool bMindShieldFound, bAddTrait;
 	local name TraitName;
 
-	// TODO: Check if the system is enabled
+	if (!default.MindShieldOnTiredNerf_Enabled[`StrategyDifficultySetting])
+	{
+		return ELR_NoInterrupt;
+	}
 
 	UnitState = XComGameState_Unit(EventSource);
 	if (UnitState == none) return ELR_NoInterrupt;
 
 	// Make sure the unit fully came back to avenger
 	// Since we are in ELD_OSS, this will take care of things like death and capture (see XCGSC_SGR)
-	if (`XCOMHQ.Crew.Find(UnitState.GetReference()) == INDEX_NONE)
+	if (`XCOMHQ.Crew.Find('ObjectID', UnitState.ObjectID) == INDEX_NONE)
 	{
 		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "is not part of HQ crew, skipping");
 		return ELR_NoInterrupt;
@@ -757,7 +764,7 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 	History = `XCOMHISTORY;
 
-	if (CIInfo.UnitsStartedMissionBelowReadyWill.Find(UnitState.GetReference()) == INDEX_NONE)
+	if (CIInfo.UnitsStartedMissionBelowReadyWill.Find('ObjectID', UnitState.ObjectID) == INDEX_NONE)
 	{
 		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "did not start mission below ready will, skipping");
 		return ELR_NoInterrupt;
@@ -770,7 +777,7 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
 		if (ItemState == none) continue;
 
-		if (ItemState.GetMyTemplateName() == 'MindShield') // TODO: Config array
+		if (default.MindShieldOnTiredNerf_Items.Find(ItemState.GetMyTemplateName()) != INDEX_NONE)
 		{
 			bMindShieldFound = true;
 			break;
@@ -812,7 +819,7 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 	// Part 2 - add a negative trait
 	bAddTrait = true;
 
-	if (true) // TODO: Config var
+	if (!default.MindShieldOnTiredNerf_PermitTraitStacking)
 	{
 		// Get the unit state from before SquadTacticalToStrategyTransfer was applied to it
 		PrevUnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitState.ObjectID,, EventGameState.HistoryIndex - 1));
@@ -1700,7 +1707,8 @@ static protected function TrySetSupplyExtractorATTVisibility (bool bNewVisible, 
 
 static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
 {
-	// Do not check whether the system is enabled here - we care about the difficulty only at return to strategy
+	// Do not check whether the system is enabled here - we care about the difficulty only at return to strategy.
+	// Also we are intersted in items only on return - if the mindshield is somehow lost mid-mission, mercy will be shown.
 
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_BattleData BattleDataState;

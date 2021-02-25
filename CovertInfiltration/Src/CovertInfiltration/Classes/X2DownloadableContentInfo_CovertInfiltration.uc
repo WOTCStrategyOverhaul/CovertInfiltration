@@ -693,6 +693,7 @@ static event OnPostMission ()
 	TriggerMissionExitEvents();
 	HandleFacilityMissionExit();
 	PostChosenStronghold();
+	ResetUnitsStartedMissionBelowReadyWill();
 
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
 }
@@ -811,6 +812,19 @@ static protected function PostChosenStronghold ()
 	if (MissionState.Source != 'MissionSource_ChosenStronghold') return;
 	
 	DisableChosenSurveillance();
+}
+
+static protected function ResetUnitsStartedMissionBelowReadyWill ()
+{
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
+	
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: ResetUnitsStartedMissionBelowReadyWill");
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
+	
+	CIInfo.ResetUnitsStartedMissionBelowReadyWill();
+
+	`SubmitGameState(NewGameState);
 }
 
 static event OnExitPostMissionSequence ()
