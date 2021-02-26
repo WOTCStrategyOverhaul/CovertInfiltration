@@ -1761,6 +1761,92 @@ exec function DisableChosenSurveillanceDebug ()
 	DisableChosenSurveillance();
 }
 
+exec function CI_DumpCurrentArmoryFullName ()
+{
+	local UIScreenStack ScreenStack;
+	local UIArmory Screen;
+
+	ScreenStack = `SCREENSTACK;
+	Screen = UIArmory(ScreenStack.GetCurrentScreen());
+
+	`CI_Log(nameof(CI_DumpCurrentArmoryFullName) @ Screen.GetUnit().GetFullName());
+}
+
+// ... stupid XComHeadquartersCheatManager::SetSoldierWill and its full name arg
+
+exec function CI_SetCurrentArmorySoldierWill (float NewStat)
+{
+	local UIScreenStack ScreenStack;
+	local UIArmory Screen;
+
+	local XComGameState NewGameState;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersProjectRecoverWill WillProject;
+	local XComGameStateHistory History;
+	local XComGameState_Unit UnitState;
+
+	ScreenStack = `SCREENSTACK;
+	Screen = UIArmory(ScreenStack.GetCurrentScreen());
+	UnitState = Screen.GetUnit();
+	
+	if (UnitState == none)
+	{
+		`CI_Log(nameof(CI_DumpCurrentArmoryFullName) @ "failed to fetch unit state, aborting");
+		return;
+	}
+
+	History = `XCOMHISTORY;
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Cheat: CI_SetCurrentArmorySoldierWill");
+
+	UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+	UnitState.SetCurrentStat(eStat_Will, NewStat);
+
+	UnitState.UpdateMentalState();
+
+	if(UnitState.NeedsWillRecovery())
+	{
+		// First remove existing recover will project if there is one.
+		XComHQ = XComGameState_HeadquartersXCom(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+		foreach History.IterateByClassType(class'XComGameState_HeadquartersProjectRecoverWill', WillProject)
+		{
+			if(WillProject.ProjectFocus == UnitState.GetReference())
+			{
+				XComHQ.Projects.RemoveItem(WillProject.GetReference());
+				NewGameState.RemoveStateObject(WillProject.ObjectID);
+				break;
+			}
+		}
+
+		// Add new will recover project
+		WillProject = XComGameState_HeadquartersProjectRecoverWill(NewGameState.CreateNewStateObject(class'XComGameState_HeadquartersProjectRecoverWill'));
+		WillProject.SetProjectFocus(UnitState.GetReference(), NewGameState);
+		XComHQ.Projects.AddItem(WillProject.GetReference());
+	}
+
+	if(NewGameState.GetNumGameStateObjects() > 0)
+	{
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		History.CleanupPendingGameState(NewGameState);
+	}
+}
+
+exec function CI_GivePendingTrait (Name TraitTemplateName)
+{
+	local XComGameState_Unit Unit;
+	local XComGameState NewGameState;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CHEAT: CI_GivePendingTrait" @ TraitTemplateName);
+
+	Unit = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', XComTacticalController(`LOCALPLAYERCONTROLLER).GetActiveUnit().GetVisualizedStateReference().ObjectID));
+	Unit.AcquireTrait(NewGameState, TraitTemplateName, false);
+
+	`TACTICALRULES.SubmitGameState(NewGameState);
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

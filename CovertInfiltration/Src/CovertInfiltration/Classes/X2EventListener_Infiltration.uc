@@ -1757,4 +1757,6 @@ static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object
 	CIInfo.UnitsStartedMissionBelowReadyWill.AddItem(UnitState.GetReference());
 
 	`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "recorded as below ready will");
+
+	return ELR_NoInterrupt;
 }
