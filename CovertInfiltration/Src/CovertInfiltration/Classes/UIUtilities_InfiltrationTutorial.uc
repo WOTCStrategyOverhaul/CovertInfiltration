@@ -76,6 +76,10 @@ var localized string strFacilityGTSBody;
 var localized string strIndividualBuiltItemsHeader;
 var localized string strIndividualBuiltItemsBody;
 
+// On Living Quarters Upgraded
+var localized string strCrewExpansionHeader;
+var localized string strCrewExpansionBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -181,6 +185,23 @@ static function CrewLimit ()
 	if (!ShouldShowPopup('CrewLimit')) return;
 	
 	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
+}
+
+static function CrewExpansion ()
+{
+	local XGParamTag ParamTag;
+	
+	`CI_LOG("Tutorial Called");
+
+	if (!ShouldShowPopup('CrewExpansion')) return;
+	
+	`CI_LOG("Tutorial Shown");
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	ParamTag.StrValue0 = class'UIAlert_LivingSpace'.static.GetFacilityName(class'LSHelpers'.default.FACILITY_HOLDS_ENGINEER);
+	ParamTag.StrValue1 = class'UIAlert_LivingSpace'.static.GetFacilityName(class'LSHelpers'.default.FACILITY_HOLDS_SCIENTIST);
+
+	UITutorialBoxLarge(default.strCrewExpansionHeader, `XEXPAND.ExpandString(default.strCrewExpansionBody));
 }
 
 static function AdvancedChains ()
