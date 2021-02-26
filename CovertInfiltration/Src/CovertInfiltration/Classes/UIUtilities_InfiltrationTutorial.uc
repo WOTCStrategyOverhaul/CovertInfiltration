@@ -76,6 +76,10 @@ var localized string strFacilityGTSBody;
 var localized string strIndividualBuiltItemsHeader;
 var localized string strIndividualBuiltItemsBody;
 
+// On mindshield on tired soldiers in squad select
+var localized string strMindShieldOnTiredNerfHeader;
+var localized string strMindShieldOnTiredNerfBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -195,6 +199,13 @@ static function IndividualBuiltItems ()
 	if (!ShouldShowPopup('IndividualBuiltItems')) return;
 
 	UITutorialBoxLarge(default.strIndividualBuiltItemsHeader, `XEXPAND.ExpandString(default.strIndividualBuiltItemsBody));
+}
+
+static function MindShieldOnTiredNerf ()
+{
+	if (!ShouldShowPopup('MindShieldOnTiredNerf')) return;
+
+	UITutorialBoxLarge(default.strMindShieldOnTiredNerfHeader, `XEXPAND.ExpandString(default.strMindShieldOnTiredNerfBody));
 }
 
 // This is required as we want to show the popup when the facility UI stuff is gone and Geoscape control is returned to the player

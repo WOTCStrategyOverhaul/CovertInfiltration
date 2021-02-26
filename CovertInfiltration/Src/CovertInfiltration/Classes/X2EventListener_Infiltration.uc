@@ -736,13 +736,11 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_Unit UnitState, PrevUnitState;
 	local XComGameStateHistory History;
-	local StateObjectReference ItemRef;
-	local XComGameState_Item ItemState;
 	local XComGameState NewGameState;
 
 	local int MaxWill, MinWill, Roll, Diff, HalfDiff;
 	local array<name> ValidTraits, GenericTraits;
-	local bool bMindShieldFound, bAddTrait;
+	local bool bAddTrait;
 	local name TraitName;
 
 	if (!default.MindShieldOnTiredNerf_Enabled[`StrategyDifficultySetting])
@@ -770,21 +768,7 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 		return ELR_NoInterrupt;
 	}
 
-	// Check the entire inventory - we don't care in which slot the item is present
-	// This also supports mod-added items that have MS's effects
-	foreach UnitState.InventoryItems(ItemRef)
-	{
-		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
-		if (ItemState == none) continue;
-
-		if (default.MindShieldOnTiredNerf_Items.Find(ItemState.GetMyTemplateName()) != INDEX_NONE)
-		{
-			bMindShieldFound = true;
-			break;
-		}
-	}
-
-	if (!bMindShieldFound)
+	if (!UnitHasMindshieldNerfItem(UnitState.GetReference()))
 	{
 		`CI_Trace(nameof(SoldierTacticalToStrategy_CheckStartedTired) $ ": unit" @ UnitState.ObjectID @ "started below ready will but has no mindshield item, skipping");
 		return ELR_NoInterrupt;
@@ -864,6 +848,33 @@ static protected function EventListenerReturn SoldierTacticalToStrategy_CheckSta
 	`SubmitGameState(NewGameState);
 
 	return ELR_NoInterrupt;
+}
+
+static function bool UnitHasMindshieldNerfItem (StateObjectReference UnitRef)
+{
+	local XComGameStateHistory History;
+	local StateObjectReference ItemRef;
+	local XComGameState_Item ItemState;
+	local XComGameState_Unit UnitState;
+
+	History = `XCOMHISTORY;
+	UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+
+	// Check the entire inventory - we don't care in which slot the item is present
+	// This also supports mod-added items that have MS's effects
+
+	foreach UnitState.InventoryItems(ItemRef)
+	{
+		ItemState = XComGameState_Item(History.GetGameStateForObjectID(ItemRef.ObjectID));
+		if (ItemState == none) continue;
+
+		if (default.MindShieldOnTiredNerf_Items.Find(ItemState.GetMyTemplateName()) != INDEX_NONE)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 static protected function EventListenerReturn OverrideDarkEventCount(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)

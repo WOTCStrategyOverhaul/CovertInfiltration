@@ -412,6 +412,9 @@ strAvatarCaptureBody="The target of this operation is a human collaborator we su
 strIndividualBuiltItemsHeader=Individually Built Items
 strIndividualBuiltItemsBody="<Bullet/> In Covert Infiltration, items are built individually rather than universally upgraded. This has several implications for your strategy going forward in terms of what targets you pick and how you equip your forces.<br/><Bullet/> Properly equipping multiple squads of operatives with the latest gear may be a challenge. Overinfiltration can help underequipped squads gain an edge on their opponents, while well-equipped squads might want to infiltrate faster so their gear can be rotated more frequently.<br/><Bullet/> Remember that items can be sold to the Black Market for supplies, but the alloys and elerium invested cannot be regained. Building too many Tier 2 items can leave you broke when Tier 3 items are unlocked.<br/>"
 
+strMindShieldOnTiredNerfHeader="Mindshields on tired soldiers"
+strMindShieldOnTiredNerfBody="<Bullet/> On commander and legend difficulties, soldiers who have a mindshield equipped and start the mission tired are guaranteed to become shaken and receive a negative trait after the mission.<br/><Bullet/> The penalty is applied after the mission is over and does not affect the soldier before/during the mission in any shape or form. <br/><br/>BRADFORD'S RECOMMENDATION: <i>Commander, the mindshield is a very powerful tool but its use is not without a cost. The drawbacks will be far more significant on soldiers who are not fully mentally rested.</i>"
+
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Tutorial is disabled while running Covert Infiltration"
 strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" is disabled while running Covert Infiltration"
