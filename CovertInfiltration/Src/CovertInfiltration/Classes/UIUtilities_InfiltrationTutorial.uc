@@ -203,7 +203,7 @@ static function IndividualBuiltItems ()
 
 static function MindShieldOnTiredNerf ()
 {
-	if (!ShouldShowPopup('MindShieldOnTiredNerf')) return;
+	if (!ShouldShowPopupIgnoreMCM('MindShieldOnTiredNerf')) return;
 
 	UITutorialBoxLarge(default.strMindShieldOnTiredNerfHeader, `XEXPAND.ExpandString(default.strMindShieldOnTiredNerfBody));
 }
@@ -248,19 +248,14 @@ static function AvatarCaptureMission ()
 /// Helpers ///
 ///////////////
 
-static protected function bool ShouldShowPopup (name StageName, optional array<name> PrecedingStages)
+static protected function bool ShouldShowPopupIgnoreMCM (name StageName, optional array<name> PrecedingStages)
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState NewGameState;
 	local name RequiredStageName;
-	local bool EnableTutorial;
 	
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 	
-	// Check if tutorial is enabled
-	EnableTutorial = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, class'UIListener_ModConfigMenu'.default.ENABLE_TUTORIAL);
-	if (!EnableTutorial) return false;
-
 	// Check if this tutorial stage has been shown already
 	if (CIInfo.TutorialStagesShown.Find(StageName) != INDEX_NONE) return false;
 
@@ -278,6 +273,16 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 
 	// Signal to show the popup
 	return true;
+}
+
+static protected function bool ShouldShowPopup (name StageName, optional array<name> PrecedingStages)
+{
+	local bool EnableTutorial;
+
+	EnableTutorial = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, class'UIListener_ModConfigMenu'.default.ENABLE_TUTORIAL);
+	if (!EnableTutorial) return false;
+
+	return ShouldShowPopupIgnoreMCM(StageName, PrecedingStages);
 }
 
 static protected function UITutorialBoxLarge (string strTitle, string strDescription)
