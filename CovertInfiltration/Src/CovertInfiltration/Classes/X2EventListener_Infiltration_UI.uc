@@ -958,7 +958,7 @@ static function CHEventListenerTemplate CreateLivingQuartersListeners()
 	local CHEventListenerTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_LivingQuarters');
-	Template.AddCHEvent('LS_CrewLimitIncreased', OnCrewIncreased, ELD_Immediate, 99);
+	Template.AddCHEvent('LS_CrewLimitIncreased', OnCrewIncreased, ELD_OnStateSubmitted, 99);
 	Template.RegisterInStrategy = true;
 
 	return Template;
