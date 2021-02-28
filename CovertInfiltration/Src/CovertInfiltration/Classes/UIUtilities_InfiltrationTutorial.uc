@@ -76,6 +76,10 @@ var localized string strFacilityGTSBody;
 var localized string strIndividualBuiltItemsHeader;
 var localized string strIndividualBuiltItemsBody;
 
+// On Living Quarters Upgraded
+var localized string strCrewExpansionHeader;
+var localized string strCrewExpansionBody;
+
 `include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
 `MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
@@ -181,6 +185,13 @@ static function CrewLimit ()
 	if (!ShouldShowPopup('CrewLimit')) return;
 	
 	UITutorialBoxLarge(default.strCrewLimitHeader, `XEXPAND.ExpandString(default.strCrewLimitBody));
+}
+
+static function CrewExpansion ()
+{
+	if (!ShouldShowPopup('CrewExpansion')) return;
+	
+	UITutorialBoxLarge(default.strCrewExpansionHeader, `XEXPAND.ExpandString(default.strCrewExpansionBody));
 }
 
 static function AdvancedChains ()

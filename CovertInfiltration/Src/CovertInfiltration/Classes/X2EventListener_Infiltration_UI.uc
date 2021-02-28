@@ -25,6 +25,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	Templates.AddItem(CreateStrategyPolicyListeners());
 	Templates.AddItem(CreateResearchListeners());
 	Templates.AddItem(CreateTacticalHUDListeners());
+	Templates.AddItem(CreateLivingQuartersListeners());
 
 	return Templates;
 }
@@ -944,6 +945,28 @@ static function EventListenerReturn IncomingReinforcementsDisplay(Object EventDa
 		// Hide previously shown alert. Anything wants to show it again will unhide it anyway
 		UICountdown.Hide();
 	}
+
+	return ELR_NoInterrupt;
+}
+
+///////////////////////
+/// Living Quarters ///
+///////////////////////
+
+static function CHEventListenerTemplate CreateLivingQuartersListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'Infiltration_UI_LivingQuarters');
+	Template.AddCHEvent('LS_CrewLimitIncreased', OnCrewIncreased, ELD_OnStateSubmitted, 99);
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn OnCrewIncreased (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	class'UIUtilities_InfiltrationTutorial'.static.CrewExpansion();
 
 	return ELR_NoInterrupt;
 }
