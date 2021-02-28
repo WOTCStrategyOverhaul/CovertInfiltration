@@ -189,18 +189,8 @@ static function CrewLimit ()
 
 static function CrewExpansion ()
 {
-	local XGParamTag ParamTag;
-	
-	`CI_LOG("Tutorial Called");
-
 	if (!ShouldShowPopup('CrewExpansion')) return;
 	
-	`CI_LOG("Tutorial Shown");
-
-	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-	ParamTag.StrValue0 = class'UIAlert_LivingSpace'.static.GetFacilityName(class'LSHelpers'.default.FACILITY_HOLDS_ENGINEER);
-	ParamTag.StrValue1 = class'UIAlert_LivingSpace'.static.GetFacilityName(class'LSHelpers'.default.FACILITY_HOLDS_SCIENTIST);
-
 	UITutorialBoxLarge(default.strCrewExpansionHeader, `XEXPAND.ExpandString(default.strCrewExpansionBody));
 }
 

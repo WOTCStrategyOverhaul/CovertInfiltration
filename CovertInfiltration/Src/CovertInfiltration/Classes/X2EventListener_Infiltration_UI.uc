@@ -966,8 +966,6 @@ static function CHEventListenerTemplate CreateLivingQuartersListeners()
 
 static protected function EventListenerReturn OnCrewIncreased (Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	`CI_LOG("Event Received");
-
 	class'UIUtilities_InfiltrationTutorial'.static.CrewExpansion();
 
 	return ELR_NoInterrupt;
