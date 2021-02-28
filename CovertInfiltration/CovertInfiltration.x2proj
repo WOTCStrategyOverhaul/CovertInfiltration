@@ -25,6 +25,9 @@
     <Folder Include="Src\ModConfigMenuAPI\Classes" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComEncyclopedia.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComGameBoard.ini">
       <SubType>Content</SubType>
     </Content>
@@ -331,6 +334,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Effect_MentalReadiness.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Encyclopedia_InfiltrationTutorial.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\X2Encyclopedia_InfiltrationTutorialClosure.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2EventListener_Infiltration.uc">
