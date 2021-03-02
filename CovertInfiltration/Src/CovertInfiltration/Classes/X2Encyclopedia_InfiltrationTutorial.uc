@@ -5,6 +5,12 @@ static function array<X2DataTemplate> CreateTemplates ()
 	local array<X2DataTemplate> Templates;
 
 	Templates.AddItem(CreateTutorialTemplate(
+		'Welcome',
+		class'UIUtilities_InfiltrationTutorial'.default.strWelcomeHeader,
+		class'UIUtilities_InfiltrationTutorial'.default.strWelcomeBody
+	));
+
+	Templates.AddItem(CreateTutorialTemplate(
 		'GeoscapeEntry',
 		class'UIUtilities_InfiltrationTutorial'.default.strGeoscapeEntryHeader,
 		class'UIUtilities_InfiltrationTutorial'.default.strGeoscapeEntryBody

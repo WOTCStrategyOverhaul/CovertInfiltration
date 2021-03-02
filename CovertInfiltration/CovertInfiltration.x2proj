@@ -173,6 +173,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIListener_BuildItems.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_FacilityGrid.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_GuerillaTacticsSchool.uc">
       <SubType>Content</SubType>
     </Content>
