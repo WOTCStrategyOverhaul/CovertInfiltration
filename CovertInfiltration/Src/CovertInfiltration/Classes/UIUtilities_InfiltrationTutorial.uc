@@ -10,6 +10,10 @@
 
 class UIUtilities_InfiltrationTutorial extends Object;
 
+// Welcome
+var localized string strWelcomeHeader;
+var localized string strWelcomeBody;
+
 // On Geoscape
 var localized string strGeoscapeEntryHeader;
 var localized string strGeoscapeEntryBody;
@@ -92,6 +96,13 @@ var localized string strMindShieldOnTiredNerfBody;
 ///////////////////////
 // Note for functions/stages that trigger more than one popup: 
 // The popups will be shown in the reverse order - the last one will be shown first
+
+static function Welcome ()
+{
+	if (!ShouldShowPopup('Welcome')) return;
+	
+	UITutorialBoxLarge(default.strWelcomeHeader, `XEXPAND.ExpandString(default.strWelcomeBody));
+}
 
 static function GeoscapeEntry ()
 {

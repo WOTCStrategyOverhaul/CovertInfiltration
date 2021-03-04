@@ -435,3 +435,6 @@ PreMissionNarratives[0]="X2NarrativeMoments.TACTICAL.SabotageCC.T_SabotageCC_Nar
 ; The player shouldn't ever see this, but just in case
 [GatecrasherCI X2MissionFlavorTextTemplate]
 FlavorText="THIS_IS_A_BUG"
+
+[Header_CovertInfiltration X2EncyclopediaTemplate]
+ListTitle="COVERT INFILTRATION"
