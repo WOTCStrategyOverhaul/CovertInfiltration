@@ -567,7 +567,9 @@ static function MissionDefinition GetMissionDefinitionForActivity (XComGameState
 		// Found the mission type to use, mark as used
 		CardManager.MarkCardUsed(MissionTypesDeckName, MissionType);
 
-		// TODO: Comments
+		// Even though we don't care about the mission manager, mark the family/type
+		// as used so that any potential mods that spawn missions using the vanilla
+		// logic will correctly de-prioritize the families/types that we picked
 		MissionManager.CacheMissionManagerCards();
 		CardManager.MarkCardUsed('MissionFamilies', MissionFamily);
 		CardManager.MarkCardUsed('MissionTypes', MissionType);
