@@ -126,14 +126,15 @@ struct ActionRiskDisplayInfo
 	var string Description;
 };
 
-enum EActivityType
+// Converted to name(s) with a list of valid values in X2Helper_Infiltration::ValidActivityTypes
+/*enum EActivityType
 {
 	eActivityType_Assault,
 	eActivityType_Action,
 	eActivityType_Infiltration,
 	eActivityType_Wait,
 	eActivityType_Special
-};
+};*/
 
 enum EChainStage_ActivityWeightModifierType
 {
@@ -153,7 +154,7 @@ struct ChainStage
 {
 	var name PresetActivity;
 	
-	var EActivityType ActivityType;
+	var name ActivityType;
 	var array<name> ActivityTags;
 
 	// Only one per ActivityTag is supported right now

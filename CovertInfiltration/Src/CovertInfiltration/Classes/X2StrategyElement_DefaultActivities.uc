@@ -361,7 +361,7 @@ static function CreateDarkEventWaitActivity(out array<X2DataTemplate> Templates)
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitDarkEvent');
 	
 	Activity.ActivityTag = 'Tag_Wait';
-	Activity.ActivityType = eActivityType_Wait;
+	Activity.ActivityType = 'eActivityType_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
 
@@ -377,7 +377,7 @@ static function CreateGenericWaitActivity(out array<X2DataTemplate> Templates)
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate', Activity, 'Activity_WaitGeneric');
 	
 	Activity.ActivityTag = 'Tag_Wait';
-	Activity.ActivityType = eActivityType_Wait;
+	Activity.ActivityType = 'eActivityType_Wait';
 	Activity.StateClass = class'XComGameState_Activity_Wait';
 	Activity.GetOverviewStatus = WaitGetOverviewStatus;
 	Activity.SetupStage = WaitSetup;

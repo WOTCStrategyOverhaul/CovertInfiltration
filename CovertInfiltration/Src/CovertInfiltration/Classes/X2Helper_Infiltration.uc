@@ -83,6 +83,8 @@ var config array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
 // False = use the count of families
 var config bool bMissionActivityDefaultBiasUsesTypes;
 
+var config array<name> ValidActivityTypes;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -1285,19 +1287,9 @@ static function HandlePostMissionPOI(XComGameState NewGameState, XComGameState_A
 	}
 }
 
-static function bool ValidateActivityType(eActivityType Type)
+static function bool ValidateActivityType(name Type)
 {
-	switch (Type)
-	{
-		case eActivityType_Assault:
-			return true;
-		case eActivityType_Action:
-			return true;
-		case eActivityType_Infiltration:
-			return true;
-	}
-
-	return false;
+	return default.ValidActivityTypes.Find(Type) != INDEX_NONE;
 }
 
 static function int GetWaitPeriodDuration (int MinDays, int MaxDays)

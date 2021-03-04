@@ -120,7 +120,7 @@ defaultproperties
 	SetupStageSubmitted = DefaultSetupStageSubmitted
 	ShouldProgressChain = DefaultShouldProgressChain
 	StateClass = class'XComGameState_Activity_CovertAction'
-	ActivityType = eActivityType_Action
+	ActivityType = "eActivityType_Action"
 
 	GetOverviewStatus = DefaultGetOverviewStatusCovertAction
 }

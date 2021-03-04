@@ -394,7 +394,7 @@ static function bool SelectPlotDefinition(MissionDefinition MissionDef, string B
 defaultproperties
 {
 	StateClass = class'XComGameState_Activity_Assault'
-	ActivityType = eActivityType_Assault
+	ActivityType = "eActivityType_Assault"
 	GetOverviewStatus = DefaultGetOverviewStatusAssault
 	OverrideStrategyMapIconTooltip = DefaultAssaultOverrideStrategyMapIconTooltip
 

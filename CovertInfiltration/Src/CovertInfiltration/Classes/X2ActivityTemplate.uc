@@ -13,7 +13,7 @@
 class X2ActivityTemplate extends X2StrategyElementTemplate config(Infiltration);
 
 var class<XComGameState_Activity> StateClass;
-var EActivityType ActivityType;
+var name ActivityType;
 var name ActivityTag;
 
 ///////////
@@ -94,23 +94,19 @@ static function int DefaultRandWeight (X2ActivityTemplate Template)
 
 function bool ValidateTemplate (out string strError)
 {
-	if (ActivityType == eActivityType_Action
-	 || ActivityType == eActivityType_Assault
-	 || ActivityType == eActivityType_Infiltration
-	 || ActivityType == eActivityType_Wait
-	 || ActivityType == eActivityType_Special)
+	if (!class'X2Helper_Infiltration'.static.ValidateActivityType(ActivityType))
 	{
-		return true;
+		strError = "has an invalid or missing ActivityType!";
+		return false;
 	}
 
-	strError = "has an invalid or missing ActivityType!";
-	return false;
+	return true;
 }
 
 defaultproperties
 {
 	StateClass = class'XComGameState_Activity'
-	ActivityType = eActivityType_MAX
+	ActivityType = "INVALID_ACTIVITY_TYPE"
 	AvailableSound = "Play_SoldierPromotion"
 
 	GetOverviewDescription = DefaultGetOverviewDescription

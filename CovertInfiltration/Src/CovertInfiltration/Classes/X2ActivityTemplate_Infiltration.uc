@@ -281,7 +281,7 @@ defaultproperties
 
 	StateClass = class'XComGameState_Activity_Infiltration'
 	ScreenClass = class'UIMission_Infiltrated'
-	ActivityType = eActivityType_Infiltration
+	ActivityType = "eActivityType_Infiltration"
 	MissionReadySound = "Play_SoldierPromotion"
 	MilestoneSound = "Play_SoldierPromotion"
 }
