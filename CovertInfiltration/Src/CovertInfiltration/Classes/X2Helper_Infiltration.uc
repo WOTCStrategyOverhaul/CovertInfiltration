@@ -78,6 +78,11 @@ var config int CasualFacilityLeadGainCap;
 // Which inventory slots will be checked for useless items during Covert Action loadouts
 var config array<EInventorySlot> IRRELEVANT_ITEM_SLOTS;
 
+// Whether to weight X2ActivityTemplate_Missions by default using the count of eligible mission families or types
+// Note that individual actitives may override this behaviour
+// False = use the count of families
+var config bool bMissionActivityDefaultBiasUsesTypes;
+
 // Messages displayed in mission debrief under "Global Effects" header
 var localized string strChainEffect_Finished;
 var localized string strChainEffect_InProgress;
@@ -504,6 +509,7 @@ static function MissionDefinition GetMissionDefinitionForActivity (XComGameState
 {
 	local XComTacticalMissionManager MissionManager;
 	local X2CardManager CardManager;
+	local name MissionTypesDeckName;
 	
 	local X2ActivityTemplate_Mission ActivityTemplate;
 	local XComGameState_MissionSite MissionState;
@@ -511,7 +517,6 @@ static function MissionDefinition GetMissionDefinitionForActivity (XComGameState
 	local MissionDefinition MissionDef;
 	
 	local array<string> ValidMissionFamilies;
-	local array<string> MissionFamiliesDeck;
 	local array<string> MissionTypesDeck;
 	local string MissionFamily;
 	local string MissionType;
@@ -526,9 +531,7 @@ static function MissionDefinition GetMissionDefinitionForActivity (XComGameState
 
 	CardManager = class'X2CardManager'.static.GetCardManager();
 	MissionState = GetMissionStateFromActivity(ActivityState);
-
 	MissionManager = `TACTICALMISSIONMGR;
-	MissionManager.CacheMissionManagerCards();
 
 	foreach default.ActivityMissionFamily (Mapping)
 	{
@@ -547,37 +550,53 @@ static function MissionDefinition GetMissionDefinitionForActivity (XComGameState
 		ValidMissionFamilies.AddItem(MissionManager.arrSourceRewardMissionTypes[0].MissionFamily);
 	}
 
-	// select the first mission type off the deck that is valid for this mapping
-	CardManager.GetAllCardsInDeck('MissionFamilies', MissionFamiliesDeck);
-	foreach MissionFamiliesDeck(MissionFamily)
-	{
-		if (ValidMissionFamilies.Find(MissionFamily) != INDEX_NONE)
-		{
-			CardManager.MarkCardUsed('MissionFamilies', MissionFamily);
-			break;
-		}
-	}
+	MissionTypesDeckName = GetMissionTypeDeckForActivityTemplate(ActivityTemplate);
+	BuildMissionActivityMissionTypesDeck(MissionTypesDeckName);
 
-	// now that we have a mission family, determine the mission type to use
-	CardManager.GetAllCardsInDeck('MissionTypes', MissionTypesDeck);
+	CardManager.GetAllCardsInDeck(MissionTypesDeckName, MissionTypesDeck);
 	foreach MissionTypesDeck(MissionType)
 	{
-		if (
-			MissionState.ExcludeMissionTypes.Find(MissionType) == INDEX_NONE &&
-			MissionManager.GetMissionDefinitionForType(MissionType, MissionDef) &&
-			(
-				MissionDef.MissionFamily == MissionFamily ||
-				(MissionDef.MissionFamily == "" && MissionDef.sType == MissionFamily) // missions without families are their own family
-			)
-		)
-		{
-			CardManager.MarkCardUsed('MissionTypes', MissionType);
-			return MissionDef;
-		}
+		if (MissionState.ExcludeMissionTypes.Find(MissionType) != INDEX_NONE) continue;
+		if (!MissionManager.GetMissionDefinitionForType(MissionType, MissionDef)) continue;
+
+		MissionFamily = MissionDef.MissionFamily;
+		if (MissionFamily == "") MissionFamily = MissionDef.sType;
+
+		if (ValidMissionFamilies.Find(MissionFamily) == INDEX_NONE) continue;
+
+		// Found the mission type to use, mark as used
+		CardManager.MarkCardUsed(MissionTypesDeckName, MissionType);
+
+		// Even though we don't care about the mission manager, mark the family/type
+		// as used so that any potential mods that spawn missions using the vanilla
+		// logic will correctly de-prioritize the families/types that we picked
+		MissionManager.CacheMissionManagerCards();
+		CardManager.MarkCardUsed('MissionFamilies', MissionFamily);
+		CardManager.MarkCardUsed('MissionTypes', MissionType);
+
+		return MissionDef;
 	}
 
 	`Redscreen("Could not find a mission type for MissionFamily: " $ MissionFamily);
 	return MissionManager.arrMissions[0];
+}
+
+static protected function name GetMissionTypeDeckForActivityTemplate (X2ActivityTemplate_Mission ActivityTemplate)
+{
+	return name("MissionActivityMissionTypes_" $ ActivityTemplate.DataName);
+}
+
+static protected function BuildMissionActivityMissionTypesDeck (name DeckName)
+{
+	local MissionDefinition MissionDef;
+	local X2CardManager CardManager;
+
+	CardManager = class'X2CardManager'.static.GetCardManager();
+
+	foreach `TACTICALMISSIONMGR.arrMissions(MissionDef)
+	{
+		CardManager.AddCardToDeck(DeckName, MissionDef.sType);
+	}
 }
 
 static function XComGameState_MissionSite GetMissionStateFromActivity (XComGameState_Activity ActivityState)

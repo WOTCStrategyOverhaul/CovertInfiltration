@@ -220,6 +220,62 @@ static function string DefaultGetMissionImage (XComGameState_Activity ActivitySt
 	return ActivityTemplate.MissionImage;
 }
 
+static function int DefaultGetMissionActivityRandWeight (X2ActivityTemplate Template)
+{
+	if (class'X2Helper_Infiltration'.default.bMissionActivityDefaultBiasUsesTypes)
+	{
+		return GetRandWeightByCountOfTypes(Template);
+	}
+
+	return GetRandWeightByCountOfFamilies(Template);
+}
+
+static function int GetRandWeightByCountOfFamilies (X2ActivityTemplate Template)
+{
+	local array<string> Families;
+
+	Families = X2ActivityTemplate_Mission(Template).GetMissionFamilies();
+
+	return Families.Length;
+}
+
+static function int GetRandWeightByCountOfTypes (X2ActivityTemplate Template)
+{
+	local MissionDefinition MissionDef;
+	local array<string> Families;
+	local string MissionFamily;
+	local int Result;
+
+	Families = X2ActivityTemplate_Mission(Template).GetMissionFamilies();
+
+	foreach `TACTICALMISSIONMGR.arrMissions(MissionDef)
+	{
+		MissionFamily = MissionDef.MissionFamily;
+		if (MissionFamily == "") MissionFamily = MissionDef.sType;
+		
+		if (Families.Find(MissionFamily) != INDEX_NONE) Result++;
+	}
+
+	return Result;
+}
+
+// This also dedupes the families (in case of any errors in the config)
+final function array<string> GetMissionFamilies ()
+{
+	local ActivityMissionFamilyMapping Mapping;
+	local array<string> Families;
+
+	foreach class'X2Helper_Infiltration'.default.ActivityMissionFamily (Mapping)
+	{
+		if (Mapping.ActivityTemplate == DataName)
+		{
+			`AddUniqueItemToArray(Families, Mapping.MissionFamily)
+		}
+	}
+
+	return Families;
+}
+
 static function bool DefaultShouldProgressChain (XComGameState_Activity ActivityState)
 {
 	return ActivityState.CompletionStatus == eActivityCompletion_Success || ActivityState.CompletionStatus == eActivityCompletion_PartialSuccess;
@@ -228,6 +284,7 @@ static function bool DefaultShouldProgressChain (XComGameState_Activity Activity
 defaultproperties
 {
 	bAssignFactionToMissionSite = true
+	ScreenClass = class'UIMission_Council'
 
 	InitializeMissionRewards = GenericInitializeMissionRewards
 	GetOverworldMeshPath = GenericGetOverworldMeshPath
@@ -239,6 +296,6 @@ defaultproperties
 	OnFailure = GenericOnFailure
 	OnExpire = GenericOnExpire
 
+	GetRandWeight = DefaultGetMissionActivityRandWeight
 	ShouldProgressChain = DefaultShouldProgressChain
-	ScreenClass = class'UIMission_Council'
 }

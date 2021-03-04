@@ -135,11 +135,30 @@ enum EActivityType
 	eActivityType_Special
 };
 
+enum EChainStage_ActivityWeightModifierType
+{
+	eCSAWMT_Ovveride,
+	eCSAWMT_Add
+};
+
+struct ChainStage_ActivityWeightModifier
+{
+	var name ActivityTag;
+
+	var EChainStage_ActivityWeightModifierType ModType;
+	var int Value;
+};
+
 struct ChainStage
 {
+	var name PresetActivity;
+	
 	var EActivityType ActivityType;
 	var array<name> ActivityTags;
-	var name PresetActivity;
+
+	// Only one per ActivityTag is supported right now
+	var array<ChainStage_ActivityWeightModifier> ActivityWeightMods;
+
 	var array<name> RewardOverrides;
 	var array<name> RewardAdditions;
 };
