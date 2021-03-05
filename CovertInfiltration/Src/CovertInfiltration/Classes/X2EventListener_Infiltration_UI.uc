@@ -803,40 +803,16 @@ static function CHEventListenerTemplate CreateStrategyPolicyListeners()
 
 static protected function EventListenerReturn StrategyPolicyInit(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-	local XComGameState_CovertInfiltrationInfo Info;
+	local UIStrategyPolicyAdjuster Adjuster;
 	local UIStrategyPolicy StrategyPolicy;
-	local XComGameState NewGameState;
 
 	StrategyPolicy = UIStrategyPolicy(EventSource);
 	if (StrategyPolicy == none) return ELR_NoInterrupt;
 
-	// Pre-first change - use smooth camera transition instead of instant jump from commander's quaters
-	if (StrategyPolicy.Movie.Stack.Screens[1].IsA(class'UIFacility_CIC'.Name))
-	{
-		StrategyPolicy.bInstantInterp = false;
-	}
+	Adjuster = new(StrategyPolicy) class'UIStrategyPolicyAdjuster';
+	Adjuster.OnScreenInit();
 
-	// First and main change - redirect the camera. This cannot be done in UISL as there will be a frame of camera jump
-	class'UIUtilities_Infiltration'.static.CamRingView(StrategyPolicy.bInstantInterp ? float(0) : `HQINTERPTIME);
-
-	// Second change - allow editing cards if did not assign before. This can be done in UISL but why have so many places?
-	if (!StrategyPolicy.bResistanceReport && !class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment)
-	{
-		StrategyPolicy.bResistanceReport = true;
-	}
-
-	// Last change: set bCompletedFirstOrdersAssignment to true. Cannot be inside previous if block as player may build the ring
-	// and then wait until supply drop to assign orders. Can also be in UISL
-	if (!class'XComGameState_CovertInfiltrationInfo'.static.GetInfo().bCompletedFirstOrdersAssignment)
-	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Completing first order assignment");
-		
-		Info = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
-		Info = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', Info.ObjectID));
-		Info.bCompletedFirstOrdersAssignment = true;
-		
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
+	return ELR_NoInterrupt;
 }
 
 static protected function EventListenerReturn StrategyPolicy_ShowCovertActionsOnClose(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
