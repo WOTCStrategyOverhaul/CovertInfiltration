@@ -61,7 +61,7 @@ static function CreateDatatapAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = 2;
 	
 	ActivityAssault.ActivityTag = 'Tag_Datatap';
 	ActivityAssault.bNeedsPOI = true;
@@ -83,7 +83,7 @@ static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = 2;
 	
 	ActivityAssault.ActivityTag = 'Tag_Intelligence';
 	ActivityAssault.bNeedsPOI = true;
@@ -125,7 +125,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = 2;
 	
 	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
@@ -285,7 +285,7 @@ static function CreateDistractionAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = 2;
 	
 	ActivityAssault.ActivityTag = 'Tag_Distraction';
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
@@ -323,7 +323,7 @@ static function CreateSabotageAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = 2;
 	
 	ActivityAssault.ActivityTag = 'Tag_Sabotage';
 	ActivityAssault.MissionRewards.AddItem('Reward_FacilityDelay');
