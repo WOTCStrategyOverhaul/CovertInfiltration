@@ -1347,7 +1347,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('ScamperEnd', CallReinforcementsOnSupplyExtraction, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryEarly, ELD_OnStateSubmitted, 99999);
 	Template.AddCHEvent('OnTacticalBeginPlay', OnTacticalPlayBegun_VeryLate, ELD_OnStateSubmitted, -99999);
-	Template.AddCHEvent('XpKillShot', XpKillShot, ELD_Immediate, 99);
+	Template.AddCHEvent('OverrideKillXp', OverrideKillXp, ELD_Immediate, 99);
 	Template.AddCHEvent('PostAliensSpawned', PostAliensSpawned, ELD_Immediate, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PreSupplyExtract, ELD_OnVisualizationBlockStarted, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PostSupplyExtract, ELD_OnVisualizationBlockCompleted, 99);
@@ -1559,69 +1559,58 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	return ELR_NoInterrupt;
 }
 
-static function EventListenerReturn XpKillShot (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+static protected function EventListenerReturn OverrideKillXp (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
 {
-	local XComGameState_Unit KillerState, VictimState, UnitState;
-	local float XpMult, OriginalKillXp, OriginalBonusKillXP;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XpEventData XpEventData;
+	local float KillXp, BonusKillXp, KillAssistXp, XpMult;
+	local XComGameState_Unit KillerState, VictimState;
+	local XComLWTuple Tuple;
+	local int WetWorkXp;
 
-	XpEventData = XpEventData(EventData);
-	if (XpEventData == none) return ELR_NoInterrupt;
+	VictimState = XComGameState_Unit(EventSource);
+	Tuple = XComLWTuple(EventData);
 
-	KillerState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.XpEarner.ObjectID));
-	VictimState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(XpEventData.EventTarget.ObjectID));
-	if (KillerState == none || VictimState == none) return ELR_NoInterrupt;
+	KillXp = Tuple.Data[0].f;
+	BonusKillXp = Tuple.Data[1].f;
+	KillAssistXp = Tuple.Data[2].f;
+	WetWorkXp = Tuple.Data[3].i;
+	KillerState = XComGameState_Unit(Tuple.Data[4].o);
 
-	`CI_Trace("Processing kill XP granted by" @ VictimState.GetFullName() @ "to" @ KillerState.GetFullName());
+	`CI_Trace("Processing kill XP granted by" @ VictimState.GetFullName() @ "to" @ KillerState.GetFullName() $ ". Original values:");
+	`CI_Trace(`showvar(KillXp));
+	`CI_Trace(`showvar(BonusKillXp));
+	`CI_Trace(`showvar(KillAssistXp));
+	`CI_Trace(`showvar(WetWorkXp));
 
 	// First record the kill - it's needed for GetKillContributionMultiplerForKill
 	class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState)
 		.RecordCharacterGroupsKill(VictimState.GetMyTemplate().CharacterGroupName);
 
 	XpMult = class'X2Helper_Infiltration'.static.GetKillContributionMultiplerForKill(VictimState.GetMyTemplate().CharacterGroupName);
-	XComHQ = `XCOMHQ;
 
-	// Save the original values, we will need them quite a bit
-	OriginalKillXp = VictimState.GetMyTemplate().KillContribution;
-	OriginalBonusKillXP = XComHQ != none ? XComHQ.BonusKillXP : 0.0;
-
-	`CI_Trace("XpMult=" $ XpMult $ ", OriginalKillXp=" $ OriginalKillXp $ ", OriginalBonusKillXP=" $ OriginalBonusKillXP);
-
-	// Undo the original values
-	KillerState.KillCount -= OriginalKillXp;
-	KillerState.BonusKills -= OriginalBonusKillXP;
-
-	// Apply the new (scaled) values
-	KillerState.KillCount += OriginalKillXp * XpMult;
-	KillerState.BonusKills += OriginalBonusKillXP * XpMult;
+	// Scale the values
+	KillXp *= XpMult;
+	BonusKillXp *= XpMult;
+	KillAssistXp *= XpMult;
 
 	// Special handling for Wet Work GTS bonus
-	// In theory, this code should never be reached as this was removed in WOTC
+	// In theory, this code should never matter as wet work was removed in WOTC
 	// However, the code is still there, and can very easily reenabled by a mod
-	// As such, we would like to handle this case as well
-	if (XComHQ != none && XComHQ.SoldierUnlockTemplates.Find('WetWorkUnlock') != INDEX_NONE)
-	{
-		// Unapply the wetwork kill
-		KillerState.WetWorkKills--;
+	// As such, we would like to handle this case as well - apply the bonus as
+	// BonusKills (WOTC's replacement for WetWorkKills)
+	BonusKillXp += WetWorkXp * class'X2ExperienceConfig'.default.NumKillsBonus * XpMult;
+	WetWorkXp = 0;
 
-		// Apply the bonus as BonusKills (WOTC's replacement for WetWorkKills)
-		KillerState.BonusKills += class'X2ExperienceConfig'.default.NumKillsBonus * XpMult;
-	}
+	`CI_Trace("Finished processing kill XP. Final values:");
+	`CI_Trace(`showvar(XpMult));
+	`CI_Trace(`showvar(KillXp));
+	`CI_Trace(`showvar(BonusKillXp));
+	`CI_Trace(`showvar(KillAssistXp));
+	`CI_Trace(`showvar(WetWorkXp));
 
-	// Adjust kill assists as well
-	foreach NewGameState.IterateByClassType(class'XComGameState_Unit', UnitState)
-	{
-		if (UnitState != KillerState && UnitState.ControllingPlayer.ObjectID == KillerState.ControllingPlayer.ObjectID && UnitState.CanEarnXp() && UnitState.IsAlive())
-		{
-			UnitState.KillAssistsCount -= OriginalKillXp;
-			UnitState.KillAssistsCount += OriginalKillXp * XpMult;
-
-			`CI_Trace("Adjusted kill assist for" @ UnitState.GetFullName());
-		}
-	}
-
-	`CI_Trace("Finished processing kill XP");
+	Tuple.Data[0].f = KillXp;
+	Tuple.Data[1].f = BonusKillXp;
+	Tuple.Data[2].f = KillAssistXp;
+	Tuple.Data[3].i = WetWorkXp;
 
 	return ELR_NoInterrupt;
 }
