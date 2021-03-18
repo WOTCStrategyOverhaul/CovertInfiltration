@@ -20,8 +20,11 @@ struct CharacterGroupKillCount
 //                     00000 - patch number
 //
 // This allows to easy compare the saved version with integer comparison, eg.
-// if (CurrentVersion > CIInfo.ModVersion) 
+// if (CurrentVersion > CIInfo.ModVersion)
+//
+// See DLCInfo for the explanation of ModVersion vs StrategyModVersion
 var int ModVersion;
+var int StrategyModVersion;
 
 const CURRENT_MOD_VERSION = 00300003;
 
@@ -195,5 +198,7 @@ protected function InitExistingCampaign()
 defaultproperties
 {
 	NumEnemiesAtMissionStart = -1;
+
 	ModVersion = 0; // Loading from a save without ModVersion feature
+	StrategyModVersion = 0; // Loading from a save without ModVersion feature
 }

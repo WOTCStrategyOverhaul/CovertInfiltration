@@ -357,8 +357,25 @@ static protected function ForceAllFactionsMet (XComGameState StartState)
 	}
 }
 
-// This implementation is currently ignorant of the ceveat regarding update in a middle of a tactical battle. oops. #627
 static function OnLoadedSavedGameWithDLCExisting ()
+{
+	ModVersion_OnLoadedSavedGameWithDLCExisting();
+}
+
+static event OnLoadedSavedGameToStrategy ()
+{
+	ModVersion_FinalizeStrategy();
+}
+
+///////////////////
+/// Mod version ///
+///////////////////
+
+// This is called right after the history is deserialized so it's the perfect place to adjust the state.
+// However, we might be in tactical so not all state objects will be visible in the history - fix
+// those in later events/hooks (referencing CIInfo.StrategyModVersion instead) and
+// ModVersion_OnPostMission will record the new strategy/final version
+static protected function ModVersion_OnLoadedSavedGameWithDLCExisting ()
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState NewGameState;
@@ -371,9 +388,7 @@ static function OnLoadedSavedGameWithDLCExisting ()
 	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Updating CI state from" @ CIInfo.ModVersion @ "to" @ class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION);
 
 	// State fix-up changes go here
-	`CI_Log("OnLoadedSavedGameWithDLCExisting running");
-
-	if (CIInfo.ModVersion < 00300003) FixEatenDEs(NewGameState);
+	`CI_Log("ModVersion_OnLoadedSavedGameWithDLCExisting running");
 
 	// Save that the state was updated.
 	// Do this last, so that the state update code can access the previous version
@@ -383,62 +398,29 @@ static function OnLoadedSavedGameWithDLCExisting ()
 	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
 }
 
-// See commit 2649f9c for details
-static protected function FixEatenDEs (XComGameState NewGameState)
+// Any fixes that reference CIInfo.StrategyModVersion should also be called here to account for cases when 
+// the update was while the save was in strategy
+static protected function ModVersion_FinalizeStrategy ()
 {
-	local array<X2StrategyElementTemplate> DarkEventTemplates;
-	local X2StrategyElementTemplate StrategyTemplate;
-	local XComGameState_HeadquartersAlien AlienHQ;
-	local XComGameState_DarkEvent DarkEventState;
-	local XComGameStateHistory History;
-	local array<name> ExistingDEs;
-	local int idx;
+	local XComGameState_CovertInfiltrationInfo CIInfo;
+	local XComGameState NewGameState;
 
-	History = `XCOMHISTORY;
+	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
 
-	// First clear the broken DEs from the AlienHQ tracking
+	// Do nothing if we already updated the state
+	if (CIInfo.StrategyModVersion >= class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION) return;
 
-	AlienHQ = XComGameState_HeadquartersAlien(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-	AlienHQ = XComGameState_HeadquartersAlien(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersAlien', AlienHQ.ObjectID));
-	
-	for (idx = 0; idx < AlienHQ.ChosenDarkEvents.Length; idx++)
-	{
-		DarkEventState = XComGameState_DarkEvent(History.GetGameStateForObjectID(AlienHQ.ChosenDarkEvents[idx].ObjectID));
-	
-		if (DarkEventState == None)
-		{
-			AlienHQ.ChosenDarkEvents.Remove(idx, 1);
-			idx--;
-		}
-	}
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Finalizing CI strategy state update from" @ CIInfo.StrategyModVersion @ "to" @ class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION);
 
-	for (idx = 0; idx < AlienHQ.ActiveDarkEvents.Length; idx++)
-	{
-		DarkEventState = XComGameState_DarkEvent(History.GetGameStateForObjectID(AlienHQ.ActiveDarkEvents[idx].ObjectID));
-	
-		if (DarkEventState == None)
-		{
-			AlienHQ.ActiveDarkEvents.Remove(idx, 1);
-			idx--;
-		}
-	}
+	// Final state fix-up changes go here
+	`CI_Log("ModVersion_FinalizeStrategy running");
 
-	// Next, resurrect the eaten DEs
+	// Save that the state was updated.
+	// Do this last, so that the state update code can access the previous version
+	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
+	CIInfo.StrategyModVersion = class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION;
 
-	foreach History.IterateByClassType(class'XComGameState_DarkEvent', DarkEventState)
-	{
-		ExistingDEs.AddItem(DarkEventState.GetMyTemplateName());
-	}
-
-	DarkEventTemplates = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager()
-		.GetAllTemplatesOfClass(class'X2DarkEventTemplate');
-
-	foreach DarkEventTemplates(StrategyTemplate)
-	{
-		if (ExistingDEs.Find(StrategyTemplate.DataName) != INDEX_NONE) continue;
-
-		NewGameState.CreateNewStateObject(class'XComGameState_DarkEvent', StrategyTemplate);
-	}
+	`SubmitGameState(NewGameState);
 }
 
 /////////////////
@@ -696,6 +678,8 @@ static event OnPostMission ()
 	ResetUnitsStartedMissionBelowReadyWill();
 
 	class'XComGameState_ActivityChain'.static.RemoveEndedChains();
+
+	ModVersion_FinalizeStrategy();
 }
 
 static protected function ResetInfiltrationChosenRoll ()
