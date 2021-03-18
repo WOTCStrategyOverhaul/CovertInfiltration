@@ -333,6 +333,9 @@ static protected function PatchDebugStart (XComGameState StartState)
 {
 	local UIShellStrategy DevStrategyShell;
 
+	// Avoid warnings when creating state for the shell
+	if (`SCREENSTACK == none) return;
+
 	// We can't check XComGameState_CampaignSettings as we are called before the values there are set
 	DevStrategyShell = UIShellStrategy(`SCREENSTACK.GetFirstInstanceOf(class'UIShellStrategy'));
 	if (DevStrategyShell == none) return;
