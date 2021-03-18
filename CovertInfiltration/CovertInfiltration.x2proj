@@ -260,6 +260,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIStrategyMap_CAButton.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIStrategyPolicyAdjuster.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\UITextContainerImproved.uc">
       <SubType>Content</SubType>
     </Content>
