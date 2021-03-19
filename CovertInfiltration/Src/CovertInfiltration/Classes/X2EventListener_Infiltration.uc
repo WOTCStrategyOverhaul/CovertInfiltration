@@ -1551,7 +1551,7 @@ static function EventListenerReturn OnTacticalPlayBegun_VeryLate (Object EventDa
 	ActivityState = class'XComGameState_Activity'.static.GetActivityFromPrimaryObjectID(BattleData.m_iMissionID);
 
 	// If avatar DVIP capture, show tutorial
-	if (ActivityState.GetActivityChain().GetMyTemplateName() == 'ActivityChain_DestroyFacility')
+	if (ActivityState != none && ActivityState.GetActivityChain().GetMyTemplateName() == 'ActivityChain_DestroyFacility')
 	{
 		class'UIUtilities_InfiltrationTutorial'.static.AvatarCaptureMission();
 	}
