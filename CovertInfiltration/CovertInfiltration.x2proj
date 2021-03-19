@@ -21,10 +21,13 @@
     <Folder Include="Src\CovertInfiltration\Classes\" />
     <Folder Include="Src\LW_Tuple" />
     <Folder Include="Src\LW_Tuple\Classes" />
-    <Folder Include="Src\ModConfigMenuAPI" />
-    <Folder Include="Src\ModConfigMenuAPI\Classes" />
+    <Folder Include="Src\ModConfigMenuAPI\" />
+    <Folder Include="Src\ModConfigMenuAPI\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComCovertInfiltration_DEFAULT.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComEncyclopedia.ini">
       <SubType>Content</SubType>
     </Content>
@@ -41,9 +44,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComMissionSources.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Config\XComModConfigMenu_Defaults.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComMissionDefs.ini">
@@ -110,7 +110,13 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_DataStructures.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\ModConfigMenu_Defaults.uc">
+    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_MCMScreen.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_MCMScreenListener.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_ForceInteractiveObjectTacticalHack.uc">
@@ -210,9 +216,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_Mission.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\UIListener_ModConfigMenu.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_NextCovertAction.uc">
@@ -516,9 +519,6 @@
     <Content Include="Src\CovertInfiltration\Classes\XMBEffect_ConditionalStatChange.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\MCM_API_CfgHelpersStatic.uci">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\extra_globals.uci">
       <SubType>Content</SubType>
     </Content>
@@ -554,6 +554,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Spinner.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_OptionsScreen.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci">
