@@ -1,6 +1,5 @@
 class CovertInfiltration_MCMScreen extends Object config(CovertInfiltration);
 
-// TODO: trace option
 var config int VERSION_CFG;
 
 var localized string ModName;
@@ -31,6 +30,8 @@ var localized string OverInfiltrationTitle;
 `MCM_API_AutoCheckBoxVars(PAUSE_ON_MILESTONE_200);
 `MCM_API_AutoCheckBoxVars(PAUSE_ON_MILESTONE_225);
 
+`MCM_API_AutoCheckBoxVars(ENABLE_TRACE_STARTUP);
+
 `include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 `MCM_API_AutoCheckBoxFns(DAYS_TO_HOURS, 1);
@@ -51,6 +52,8 @@ var localized string OverInfiltrationTitle;
 `MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_175, 1);
 `MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_200, 1);
 `MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_225, 1);
+
+`MCM_API_AutoCheckBoxFns(ENABLE_TRACE_STARTUP, 1);
 
 event OnInit(UIScreen Screen)
 {
@@ -89,6 +92,10 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AutoAddCheckBox(Group, PAUSE_ON_MILESTONE_200);
 	`MCM_API_AutoAddCheckBox(Group, PAUSE_ON_MILESTONE_225);
 
+	// Not localized on purpose
+	Group = Page.AddGroup('DeveloperToolsGroup', "Developer tools");
+	ENABLE_TRACE_STARTUP_MCMUI = Group.AddCheckBox('ENABLE_TRACE_STARTUP', "Enable trace on startup", "WARNING: Can flood logs with internal info. WILL reveal things that player is not supposed to be aware of", ENABLE_TRACE_STARTUP, ENABLE_TRACE_STARTUP_SaveHandler);
+
 	Page.ShowSettings();
 }
 
@@ -112,6 +119,8 @@ simulated function LoadSavedSettings()
 	PAUSE_ON_MILESTONE_175 = `GETMCMVAR(PAUSE_ON_MILESTONE_175);
 	PAUSE_ON_MILESTONE_200 = `GETMCMVAR(PAUSE_ON_MILESTONE_200);
 	PAUSE_ON_MILESTONE_225 = `GETMCMVAR(PAUSE_ON_MILESTONE_225);
+
+	ENABLE_TRACE_STARTUP = `GETMCMVAR(ENABLE_TRACE_STARTUP);
 }
 
 simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
@@ -134,6 +143,8 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_AutoReset(PAUSE_ON_MILESTONE_175);
 	`MCM_API_AutoReset(PAUSE_ON_MILESTONE_200);
 	`MCM_API_AutoReset(PAUSE_ON_MILESTONE_225);
+
+	`MCM_API_AutoReset(ENABLE_TRACE_STARTUP);
 }
 
 

@@ -28,6 +28,8 @@ var name ForcedNextEnviromentalSitrep;
 
 var const array<name> HQInventoryStatesToEnlistIntoTactical;
 
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
+
 //////////////////////////////////
 /// Vanilla DLCInfo misc hooks ///
 //////////////////////////////////
@@ -432,10 +434,10 @@ static protected function ModVersion_FinalizeStrategy ()
 
 static function OnPreCreateTemplates()
 {
-	/*if (class'UIListener_ModConfigMenu'.default.ENABLE_TRACE_STARTUP)
+	if (`GETMCMVAR(ENABLE_TRACE_STARTUP))
 	{
 		GetCDO().SuppressTraceLogs = false;
-	}*/
+	}
 
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 	class'X2Helper_Infiltration'.static.ValidateXpMultiplers();

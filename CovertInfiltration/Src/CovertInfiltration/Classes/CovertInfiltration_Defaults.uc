@@ -20,3 +20,6 @@ var config bool PAUSE_ON_MILESTONE_150;
 var config bool PAUSE_ON_MILESTONE_175;
 var config bool PAUSE_ON_MILESTONE_200;
 var config bool PAUSE_ON_MILESTONE_225;
+
+// False is the default, not configurable
+var bool ENABLE_TRACE_STARTUP;
