@@ -1,4 +1,4 @@
-class CovertInfiltration_MCMScreen extends Object config(CovertInfiltration);
+class CI_MCMScreen extends Object config(CovertInfiltration);
 
 var config int VERSION_CFG;
 

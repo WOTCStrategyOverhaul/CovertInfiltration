@@ -110,13 +110,10 @@
     <Content Include="Src\CovertInfiltration\Classes\CI_DataStructures.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_Defaults.uc">
+    <Content Include="Src\CovertInfiltration\Classes\CI_MCMDefaults.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_MCMScreen.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\CovertInfiltration\Classes\CovertInfiltration_MCMScreenListener.uc">
+    <Content Include="Src\CovertInfiltration\Classes\CI_MCMScreen.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\SeqAct_ForceInteractiveObjectTacticalHack.uc">
@@ -183,6 +180,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_GuerillaTacticsSchool.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIListener_MCM.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\CovertInfiltration\Classes\UIListener_ModConfigMenu.uc">

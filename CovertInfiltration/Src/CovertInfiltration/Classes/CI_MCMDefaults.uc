@@ -1,4 +1,4 @@
-class CovertInfiltration_Defaults extends object config(CovertInfiltration_DEFAULT);
+class CI_MCMDefaults extends object config(CovertInfiltration_DEFAULT);
 
 var config int VERSION_CFG;
 

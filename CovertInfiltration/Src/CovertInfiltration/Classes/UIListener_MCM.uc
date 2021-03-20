@@ -1,8 +1,8 @@
-class CovertInfiltration_MCMScreenListener extends UIScreenListener;
+class UIListener_MCM extends UIScreenListener;
 
 event OnInit(UIScreen Screen)
 {
-	local CovertInfiltration_MCMScreen MCMScreen;
+	local CI_MCMScreen MCMScreen;
 
 	if (ScreenClass==none)
 	{
@@ -11,7 +11,7 @@ event OnInit(UIScreen Screen)
 		else return;
 	}
 
-	MCMScreen = new class'CovertInfiltration_MCMScreen';
+	MCMScreen = new class'CI_MCMScreen';
 	MCMScreen.OnInit(Screen);
 }
 

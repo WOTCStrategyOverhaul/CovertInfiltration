@@ -16,8 +16,8 @@ Although if you already have a [UnrealEd.EditorEngine] section, you probably alr
 // Contains helper functions for doing proper user-configurable save data. See documentation for patterns on how to do it.
 
 
-`define MCM_DEFAULT_CLASS class'CovertInfiltration_Defaults'
-`define MCM_SCREEN_CLASS class'CovertInfiltration_MCMScreen'
+`define MCM_DEFAULT_CLASS class'CI_MCMDefaults'
+`define MCM_SCREEN_CLASS class'CI_MCMScreen'
 
 
 //MCM_MAJOR_VERSION defined means were are in the Screen class, because this is defined in MCM_API_INCLUDES.uci

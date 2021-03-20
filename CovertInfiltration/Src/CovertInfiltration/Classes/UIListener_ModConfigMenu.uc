@@ -43,7 +43,7 @@ static function TryTransfer ()
 		return;
 	}
 
-	if (class'CovertInfiltration_MCMScreen'.default.VERSION_CFG > 3)
+	if (class'CI_MCMScreen'.default.VERSION_CFG > 3)
 	{
 		`RedScreen("CI MCM error, see log");
 		`CI_Log("WARNING: Can't auto-transfer MCM config to the new format as the new format already contains user-configured values");
@@ -51,23 +51,23 @@ static function TryTransfer ()
 		return;
 	}
 
-	class'CovertInfiltration_MCMScreen'.default.DAYS_TO_HOURS = default.DAYS_TO_HOURS;
-	class'CovertInfiltration_MCMScreen'.default.DAYS_BEFORE_HOURS = default.DAYS_BEFORE_HOURS;
-	class'CovertInfiltration_MCMScreen'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED = default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED;
-	class'CovertInfiltration_MCMScreen'.default.ENABLE_TUTORIAL = default.ENABLE_TUTORIAL;
-	class'CovertInfiltration_MCMScreen'.default.WARN_BEFORE_EXPIRATION = default.WARN_BEFORE_EXPIRATION;
-	class'CovertInfiltration_MCMScreen'.default.HOURS_BEFORE_WARNING = default.HOURS_BEFORE_WARNING;
-	class'CovertInfiltration_MCMScreen'.default.LOW_SOLDIERS_WARNING = default.LOW_SOLDIERS_WARNING;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_100 = default.PAUSE_ON_MILESTONE_100;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_125 = default.PAUSE_ON_MILESTONE_125;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_150 = default.PAUSE_ON_MILESTONE_150;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_175 = default.PAUSE_ON_MILESTONE_175;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_200 = default.PAUSE_ON_MILESTONE_200;
-	class'CovertInfiltration_MCMScreen'.default.PAUSE_ON_MILESTONE_225 = default.PAUSE_ON_MILESTONE_225;
-	class'CovertInfiltration_MCMScreen'.default.ENABLE_TRACE_STARTUP = default.ENABLE_TRACE_STARTUP;
+	class'CI_MCMScreen'.default.DAYS_TO_HOURS = default.DAYS_TO_HOURS;
+	class'CI_MCMScreen'.default.DAYS_BEFORE_HOURS = default.DAYS_BEFORE_HOURS;
+	class'CI_MCMScreen'.default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED = default.SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED;
+	class'CI_MCMScreen'.default.ENABLE_TUTORIAL = default.ENABLE_TUTORIAL;
+	class'CI_MCMScreen'.default.WARN_BEFORE_EXPIRATION = default.WARN_BEFORE_EXPIRATION;
+	class'CI_MCMScreen'.default.HOURS_BEFORE_WARNING = default.HOURS_BEFORE_WARNING;
+	class'CI_MCMScreen'.default.LOW_SOLDIERS_WARNING = default.LOW_SOLDIERS_WARNING;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_100 = default.PAUSE_ON_MILESTONE_100;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_125 = default.PAUSE_ON_MILESTONE_125;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_150 = default.PAUSE_ON_MILESTONE_150;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_175 = default.PAUSE_ON_MILESTONE_175;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_200 = default.PAUSE_ON_MILESTONE_200;
+	class'CI_MCMScreen'.default.PAUSE_ON_MILESTONE_225 = default.PAUSE_ON_MILESTONE_225;
+	class'CI_MCMScreen'.default.ENABLE_TRACE_STARTUP = default.ENABLE_TRACE_STARTUP;
 
-	class'CovertInfiltration_MCMScreen'.default.VERSION_CFG = 4;
-	class'CovertInfiltration_MCMScreen'.static.StaticSaveConfig();
+	class'CI_MCMScreen'.default.VERSION_CFG = 4;
+	class'CI_MCMScreen'.static.StaticSaveConfig();
 
 	default.CONFIG_VERSION = -1;
 	StaticSaveConfig();
