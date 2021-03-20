@@ -1,6 +1,12 @@
-//-----------------------------------------------------------
-// TODO
-//-----------------------------------------------------------
+//---------------------------------------------------------------------------------------
+//  AUTHOR:   Xymanek
+//  PURPOSE:  This class used to house the MCM config, but that was moved to Mr.Nice's
+//            integration (see CI_MCMScreen). Now it exists solely to auto-transfer
+//            existing configs to the new format
+//  IMPORANT: Names (class, config, fields) cannot be changed
+//---------------------------------------------------------------------------------------
+//  WOTCStrategyOverhaul Team
+//---------------------------------------------------------------------------------------
 
 class UIListener_ModConfigMenu extends Object config(CovertInfiltrationSettings);
 
@@ -71,4 +77,6 @@ static function TryTransfer ()
 
 	default.CONFIG_VERSION = -1;
 	StaticSaveConfig();
+
+	`CI_Log("Auto-transferred the MCM config to the new format");
 }

@@ -70,10 +70,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Page = ConfigAPI.NewSettingsPage(ModName);
 	Page.SetPageTitle(PageTitle);
 	Page.SetSaveHandler(SaveButtonClicked);
-	
-	// TODO
-	//Uncomment to enable reset
-	//Page.EnableResetButton(ResetButtonClicked);
+	Page.EnableResetButton(ResetButtonClicked);
 
 	Group = Page.AddGroup('VariousSettingsGroup', VariousSettingsTitle);
 	`MCM_API_AutoAddCheckBox(Group, DAYS_TO_HOURS);
