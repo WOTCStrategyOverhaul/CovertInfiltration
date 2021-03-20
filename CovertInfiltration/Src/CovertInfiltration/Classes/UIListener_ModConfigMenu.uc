@@ -10,6 +10,9 @@
 
 class UIListener_ModConfigMenu extends Object config(CovertInfiltrationSettings);
 
+// Add a note in the config files for the users
+var config string IMPORTANT_INFO;
+
 var config int CONFIG_VERSION;
 
 var config bool DAYS_TO_HOURS;
@@ -37,7 +40,7 @@ static function TryTransfer ()
 	{
 		`RedScreen("CI MCM error, see log");
 		`CI_Log("WARNING: Detected MCM config from before beta 2, can't auto-transfer to the new format");
-		`CI_Log("Delete Documents\My Games\XCOM2 War of the Chosen\XComGame\Config\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
+		`CI_Log("Delete Documents\\My Games\\XCOM2 War of the Chosen\\XComGame\\Config\\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
 		return;
 	}
 
@@ -45,7 +48,7 @@ static function TryTransfer ()
 	{
 		`RedScreen("CI MCM error, see log");
 		`CI_Log("WARNING: Detected MCM config from the old format with an incorrect version, can't auto-transfer to the new format");
-		`CI_Log("Delete Documents\My Games\XCOM2 War of the Chosen\XComGame\Config\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
+		`CI_Log("Delete Documents\\My Games\\XCOM2 War of the Chosen\\XComGame\\Config\\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
 		return;
 	}
 
@@ -53,7 +56,7 @@ static function TryTransfer ()
 	{
 		`RedScreen("CI MCM error, see log");
 		`CI_Log("WARNING: Can't auto-transfer MCM config to the new format as the new format already contains user-configured values");
-		`CI_Log("Delete Documents\My Games\XCOM2 War of the Chosen\XComGame\Config\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
+		`CI_Log("Delete Documents\\My Games\\XCOM2 War of the Chosen\\XComGame\\Config\\XComCovertInfiltrationSettings.ini to abandon old values and get rid of this warning");
 		return;
 	}
 
@@ -75,6 +78,7 @@ static function TryTransfer ()
 	class'CI_MCMScreen'.default.VERSION_CFG = 4;
 	class'CI_MCMScreen'.static.StaticSaveConfig();
 
+	default.IMPORTANT_INFO = "This file is no longer in use and can be safely deleted";
 	default.CONFIG_VERSION = -1;
 	StaticSaveConfig();
 

@@ -84,7 +84,7 @@ strProgress=Progress
 strCovertAction=Covert Action
 strCovertInfiltration=Covert Infiltration
 
-[CovertInfiltration_MCMScreen]
+[CI_MCMScreen]
 ModName="Covert Infiltration"
 PageTitle="Covert Infiltration"
 
