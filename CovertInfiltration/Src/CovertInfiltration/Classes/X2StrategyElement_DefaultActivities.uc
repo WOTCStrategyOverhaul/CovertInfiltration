@@ -17,6 +17,16 @@ var const config int MaxDarkEventWaitDays;
 var const config int MinGenericWaitDays;
 var const config int MaxGenericWaitDays;
 
+// Initial difficulty values before monthly difficulty is applied
+var config int IntelligenceDifficulty;
+var config int InformantDifficulty;
+var config int SabotageDifficulty;
+var config int DatatapDifficulty;
+var config int DistractionDifficulty;
+var config int ExtractionDifficulty;
+var config int ConvoyDifficulty;
+var config int LandedDifficulty;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -61,7 +71,7 @@ static function CreateDatatapAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = default.DatatapDifficulty;
 	
 	ActivityAssault.ActivityTag = 'Tag_Datatap';
 	ActivityAssault.bNeedsPOI = true;
@@ -83,7 +93,7 @@ static function CreateIntelligenceAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "GeoscapeMesh_CI.CI_Geoscape.CI_HackDevice";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_ResHQ";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Intel";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = default.IntelligenceDifficulty;
 	
 	ActivityAssault.ActivityTag = 'Tag_Intelligence';
 	ActivityAssault.bNeedsPOI = true;
@@ -125,7 +135,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Council_VIP";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = default.InformantDifficulty;
 	
 	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
@@ -285,7 +295,7 @@ static function CreateDistractionAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.GorillaOps";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_GOPS";
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.Alert_Advent_Ops_Appear";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = default.DistractionDifficulty;
 	
 	ActivityAssault.ActivityTag = 'Tag_Distraction';
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIncreaseIncome');
@@ -323,7 +333,7 @@ static function CreateSabotageAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OverworldMeshPath = "UI_3D.Overwold_Final.Retribution";
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_Retribution";
 	ActivityAssault.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress";
-	ActivityAssault.Difficulty = 1;
+	ActivityAssault.Difficulty = default.SabotageDifficulty;
 	
 	ActivityAssault.ActivityTag = 'Tag_Sabotage';
 	ActivityAssault.MissionRewards.AddItem('Reward_FacilityDelay');
@@ -398,7 +408,7 @@ static function CreateSupplyConvoy(out array<X2DataTemplate> Templates)
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyRaid_AdvConvoy";
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_SupplyRaid";
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.Alert_Supply_Raid";
-	Activity.Difficulty = 3;
+	Activity.Difficulty = default.ConvoyDifficulty;
 	
 	Activity.ActivityTag = 'Tag_Convoy';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
@@ -418,7 +428,7 @@ static function CreateSupplyExtract(out array<X2DataTemplate> Templates)
 	Activity.OverworldMeshPath = "UI_3D.Overwold_Final.SupplyExtraction";
 	Activity.UIButtonIcon = "img:///UILibrary_XPACK_Common.MissionIcon_SupplyExtraction";
 	Activity.MissionImage = "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies";
-	Activity.Difficulty = 2;
+	Activity.Difficulty = default.ExtractionDifficulty;
 	
 	Activity.ActivityTag = 'Tag_Extract';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
@@ -439,7 +449,7 @@ static function CreateSecureUFO(out array<X2DataTemplate> Templates)
 	Activity.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Advent";
 	Activity.ScreenClass = class'UIMission_LandedUFO';
 	Activity.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_UFO_Landed";
-	Activity.Difficulty = 3;
+	Activity.Difficulty = default.LandedDifficulty;
 	
 	Activity.ActivityTag = 'Tag_UFO';
 	Activity.MissionRewards.AddItem('Reward_Materiel');
