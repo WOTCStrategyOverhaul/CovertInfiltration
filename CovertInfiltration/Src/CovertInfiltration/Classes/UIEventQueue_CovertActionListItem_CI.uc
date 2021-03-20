@@ -8,11 +8,9 @@
 
 class UIEventQueue_CovertActionListItem_CI extends UIEventQueue_CovertActionListItem;
 
-`include(CovertInfiltration/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 var StateObjectReference ActionRef;
-
-`MCM_CH_VersionChecker(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
 
 simulated function UpdateData(HQEvent Event)
 {
@@ -24,8 +22,8 @@ simulated function UpdateData(HQEvent Event)
 	Desc = Event.Data;
 	ActionRef = Event.ActionRef;
 
-	DaysToHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_TO_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_TO_HOURS);
-	DaysBeforeHours = `MCM_CH_GetValue(class'ModConfigMenu_Defaults'.default.DAYS_BEFORE_HOURS_DEFAULT, class'UIListener_ModConfigMenu'.default.DAYS_BEFORE_HOURS);
+	DaysToHours = `GETMCMVAR(DAYS_TO_HOURS);
+	DaysBeforeHours = `GETMCMVAR(DAYS_BEFORE_HOURS);
 
 	if(!DaysToHours)
 	{

@@ -34,7 +34,7 @@ var localized string OverInfiltrationTitle;
 `include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 `MCM_API_AutoCheckBoxFns(DAYS_TO_HOURS, 1);
-`MCM_API_AutoSliderFns(DAYS_BEFORE_HOURS, 1);
+`MCM_API_AutoSliderFns(DAYS_BEFORE_HOURS,, 1);
 
 `MCM_API_AutoCheckBoxFns(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, 1);
 

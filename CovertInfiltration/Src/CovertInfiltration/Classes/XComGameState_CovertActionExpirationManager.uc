@@ -10,8 +10,7 @@ class XComGameState_CovertActionExpirationManager extends XComGameState_BaseObje
 
 var array<ActionExpirationInfo> ActionExpirationInfoList;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 static function CreateExpirationManager(optional XComGameState StartState)
 {
@@ -59,7 +58,7 @@ static function Update()
 	foreach LocalActionExpirationInfoList(ExpirationInfo)
 	{
 		CovertAction = XComGameState_CovertAction(`XCOMHISTORY.GetGameStateForObjectID(ExpirationInfo.ActionRef.ObjectID));
-		WarnBeforeExpiration = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION);
+		WarnBeforeExpiration = `GETMCMVAR(WARN_BEFORE_EXPIRATION);
 		CurrentTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 
 		if (CovertAction == none)
@@ -86,7 +85,7 @@ static function Update()
 		}
 		if (WarnBeforeExpiration && !ExpirationInfo.bAlreadyWarnedOfExpiration)
 		{
-			HoursBeforeWarning = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.HOURS_BEFORE_WARNING);
+			HoursBeforeWarning = `GETMCMVAR(HOURS_BEFORE_WARNING);
 			AdjustedTime = class'XComGameState_GeoscapeEntity'.static.GetCurrentTime();
 			class'X2StrategyGameRulesetDataStructures'.static.AddHours(AdjustedTime, HoursBeforeWarning);
 

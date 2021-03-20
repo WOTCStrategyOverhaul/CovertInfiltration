@@ -84,37 +84,45 @@ strProgress=Progress
 strCovertAction=Covert Action
 strCovertInfiltration=Covert Infiltration
 
-[UIListener_ModConfigMenu]
+[CovertInfiltration_MCMScreen]
+ModName="Covert Infiltration"
 PageTitle="Covert Infiltration"
+
 VariousSettingsTitle="Various Settings"
 TipsTitle="Tips and Explanations"
 OverInfiltrationTitle="Over Infiltration"
-DaysToHoursDesc="Hours Instead of Days"
-DaysToHoursTooltip="Display hours instead of days in the EventQueue once the time remaining hits a certain threshold"
-DaysBeforeHoursDesc="Days to Hours Threshold"
-DaysBeforeHoursTooltip="At this many days left, hours will be displayed instead of days"
-SuppressSkulljackNagIfDeployedDesc="Disable SKULLJACK remainder when it's already deployed"
-SuppressSkulljackNagIfDeployedTooltip="If any of your currently infiltrating troops have a SKULLJACK equipped, disable Shen's reminder to equip it in Squad Select"
-WarnBeforeExpirationDesc="Warn Before Expiration"
-WarnBeforeExpirationTooltip="Show a warning before an activity is about to expire"
-HoursBeforeWarningDesc="Hours Before Warning"
-HoursBeforeWarningTooltip="The expiration warning will appear this many hours before activity expiration"
-EnableTutorialDesc="Enable Tutorial"
-EnableTutorialTooltip="Show in-game explanations and tips regarding changes and new features/mechanics"
-LowSoldiersWarningDesc="Enable Low Soldiers Warning"
-LowSoldiersWarningTooltip="Bradford will warn you when less than 6 ready to fight soldiers remain in the barracks"
-PauseOnMilestone100Desc="Pause at 100% infil (Mission Ready)"
-PauseOnMilestone100Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 100%"
-PauseOnMilestone125Desc="Pause at 125% infil (Generic Buff Tier 1)"
-PauseOnMilestone125Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 125%"
-PauseOnMilestone150Desc="Pause at 150% infil (Tier 1 Random Sitrep)"
-PauseOnMilestone150Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 150%"
-PauseOnMilestone175Desc="Pause at 175% infil (Negative Sitrep Removed)"
-PauseOnMilestone175Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 175%"
-PauseOnMilestone200Desc="Pause at 200% infil (Tier 2 Random Sitrep)"
-PauseOnMilestone200Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 200%"
-PauseOnMilestone225Desc="Pause at 225% infil (Generic Buff Tier 2)"
-PauseOnMilestone225Tooltip="If enabled, any geoscape scans will pause when an infiltration reaches 225%"
+
+DAYS_TO_HOURS_Label="Hours Instead of Days"
+DAYS_TO_HOURS_Tip="Display hours instead of days in the EventQueue once the time remaining hits a certain threshold"
+DAYS_BEFORE_HOURS_Label="Days to Hours Threshold"
+DAYS_BEFORE_HOURS_Tip="At this many days left, hours will be displayed instead of days"
+
+SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Label="Disable SKULLJACK remainder when it's already deployed"
+SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Tip="If any of your currently infiltrating troops have a SKULLJACK equipped, disable Shen's reminder to equip it in Squad Select"
+
+ENABLE_TUTORIAL_Label="Enable Tutorial"
+ENABLE_TUTORIAL_Tip="Show in-game explanations and tips regarding changes and new features/mechanics"
+
+WARN_BEFORE_EXPIRATION_Label="Warn Before Expiration"
+WARN_BEFORE_EXPIRATION_Tip="Show a warning before an activity is about to expire"
+HOURS_BEFORE_WARNING_Label="Hours Before Warning"
+HOURS_BEFORE_WARNING_Tip="The expiration warning will appear this many hours before activity expiration"
+
+LOW_SOLDIERS_WARNING_Label="Enable Low Soldiers Warning"
+LOW_SOLDIERS_WARNING_Tip="Bradford will warn you when less than 6 ready to fight soldiers remain in the barracks"
+
+PAUSE_ON_MILESTONE_100_Label="Pause at 100% infil (Mission Ready)"
+PAUSE_ON_MILESTONE_100_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 100%"
+PAUSE_ON_MILESTONE_125_Label="Pause at 125% infil (Generic Buff Tier 1)"
+PAUSE_ON_MILESTONE_125_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 125%"
+PAUSE_ON_MILESTONE_150_Label="Pause at 150% infil (Tier 1 Random Sitrep)"
+PAUSE_ON_MILESTONE_150_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 150%"
+PAUSE_ON_MILESTONE_175_Label="Pause at 175% infil (Negative Sitrep Removed)"
+PAUSE_ON_MILESTONE_175_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 175%"
+PAUSE_ON_MILESTONE_200_Label="Pause at 200% infil (Tier 2 Random Sitrep)"
+PAUSE_ON_MILESTONE_200_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 200%"
+PAUSE_ON_MILESTONE_225_Label="Pause at 225% infil (Generic Buff Tier 2)"
+PAUSE_ON_MILESTONE_225_Tip="If enabled, any geoscape scans will pause when an infiltration reaches 225%"
 
 [UIUtilities_Infiltration]
 strReinforcementsBodyWarning="In <XGParam:StrValue0> Turns"

@@ -4,8 +4,7 @@ var bool bExpiring;
 var bool bAlreadyWarnedOfExpiration;
 var TDateTime ExpiryTimerStart, ExpiryTimerEnd;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 function SetupExpiry ()
 {
@@ -34,7 +33,7 @@ protected function UpdateActivity ()
 	local bool WarnBeforeExpiration;
 	local int HoursBeforeWarning;
 
-	WarnBeforeExpiration = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.WARN_BEFORE_EXPIRATION_DEFAULT, class'UIListener_ModConfigMenu'.default.WARN_BEFORE_EXPIRATION);
+	WarnBeforeExpiration = `GETMCMVAR(WARN_BEFORE_EXPIRATION);
 
 	if (bExpiring
 	 && class'X2StrategyGameRulesetDataStructures'.static.LessThan(ExpiryTimerEnd, GetCurrentTime())
@@ -66,7 +65,7 @@ protected function UpdateActivity ()
 	}
 	else if (WarnBeforeExpiration && bExpiring && !bAlreadyWarnedOfExpiration)
 	{
-		HoursBeforeWarning = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.HOURS_BEFORE_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.HOURS_BEFORE_WARNING);
+		HoursBeforeWarning = `GETMCMVAR(HOURS_BEFORE_WARNING);
 		AdjustedTime = GetCurrentTime();
 		class'X2StrategyGameRulesetDataStructures'.static.AddHours(AdjustedTime, HoursBeforeWarning);
 

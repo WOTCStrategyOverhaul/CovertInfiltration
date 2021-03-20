@@ -2,15 +2,14 @@ class X2Encyclopedia_InfiltrationTutorialClosure extends Object;
 
 var name StageName;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 function bool ShouldShow ()
 {
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local bool EnableTutorial;
 
-	EnableTutorial = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, class'UIListener_ModConfigMenu'.default.ENABLE_TUTORIAL);
+	EnableTutorial = `GETMCMVAR(ENABLE_TUTORIAL);
 	if (!EnableTutorial) return true;
 
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.GetInfo();
