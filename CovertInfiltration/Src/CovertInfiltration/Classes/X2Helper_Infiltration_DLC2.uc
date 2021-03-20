@@ -47,8 +47,11 @@ static function PlaceRulerOnInfiltration (XComGameState NewGameState, XComGameSt
     }
 
     History = `XCOMHISTORY;
-
     RulerManager = XComGameState_AlienRulerManager(History.GetSingleGameStateObjectForClass(class'XComGameState_AlienRulerManager'));
+
+	// Make sure the casual spawning of rulers is enabled (e.g. the nest mission is done)
+	if (!RulerManager.AreAlienRulersAllowedToSpawn()) return;
+
 	RulerManager = XComGameState_AlienRulerManager(NewGameState.ModifyStateObject(class'XComGameState_AlienRulerManager', RulerManager.ObjectID));
 	RulerManager.UpdateActiveAlienRulers();
 
