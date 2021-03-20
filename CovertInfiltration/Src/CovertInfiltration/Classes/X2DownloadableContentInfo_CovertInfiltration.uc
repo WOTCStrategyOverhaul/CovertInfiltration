@@ -434,6 +434,9 @@ static protected function ModVersion_FinalizeStrategy ()
 
 static function OnPreCreateTemplates()
 {
+	// This must be the very first thing called in the mod code
+	class'UIListener_ModConfigMenu'.static.TryTransfer();
+
 	if (`GETMCMVAR(ENABLE_TRACE_STARTUP))
 	{
 		GetCDO().SuppressTraceLogs = false;

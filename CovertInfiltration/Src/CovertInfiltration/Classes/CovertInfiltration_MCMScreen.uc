@@ -33,27 +33,28 @@ var localized string OverInfiltrationTitle;
 `MCM_API_AutoCheckBoxVars(ENABLE_TRACE_STARTUP);
 
 `include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
+// Versions 3 and earlier were the previous MCM implementation
 
-`MCM_API_AutoCheckBoxFns(DAYS_TO_HOURS, 1);
-`MCM_API_AutoSliderFns(DAYS_BEFORE_HOURS,, 1);
+`MCM_API_AutoCheckBoxFns(DAYS_TO_HOURS, 4);
+`MCM_API_AutoSliderFns(DAYS_BEFORE_HOURS,, 4);
 
-`MCM_API_AutoCheckBoxFns(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, 1);
+`MCM_API_AutoCheckBoxFns(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, 4);
 
-`MCM_API_AutoCheckBoxFns(ENABLE_TUTORIAL, 1);
+`MCM_API_AutoCheckBoxFns(ENABLE_TUTORIAL, 4);
 
-`MCM_API_AutoCheckBoxFns(WARN_BEFORE_EXPIRATION, 1);
-`MCM_API_AutoSliderFns(HOURS_BEFORE_WARNING,, 1);
+`MCM_API_AutoCheckBoxFns(WARN_BEFORE_EXPIRATION, 4);
+`MCM_API_AutoSliderFns(HOURS_BEFORE_WARNING,, 4);
 
-`MCM_API_AutoCheckBoxFns(LOW_SOLDIERS_WARNING, 1);
+`MCM_API_AutoCheckBoxFns(LOW_SOLDIERS_WARNING, 4);
 
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_100, 1);
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_125, 1);
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_150, 1);
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_175, 1);
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_200, 1);
-`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_225, 1);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_100, 4);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_125, 4);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_150, 4);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_175, 4);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_200, 4);
+`MCM_API_AutoCheckBoxFns(PAUSE_ON_MILESTONE_225, 4);
 
-`MCM_API_AutoCheckBoxFns(ENABLE_TRACE_STARTUP, 1);
+`MCM_API_AutoCheckBoxFns(ENABLE_TRACE_STARTUP, 4);
 
 event OnInit(UIScreen Screen)
 {
@@ -70,6 +71,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	Page.SetPageTitle(PageTitle);
 	Page.SetSaveHandler(SaveButtonClicked);
 	
+	// TODO
 	//Uncomment to enable reset
 	//Page.EnableResetButton(ResetButtonClicked);
 
