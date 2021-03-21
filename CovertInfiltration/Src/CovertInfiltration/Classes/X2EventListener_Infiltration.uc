@@ -1351,7 +1351,7 @@ static function CHEventListenerTemplate CreateTacticalListeners()
 	Template.AddCHEvent('PostAliensSpawned', PostAliensSpawned, ELD_Immediate, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PreSupplyExtract, ELD_OnVisualizationBlockStarted, 99);
 	Template.AddCHEvent('KismetGameStateMatinee', KismetGameStateMatinee_PostSupplyExtract, ELD_OnVisualizationBlockCompleted, 99);
-	Template.AddCHEvent('OnUnitBeginPlay', OnUnitBeginPlay_CheckTired, ELD_Immediate, 99);
+	Template.AddCHEvent('OnUnitBeginPlay', OnUnitBeginPlay_CheckTired, ELD_OnStateSubmitted, 99);
 	Template.RegisterInTactical = true;
 
 	return Template;
@@ -1710,23 +1710,25 @@ static protected function TrySetSupplyExtractorATTVisibility (bool bNewVisible, 
 	}
 }
 
-static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
+static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object EventData, Object EventSource, XComGameState EventGameState, Name Event, Object CallbackData)
 {
-	// Do not check whether the system is enabled here - we care about the difficulty only at return to strategy.
-	// Also we are intersted in items only on return - if the mindshield is somehow lost mid-mission, mercy will be shown.
-
 	local XComGameState_CovertInfiltrationInfo CIInfo;
 	local XComGameState_BattleData BattleDataState;
 	local XComGameState_Unit UnitState;
+	local XComGameState NewGameState;
 
-	// Ensure we have the pending unit state
+	// We need the version of the unit before the play begun - we care how the unit was
+	// sent into tactical, bypassing any begin play logic
 	UnitState = XComGameState_Unit(EventSource);
-	UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitState.ObjectID));
+	UnitState = XComGameState_Unit(UnitState.GetPreviousVersion());
 
-	if (UnitState == none)
+	// If there is no previous version, then the unit was created mid-tactical - don't care
+	if (UnitState == none) return ELR_NoInterrupt;
+
+	// For future debugging, if any
+	if (UnitState.IsInPlay())
 	{
-		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) @ "failed to get pending unit state, bailing");
-		return ELR_NoInterrupt;
+		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "previous state is in play. Not fatal, but likely incorrect");
 	}
 
 	if (!UnitState.UsesWillSystem())
@@ -1753,8 +1755,10 @@ static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object
 		return ELR_NoInterrupt;
 	}
 
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: Mark unit started below ready will:" @ UnitState.ObjectID @ UnitState.GetFullName());
 	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
 	CIInfo.UnitsStartedMissionBelowReadyWill.AddItem(UnitState.GetReference());
+	`SubmitGameState(NewGameState);
 
 	`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "recorded as below ready will");
 
