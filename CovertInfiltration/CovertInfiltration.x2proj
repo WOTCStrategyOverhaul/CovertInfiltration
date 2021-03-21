@@ -37,6 +37,9 @@
     <Content Include="Config\XComGameData.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Config\XComMaps.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComMissions.ini">
       <SubType>Content</SubType>
     </Content>
@@ -47,6 +50,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComMissionDefs.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\XComPCPs.ini">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Config\XComPlots.ini">
