@@ -601,6 +601,18 @@ static function PatchMissionDefinitions ()
 			MissionManager.arrMissions[i].MissionObjectives[0] = SweepObjective;
 			MissionManager.arrMissions[i].MissionObjectives[1] = DestroyObjective;
 		}
+
+		if (
+			MissionManager.arrMissions[i].sType == "CovertEscape" &&
+			MissionManager.arrMissions[i].MissionName == 'CovertEscape'
+		)
+		{
+			MissionManager.arrMissions[i].MapNames[0] = "Obj_CovertEscape_CI";
+			
+			MissionManager.arrMissions[i].MissionSchedules.Length = 0;
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Covert_Escape_CI');
+			MissionManager.arrMissions[i].MissionSchedules.AddItem('Covert_Escape_CI_Lost');
+		}
 	}
 }
 
