@@ -164,7 +164,7 @@ static function X2DataTemplate CreatePatrolWildernessTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Templars');
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	//Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
