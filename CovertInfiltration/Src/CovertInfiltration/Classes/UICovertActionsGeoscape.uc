@@ -8,8 +8,7 @@
 class UICovertActionsGeoscape extends UIScreen;
 
 // UI - background gradient
-var UIImage BackgroundGradientTop;
-var UIImage BackgroundGradientBottom;
+var UIVignette Vignette;
 
 // UI - chain preview
 var UIChainPreview ChainPreview;
@@ -186,19 +185,10 @@ simulated function BuildScreen()
 
 simulated protected function BuildBackground ()
 {
-	BackgroundGradientTop = Spawn(class'UIImage', self);
-	BackgroundGradientTop.bAnimateOnInit = false;
-	BackgroundGradientTop.InitImage('BackgroundGradientTop', "img:///UILibrary_CovertInfiltration.gradient_top");
-	BackgroundGradientTop.AnchorTopLeft();
-	BackgroundGradientTop.SetPosition(0, 0);
-	BackgroundGradientTop.SetSize(Movie.UI_RES_X, 512);
-
-	BackgroundGradientBottom = Spawn(class'UIImage', self);
-	BackgroundGradientBottom.bAnimateOnInit = false;
-	BackgroundGradientBottom.InitImage('BackgroundGradientBottom', "img:///UILibrary_CovertInfiltration.gradient_bottom");
-	BackgroundGradientBottom.AnchorBottomLeft();
-	BackgroundGradientBottom.SetPosition(0, -512);
-	BackgroundGradientBottom.SetSize(Movie.UI_RES_X, 512);
+	Vignette = Spawn(class'UIVignette', self);
+	Vignette.bAnimateOnInit = false;
+	Vignette.AnimateInDuration = ANIMATE_IN_DURATION;
+	Vignette.InitVignette('Vignette');
 }
 
 simulated protected function BuildChainPreview ()
@@ -628,8 +618,7 @@ simulated function AnimateIn(optional float Delay = 0.0)
 {
 	// BG Gradient
 
-	BackgroundGradientTop.AddTweenBetween("_alpha", 0, BackgroundGradientTop.Alpha, ANIMATE_IN_DURATION, Delay, "easeoutquad");
-	BackgroundGradientBottom.AddTweenBetween("_alpha", 0, BackgroundGradientBottom.Alpha, ANIMATE_IN_DURATION, Delay, "easeoutquad");
+	Vignette.AnimateIn();
 
 	// Left
 

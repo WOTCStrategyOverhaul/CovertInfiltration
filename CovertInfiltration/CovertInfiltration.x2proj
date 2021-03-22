@@ -314,6 +314,9 @@
     <Content Include="Src\CovertInfiltration\Classes\UIVerticalListItemBase.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\CovertInfiltration\Classes\UIVignette.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\CovertInfiltration\Classes\X2Ability_SitRepAbilitySet_CI.uc">
       <SubType>Content</SubType>
     </Content>
