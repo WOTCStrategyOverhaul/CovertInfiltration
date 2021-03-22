@@ -47,8 +47,7 @@ var config bool MindShieldOnTiredNerf_PermitTraitStacking; // If enabled, a nega
 
 var localized string strOneTimeMarketLeadDescription;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -910,7 +909,7 @@ static protected function EventListenerReturn OverrideDarkEventCount(Object Even
 	
 static protected function EventListenerReturn PreventLowSoldiersCovertActionNag(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	if (`MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.LOW_SOLDIERS_WARNING_DEFAULT, class'UIListener_ModConfigMenu'.default.LOW_SOLDIERS_WARNING))
+	if (`GETMCMVAR(LOW_SOLDIERS_WARNING))
 	{
 		return ELR_InterruptListeners;
 	}

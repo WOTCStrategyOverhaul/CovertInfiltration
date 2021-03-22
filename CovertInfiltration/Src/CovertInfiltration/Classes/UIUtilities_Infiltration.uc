@@ -39,8 +39,7 @@ var localized string strChainStatusPrefix;
 var localized string strActionableLeadUsed;
 var localized string strLastActionableLeadUsed;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 //////////////////
 /// Game state ///

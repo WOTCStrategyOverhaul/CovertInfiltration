@@ -88,8 +88,7 @@ var localized string strCrewExpansionBody;
 var localized string strMindShieldOnTiredNerfHeader;
 var localized string strMindShieldOnTiredNerfBody;
 
-`include(CovertInfiltration/Src/CovertInfiltration/MCM_API_CfgHelpersStatic.uci)
-`MCM_CH_VersionCheckerStatic(class'ModConfigMenu_Defaults'.default.iVERSION, class'UIListener_ModConfigMenu'.default.CONFIG_VERSION)
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 ///////////////////////
 /// Tutorial popups ///
@@ -301,7 +300,7 @@ static protected function bool ShouldShowPopup (name StageName, optional array<n
 {
 	local bool EnableTutorial;
 
-	EnableTutorial = `MCM_CH_GetValueStatic(class'ModConfigMenu_Defaults'.default.ENABLE_TUTORIAL_DEFAULT, class'UIListener_ModConfigMenu'.default.ENABLE_TUTORIAL);
+	EnableTutorial = `GETMCMVAR(ENABLE_TUTORIAL);
 	if (!EnableTutorial) return false;
 
 	return ShouldShowPopupIgnoreMCM(StageName, PrecedingStages);

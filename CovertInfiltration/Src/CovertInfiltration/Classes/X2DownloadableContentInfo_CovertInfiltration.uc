@@ -27,6 +27,8 @@ var name ForcedNextEnviromentalSitrep;
 
 var const array<name> HQInventoryStatesToEnlistIntoTactical;
 
+`include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
+
 //////////////////////////////////
 /// Vanilla DLCInfo misc hooks ///
 //////////////////////////////////
@@ -431,7 +433,10 @@ static protected function ModVersion_FinalizeStrategy ()
 
 static function OnPreCreateTemplates()
 {
-	if (class'UIListener_ModConfigMenu'.default.ENABLE_TRACE_STARTUP)
+	// This must be the very first thing called in the mod code
+	class'UIListener_ModConfigMenu'.static.TryTransfer();
+
+	if (`GETMCMVAR(ENABLE_TRACE_STARTUP))
 	{
 		GetCDO().SuppressTraceLogs = false;
 	}
