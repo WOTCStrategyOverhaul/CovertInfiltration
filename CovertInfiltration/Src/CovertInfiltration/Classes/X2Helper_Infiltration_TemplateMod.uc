@@ -1126,6 +1126,25 @@ static function PatchDoomRemovalCovertAction()
 	ActionTemplate.bMultiplesAllowed = false;
 }
 
+static function PatchUniqueCovertActions ()
+{
+	RemoveUniqueFromCovertAction('CovertAction_SuperiorPCS');
+	RemoveUniqueFromCovertAction('CovertAction_SuperiorWeaponUpgrade');
+}
+
+static function RemoveUniqueFromCovertAction (name ActionName)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActionName));
+	
+	ActionTemplate.bMultiplesAllowed = false;
+	ActionTemplate.bUnique = false;
+}
+
 static function PatchResourceGatheringCovertActions ()
 {
 	local X2StrategyElementTemplateManager TemplateManager;
