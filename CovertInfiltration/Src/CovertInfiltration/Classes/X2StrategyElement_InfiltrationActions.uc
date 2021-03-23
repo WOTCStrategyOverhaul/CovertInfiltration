@@ -134,6 +134,7 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
 	Template.bMultiplesAllowed = true;
 	Template.bUseRewardImage = true;
+	Template.bCanNeverBeRookie = true;
 
 	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Skirmishers');
 	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Reapers');
