@@ -1627,3 +1627,16 @@ static function bool ActionHasAmbushRisk (XComGameState_CovertAction CovertActio
 
 	return false;
 }
+
+static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName, optional int iMinRank, optional bool bFactionClass, optional bool bReduceRisk)
+{
+	local CovertActionSlot OptionalSlot;
+
+	OptionalSlot.StaffSlot = SlotName;
+	OptionalSlot.bChanceFame = false;
+	OptionalSlot.bReduceRisk = bReduceRisk;
+	OptionalSlot.iMinRank = iMinRank;
+	OptionalSlot.bFactionClass = bFactionClass;
+
+	return OptionalSlot;
+}

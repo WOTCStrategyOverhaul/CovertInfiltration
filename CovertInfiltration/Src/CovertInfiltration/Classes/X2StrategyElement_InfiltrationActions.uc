@@ -40,7 +40,7 @@ static function X2DataTemplate CreateAlienCorpsesTemplate()
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 	Template.Risks.AddItem('CovertActionRisk_SoldierCaptured');
@@ -141,7 +141,7 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionScientistStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
@@ -165,7 +165,7 @@ static function X2DataTemplate CreatePatrolWildernessTemplate()
 
 	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	//Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
@@ -236,19 +236,6 @@ private static function CovertActionSlot CreateDefaultStaffSlot(name SlotName)
 	StaffSlot.bReduceRisk = false;
 	
 	return StaffSlot;
-}
-
-private static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName, optional int iMinRank, optional bool bFactionClass, optional bool bReduceRisk)
-{
-	local CovertActionSlot OptionalSlot;
-
-	OptionalSlot.StaffSlot = SlotName;
-	OptionalSlot.bChanceFame = false;
-	OptionalSlot.bReduceRisk = bReduceRisk;
-	OptionalSlot.iMinRank = iMinRank;
-	OptionalSlot.bFactionClass = bFactionClass;
-
-	return OptionalSlot;
 }
 
 private static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int Quantity)
