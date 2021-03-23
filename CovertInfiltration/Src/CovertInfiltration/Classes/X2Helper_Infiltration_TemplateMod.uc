@@ -1172,7 +1172,7 @@ static function CreateLategameCovertAction (name ActionName, name OptionalSlotSt
 	ActionTemplate.Risks.AddItem('CovertActionRisk_Ambush');
 
 	ActionTemplate.Slots.Length = 0;
-	ActionTemplate.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3, true));
+	ActionTemplate.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
 	ActionTemplate.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
 	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot(OptionalSlotStaff,,, true));
 }
