@@ -1126,6 +1126,32 @@ static function PatchDoomRemovalCovertAction()
 	ActionTemplate.bMultiplesAllowed = false;
 }
 
+static function PatchResourceGatheringCovertActions ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	CreateLategameCovertAction('CovertAction_GatherSupplies');
+	CreateLategameCovertAction('CovertAction_GatherIntel');
+}
+
+static function CreateLategameCovertAction (name ActionName)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActionName));
+
+	ActionTemplate.bMultiplesAllowed = false;
+	ActionTemplate.RequiredFactionInfluence = eFactionInfluence_Influential;
+	ActionTemplate.Risks.AddItem('CovertActionRisk_SoldierCaptured');
+	ActionTemplate.Risks.AddItem('CovertActionRisk_Ambush');
+}
+
 /////////////////////
 /// Faction Cards ///
 /////////////////////
