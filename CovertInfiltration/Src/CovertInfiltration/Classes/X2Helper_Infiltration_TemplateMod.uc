@@ -1147,11 +1147,6 @@ static function RemoveUniqueFromCovertAction (name ActionName)
 
 static function PatchResourceGatheringCovertActions ()
 {
-	local X2StrategyElementTemplateManager TemplateManager;
-	local X2CovertActionTemplate ActionTemplate;
-	
-	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
 	ConvertActionToLategame('CovertAction_GatherSupplies', 'CovertActionEngineerStaffSlot');
 	ConvertActionToLategame('CovertAction_GatherIntel', 'CovertActionScientistStaffSlot');
 }
