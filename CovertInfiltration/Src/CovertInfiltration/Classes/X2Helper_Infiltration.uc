@@ -1628,6 +1628,33 @@ static function bool ActionHasAmbushRisk (XComGameState_CovertAction CovertActio
 	return false;
 }
 
+// Copied from X2StrategyElement_DefaultCovertActions
+static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed = false)
+{
+	local CovertActionSlot SoldierSlot;
+
+	SoldierSlot.StaffSlot = SlotName;
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostHP');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostAim');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostMobility');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostDodge');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostWill');
+	SoldierSlot.Rewards.AddItem('Reward_StatBoostHacking');
+	if (bPromotionAllowed) SoldierSlot.Rewards.AddItem('Reward_RankUp');
+
+	SoldierSlot.iMinRank = iMinRank;
+	SoldierSlot.bChanceFame = false;
+	SoldierSlot.bRandomClass = bRandomClass;
+	SoldierSlot.bFactionClass = bFactionClass;
+
+	if (SlotName == 'CovertActionRookieStaffSlot')
+	{
+		SoldierSlot.bChanceFame = false;
+	}
+
+	return SoldierSlot;
+}
+
 static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName, optional int iMinRank, optional bool bFactionClass, optional bool bReduceRisk)
 {
 	local CovertActionSlot OptionalSlot;
@@ -1639,4 +1666,17 @@ static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName, option
 	OptionalSlot.bFactionClass = bFactionClass;
 
 	return OptionalSlot;
+}
+
+static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int Quantity)
+{
+	local StrategyCostReward ActionCost;
+	local ArtifactCost Resources;
+
+	Resources.ItemTemplateName = ResourceName;
+	Resources.Quantity = Quantity;
+	ActionCost.Cost.ResourceCosts.AddItem(Resources);
+	ActionCost.Reward = 'Reward_DecreaseRisk';
+	
+	return ActionCost;
 }

@@ -1152,11 +1152,11 @@ static function PatchResourceGatheringCovertActions ()
 	
 	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-	CreateLategameCovertAction('CovertAction_GatherSupplies', 'CovertActionEngineerStaffSlot');
-	CreateLategameCovertAction('CovertAction_GatherIntel', 'CovertActionScientistStaffSlot');
+	ConvertActionToLategame('CovertAction_GatherSupplies', 'CovertActionEngineerStaffSlot');
+	ConvertActionToLategame('CovertAction_GatherIntel', 'CovertActionScientistStaffSlot');
 }
 
-static function CreateLategameCovertAction (name ActionName, name OptionalSlotStaff)
+static function ConvertActionToLategame (name ActionName, name OptionalSlotStaff)
 {
 	local X2StrategyElementTemplateManager TemplateManager;
 	local X2CovertActionTemplate ActionTemplate;
@@ -1172,8 +1172,8 @@ static function CreateLategameCovertAction (name ActionName, name OptionalSlotSt
 	ActionTemplate.Risks.AddItem('CovertActionRisk_Ambush');
 
 	ActionTemplate.Slots.Length = 0;
-	ActionTemplate.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
-	ActionTemplate.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
 	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot(OptionalSlotStaff,,, true));
 }
 

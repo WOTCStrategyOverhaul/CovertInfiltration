@@ -492,9 +492,9 @@ static function CreatePreparePersonnel (out array<X2DataTemplate> Templates)
 	`CREATE_X2TEMPLATE(class'X2ActivityTemplate_CovertAction', Activity, 'Activity_PreparePersonnel');
 	CovertAction = CreateStandardActivityCA("PreparePersonnel", "CovertAction");
 
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.OptionalCosts.AddItem(CreateOptionalCostSlot('Supplies', 25));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.OptionalCosts.AddItem(class'X2Helper_Infiltration'.static.CreateOptionalCostSlot('Supplies', 25));
 
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
 	CovertAction.Rewards.AddItem('Reward_Progress');
@@ -517,8 +517,8 @@ static function CreatePrepareFactionJB (out array<X2DataTemplate> Templates)
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
 
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
 	Activity.CovertActionName = CovertAction.DataName;
@@ -539,8 +539,8 @@ static function CreatePrepareUFO (out array<X2DataTemplate> Templates)
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
 
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierCaptured');
 	CovertAction.Risks.AddItem('CovertActionRisk_SoldierWounded');
 	CovertAction.Rewards.AddItem('Reward_Progress');
@@ -563,8 +563,8 @@ static function CreatePrepareFacility (out array<X2DataTemplate> Templates)
 	CovertAction.RequiredFactionInfluence = eFactionInfluence_Influential;
 	CovertAction.bDisplayIgnoresInfluence = true;
 
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	CovertAction.Slots.AddItem(CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	CovertAction.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	CovertAction.Risks.AddItem('CovertActionRisk_Ambush');
 	CovertAction.Rewards.AddItem('Reward_Progress');
 
@@ -729,46 +729,6 @@ static function string WaitGetOverviewStatus (XComGameState_Activity ActivitySta
 	}
 
 	return class'X2ActivityTemplate'.static.DefaultGetOverviewStatus(ActivityState);
-}
-
-// Copied from X2StrategyElement_DefaultCovertActions
-static function CovertActionSlot CreateDefaultSoldierSlot(name SlotName, optional int iMinRank, optional bool bRandomClass, optional bool bFactionClass, optional bool bPromotionAllowed = false)
-{
-	local CovertActionSlot SoldierSlot;
-
-	SoldierSlot.StaffSlot = SlotName;
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostHP');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostAim');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostMobility');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostDodge');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostWill');
-	SoldierSlot.Rewards.AddItem('Reward_StatBoostHacking');
-	if (bPromotionAllowed) SoldierSlot.Rewards.AddItem('Reward_RankUp');
-
-	SoldierSlot.iMinRank = iMinRank;
-	SoldierSlot.bChanceFame = false;
-	SoldierSlot.bRandomClass = bRandomClass;
-	SoldierSlot.bFactionClass = bFactionClass;
-
-	if (SlotName == 'CovertActionRookieStaffSlot')
-	{
-		SoldierSlot.bChanceFame = false;
-	}
-
-	return SoldierSlot;
-}
-
-static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int Quantity)
-{
-	local StrategyCostReward ActionCost;
-	local ArtifactCost Resources;
-
-	Resources.ItemTemplateName = ResourceName;
-	Resources.Quantity = Quantity;
-	ActionCost.Cost.ResourceCosts.AddItem(Resources);
-	ActionCost.Reward = 'Reward_DecreaseRisk';
-	
-	return ActionCost;
 }
 
 // Copied from X2StrategyElement_XpackMissionSources
