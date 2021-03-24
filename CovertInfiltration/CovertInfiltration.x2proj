@@ -16,6 +16,7 @@
     <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
+    <Folder Include="Localization\RUS" />
     <Folder Include="Src\" />
     <Folder Include="Src\CovertInfiltration\" />
     <Folder Include="Src\CovertInfiltration\Classes\" />
@@ -105,6 +106,15 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\CovertInfiltration.int">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\RUS\BetterSecondWaveSupport.rus">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\RUS\CovertInfiltration.rus">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\RUS\XComGame.rus">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
