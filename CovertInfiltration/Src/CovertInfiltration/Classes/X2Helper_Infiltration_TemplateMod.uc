@@ -1126,6 +1126,57 @@ static function PatchDoomRemovalCovertAction()
 	ActionTemplate.bMultiplesAllowed = false;
 }
 
+static function PatchUniqueCovertActions ()
+{
+	RemoveUniqueFromCovertAction('CovertAction_SuperiorPCS');
+	RemoveUniqueFromCovertAction('CovertAction_SuperiorWeaponUpgrade');
+}
+
+static function RemoveUniqueFromCovertAction (name ActionName)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActionName));
+	
+	ActionTemplate.bMultiplesAllowed = false;
+	ActionTemplate.bUnique = false;
+}
+
+static function PatchResourceGatheringCovertActions ()
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ConvertActionToLategame('CovertAction_GatherSupplies', 'CovertActionEngineerStaffSlot');
+	ConvertActionToLategame('CovertAction_GatherIntel', 'CovertActionScientistStaffSlot');
+}
+
+static function ConvertActionToLategame (name ActionName, name OptionalSlotStaff)
+{
+	local X2StrategyElementTemplateManager TemplateManager;
+	local X2CovertActionTemplate ActionTemplate;
+	
+	TemplateManager = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	ActionTemplate = X2CovertActionTemplate(TemplateManager.FindStrategyElementTemplate(ActionName));
+
+	ActionTemplate.bMultiplesAllowed = false;
+	ActionTemplate.RequiredFactionInfluence = eFactionInfluence_Influential;
+
+	ActionTemplate.Risks.AddItem('CovertActionRisk_SoldierCaptured');
+	ActionTemplate.Risks.AddItem('CovertActionRisk_Ambush');
+
+	ActionTemplate.Slots.Length = 0;
+	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot', 3));
+	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot(OptionalSlotStaff,,, true));
+}
+
 /////////////////////
 /// Faction Cards ///
 /////////////////////

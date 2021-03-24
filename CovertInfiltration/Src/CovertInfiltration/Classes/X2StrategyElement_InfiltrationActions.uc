@@ -38,9 +38,9 @@ static function X2DataTemplate CreateAlienCorpsesTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_AlienCorpses_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_AlienCorpses_Templars');
 
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 	Template.Risks.AddItem('CovertActionRisk_SoldierCaptured');
@@ -64,9 +64,9 @@ static function X2DataTemplate CreateUtilityItemsTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_UtilityItems_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_UtilityItems_Templars');
 	
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.OptionalCosts.AddItem(CreateOptionalCostSlot('Intel', 25));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.OptionalCosts.AddItem(class'X2Helper_Infiltration'.static.CreateOptionalCostSlot('Intel', 25));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
@@ -88,9 +88,9 @@ static function X2DataTemplate CreateExperimentalItemTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_ExperimentalItem_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_ExperimentalItem_Templars');
 
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.OptionalCosts.AddItem(CreateOptionalCostSlot('Supplies', 25));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.OptionalCosts.AddItem(class'X2Helper_Infiltration'.static.CreateOptionalCostSlot('Supplies', 25));
 	
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 	Template.Risks.AddItem('CovertActionRisk_SoldierCaptured');
@@ -140,9 +140,9 @@ static function X2DataTemplate CreateTechnologyRushTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Templars');
 
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionScientistStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
@@ -164,9 +164,9 @@ static function X2DataTemplate CreatePatrolWildernessTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_PatrolWilderness_Templars');
 
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	//Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	//Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
 
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
@@ -189,8 +189,8 @@ static function X2DataTemplate CreateBlackMarketTemplate()
 	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Reapers');
 	Template.Narratives.AddItem('CovertActionNarrative_BlackMarket_Templars');
 
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(class'X2StrategyElement_DefaultActivities'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
+	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
 
 	Template.Rewards.AddItem('Reward_BlackMarket');
 
@@ -237,32 +237,6 @@ private static function CovertActionSlot CreateDefaultStaffSlot(name SlotName)
 	StaffSlot.bReduceRisk = false;
 	
 	return StaffSlot;
-}
-
-private static function CovertActionSlot CreateDefaultOptionalSlot(name SlotName, optional int iMinRank, optional bool bFactionClass, optional bool bReduceRisk)
-{
-	local CovertActionSlot OptionalSlot;
-
-	OptionalSlot.StaffSlot = SlotName;
-	OptionalSlot.bChanceFame = false;
-	OptionalSlot.bReduceRisk = bReduceRisk;
-	OptionalSlot.iMinRank = iMinRank;
-	OptionalSlot.bFactionClass = bFactionClass;
-
-	return OptionalSlot;
-}
-
-private static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int Quantity)
-{
-	local StrategyCostReward ActionCost;
-	local ArtifactCost Resources;
-
-	Resources.ItemTemplateName = ResourceName;
-	Resources.Quantity = Quantity;
-	ActionCost.Cost.ResourceCosts.AddItem(Resources);
-	ActionCost.Reward = 'Reward_DecreaseRisk';
-	
-	return ActionCost;
 }
 
 private static function CovertActionSlot CreateDefaultPromotionSlot(name SlotName)
