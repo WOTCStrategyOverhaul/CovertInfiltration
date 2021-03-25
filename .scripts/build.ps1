@@ -322,9 +322,9 @@ for ($i=0; $i -lt $thismodpackages.length; $i++) {
 }
 Write-Host "Copied compiled script packages."
 
-# TODO: Optimize this. One could skip recompiling shader caches if the shader cache is newer than any other content file.
-Write-Host "Testing $modSrcRoot/Content"
-if(Test-Path "$modSrcRoot/Content")
+# This needs to happen before cooking - shader precompiler gets confused by some inlined materials
+Write-Host "Testing $modSrcRoot/Content and ContentForCook"
+if((Test-Path "$modSrcRoot/Content") -or (Test-Path "$modSrcRoot/ContentForCook"))
 {
     Write-Host "Exists"
     $contentfiles = Get-ChildItem "$modSrcRoot/Content\*"  -Include *.upk, *.umap -Recurse -File
@@ -377,8 +377,6 @@ if(Test-Path "$modSrcRoot/Content")
 }
 
 # Cook assets if we need to
-# TODO: Decide what to do with normal content upks
-# For testing, I just deleted everything except for shader cache
 if ($enableAssetCooking -eq $true)
 {
 	Write-Host "Entered asset cooking"
@@ -436,7 +434,7 @@ if ($enableAssetCooking -eq $true)
 		
 		# "Inject" our assets into the SDK
 		Remove-Item $sdkModsContentDir
-		&"$selfScriptPath\junction.exe" -nobanner -accepteula "$sdkModsContentDir" "$modSrcRoot\Content"
+		&"$selfScriptPath\junction.exe" -nobanner -accepteula "$sdkModsContentDir" "$modSrcRoot\ContentForCook"
 		
 		# TODO: ini edits
 		$defaultEngineContentNew = $defaultEngineContentOriginal
@@ -539,6 +537,9 @@ if ($enableAssetCooking -eq $true)
 			# Mod assets for some reason refuse to load with the _SF suffix
 			Copy-Item "$projectCookCacheDir\${package}_SF.upk" -Destination $dest
 		}
+
+        # No need for the ContentForCook directory anymore
+        Remove-Item "$stagingPath/ContentForCook" -Recurse
 	}
 }
 
