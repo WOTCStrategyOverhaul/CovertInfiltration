@@ -158,6 +158,7 @@ if (![string]::IsNullOrEmpty($cookOptionsPs) -And (Test-Path $cookOptionsPs))
 	. ($cookOptionsPs)
 } else {
 	$enableAssetCooking = $false
+    [string[]]$missingUncooked = @()
 	Write-Host "Disabling asset cooking as no options file specified"
 }
 
@@ -314,6 +315,24 @@ for ($i=0; $i -lt $thismodpackages.length; $i++) {
     Write-Host "$sdkPath/XComGame/Script/$name.u"
 }
 Write-Host "Copied compiled script packages."
+
+if ($missingUncooked.Length -gt 0)
+{
+    Write-Host "Including MissingUncooked"
+
+    $missingUncookedPath = [io.path]::Combine($stagingPath, "Content", "MissingUncooked")
+    $sdkContentPath = [io.path]::Combine($sdkPath, "XComGame", "Content")
+
+    if (!(Test-Path $missingUncookedPath))
+    {
+        New-Item -ItemType "directory" -Path $missingUncookedPath
+    }
+
+    foreach ($fileName in $missingUncooked)
+    {
+        (Get-ChildItem -Path $sdkContentPath -Filter $fileName -Recurse).FullName | Copy-Item -Destination $missingUncookedPath
+    }
+}
 
 # TODO: Optimize this. One could skip recompiling shader caches if the shader cache is newer than any other content file.
 Write-Host "Testing $modSrcRoot/Content"

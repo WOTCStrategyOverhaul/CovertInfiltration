@@ -15,3 +15,6 @@ $enableAssetCooking = $true
 	"Obj_SupplyExtraction_CI"
 	#"Obj_CovertEscape_CI"
 	
+[string[]]$missingUncooked = #@()
+    "CIN_TroopTransport.upk",
+    "PCP_Archetypes_XPACK.upk"
