@@ -322,24 +322,6 @@ for ($i=0; $i -lt $thismodpackages.length; $i++) {
 }
 Write-Host "Copied compiled script packages."
 
-if ($missingUncooked.Length -gt 0)
-{
-    Write-Host "Including MissingUncooked"
-
-    $missingUncookedPath = [io.path]::Combine($stagingPath, "Content", "MissingUncooked")
-    $sdkContentPath = [io.path]::Combine($sdkPath, "XComGame", "Content")
-
-    if (!(Test-Path $missingUncookedPath))
-    {
-        New-Item -ItemType "directory" -Path $missingUncookedPath
-    }
-
-    foreach ($fileName in $missingUncooked)
-    {
-        (Get-ChildItem -Path $sdkContentPath -Filter $fileName -Recurse).FullName | Copy-Item -Destination $missingUncookedPath
-    }
-}
-
 # TODO: Optimize this. One could skip recompiling shader caches if the shader cache is newer than any other content file.
 Write-Host "Testing $modSrcRoot/Content"
 if(Test-Path "$modSrcRoot/Content")
@@ -389,6 +371,8 @@ if(Test-Path "$modSrcRoot/Content")
 		Write-Host "No reason to precompile shaders, using existing"
         Copy-Item -Path $cachedShaderCachePath -Destination "$stagingPath/Content"
 	}
+
+    # TODO: Automatically delete the shader cache if it's "empty" (see AML cleanup logic)
 }
 
 # Cook assets if we need to
@@ -555,6 +539,27 @@ if ($enableAssetCooking -eq $true)
 			Copy-Item "$projectCookCacheDir\${package}_SF.upk" -Destination $dest
 		}
 	}
+}
+
+# Do this last as there is no need for it earlier - the cooker obviously has access to the game assets
+# and precompiling shaders seems to do nothing (I assume they are included in the game's GlobalShaderCache)
+# TODO: test shaders that were not inlined into maps/SF packages
+if ($missingUncooked.Length -gt 0)
+{
+    Write-Host "Including MissingUncooked"
+
+    $missingUncookedPath = [io.path]::Combine($stagingPath, "Content", "MissingUncooked")
+    $sdkContentPath = [io.path]::Combine($sdkPath, "XComGame", "Content")
+
+    if (!(Test-Path $missingUncookedPath))
+    {
+        New-Item -ItemType "directory" -Path $missingUncookedPath
+    }
+
+    foreach ($fileName in $missingUncooked)
+    {
+        (Get-ChildItem -Path $sdkContentPath -Filter $fileName -Recurse).FullName | Copy-Item -Destination $missingUncookedPath
+    }
 }
 
 # copy all staged files to the actual game's mods folder
