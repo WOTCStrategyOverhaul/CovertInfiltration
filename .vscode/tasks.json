@@ -2,13 +2,10 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "Build release",
             "type": "shell",
-            "command": "powershell.exe -file '${workspaceRoot}\\.scripts\\build.ps1' -mod 'CovertInfiltration' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -includes 'SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime' -clean 'SquadSelectAtAnyTime'",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -mod \"CovertInfiltration\" -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -includes 'SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime' -clean 'SquadSelectAtAnyTime'",
+            "group": "build",
             "problemMatcher": [{
                 // The problem is owned by the unrealscript language service.
                 "owner": "unrealscript",
@@ -29,36 +26,28 @@
             }]
         },
         {
-            "label": "buildHighlander",
+            "label": "Build debug",
             "type": "shell",
-            "command": "powershell.exe -file '${workspaceRoot}\\X2WOTCCommunityHighlander\\.scripts\\build.ps1' -mod 'X2WOTCCommunityHighlander' -srcDirectory '${workspaceRoot}\\X2WOTCCommunityHighlander' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}'",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "buildSSAAT",
-            "type": "shell",
-            "command": "powershell.exe -file '${workspaceRoot}\\.scripts\\build.ps1' -mod 'SquadSelectAtAnyTime' -srcDirectory '${workspaceRoot}\\SquadSelectAnyTime' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}'",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "runGame",
-            "type": "shell",
-            "command": "powershell.exe -file '${workspaceRoot}\\.scripts\\run.ps1' -gamePath '${config:xcom.highlander.gameroot}'",
-            "problemMatcher": []
-        },
-        {
-            "label": "runUnrealEditor",
-            "type": "shell",
-            "command": "powershell.exe -file '${workspaceRoot}\\.scripts\\runUnrealEditor.ps1' -sdkPath '${config:xcom.highlander.sdkroot}'",
-            "problemMatcher": []
+            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -mod 'CovertInfiltration' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -includes 'SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime' -clean 'SquadSelectAtAnyTime' -debug",
+            "group": "build",
+            "problemMatcher": [{
+                // The problem is owned by the unrealscript language service.
+                "owner": "unrealscript",
+                // The file name for reported problems is absolute to the opened folder.
+                "fileLocation": ["absolute"],
+                // The actual pattern to match problems in the output.
+                "pattern": {
+                    "regexp": "^(.*)\\(([0-9]*)\\) : (Warning|Error), ([^\n]*)$",
+                    // The first match group matches the file name which is absolute
+                    "file": 1,
+                    // The second match group matches the line on which the problem occurred.
+                    "line": 2,
+                    // The third match group matches the problem's severity. Can be ignored. Then all problems are captured as errors.
+                    "severity": 3,
+                    // The fourth match group matches the message.
+                    "message": 4
+                }
+            }]
         }
     ]
 }
