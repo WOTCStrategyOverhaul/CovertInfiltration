@@ -134,7 +134,7 @@ function Invoke-Make([string] $makeCmd, [string] $makeFlags, [string] $sdkPath, 
 }
 
 # This doesn't work yet, but it might at some point
-Clear-Host
+#Clear-Host
 
 if (![string]::IsNullOrEmpty($cookOptionsPs))
 {
@@ -333,6 +333,7 @@ if(Test-Path "$modSrcRoot/Content")
 	$need_shader_precompile = $false;
 	
 	# Try to find a reason to precompile the shaders
+    # TODO: Deleting a content file currently does not trigger re-precompile
 	if (!(Test-Path -Path $cachedShaderCachePath))
 	{
 		$need_shader_precompile = $true;
@@ -561,6 +562,11 @@ if ($missingUncooked.Length -gt 0)
         (Get-ChildItem -Path $sdkContentPath -Filter $fileName -Recurse).FullName | Copy-Item -Destination $missingUncookedPath
     }
 }
+
+# Delete the actual game's mod's folder
+# This ensures that files that were deleted in the project will also get deleted in the deployed version
+Write-Host "Deleting existing deployed mod folder"
+Remove-Item "$gamePath/XComGame/Mods/$modNameCanonical" -Force -Recurse -WarningAction SilentlyContinue
 
 # copy all staged files to the actual game's mods folder
 Write-Host "Copying all staging files to production..."
