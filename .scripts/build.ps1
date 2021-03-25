@@ -171,6 +171,12 @@ $modNameCanonical = $mod
 # the folder below that that contains Config, Localization, Src, etc...
 $modSrcRoot = "$srcDirectory\$modNameCanonical"
 
+$buildCachePath = [io.path]::combine($srcDirectory, 'BuildCache')
+if (!(Test-Path $buildCachePath))
+{
+    New-Item -ItemType "directory" -Path $buildCachePath
+}
+
 # clean
 $stagingPath = "{0}\XComGame\Mods\{1}" -f $sdkPath, $modNameCanonical
 Write-Host "Cleaning mod project at $stagingPath...";
@@ -340,17 +346,18 @@ if(Test-Path "$modSrcRoot/Content")
 {
     Write-Host "Exists"
     $contentfiles = Get-ChildItem "$modSrcRoot/Content\*"  -Include *.upk, *.umap -Recurse -File
-	$shader_cache_path = "$gamePath/XComGame/Mods/$modNameCanonical/Content/$($modNameCanonical)_ModShaderCache.upk";
+    $shaderCacheName = "$($modNameCanonical)_ModShaderCache.upk"
+	$cachedShaderCachePath = "$buildCachePath/$($shaderCacheName)";
 	$need_shader_precompile = $false;
 	
 	# Try to find a reason to precompile the shaders
-	if (!(Test-Path -Path $shader_cache_path))
+	if (!(Test-Path -Path $cachedShaderCachePath))
 	{
 		$need_shader_precompile = $true;
 	} 
 	elseif ($contentfiles.length -gt 0)
     {
-		$shader_cache = Get-Item $shader_cache_path;
+		$shader_cache = Get-Item $cachedShaderCachePath;
 		
 		for ($i = 0; $i -lt $contentfiles.Length; $i++) 
 		{
@@ -374,10 +381,13 @@ if(Test-Path "$modSrcRoot/Content")
             throw "Failed to compile mod shader cache!"
         }
         Write-Host "Generated Shader Cache."
+
+        Copy-Item -Path "$stagingPath/Content/$shaderCacheName" -Destination $buildCachePath 
 	}
 	else
 	{
-		Write-Host "No reason to precompile shaders, skipping"
+		Write-Host "No reason to precompile shaders, using existing"
+        Copy-Item -Path $cachedShaderCachePath -Destination "$stagingPath/Content"
 	}
 }
 
