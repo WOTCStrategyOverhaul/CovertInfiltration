@@ -327,6 +327,8 @@ Write-Host "Testing $modSrcRoot/Content and ContentForCook"
 if((Test-Path "$modSrcRoot/Content") -or (Test-Path "$modSrcRoot/ContentForCook"))
 {
     Write-Host "Exists"
+
+    #TODO: Include ContentForCook here
     $contentfiles = Get-ChildItem "$modSrcRoot/Content\*"  -Include *.upk, *.umap -Recurse -File
     $shaderCacheName = "$($modNameCanonical)_ModShaderCache.upk"
 	$cachedShaderCachePath = "$buildCachePath/$($shaderCacheName)";
@@ -475,7 +477,9 @@ if ($enableAssetCooking -eq $true)
 			$package = $packagesToMakeSF[$i];
 			$defaultEngineContentNew = "$defaultEngineContentNew`n+SeekFreePackage=$package"
 		}
+
 		# Write to file
+        # TODO: Save the $defaultEngineContentOriginal to a file in BuildCache for easy restore if we crash + create a build target for it
 		$defaultEngineContentNew | Set-Content $defaultEnginePath -NoNewline;
 		
 		# Invoke cooker
@@ -490,6 +494,11 @@ if ($enableAssetCooking -eq $true)
 		#&"$sdkPath/binaries/Win64/XComGame.com" CookPackages $mapsString -platform=pcconsole -skipmaps -modcook -TFCSUFFIX="$tfcSuffix" -singlethread -unattended
 		# Powershell inserts qoutes around $mapsString which breaks UE's parser. So, we call manually
 		
+        # TODO: Parse output
+        # * "Adding [...]" lines are useful but also an enourmous spam and stay the same as long as the packages to cook and their references stay the same - remove from output (and save to a file in BuildCache?)
+        # * OnlineSubsystemSteamworks and AkAudio cannot be removed from cook and generate 4 errors when mod is built in debug - needs to be ignored
+        # * Cooker can crash and the exit code will still be 0 - need to treat as proper failure (also same for script and shader compilers)
+
 		$pinfo = New-Object System.Diagnostics.ProcessStartInfo
 		$pinfo.FileName = "$sdkPath\binaries\Win64\XComGame.com"
 		#$pinfo.RedirectStandardOutput = $true
@@ -566,8 +575,11 @@ if ($missingUncooked.Length -gt 0)
 
 # Delete the actual game's mod's folder
 # This ensures that files that were deleted in the project will also get deleted in the deployed version
-Write-Host "Deleting existing deployed mod folder"
-Remove-Item "$gamePath/XComGame/Mods/$modNameCanonical" -Force -Recurse -WarningAction SilentlyContinue
+if (Test-Path "$gamePath/XComGame/Mods/$modNameCanonical")
+{
+    Write-Host "Deleting existing deployed mod folder"
+    Remove-Item "$gamePath/XComGame/Mods/$modNameCanonical" -Force -Recurse
+}
 
 # copy all staged files to the actual game's mods folder
 Write-Host "Copying all staging files to production..."
