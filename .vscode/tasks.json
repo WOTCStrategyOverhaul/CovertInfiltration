@@ -4,7 +4,7 @@
         {
             "label": "Build release",
             "type": "shell",
-            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -mod \"CovertInfiltration\" -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -includes 'SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime' -clean 'SquadSelectAtAnyTime'",
+            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -config 'default'",
             "group": "build",
             "problemMatcher": [{
                 // The problem is owned by the unrealscript language service.
@@ -28,7 +28,7 @@
         {
             "label": "Build debug",
             "type": "shell",
-            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -mod 'CovertInfiltration' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -includes 'SquadSelectAnyTime/SquadSelectAtAnyTime/Src/SquadSelectAtAnyTime' -clean 'SquadSelectAtAnyTime' -debug",
+            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -config 'debug'",
             "group": "build",
             "problemMatcher": [{
                 // The problem is owned by the unrealscript language service.

@@ -1,4 +1,4 @@
-$enableAssetCooking = $true
+$enableAssetCooking = $false
 
 [string[]]$packagesToMakeSF = #@()
 	#"StratCovert_Plt",

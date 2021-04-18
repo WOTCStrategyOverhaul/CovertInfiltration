@@ -4,3 +4,6 @@
 [submodule "SquadSelectAnyTime"]
 	path = SquadSelectAnyTime
 	url = https://github.com/WOTCStrategyOverhaul/SquadSelectAnyTime.git
+[submodule ".scripts/X2ModBuildCommon"]
+	path = .scripts/X2ModBuildCommon
+	url = https://github.com/X2CommunityCore/X2ModBuildCommon

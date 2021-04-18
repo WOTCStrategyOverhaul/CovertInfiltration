@@ -1,0 +1,12 @@
+{
+    "missingUncooked": [
+        "CIN_TroopTransport.upk",
+        "PCP_Archetypes_XPACK.upk"
+    ],
+    "packagesToMakeSF": [
+        "UILibrary_MissionImages_CI"
+    ],
+    "umapsToCook": [
+        "Obj_SupplyExtraction_CI"
+    ]
+}
