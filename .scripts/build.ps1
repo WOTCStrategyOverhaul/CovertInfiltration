@@ -29,10 +29,9 @@ try {
     $builder.IncludeSrc("$srcDirectory\X2WOTCCommunityHighlander\X2WOTCCommunityHighlander\Src")
     $builder.IncludeSrc("$srcDirectory\X2WOTCCommunityHighlander\Components\DLC2CommunityHighlander\DLC2CommunityHighlander\Src")
 
-    $builder.IncludeSrc("$srcDirectory\SquadSelectAnyTime\SquadSelectAtAnyTime\Src\SquadSelectAtAnyTime")
+    $builder.IncludeSrc("$srcDirectory\SquadSelectAnyTime\SquadSelectAtAnyTime\Src")
     $builder.AddToClean("SquadSelectAtAnyTime")
     
-    # TODO: is ignored for some reason
     $builder.SetContentOptionsJsonPath("$srcDirectory/ContentOptions.json")
 
     $builder.AddPreMakeHook({
