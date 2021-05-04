@@ -11,9 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Config\" />
-    <Folder Include="Content\Maps" />
-    <Folder Include="Content\Maps\Missions" />
-    <Folder Include="Content\MissingUncooked" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
     <Folder Include="Localization\RUS" />
@@ -68,37 +65,6 @@
     <Content Include="Config\XComUI.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Content\GeoscapeMesh_CI.upk">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\CIN_Loading_Infiltration_CityCenter.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\CIN_Loading_Infiltration_SmallTown.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\CIN_SkyrangerIntros_Infiltration.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\Missions\Obj_CovertEscape_CI.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\Missions\Obj_Gatecrasher_CI.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\Missions\Obj_SabotageCC_CI.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\Maps\Missions\Obj_SupplyExtraction_CI.umap">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\MissingUncooked\CIN_TroopTransport.upk">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\MissingUncooked\MissionAssets_SupplyExtraction.upk">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Content\UILibrary_CovertInfiltration.upk" />
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
