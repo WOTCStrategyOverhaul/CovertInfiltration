@@ -68,6 +68,9 @@
     <Content Include="Config\XComInfiltration.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ContentOptions.json">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Localization\BetterSecondWaveSupport.int">
       <SubType>Content</SubType>
     </Content>

@@ -31,7 +31,7 @@ $builder.IncludeSrc("$srcDirectory\X2WOTCCommunityHighlander\Components\DLC2Comm
 $builder.IncludeSrc("$srcDirectory\SquadSelectAnyTime\SquadSelectAtAnyTime\Src")
 $builder.AddToClean("SquadSelectAtAnyTime")
 
-$builder.SetContentOptionsJsonPath("$srcDirectory/ContentOptions.json")
+$builder.SetContentOptionsJsonFilename("ContentOptions.json")
 
 $builder.AddPreMakeHook({
     Write-Host "Updating version and commit..."
