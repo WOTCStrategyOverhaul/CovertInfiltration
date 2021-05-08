@@ -44,6 +44,7 @@ struct ActionFlatRiskSitRep
 {
 	var name FlatRiskName;
 	var name SitRepName;
+	var bool InfiltrationOnly;
 };
 
 struct DelayedReinforcementOrder

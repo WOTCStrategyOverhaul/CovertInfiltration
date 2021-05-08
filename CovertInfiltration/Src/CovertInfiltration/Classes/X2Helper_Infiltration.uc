@@ -719,7 +719,10 @@ static function BuildFlatRisksDeck ()
 	
 	foreach default.FlatRiskSitReps(FlatRiskDef)
 	{
-		CardManager.AddCardToDeck('FlatRisks', string(FlatRiskDef.FlatRiskName));
+		if (!FlatRiskDef.InfiltrationOnly)
+		{
+			CardManager.AddCardToDeck('FlatRisks', string(FlatRiskDef.FlatRiskName));
+		}
 	}
 }
 
