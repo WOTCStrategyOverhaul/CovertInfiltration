@@ -4,7 +4,11 @@
         "PCP_Archetypes_XPACK.upk"
     ],
     "packagesToMakeSF": [
-        "UILibrary_MissionImages_CI"
+        "UILibrary_MissionImages_CI",
+        "GeoscapeMesh_CI",
+        "UILibrary_CI_Abilities",
+        "UILibrary_CI_ChainPreview",
+        "UILibrary_CovertInfiltration"
     ],
     "umapsToCook": [
         "Obj_SupplyExtraction_CI"

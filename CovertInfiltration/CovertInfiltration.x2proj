@@ -23,6 +23,9 @@
     <Folder Include="Src\ModConfigMenuAPI\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\XComContent.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComCovertInfiltration_DEFAULT.ini">
       <SubType>Content</SubType>
     </Content>
