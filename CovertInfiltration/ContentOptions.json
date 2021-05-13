@@ -5,12 +5,20 @@
     ],
     "packagesToMakeSF": [
         "UILibrary_MissionImages_CI",
-        "GeoscapeMesh_CI",
         "UILibrary_CI_Abilities",
-        "UILibrary_CI_ChainPreview",
-        "UILibrary_CovertInfiltration"
+        "CI_InventoryImages"
     ],
     "umapsToCook": [
         "Obj_SupplyExtraction_CI"
+    ],
+    "collectionMapsToCook": [
+        {
+            "name": "StrategyCollection_CI",
+            "packages": [
+                "GeoscapeMesh_CI",
+                "UILibrary_CI_ChainPreview",
+                "UILibrary_CovertInfiltration"
+            ]
+        }
     ]
 }

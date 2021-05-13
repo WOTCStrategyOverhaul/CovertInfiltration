@@ -15,7 +15,7 @@ static function X2DataTemplate CreateActionableFacilityLead ()
 
 	`CREATE_X2TEMPLATE(class'X2ItemTemplate', Template, 'ActionableFacilityLead');
 
-	Template.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Unlocked";
+	Template.strImage = "img:///CI_InventoryImages.Inv_Facility_Lead_Unlocked";
 	Template.ItemCat = 'resource';
 	Template.CanBeBuilt = false;
 	Template.HideInInventory = false;

@@ -137,7 +137,7 @@ static function PatchFacilityLeadItem ()
 	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
 	ItemTemplate = ItemTemplateManager.FindItemTemplate('FacilityLeadItem');
 
-	ItemTemplate.strImage = "img:///UILibrary_CovertInfiltration.Inv_Facility_Lead_Locked";
+	ItemTemplate.strImage = "img:///CI_InventoryImages.Inv_Facility_Lead_Locked";
 	
 	// Needed to gate the hack reward
 	// (see X2HackRewardTemplate::IsHackRewardCurrentlyPossible)
