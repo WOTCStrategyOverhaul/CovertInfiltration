@@ -788,7 +788,7 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 		{
 			i = default.FlatRiskSitReps.Find('FlatRiskName', name(Card));
 
-			if (i != INDEX_NONE)
+			if (i != INDEX_NONE && !default.FlatRiskSitReps[i].InfiltrationOnly)
 			{
 				SitRepTemplate = SitRepManager.FindSitRepTemplate(default.FlatRiskSitReps[i].SitRepName);
 
