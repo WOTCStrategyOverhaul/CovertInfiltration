@@ -748,7 +748,6 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 		BuildFlatRisksDeck();
 
 		// Select a positive sitrep
-		CardLabels.Length = 0;
 		CardManager.GetAllCardsInDeck('OverInfiltrationBonuses', CardLabels);
 
 		foreach CardLabels(Card)
@@ -783,6 +782,7 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 		}
 
 		// Select a negative sitrep. Do this after positive sitreps, since there are more risks and some are not compatible
+		CardLabels.Length = 0;
 		CardManager.GetAllCardsInDeck('FlatRisks', CardLabels);
 		foreach CardLabels(Card)
 		{
