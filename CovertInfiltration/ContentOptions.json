@@ -3,15 +3,15 @@
         "CIN_TroopTransport.upk",
         "PCP_Archetypes_XPACK.upk"
     ],
-    "packagesToMakeSF": [
+    "sfStandalone": [
         "UILibrary_MissionImages_CI",
         "UILibrary_CI_Abilities",
         "CI_InventoryImages"
     ],
-    "umapsToCook": [
+    "sfMaps": [
         "Obj_SupplyExtraction_CI"
     ],
-    "collectionMapsToCook": [
+    "sfCollectionMaps": [
         {
             "name": "StrategyCollection_CI",
             "packages": [
