@@ -1821,6 +1821,11 @@ exec function CI_GivePendingTrait (Name TraitTemplateName)
 	`TACTICALRULES.SubmitGameState(NewGameState);
 }
 
+exec function CI_TestWaterworldAchievements ()
+{
+	class'X2AchievementTracker'.static.FinalMissionOnSuccess();
+}
+
 ///////////////
 /// Helpers ///
 ///////////////
