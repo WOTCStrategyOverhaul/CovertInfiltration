@@ -1134,18 +1134,18 @@ static protected function PreCompleteStrategyFromTacticalTransfer_ForceRevealCou
 	`SubmitGameState(NewGameState);
 }
 
-static protected function EventListenerReturn HasIncreasedSquadSize (Object EventData, Object EventSource, XComGameState NullGameState, Name Event, Object CallbackData)
+static protected function EventListenerReturn HasIncreasedSquadSize (Object EventData, Object EventSource, XComGameState NullGameState, Name EventID, Object CallbackData)
 {
 	local XComGameState_HeadquartersXCom XComHQ;
-	local LWTuple Tuple;
+	local XComLWTuple Tuple;
 
-	Tuple = LWTuple(EventData);
-	
-	if (Tuple != none)
-	{
-		XComHQ = `XCOMHQ;
-		Tuple.Data[0].b = XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') || XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2');
-	}
+	Tuple = XComLWTuple(EventData);
+
+	if (Tuple == none || Tuple.Id != 'HasIncreasedSquadSize') return ELR_NoInterrupt;
+
+	XComHQ = `XCOMHQ;
+
+	Tuple.Data[0].b = XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') || XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2');
 
 	return ELR_NoInterrupt;
 }
