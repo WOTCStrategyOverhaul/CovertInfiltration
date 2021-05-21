@@ -577,6 +577,7 @@ class BuildProject {
 
 			if ($null -eq (Get-ChildItem -Path $stagingContentForCook -Filter $mapDef.name -Recurse)) {
 				# Important: we cannot use .umap extension here - git lfs (if in use) gets confused during git subtree add
+				# See https://github.com/X2CommunityCore/X2ModBuildCommon/wiki/Do-not-use-.umap-for-files-in-this-repo
 				Copy-Item "$global:buildCommonSelfPath\EmptyUMap" "$stagingContentForCook\$($mapDef.name).umap"
 			}
 		}
