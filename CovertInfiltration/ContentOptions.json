@@ -1,0 +1,24 @@
+{
+    "missingUncooked": [
+        "CIN_TroopTransport.upk",
+        "PCP_Archetypes_XPACK.upk"
+    ],
+    "sfStandalone": [
+        "UILibrary_MissionImages_CI",
+        "UILibrary_CI_Abilities",
+        "CI_InventoryImages"
+    ],
+    "sfMaps": [
+        "Obj_SupplyExtraction_CI"
+    ],
+    "sfCollectionMaps": [
+        {
+            "name": "StrategyCollection_CI",
+            "packages": [
+                "GeoscapeMesh_CI",
+                "UILibrary_CI_ChainPreview",
+                "UILibrary_CovertInfiltration"
+            ]
+        }
+    ]
+}
