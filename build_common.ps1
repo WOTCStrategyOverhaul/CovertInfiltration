@@ -776,21 +776,25 @@ class BuildProject {
 		Write-Host "Copying Texture File Caches..."
 		Robocopy.exe "$cookedpcconsoledir" "$($this.modcookdir)" *.tfc /NJH /XC /XN /XO
 		Write-Host "Copied Texture File Caches."
-
-		# Cook it!
-		# The CookPackages commandlet generally is super unhelpful. The output is basically always the same and errors
-		# don't occur -- it rather just crashes the game. Hence, we just pipe the output to $null
-		Write-Host "Invoking CookPackages (this may take a while)"
+		
+		# Prepare editor args
 		$cook_args = @("cookpackages", "-platform=pcconsole", "-quickanddirty", "-modcook", "-sha", "-multilanguagecook=INT+FRA+ITA+DEU+RUS+POL+KOR+ESN", "-singlethread", "-nopause")
 		if ($this.final_release -eq $true)
 		{
 			$cook_args += "-final_release"
 		}
 		
+		# The CookPackages commandlet generally is super unhelpful. The output is basically always the same and errors
+		# don't occur -- it rather just crashes the game. Hence, we just buffer the output and present it to user only
+		# if something went wrong
+
 		# TODO: Filter more lines for HL cook? `Hashing`? `SHA: package not found`? `Couldn't find localized resource`?
 		# `Warning, Texture file cache waste exceeds`? `Warning, Package _ is not conformed`?
 		$handler = [BufferingReceiver]::new()
 		$handler.processDescr = "cooking native packages"
+
+		# Cook it!
+		Write-Host "Invoking CookPackages (this may take a while)"
 		$this._InvokeEditorCmdlet($handler, $cook_args, 10)
 
 		Write-Host "Cooked native script packages."
