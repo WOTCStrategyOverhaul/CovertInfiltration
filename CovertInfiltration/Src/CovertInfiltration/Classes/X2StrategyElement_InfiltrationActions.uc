@@ -18,7 +18,6 @@ static function array<X2DataTemplate> CreateTemplates()
 	CovertActions.AddItem(CreateUtilityItemsTemplate());
 	CovertActions.AddItem(CreateExperimentalItemTemplate());
 	CovertActions.AddItem(CreateExhaustiveTrainingTemplate());
-	CovertActions.AddItem(CreateTechnologyRushTemplate());
 	CovertActions.AddItem(CreatePatrolWildernessTemplate());
 	CovertActions.AddItem(CreateBlackMarketTemplate());
 	
@@ -120,33 +119,6 @@ static function X2DataTemplate CreateExhaustiveTrainingTemplate()
 	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
 
 	Template.Rewards.AddItem('Reward_Promotions');
-
-	return Template;
-}
-
-static function X2DataTemplate CreateTechnologyRushTemplate()
-{
-	local X2CovertActionTemplate Template;
-
-	`CREATE_X2TEMPLATE(class'X2CovertActionTemplate', Template, 'CovertAction_TechRush');
-
-	Template.ChooseLocationFn = class'X2StrategyElement_DefaultCovertActions'.static.ChooseRandomRegion;
-	Template.OverworldMeshPath = "UI_3D.Overwold_Final.CovertAction";
-	Template.bMultiplesAllowed = true;
-	Template.bUseRewardImage = true;
-	Template.bCanNeverBeRookie = true;
-
-	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Skirmishers');
-	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Reapers');
-	Template.Narratives.AddItem('CovertActionNarrative_BreakthroughTech_Templars');
-
-	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultSoldierSlot('CovertActionSoldierStaffSlot'));
-	Template.Slots.AddItem(CreateDefaultStaffSlot('CovertActionScientistStaffSlot'));
-	Template.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot('CovertActionSoldierStaffSlot', , , true));
-
-	Template.Risks.AddItem('CovertActionRisk_SoldierWounded');
-
-	Template.Rewards.AddItem('Reward_TechInspire');
 
 	return Template;
 }

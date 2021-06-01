@@ -309,12 +309,6 @@ ActionName="Обмен опытом"
 ActionPreNarrative="Моими последователями могут быть только те, кто обладает сильной волей, выплавленной под моей рукой. Ваши солдаты могли бы извлечь выгоду из такой подготовки... при условии, что они достойны."
 ActionPostNarrative="Оказалось, что ваши кандидаты обладают сильным характером. Если бы они не были нужны где-то еще, я бы уже ввел их в свои ряды."
 
-[CovertAction_TechRush X2CovertActionTemplate]
-ActionObjective="Ускорение исследования"
-
-[Reward_TechInspire X2RewardTemplate]
-DisplayName="Исследование ускорено"
-
 [CovertAction_AlienCorpses X2CovertActionTemplate]
 ActionObjective="Добыть трупы инопланетян"
 

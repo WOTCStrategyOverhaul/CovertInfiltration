@@ -75,7 +75,6 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('CovertAction_PreventGiveRewards', PreventActionRewards, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertAction_RemoveEntity_ShouldEmptySlots', ShouldEmptySlotsOnActionRemoval, ELD_Immediate, 99);
 	Template.AddCHEvent('ShouldCleanupCovertAction', ShouldCleanupCovertAction, ELD_Immediate, 99);
-	Template.AddCHEvent('ResearchCompleted', CheckTechRushCovertActions, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('SitRepCheckAdditionalRequirements', SitRepCheckAdditionalRequirements, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertActionAllowCheckForProjectOverlap', CovertActionAllowCheckForProjectOverlap, ELD_Immediate, 99);
 	Template.AddCHEvent('CovertAction_AllowResActivityRecord', CovertAction_AllowResActivityRecord, ELD_Immediate, 99);
@@ -294,57 +293,6 @@ static protected function EventListenerReturn ShouldCleanupCovertAction(Object E
 		{
 			Tuple.Data[1].b = false;
 		}
-	}
-
-	return ELR_NoInterrupt;
-}
-
-static protected function EventListenerReturn CheckTechRushCovertActions(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local XComGameState NewGameState;
-	local XComGameStateHistory History;
-	local XComGameState_CovertInfiltrationInfo CIInfo;
-	local XComGameState_Tech TechState, AttachedTech;
-	local XComGameState_CovertAction ActionState;
-	local StateObjectReference RewardRef;
-	local XComGameState_Reward RewardState;
-	local bool RemovedAction;
-
-	RemovedAction = false;
-	History = `XCOMHISTORY;
-	TechState = XComGameState_Tech(EventData);
-
-	if(TechState == none) return ELR_NoInterrupt;
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Clear TechRush Covert Actions");
-	CIInfo = class'XComGameState_CovertInfiltrationInfo'.static.ChangeForGamestate(NewGameState);
-	
-	foreach History.IterateByClassType(class'XComGameState_CovertAction', ActionState)
-	{
-		if (ActionState.bCompleted == false && ActionState.GetMyTemplateName() == 'CovertAction_TechRush')
-		{
-			foreach ActionState.RewardRefs(RewardRef)
-			{
-				RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
-				AttachedTech = XComGameState_Tech(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-
-				if (AttachedTech == TechState)
-				{
-					`CI_Trace("Flagged " $ ActionState.GetMyTemplateName $ " for removal on next update");
-					CIInfo.CovertActionsToRemove.AddItem(ActionState.GetReference());
-					RemovedAction = true;
-				}
-			}
-		}
-	}
-
-	if (RemovedAction)
-	{
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		History.CleanupPendingGameState(NewGameState);
 	}
 
 	return ELR_NoInterrupt;
