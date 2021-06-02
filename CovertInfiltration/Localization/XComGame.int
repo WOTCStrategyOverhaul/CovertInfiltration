@@ -309,12 +309,6 @@ ActionName="Inter-Resistance Exercises"
 ActionPreNarrative="My followers can only be those of strong will, molded by my hand to become true Templars. Your soldiers could benefit from such conditioning... provided they are worthy."
 ActionPostNarrative="Your candidates were found to be of strong character. If they were not needed elsewhere, I would have already inducted them into my following."
 
-[CovertAction_TechRush X2CovertActionTemplate]
-ActionObjective="Accelerate Research"
-
-[Reward_TechInspire X2RewardTemplate]
-DisplayName="Rush Research"
-
 [CovertAction_AlienCorpses X2CovertActionTemplate]
 ActionObjective="Recover Alien Corpses"
 
