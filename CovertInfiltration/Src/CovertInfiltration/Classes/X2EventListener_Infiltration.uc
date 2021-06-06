@@ -1578,19 +1578,31 @@ static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object
 	local XComGameState_BattleData BattleDataState;
 	local XComGameState_Unit UnitState;
 	local XComGameState NewGameState;
+	local string strDebugUnit;
+
+	// Get the unit as it was at the frame that event was triggered.
+	// EventSource is the latest and we could've have more frames since.
+	UnitState = XComGameState_Unit(EventSource);
+	UnitState = XComGameState_Unit(EventGameState.GetGameStateForObjectID(UnitState.ObjectID));
+
+	if (UnitState == none)
+	{
+		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) $ ": failed to fetch UnitState???");
+		return ELR_NoInterrupt;
+	}
 
 	// We need the version of the unit before the play begun - we care how the unit was
-	// sent into tactical, bypassing any begin play logic
-	UnitState = XComGameState_Unit(EventSource);
-	UnitState = XComGameState_Unit(UnitState.GetPreviousVersion());
-
+	// sent into tactical, bypassing any begin play logic.
 	// If there is no previous version, then the unit was created mid-tactical - don't care
+	UnitState = XComGameState_Unit(UnitState.GetPreviousVersion());
 	if (UnitState == none) return ELR_NoInterrupt;
+
+	strDebugUnit = UnitState.ObjectID @ "\"" $ UnitState.GetFullName() $ "\"";
 
 	// For future debugging, if any
 	if (UnitState.IsInPlay())
 	{
-		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "previous state is in play. Not fatal, but likely incorrect");
+		`RedScreen(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ strDebugUnit @ "previous state is in play. Not fatal, but likely incorrect");
 	}
 
 	if (!UnitState.UsesWillSystem())
@@ -1607,13 +1619,13 @@ static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object
 		BattleDataState.DirectTransferInfo.TransferredUnitStats.Find('UnitStateRef', UnitState.GetReference()) != INDEX_NONE
 	)
 	{
-		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "was transferred from tactical, skipping");
+		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ strDebugUnit @ "was transferred from tactical, skipping");
 		return ELR_NoInterrupt;
 	}
 
 	if (!UnitState.BelowReadyWillState())
 	{
-		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "is not tired, skipping");
+		`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ strDebugUnit @ "is not tired, skipping");
 		return ELR_NoInterrupt;
 	}
 
@@ -1622,7 +1634,7 @@ static protected function EventListenerReturn OnUnitBeginPlay_CheckTired (Object
 	CIInfo.UnitsStartedMissionBelowReadyWill.AddItem(UnitState.GetReference());
 	`SubmitGameState(NewGameState);
 
-	`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ UnitState.ObjectID @ "recorded as below ready will");
+	`CI_Trace(nameof(OnUnitBeginPlay_CheckTired) $ ": unit" @ strDebugUnit @ "recorded as below ready will");
 
 	return ELR_NoInterrupt;
 }
