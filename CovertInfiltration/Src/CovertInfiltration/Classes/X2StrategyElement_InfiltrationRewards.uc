@@ -135,7 +135,7 @@ static function X2DataTemplate CreateSmallIntelRewardTemplate()
 
 static function GenerateSmallIntelReward(XComGameState_Reward RewardState, XComGameState NewGameState, optional float RewardScalar = 1.0, optional StateObjectReference RegionRef)
 {
-	RewardState.Quantity = GetSmallIntelReward();
+	RewardState.Quantity = Round(float(GetSmallIntelReward()) * RewardScalar);
 }
 
 static function int GetSmallIntelReward()
