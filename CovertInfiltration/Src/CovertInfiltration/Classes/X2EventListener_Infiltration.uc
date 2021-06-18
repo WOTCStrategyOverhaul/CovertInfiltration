@@ -89,6 +89,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	Template.AddCHEvent('LowSoldiersCovertAction', PreventLowSoldiersCovertActionNag, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('OverrideAddChosenTacticalTagsToMission', OverrideAddChosenTacticalTagsToMission, ELD_Immediate, 99);
 	Template.AddCHEvent('PreCompleteStrategyFromTacticalTransfer', PreCompleteStrategyFromTacticalTransfer, ELD_Immediate, 99);
+	Template.AddCHEvent('AllowNoSquadSizeUpgradeAchievement', AllowNoSquadSizeUpgradeAchievement, ELD_Immediate, 99);
 	Template.AddCHEvent('BlackMarketGoodsReset', BlackMarketGoodsReset, ELD_Immediate, 99);
 	Template.AddCHEvent('BlackMarketPurchase', BlackMarketPurchase_OSS, ELD_OnStateSubmitted, 99);
 	Template.AddCHEvent('AddResource', AddResource_OSS, ELD_OnStateSubmitted, 99);
@@ -1131,6 +1132,22 @@ static protected function PreCompleteStrategyFromTacticalTransfer_ForceRevealCou
 	DarkEventState.bSecretEvent = false;
 
 	`SubmitGameState(NewGameState);
+}
+
+static protected function EventListenerReturn AllowNoSquadSizeUpgradeAchievement (Object EventData, Object EventSource, XComGameState NullGameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComLWTuple Tuple;
+
+	Tuple = XComLWTuple(EventData);
+
+	if (Tuple == none || Tuple.Id != 'AllowNoSquadSizeUpgradeAchievement') return ELR_NoInterrupt;
+
+	XComHQ = `XCOMHQ;
+
+	Tuple.Data[0].b = !(XComHQ.HasSoldierUnlockTemplate('InfiltrationSize1') || XComHQ.HasSoldierUnlockTemplate('InfiltrationSize2'));
+
+	return ELR_NoInterrupt;
 }
 
 static protected function EventListenerReturn BlackMarketGoodsReset (Object EventData, Object EventSource, XComGameState NewGameState, Name Event, Object CallbackData)
