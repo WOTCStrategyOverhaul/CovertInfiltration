@@ -243,6 +243,9 @@ static function StateObjectReference ChooseExtraSoldierFaction (XComGameState_Ac
 
 static function bool IsExtraSoldierChainAvailable (XComGameState NewGameState)
 {
+	// Only 1 at a time, else we can spawn one while the previous is still in progress, thus violating the count rules
+	if (DoesActiveChainExist('ActivityChain_JailbreakFactionSoldier', NewGameState)) return false;
+
 	return FindFactionForExtraSoldier(NewGameState).ObjectID > 0;
 }
 
@@ -427,7 +430,7 @@ static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 
 	// Do not spawn the chain if there is no place for it
 	// Eg. due to ongoing chains
-	if (FacilityChainAlreadyExists()) return false;
+	if (DoesActiveChainExist('ActivityChain_DestroyFacility', NewGameState)) return false;
 
 	// Check if we reached the relevant part of the game
 	if (!class'X2Helper_Infiltration'.static.IsLeadsSystemEngaged()) return false;
@@ -444,21 +447,6 @@ static function bool IsFacilityChainAvailable (XComGameState NewGameState)
 	}
 
 	return TotalFacilityDoom >= default.FacilityChainMinGlobalFacilityDoom;
-}
-
-static function bool FacilityChainAlreadyExists ()
-{
-	local XComGameState_ActivityChain ChainState;
-
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
-	{
-		if (ChainState.GetMyTemplateName() == 'ActivityChain_DestroyFacility' && ChainState.bEnded == false)
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 static function X2DataTemplate CreateIntelInterceptionTemplate()
@@ -677,4 +665,39 @@ static function string GetDarkEventObjective (XComGameState_ActivityChain ChainS
 	kTag.StrValue0 = ChainState.GetChainDarkEvent().GetDisplayName();
 
 	return `XEXPAND.ExpandString(ChainState.GetMyTemplate().strObjective);
+}
+
+///////////////
+/// Helpers ///
+///////////////
+
+static function bool DoesActiveChainExist (name TemplateName, optional XComGameState NewGameState = none)
+{
+	local XComGameState_ActivityChain ChainState;
+	local array<int> SeenObjectIDs;
+
+	if (NewGameState != none)
+	{
+		foreach NewGameState.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
+		{
+			if (ChainState.GetMyTemplateName() == TemplateName && !ChainState.bEnded)
+			{
+				return true;
+			}
+
+			SeenObjectIDs.AddItem(ChainState.ObjectID);
+		}
+	}
+
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_ActivityChain', ChainState)
+	{
+		if (SeenObjectIDs.Find(ChainState.ObjectID) != INDEX_NONE) continue;
+
+		if (ChainState.GetMyTemplateName() == TemplateName && !ChainState.bEnded)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
