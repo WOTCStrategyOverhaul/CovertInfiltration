@@ -26,7 +26,7 @@ struct CharacterGroupKillCount
 var int ModVersion;
 var int StrategyModVersion;
 
-const CURRENT_MOD_VERSION = 00300004;
+const CURRENT_MOD_VERSION = 00400001; // Since we don't support suffixes, represent 1.0 RC1 as "beta 4.1" (there was/is no beta 4)
 
 /////////////////////
 /// Strategy vars ///
