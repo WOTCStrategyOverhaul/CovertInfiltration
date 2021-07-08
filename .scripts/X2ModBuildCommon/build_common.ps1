@@ -797,7 +797,7 @@ class ModAssetsCookStep {
 	}
 
 	[void] Execute() {
-		if (($this.project.contentOptions.sfStandalone.Length -lt 1) -and ($this.project.contentOptions.sfMaps.Length -lt 1)) {
+		if (($this.project.contentOptions.sfStandalone.Length -lt 1) -and ($this.project.contentOptions.sfMaps.Length -lt 1) -and ($this.project.contentOptions.sfCollectionMaps.Length -lt 1)) {
 			Write-Host "No asset cooking is requested, skipping"
 			return
 		}
