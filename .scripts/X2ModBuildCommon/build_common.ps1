@@ -967,9 +967,6 @@ class ModAssetsCookStep {
 		$lines += "!NetNativePackages=Empty"
 		$lines += "!NativePackages=Empty"
 		
-		$lines += "[Engine.StartupPackages]"
-		$lines += "!Package=Empty"
-		
 		$lines += "[Engine.PackagesToAlwaysCook]"
 		$lines += "!SeekFreePackage=Empty"
 
@@ -982,6 +979,10 @@ class ModAssetsCookStep {
 
 	[string] _BuildEngineIniAdditionsNormalPass () {
 		$lines = @()
+
+		# Don't re-cook the startup (cooker doesn't cache it)
+		$lines += "[Engine.StartupPackages]"
+		$lines += "!Package=Empty"
 
 		# SF Standalone packages
 		$lines += "[Engine.PackagesToAlwaysCook]"
