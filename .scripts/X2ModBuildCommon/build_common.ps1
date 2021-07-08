@@ -789,6 +789,9 @@ class ModAssetsCookStep {
 	[string] $editorArgsFirstPass
 	[string] $editorArgsNormalPass
 
+	# Doesn't include the editor-only packages and the missing ones (e.g. PSN subsystem)
+	[string[]] $cookedNativeScriptPackages = @("XComGame", "Core", "Engine", "GFxUI", "AkAudio", "GameFramework", "IpDrv", "OnlineSubsystemSteamworks")
+
 	ModAssetsCookStep ([BuildProject] $project) {
 		$this.project = $project
 	}
@@ -834,8 +837,11 @@ class ModAssetsCookStep {
 		$this.sdkEngineIniPath = "$($this.project.sdkPath)/XComGame/Config/DefaultEngine.ini"
 		$this.sdkEngineIniContentOriginal = Get-Content $this.sdkEngineIniPath | Out-String
 
-		# TODO: native script packages + startup
 		$this.filesRequiredToSkipFirstPass = @("GlobalPersistentCookerData.upk", "gfxCommon_SF.upk")
+		foreach ($package in $this.cookedNativeScriptPackages) {
+			$this.filesRequiredToSkipFirstPass += "$package.upk"
+			$this.filesRequiredToSkipFirstPass += "$package.upk.uncompressed_size"
+		}
 	
 		$this.cookedMaps = $this.project.contentOptions.sfMaps
 		foreach ($mapDef in $this.project.contentOptions.sfCollectionMaps) {
@@ -867,8 +873,7 @@ class ModAssetsCookStep {
 		}
 		else {
 			# Figure out which packages we need
-			$permitMissing = @("OnlineSubsystemPC", "OnlineSubsystemLive", "OnlineSubsystemPSN")
-			$required = @($global:nativescriptpackages | Where-Object {$_ -notin $permitMissing})
+			$required = $this.cookedNativeScriptPackages
 			
 			# Make sure we have all of them ready for use
 			$missing = @()
@@ -959,23 +964,13 @@ class ModAssetsCookStep {
 		# Redirect to cached release script packages to support debug builds
 		$lines += "ScriptPaths=$($this.cachedReleaseScriptPackagesDir)"
 
-		# Remove various default always seek free packages
+		# Remove default seek free packages
 		# This will trump the rest of file content as it's all the way at the bottom
-
-		$lines += "[Engine.ScriptPackages]"
-		$lines += "!EngineNativePackages=Empty"
-		$lines += "!NetNativePackages=Empty"
-		$lines += "!NativePackages=Empty"
-		
 		$lines += "[Engine.PackagesToAlwaysCook]"
 		$lines += "!SeekFreePackage=Empty"
 
 		return $lines -join "`n"
 	}
-
-	# TODO
-	# [string] _BuildEngineIniAdditionsFirstPass () {
-	# }
 
 	[string] _BuildEngineIniAdditionsNormalPass () {
 		$lines = @()
@@ -1047,6 +1042,9 @@ class ModAssetsCookStep {
 				# Now delete the polluted TFCs
 				Get-ChildItem -Path $this.cachedCookerOutputPath -Filter "*$($this.tfcSuffix).tfc" | Remove-Item
 
+				# And make sure scripts are never cooked again
+				$this._SetTimestampOnCookedScript()
+
 				Write-Host "First time cook done, proceeding with normal"
 			}
 
@@ -1105,6 +1103,24 @@ class ModAssetsCookStep {
 		# Even a sleep of 1 ms causes a noticable delay between cooker being done (files created)
 		# and output completing. So, just spin
 		$this.project._InvokeEditorCmdlet($handler, $editorArguments, 0)
+	}
+
+	[void] _SetTimestampOnCookedScript () {
+		$newTimestamp = (Get-Date).AddYears(30)
+		$files = @()
+
+		foreach ($package in $this.cookedNativeScriptPackages) {
+			$files += "$package.upk"
+			$files += "$package.upk.uncompressed_size"
+		}
+		
+		foreach ($file in $files) {
+			$path = [io.path]::Combine($this.cachedCookerOutputPath, $file)
+
+			if (Test-Path $path) {
+				(Get-Item $path).LastWriteTime = $newTimestamp
+			}
+		}
 	}
 
 	[void] _StageArtifacts () {
