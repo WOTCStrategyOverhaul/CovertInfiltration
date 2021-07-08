@@ -1050,13 +1050,16 @@ static function BarracksStatusReport GetBarracksStatusReport()
 		{
 			CurrentBarracksStatus.Wounded++;
 		}
-		else if (Soldier.GetMentalState() == eMentalState_Tired)
-		{
-			CurrentBarracksStatus.Tired++;
-		}
 		else if (Soldier.CanGoOnMission())
 		{
-			CurrentBarracksStatus.Ready++;
+            if (Soldier.GetMentalState() == eMentalState_Tired)
+            {
+                CurrentBarracksStatus.Tired++;
+            }
+            else
+            {
+                CurrentBarracksStatus.Ready++;
+            }
 		}
 		else
 		{
