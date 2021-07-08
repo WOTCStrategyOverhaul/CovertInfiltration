@@ -773,6 +773,8 @@ class ModAssetsCookStep {
 	[string] $cookerOutputPath
 	[string] $cachedCookerOutputPath
 
+	[string] $cachedReleaseScriptPackagesDir
+
 	[string] $sdkEngineIniPath
 	[string] $sdkEngineIniContentOriginal
 	[string] $sdkEngineIniChangesPreamble = "HACKS FOR MOD ASSETS COOKING"
@@ -804,6 +806,7 @@ class ModAssetsCookStep {
 		
 		Write-Host "Preparing assets cooking"
 
+		$this._PrepareReleaseScriptPackages()
 		$this._PrepareProjectCache()
 		$this._PrepareSdkEngineIni()
 		$this._PrepareSdkFolders()
@@ -826,6 +829,8 @@ class ModAssetsCookStep {
 		$this.contentForCookPath = "$($this.project.modSrcRoot)\ContentForCook"
 		$this.collectionMapsPath = [io.path]::combine($this.project.buildCachePath, 'CollectionMaps')
 		
+		$this.cachedReleaseScriptPackagesDir = [io.path]::combine($this.project.buildCachePath, 'ReleaseScriptPackages')
+
 		$this.sdkEngineIniPath = "$($this.project.sdkPath)/XComGame/Config/DefaultEngine.ini"
 		$this.sdkEngineIniContentOriginal = Get-Content $this.sdkEngineIniPath | Out-String
 
@@ -847,6 +852,42 @@ class ModAssetsCookStep {
 		if ($this.sdkEngineIniContentOriginal.Contains($this.sdkEngineIniChangesPreamble))
 		{
 			ThrowFailure "Another cook is already in progress (DefaultEngine.ini)"
+		}
+	}
+
+	[void] _PrepareReleaseScriptPackages () {
+		if (!(Test-Path $this.cachedReleaseScriptPackagesDir))
+		{
+			New-Item -ItemType "directory" -Path $this.cachedReleaseScriptPackagesDir
+		}
+
+		if (!$this.project.debug) {
+			# Store the release packages for next potential debug builds
+			Robocopy.exe "$($this.project.sdkPath)\XComGame\Script" $this.cachedReleaseScriptPackagesDir *.* $global:def_robocopy_args
+		}
+		else {
+			# Figure out which packages we need
+			$permitMissing = @("OnlineSubsystemPC", "OnlineSubsystemLive", "OnlineSubsystemPSN")
+			$required = @($global:nativescriptpackages | Where-Object {$_ -notin $permitMissing})
+			
+			# Make sure we have all of them ready for use
+			$missing = @()
+
+			foreach ($package in $required) {
+				 if (!(Test-Path "$($this.cachedReleaseScriptPackagesDir)\$package.u")) {
+					 $missing += $package
+				 }
+			}
+
+			if ($missing.Length -gt 0) {
+				Write-Host "Missing cached release script packages: $missing"
+				ThrowFailure "Missing cached release script packages - cannot cook assets. Please build the mod in release (aka default) once to cache them"
+			}
+
+			Write-Host ""
+			Write-Host "Using cached release script packages"
+			Write-Host "If you've made changes to (or added) classes which are referenced by assets, please rebuild the mod in release (aka default) once to cache them"
+			Write-Host ""
 		}
 	}
 
@@ -894,10 +935,11 @@ class ModAssetsCookStep {
 	}
 
 	[void] _PrepareSdkEngineIni() {
-		$additionsShared = $this._BuildEngineIniAdditionsShared()
+		$original = $this.sdkEngineIniContentOriginal + "`n"
+		$additionsShared = $this._BuildEngineIniAdditionsShared() + "`n"
 
-		$this.sdkEngineIniContentNewFirstPass = $this.sdkEngineIniContentOriginal + $additionsShared
-		$this.sdkEngineIniContentNewNormalPass = $this.sdkEngineIniContentOriginal + $additionsShared + $this._BuildEngineIniAdditionsNormalPass()
+		$this.sdkEngineIniContentNewFirstPass = $original + $additionsShared
+		$this.sdkEngineIniContentNewNormalPass = $original + $additionsShared + $this._BuildEngineIniAdditionsNormalPass()
 
 		# Backup the DefaultEngine.ini
 		Copy-Item $this.sdkEngineIniPath "$($this.sdkEngineIniPath).bak_PRE_ASSET_COOKING"
@@ -913,6 +955,9 @@ class ModAssetsCookStep {
 		$lines += "[Core.System]"
 		$lines += "+Paths=$($this.contentForCookPath)"
 		$lines += "+Paths=$($this.collectionMapsPath)"
+
+		# Redirect to cached release script packages to support debug builds
+		$lines += "ScriptPaths=$($this.cachedReleaseScriptPackagesDir)"
 
 		# Remove various default always seek free packages
 		# This will trump the rest of file content as it's all the way at the bottom
