@@ -1052,14 +1052,14 @@ static function BarracksStatusReport GetBarracksStatusReport()
 		}
 		else if (Soldier.CanGoOnMission())
 		{
-            if (Soldier.GetMentalState() == eMentalState_Tired)
-            {
-                CurrentBarracksStatus.Tired++;
-            }
-            else
-            {
-                CurrentBarracksStatus.Ready++;
-            }
+			if (Soldier.GetMentalState() == eMentalState_Tired)
+			{
+				CurrentBarracksStatus.Tired++;
+			}
+			else
+			{
+				CurrentBarracksStatus.Ready++;
+			}
 		}
 		else
 		{
