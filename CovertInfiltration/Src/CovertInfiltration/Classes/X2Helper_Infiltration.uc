@@ -1038,7 +1038,11 @@ static function BarracksStatusReport GetBarracksStatusReport()
 
 	foreach Soldiers(Soldier)
 	{
-		if (Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
+		if (Soldier.bCaptured)
+		{
+			continue;
+		}
+		else if (Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
 			CurrentBarracksStatus.Infiltrating++;
 		}
@@ -1050,13 +1054,16 @@ static function BarracksStatusReport GetBarracksStatusReport()
 		{
 			CurrentBarracksStatus.Wounded++;
 		}
-		else if (Soldier.GetMentalState() == eMentalState_Tired)
-		{
-			CurrentBarracksStatus.Tired++;
-		}
 		else if (Soldier.CanGoOnMission())
 		{
-			CurrentBarracksStatus.Ready++;
+			if (Soldier.GetMentalState() == eMentalState_Tired)
+			{
+				CurrentBarracksStatus.Tired++;
+			}
+			else
+			{
+				CurrentBarracksStatus.Ready++;
+			}
 		}
 		else
 		{
