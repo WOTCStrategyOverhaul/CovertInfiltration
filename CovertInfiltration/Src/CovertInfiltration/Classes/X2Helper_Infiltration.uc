@@ -1038,7 +1038,11 @@ static function BarracksStatusReport GetBarracksStatusReport()
 
 	foreach Soldiers(Soldier)
 	{
-		if (Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
+		if (Soldier.bCaptured)
+		{
+			continue;
+		}
+		else if (Soldier.GetStaffSlot() != none && Soldier.GetStaffSlot().GetMyTemplateName() == 'InfiltrationStaffSlot')
 		{
 			CurrentBarracksStatus.Infiltrating++;
 		}
@@ -1049,10 +1053,6 @@ static function BarracksStatusReport GetBarracksStatusReport()
 		else if (Soldier.IsInjured())
 		{
 			CurrentBarracksStatus.Wounded++;
-		}
-		else if (Soldier.bCaptured)
-		{
-			continue;
 		}
 		else if (Soldier.CanGoOnMission())
 		{
