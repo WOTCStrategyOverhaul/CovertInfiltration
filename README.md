@@ -297,7 +297,7 @@ Assuming the file is named `ContentOptions.json`:
 $builder.SetContentOptionsJsonFilename("ContentOptions.json")
 ```
 
-Two options are avaliable: `missingUncooked` and `sfCollectionMaps`. Omitting an option (or the file entirely)
+Four options are available: `missingUncooked`, `sfStandalone`, `sfMaps`, `sfCollectionMaps`. Omitting an option (or the file entirely)
 is treated the same as setting it to an empty array
 
 ### Including missing uncooked
@@ -318,8 +318,8 @@ Example from Covert Infiltration:
 
 ### Asset cooking
 
-The other option is for the mod assets cooking. Because it is such a complex process, the package and map configuration is
-described in a separate file. See [Asset Cooking](https://github.com/X2CommunityCore/X2ModBuildCommon/wiki/Asset-cooking-(v1.2.0)) for details.
+The rest of the options are for the mod assets cooking. Because it is such a complex process, the package and map configuration is
+described in a separate file. See [Asset Cooking](https://github.com/X2CommunityCore/X2ModBuildCommon/wiki/Asset-cooking) for details.
 
 # Additional features
 
