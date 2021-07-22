@@ -575,6 +575,8 @@ static event OnPreMission (XComGameState StartGameState, XComGameState_MissionSi
 	TryEnlistChainStateIntoTactical(StartGameState, MissionState);
 	EnlistHQInventoryStatesToEnlistIntoTactical(StartGameState);
 	class'XComGameState_CovertInfiltrationInfo'.static.ResetPreMission(StartGameState);
+
+	OnPreMission_Activity(StartGameState, MissionState);
 }
 
 // Small explanation: the strategy states are archived before the tactical start state and are normally inaccesible in tactical.
@@ -656,6 +658,27 @@ static protected function EnlistHQInventoryStatesToEnlistIntoTactical (XComGameS
 		 {
 			StartGameState.ModifyStateObject(class'XComGameState_Item', ItemRef.ObjectID);
 		 }
+	}
+}
+
+static protected function OnPreMission_Activity (XComGameState StartGameState, XComGameState_MissionSite MissionState)
+{
+	local X2ActivityTemplate_Mission MissionActivityTemplate;
+	local XComGameState_Activity ActivityState;
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObject(MissionState);
+	if (ActivityState == none) return;
+
+	MissionActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (MissionActivityTemplate == none)
+	{
+		`CI_Log("ERROR: Launching into an activity-associated mission, but the activity doesn't use X2ActivityTemplate_Mission???");
+		return;
+	}
+
+	if (MissionActivityTemplate.OnPreMission != none)
+	{
+		MissionActivityTemplate.OnPreMission(StartGameState, ActivityState);
 	}
 }
 

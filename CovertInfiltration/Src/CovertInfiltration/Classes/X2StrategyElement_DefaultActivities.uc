@@ -140,6 +140,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.SetupStage = InformantAssaultSetup;
+	ActivityAssault.OnPreMission = InformantAssaultOnPreMission;
 	ActivityAssault.OnSuccess = InformantAssaultOnSuccess;
 	ActivityAssault.OnFailure = InformantAssaultOnFailure;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
@@ -188,6 +189,7 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardA');
 		MissionState.Rewards.AddItem(RewardState.GetReference());
+
 		RewardState = SoldierRewardTemplate.CreateInstanceFromTemplate(NewGameState);
 		RewardState.GenerateReward(NewGameState, ResHQ.GetMissionResourceRewardScalar(RewardState), ActivityState.GetActivityChain().PrimaryRegionRef);
 		AddTacticalTagToRewardUnit(NewGameState, RewardState, 'SoldierRewardB');
@@ -203,6 +205,90 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 	}
 
 	class'X2ActivityTemplate_Assault'.static.MarkMissionForStrategyMapAlert(NewGameState, ActivityState);
+}
+
+static function InformantAssaultOnPreMission (XComGameState StartGameState, XComGameState_Activity ActivityState)
+{
+	local XComGameState_Unit VipUnitState, RewardUnitState;
+	local XGCharacterGenerator CharacterGenerator;
+	local XComGameState_MissionSite MissionState;
+	local XComGameState_WorldRegion RegionState;
+	local XComGameState_BattleData BattleData;
+	local TSoldier CharacterGeneratorResult;
+	local X2CharacterTemplate VipTemplate;
+	local name Country;
+
+	`CI_Log("InformantAssaultOnPreMission");
+
+	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	foreach StartGameState.IterateByClassType(class'XComGameState_BattleData', BattleData)
+	{
+		break;
+	}
+
+	// Get the country to use
+
+	RegionState = MissionState.GetWorldRegion();
+	if (RegionState != none)
+	{
+		Country = RegionState.GetMyTemplate().GetRandomCountryInRegion();
+	}
+
+	// Grab the char template (FriendlyVIPCivilian) and spawn one
+	VipTemplate = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager().FindCharacterTemplate('FriendlyVIPCivilian');
+	VipUnitState = VipTemplate.CreateInstanceFromTemplate(StartGameState);
+
+	// Replicate CreateCharacter in char pool manager, last branch
+	// No need to destroy the char generator manually since the whole world is about to be torn down anyway
+	CharacterGenerator = `XCOMGRI.Spawn(VipTemplate.CharacterGeneratorClass);
+	CharacterGeneratorResult = CharacterGenerator.CreateTSoldier('FriendlyVIPCivilian',, Country);
+
+	VipUnitState.SetTAppearance(CharacterGeneratorResult.kAppearance);
+	VipUnitState.SetCharacterName(CharacterGeneratorResult.strFirstName, CharacterGeneratorResult.strLastName, CharacterGeneratorResult.strNickName);
+	VipUnitState.SetCountry(CharacterGeneratorResult.nmCountry);
+	
+	if (!VipUnitState.HasBackground())
+	{
+		VipUnitState.GenerateBackground(, CharacterGenerator.BioCountryName);
+	}
+	
+	class'XComGameState_Unit'.static.NameCheck(CharacterGenerator, VipUnitState, eNameType_Full);
+
+	VipUnitState.StoreAppearance();
+
+	// Set the battleData.RewardUnits as first (+ original), replicate XGStrategy proxy logic
+	VipUnitState.TacticalTag = 'VIPReward';
+	RewardUnitState = InformantAssaultOnPreMission_PrepareRewardUnit(StartGameState, VipUnitState, BattleData);
+	BattleData.RewardUnits.InsertItem(0, RewardUnitState.GetReference());
+	BattleData.RewardUnitOriginals.InsertItem(0, RewardUnitState.GetReference());
+
+	// test
+}
+
+// Copied from XGStrategy::LaunchTacticalBattle
+static protected function XComGameState_Unit InformantAssaultOnPreMission_PrepareRewardUnit (XComGameState StartGameState, XComGameState_Unit StrategyUnitState, XComGameState_BattleData BattleData)
+{
+	local XComGameState_Unit ProxySoldierState;
+
+	// create a proxy if needed. This allows the artists and LDs to create simpler standin versions of units,
+	// for example soldiers without weapons.
+	// Unless the reward is a soldier with a tactical tag to be specifically passed into the mission
+	ProxySoldierState = none;
+	if (/*RewardStateObject.GetMyTemplateName() != 'Reward_Soldier'*/ true || StrategyUnitState.TacticalTag == '')
+	{
+		ProxySoldierState = class'XComTacticalMissionManager'.static.CreateProxyRewardUnitIfNeeded(StrategyUnitState, StartGameState);
+	}
+
+	if(ProxySoldierState == none)
+	{
+		// no proxy needed, so just send the original
+		ProxySoldierState = StrategyUnitState;
+	}
+
+	// all reward units start on the neutral team
+	ProxySoldierState.SetControllingPlayer( BattleData.CivilianPlayerRef );
+
+	return ProxySoldierState;
 }
 
 static function InformantAssaultOnSuccess (XComGameState NewGameState, XComGameState_Activity ActivityState)

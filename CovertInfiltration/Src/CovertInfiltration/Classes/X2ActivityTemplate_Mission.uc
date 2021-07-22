@@ -27,6 +27,7 @@ delegate PreMissionSetup (XComGameState NewGameState, XComGameState_Activity Act
 delegate OnStrategyMapSelected (XComGameState_Activity ActivityState);
 delegate OverrideStrategyMapIconTooltip (XComGameState_Activity ActivityState, out string Title, out string Body);
 delegate string GetMissionImage (XComGameState_Activity ActivityState);
+delegate OnPreMission (XComGameState StartGameState, XComGameState_Activity ActivityState);
 
 ////////////////////////////////////////////
 /// Proxied from X2MissionSourceTemplate ///
