@@ -136,6 +136,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.UIButtonIcon = "img:///UILibrary_StrategyImages.X2StrategyMap.MissionIcon_Council";
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
 	ActivityAssault.Difficulty = default.InformantDifficulty;
+	ActivityAssault.StateClass = class'XComGameState_Activity_Assault_Informant';
 	
 	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
@@ -143,6 +144,7 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.OnPreMission = InformantAssaultOnPreMission;
 	ActivityAssault.OnSuccess = InformantAssaultOnSuccess;
 	ActivityAssault.OnFailure = InformantAssaultOnFailure;
+	ActivityAssault.OnExitPostMissionSequence = InformantAssaultOnExitPostMissionSequence;
 	ActivityAssault.MissionRewards.AddItem('Reward_Rumor');
 	ActivityAssault.MissionRewards.AddItem('Reward_SmallIntel');
 	ActivityAssault.GetMissionDifficulty = GetMissionDifficultyFromMonthPlusTemplate;
@@ -209,6 +211,7 @@ static function InformantAssaultSetup (XComGameState NewGameState, XComGameState
 
 static function InformantAssaultOnPreMission (XComGameState StartGameState, XComGameState_Activity ActivityState)
 {
+	local XComGameState_Activity_Assault_Informant InformantActivityState;
 	local XComGameState_Unit VipUnitState, RewardUnitState;
 	local XGCharacterGenerator CharacterGenerator;
 	local XComGameState_MissionSite MissionState;
@@ -260,7 +263,20 @@ static function InformantAssaultOnPreMission (XComGameState StartGameState, XCom
 	VipUnitState.TacticalTag = 'VIPReward';
 	RewardUnitState = InformantAssaultOnPreMission_PrepareRewardUnit(StartGameState, VipUnitState, BattleData);
 	BattleData.RewardUnits.InsertItem(0, RewardUnitState.GetReference());
-	BattleData.RewardUnitOriginals.InsertItem(0, RewardUnitState.GetReference());
+	BattleData.RewardUnitOriginals.InsertItem(0, VipUnitState.GetReference());
+
+	`CI_Trace("Created FriendlyVIPCivilian as first BattleData.RewardUnits:" @ VipUnitState.ObjectID @ VipUnitState.GetFullName());
+
+	// Save the ref to the VIP, so we know who to delete later
+	InformantActivityState = XComGameState_Activity_Assault_Informant(ActivityState);
+	if (InformantActivityState == none)
+	{
+		`Redscreen("CI: InformantAssaultOnPreMission: state is not XComGameState_Activity_Assault_Informant - older save?");
+		return;
+	}
+
+	InformantActivityState = XComGameState_Activity_Assault_Informant(StartGameState.ModifyStateObject(class'XComGameState_Activity_Assault_Informant', InformantActivityState.ObjectID));
+	InformantActivityState.TempVipRef = VipUnitState.GetReference();
 
 	// test
 }
@@ -332,6 +348,30 @@ static function InformantAssaultOnFailure (XComGameState NewGameState, XComGameS
 	
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsFailed');
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
+}
+
+static protected function InformantAssaultOnExitPostMissionSequence (XComGameState_Activity ActivityState)
+{
+	local XComGameState_Activity_Assault_Informant InformantActivityState;
+	local StateObjectReference EmptyRef;
+	local XComGameState NewGameState;
+
+	InformantActivityState = XComGameState_Activity_Assault_Informant(ActivityState);
+	if (InformantActivityState == none)
+	{
+		`Redscreen("CI: InformantAssaultOnExitPostMissionSequence: state is not XComGameState_Activity_Assault_Informant - older save?");
+		return;
+	}
+
+	if (InformantActivityState.TempVipRef.ObjectID < 1) return;
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("InformantAssaultOnExitPostMissionSequence - delete temp VIP");
+	InformantActivityState = XComGameState_Activity_Assault_Informant(NewGameState.ModifyStateObject(class'XComGameState_Activity_Assault_Informant', InformantActivityState.ObjectID));
+
+	NewGameState.RemoveStateObject(InformantActivityState.TempVipRef.ObjectID);
+	InformantActivityState.TempVipRef = EmptyRef;
+
+	`GAMERULES.SubmitGameState(NewGameState);
 }
 
 static function CreateInformantInfiltration (out array<X2DataTemplate> Templates)

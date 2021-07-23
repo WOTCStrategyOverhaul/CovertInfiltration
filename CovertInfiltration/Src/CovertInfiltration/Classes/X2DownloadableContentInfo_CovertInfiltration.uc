@@ -827,7 +827,9 @@ static protected function ResetUnitsStartedMissionBelowReadyWill ()
 static event OnExitPostMissionSequence ()
 {
 	PostMissionUpgradeItems();
-	TriggerComplicationsOnExitPostMissionSequence();
+
+	OnExitPostMissionSequence_Complications();
+	OnExitPostMissionSequence_Activity();
 }
 
 static function PostMissionUpgradeItems ()
@@ -858,7 +860,7 @@ static function PostMissionUpgradeItems ()
 	`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
 }
 
-static protected function TriggerComplicationsOnExitPostMissionSequence ()
+static protected function OnExitPostMissionSequence_Complications ()
 {
 	local XComGameState_Complication ComplicationState;
 	local XComGameState_ActivityChain ChainState;
@@ -878,6 +880,30 @@ static protected function TriggerComplicationsOnExitPostMissionSequence ()
 	{
 		ComplicationState = XComGameState_Complication(History.GetGameStateForObjectID(StateRef.ObjectID));
 		ComplicationState.OnExitPostMissionSequence();
+	}
+}
+
+static protected function OnExitPostMissionSequence_Activity ()
+{
+	local X2ActivityTemplate_Mission MissionActivityTemplate;
+	local XComGameState_Activity ActivityState;
+	local XComGameState_BattleData BattleData;
+
+	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	ActivityState = class'XComGameState_Activity'.static.GetActivityFromObjectID(BattleData.m_iMissionID);
+	if (ActivityState == none) return;
+
+	MissionActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
+	if (MissionActivityTemplate == none)
+	{
+		`CI_Log("ERROR: OnExitPostMissionSequence_Activity: the activity doesn't use X2ActivityTemplate_Mission???");
+		return;
+	}
+
+	if (MissionActivityTemplate.OnExitPostMissionSequence != none)
+	{
+		MissionActivityTemplate.OnExitPostMissionSequence(ActivityState);
 	}
 }
 
