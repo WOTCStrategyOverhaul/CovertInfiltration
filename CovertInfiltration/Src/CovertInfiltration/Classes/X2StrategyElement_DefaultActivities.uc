@@ -313,7 +313,7 @@ static function InformantAssaultOnSuccess (XComGameState NewGameState, XComGameS
 	local XComGameState_MissionSite MissionState;
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
-	ExcludeIndices = class'X2StrategyElement_XPackMissionSources'.static.GetResOpExcludeRewards(MissionState);
+	InformantAssaultCollectExcludeIndicesForAddSoldiers(ExcludeIndices, MissionState);
 
 	MissionState.bUsePartialSuccessText = (ExcludeIndices.Length > 0);
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
@@ -329,15 +329,33 @@ static function InformantAssaultOnSuccess (XComGameState NewGameState, XComGameS
 
 static function InformantAssaultOnFailure (XComGameState NewGameState, XComGameState_Activity ActivityState)
 {
-	local array<int> ExcludeIndices;
 	local XComGameState_MissionSite MissionState;
+	local XComGameState_Reward RewardState;
+	local StateObjectReference RewardRef;
+	local XComGameStateHistory History;
+	local XComGameState_Unit UnitState;
+	local array<int> ExcludeIndices;
+	local int i;
 
 	MissionState = class'X2Helper_Infiltration'.static.GetMissionStateFromActivity(ActivityState);
+	History = `XCOMHISTORY;
 	
 	// Even though the primary objective was failed, we still want to check if secondary objectives were completed and award those soldiers
-	ExcludeIndices = class'X2StrategyElement_XPackMissionSources'.static.GetResOpExcludeRewards(MissionState);
-	ExcludeIndices.AddItem(0); // Exclude the primary VIP
-	ExcludeIndices.AddItem(1); // Exclude the Intel reward
+	InformantAssaultCollectExcludeIndicesForAddSoldiers(ExcludeIndices, MissionState);
+
+	// Now we need to exclude all the rewards that are not units with tactical tags (those are handeled above)
+	foreach MissionState.Rewards(RewardRef, i)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+		if (UnitState == none || UnitState.TacticalTag == '')
+		{
+			ExcludeIndices.AddItem(i);
+		}
+	}
+
+	// Grant the rewards
 	class'X2StrategyElement_DefaultMissionSources'.static.GiveRewards(NewGameState, MissionState, ExcludeIndices);
 	
 	class'X2Helper_Infiltration'.static.HandlePostMissionPOI(NewGameState, ActivityState, false);
@@ -348,6 +366,37 @@ static function InformantAssaultOnFailure (XComGameState NewGameState, XComGameS
 	
 	class'XComGameState_HeadquartersResistance'.static.RecordResistanceActivity(NewGameState, 'ResAct_GuerrillaOpsFailed');
 	class'XComGameState_HeadquartersResistance'.static.AddGlobalEffectString(NewGameState, class'X2Helper_Infiltration'.static.GetPostMissionText(ActivityState, false), true);
+}
+
+static protected function InformantAssaultCollectExcludeIndicesForAddSoldiers (out array<int> ExcludeIndices, XComGameState_MissionSite MissionState)
+{
+	local MissionObjectiveDefinition Objective;
+	local XComGameState_BattleData BattleData;
+	local int iReward;
+
+	BattleData = XComGameState_BattleData(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	foreach BattleData.MapData.ActiveMission.MissionObjectives(Objective)
+	{
+		// Do not exclude rewards from successfull objectives
+		if (Objective.bCompleted) continue;
+
+		if (Objective.ObjectiveName == 'SoldierVIP' || Objective.ObjectiveName == 'SecondaryVIP_01')
+		{
+			if (FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardA', iReward))
+			{
+				ExcludeIndices.AddItem(iReward);
+			}
+		}
+
+		if (Objective.ObjectiveName == 'SecondaryVIP_02')
+		{
+			if (FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardB', iReward))
+			{
+				ExcludeIndices.AddItem(iReward);
+			}
+		}
+	}
 }
 
 static protected function InformantAssaultOnExitPostMissionSequence (XComGameState_Activity ActivityState)
@@ -867,6 +916,26 @@ private static function AddTacticalTagToRewardUnit(XComGameState NewGameState, X
 	{
 		UnitState.TacticalTag = TacticalTag;
 	}
+}
+
+static protected function bool FindRewardIndexWithUnitTacticalTag (XComGameState_MissionSite MissionState, name TacticalTag, out int Index)
+{
+	local XComGameState_Reward RewardState;
+	local StateObjectReference RewardRef;
+	local XComGameStateHistory History;
+	local XComGameState_Unit UnitState;
+	
+	History = `XCOMHISTORY;
+
+	foreach MissionState.Rewards(RewardRef, Index)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+
+		if (UnitState != none && UnitState.TacticalTag == TacticalTag) return true;
+	}
+
+	return false;
 }
 
 defaultproperties
