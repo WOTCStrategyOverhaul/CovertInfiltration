@@ -383,18 +383,14 @@ static protected function InformantAssaultCollectExcludeIndicesForAddSoldiers (o
 
 		if (Objective.ObjectiveName == 'SoldierVIP' || Objective.ObjectiveName == 'SecondaryVIP_01')
 		{
-			if (FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardA', iReward))
-			{
-				ExcludeIndices.AddItem(iReward);
-			}
+			iReward = FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardA');
+			if (iReward != INDEX_NONE) ExcludeIndices.AddItem(iReward);
 		}
 
 		if (Objective.ObjectiveName == 'SecondaryVIP_02')
 		{
-			if (FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardB', iReward))
-			{
-				ExcludeIndices.AddItem(iReward);
-			}
+			iReward = FindRewardIndexWithUnitTacticalTag(MissionState, 'SoldierRewardB');
+			if (iReward != INDEX_NONE) ExcludeIndices.AddItem(iReward);
 		}
 	}
 }
@@ -918,24 +914,25 @@ private static function AddTacticalTagToRewardUnit(XComGameState NewGameState, X
 	}
 }
 
-static protected function bool FindRewardIndexWithUnitTacticalTag (XComGameState_MissionSite MissionState, name TacticalTag, out int Index)
+static protected function int FindRewardIndexWithUnitTacticalTag (XComGameState_MissionSite MissionState, name TacticalTag)
 {
 	local XComGameState_Reward RewardState;
 	local StateObjectReference RewardRef;
 	local XComGameStateHistory History;
 	local XComGameState_Unit UnitState;
+	local int i;
 	
 	History = `XCOMHISTORY;
 
-	foreach MissionState.Rewards(RewardRef, Index)
+	foreach MissionState.Rewards(RewardRef, i)
 	{
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
 		UnitState = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 
-		if (UnitState != none && UnitState.TacticalTag == TacticalTag) return true;
+		if (UnitState != none && UnitState.TacticalTag == TacticalTag) return i;
 	}
 
-	return false;
+	return INDEX_NONE;
 }
 
 defaultproperties
