@@ -345,7 +345,7 @@ static function InformantAssaultOnFailure (XComGameState NewGameState, XComGameS
 	// Even though the primary objective was failed, we still want to check if secondary objectives were completed and award those soldiers
 	InformantAssaultCollectExcludeIndicesForAddSoldiers(ExcludeIndices, MissionState);
 
-	// Now we need to exclude all the rewards that are not units with tactical tags (those are handeled above)
+	// Now we need to exclude all the rewards that are not units with tactical tags (those are handled above)
 	foreach MissionState.Rewards(RewardRef, i)
 	{
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
