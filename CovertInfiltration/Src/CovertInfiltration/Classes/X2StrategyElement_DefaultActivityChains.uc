@@ -32,6 +32,8 @@ static function array<X2DataTemplate> CreateTemplates()
 	Activites.AddItem(CreateIntelInterceptionTemplate());
 	Activites.AddItem(CreateSupplyInterceptionTemplate());
 
+	Activites.AddItem(Create_TEST_Tag_Informant_Assault());
+
 	return Activites;
 }
 
@@ -514,6 +516,20 @@ static function AttachResCon(XComGameState NewGameState, XComGameState_Activity 
 		}
 	}
 	`CI_Log("No valid rewards in this mission!");
+}
+
+static function X2DataTemplate Create_TEST_Tag_Informant_Assault()
+{
+	local X2ActivityChainTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'X2ActivityChainTemplate', Template, 'ActivityChain_TEST_Tag_Informant_Assault');
+	
+	Template.ChooseFaction = ChooseMetFaction;
+	Template.ChooseRegions = ChooseRandomContactedRegion;
+
+	Template.Stages.AddItem(ConstructRandomStage('eActivityType_Assault', 'Tag_Informant'));
+
+	return Template;
 }
 
 ///////////////
