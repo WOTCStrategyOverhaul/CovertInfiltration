@@ -229,8 +229,7 @@ static function InformantAssaultOnPreMission (XComGameState StartGameState, XCom
 		break;
 	}
 
-	// Get the country to use
-
+	// Get the country to use for the VIP
 	RegionState = MissionState.GetWorldRegion();
 	if (RegionState != none)
 	{
@@ -259,9 +258,14 @@ static function InformantAssaultOnPreMission (XComGameState StartGameState, XCom
 
 	VipUnitState.StoreAppearance();
 
-	// Set the battleData.RewardUnits as first (+ original), replicate XGStrategy proxy logic
+	// Set the tactical tag like the ResOps mission source does
 	VipUnitState.TacticalTag = 'VIPReward';
+
+	// Replicate XGStrategy proxy logic
 	RewardUnitState = InformantAssaultOnPreMission_PrepareRewardUnit(StartGameState, VipUnitState, BattleData);
+
+	// Set the new unit as BattleData.RewardUnits first (+ original) - that's the entry that's used by the mission manager
+	// (otherwise the first optional will be used instead)
 	BattleData.RewardUnits.InsertItem(0, RewardUnitState.GetReference());
 	BattleData.RewardUnitOriginals.InsertItem(0, VipUnitState.GetReference());
 
@@ -277,8 +281,6 @@ static function InformantAssaultOnPreMission (XComGameState StartGameState, XCom
 
 	InformantActivityState = XComGameState_Activity_Assault_Informant(StartGameState.ModifyStateObject(class'XComGameState_Activity_Assault_Informant', InformantActivityState.ObjectID));
 	InformantActivityState.TempVipRef = VipUnitState.GetReference();
-
-	// test
 }
 
 // Copied from XGStrategy::LaunchTacticalBattle
