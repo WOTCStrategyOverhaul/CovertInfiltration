@@ -457,6 +457,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchSabotageMonumentMissionSchedules();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchMissionDefinitions();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchSabotageMissionNarrative();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchInfiltrationTemplates();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchItemStats();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadPOI();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchFacilityLeadItem();

@@ -24,6 +24,7 @@ var config(GameData) int FacilityLeadResearchPointsToComplete;
 var config(GameData) int FacilityLeadResearchRepeatPointsIncrease;
 var config(Infiltration) float FacilityLeadPOINeededProgressThreshold;
 var config(Infiltration) int FacilityLeadPOINeededLeadsCap;
+var config(Infiltration) array<InfiltrationModifier> EditInfilModifiers;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -177,6 +178,106 @@ static function PatchFacilityLeadReward ()
 static protected function bool IsFacilityLeadRewardAvailable (optional XComGameState NewGameState, optional StateObjectReference AuxRef)
 {
 	return IsFacilityLeadItemAvailable();
+}
+
+static function PatchInfiltrationTemplates()
+{
+	local X2InfiltrationModTemplateManager	InfilTemplateManager;
+	local X2InfiltrationModTemplate			InfilTemplate;
+	local X2ItemTemplateManager				ItemTemplateManager;
+	local X2ItemTemplate					ItemTemplate;
+	local X2CharacterTemplateManager		CharacterTemplateManager;
+	local X2CharacterTemplate				CharacterTemplate;
+	local X2AbilityTemplateManager			AbilityTemplateManager;
+	local X2AbilityTemplate					AbilityTemplate;
+	local InfiltrationModifier				Modifier;
+	local XComOnlineEventMgr				OnlineEventMgr;
+	local bool								MatchedDLC;
+	local int								i;
+	
+	if (default.EditInfilModifiers.Length < 1)
+	{
+		return;
+	}
+	
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+	CharacterTemplateManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
+	
+	foreach default.EditInfilModifiers(Modifier)
+	{
+		// Skip if this comes from a DLC that we don't have
+		if (Modifier.DLC != "")
+		{
+			OnlineEventMgr = `ONLINEEVENTMGR;
+
+			for (i = 0; i < OnlineEventMgr.GetNumDLC(); ++i)
+			{
+				if (name(Modifier.DLC) == OnlineEventMgr.GetDLCNames(i)) MatchedDLC = true;
+			}
+
+			if (!MatchedDLC)
+			{
+				`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ "DLC which is not loaded - skipping edit");
+				continue;
+			}
+		}
+		
+		switch (Modifier.ModifyType)
+		{
+			case eIMT_Ability:
+				AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate(Modifier.DataName);
+				if (AbilityTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromAbility(AbilityTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+					}
+				}
+				break;
+			case eIMT_Character:
+				CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(Modifier.DataName);
+				if (CharacterTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCharacter(CharacterTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+					}
+				}
+				break;
+			case eIMT_Item:
+				ItemTemplate = ItemTemplateManager.FindItemTemplate(Modifier.DataName);
+				if (ItemTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(ItemTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+					}
+				}
+				break;				
+			case eIMT_Category:
+				ItemTemplate = ItemTemplateManager.FindItemTemplate(Modifier.DataName);
+				if (ItemTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCategory(ItemTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 ////////////////
