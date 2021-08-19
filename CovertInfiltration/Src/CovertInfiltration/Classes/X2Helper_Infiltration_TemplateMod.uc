@@ -192,7 +192,7 @@ static function PatchInfiltrationTemplates()
 	local X2AbilityTemplate					AbilityTemplate;
 	local InfiltrationModifier				Modifier;
 	local XComOnlineEventMgr				OnlineEventMgr;
-	local bool								MatchedDLC;
+	local bool								bMatchedDLC, bTemplateChanged;
 	local int								i;
 	
 	if (default.EditInfilModifiers.Length < 1)
@@ -207,6 +207,8 @@ static function PatchInfiltrationTemplates()
 	
 	foreach default.EditInfilModifiers(Modifier)
 	{
+		bTemplateChanged = false;
+
 		// Skip if this comes from a DLC that we don't have
 		if (Modifier.DLC != "")
 		{
@@ -214,12 +216,12 @@ static function PatchInfiltrationTemplates()
 
 			for (i = 0; i < OnlineEventMgr.GetNumDLC(); ++i)
 			{
-				if (name(Modifier.DLC) == OnlineEventMgr.GetDLCNames(i)) MatchedDLC = true;
+				if (name(Modifier.DLC) == OnlineEventMgr.GetDLCNames(i)) bMatchedDLC = true;
 			}
 
-			if (!MatchedDLC)
+			if (!bMatchedDLC)
 			{
-				`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ "DLC which is not loaded - skipping edit");
+				`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ " which is not loaded - skipping edit");
 				continue;
 			}
 		}
@@ -235,6 +237,7 @@ static function PatchInfiltrationTemplates()
 					{
 						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
 						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
 					}
 				}
 				break;
@@ -247,6 +250,7 @@ static function PatchInfiltrationTemplates()
 					{
 						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
 						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
 					}
 				}
 				break;
@@ -259,6 +263,7 @@ static function PatchInfiltrationTemplates()
 					{
 						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
 						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
 					}
 				}
 				break;				
@@ -271,11 +276,21 @@ static function PatchInfiltrationTemplates()
 					{
 						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
 						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
 					}
 				}
 				break;
 			default:
 				break;
+		}
+
+		if (bTemplateChanged)
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "was successfully edited using EditInfilModifiers");
+		}
+		else
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "could not be found for editing by EditInfilModifiers");
 		}
 	}
 }
