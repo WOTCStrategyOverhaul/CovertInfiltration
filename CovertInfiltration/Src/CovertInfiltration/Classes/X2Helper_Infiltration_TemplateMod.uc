@@ -191,9 +191,7 @@ static function PatchInfiltrationTemplates()
 	local X2AbilityTemplateManager			AbilityTemplateManager;
 	local X2AbilityTemplate					AbilityTemplate;
 	local InfiltrationModifier				Modifier;
-	local XComOnlineEventMgr				OnlineEventMgr;
-	local bool								bMatchedDLC, bTemplateChanged;
-	local int								i;
+	local bool								bTemplateChanged;
 	
 	if (default.EditInfilModifiers.Length < 1)
 	{
@@ -210,20 +208,10 @@ static function PatchInfiltrationTemplates()
 		bTemplateChanged = false;
 
 		// Skip if this comes from a DLC that we don't have
-		if (Modifier.DLC != "")
+		if (Modifier.DLC != "" && !class'X2Helper_Infiltration'.static.IsDLCLoaded(Modifier.DLC))
 		{
-			OnlineEventMgr = `ONLINEEVENTMGR;
-
-			for (i = 0; i < OnlineEventMgr.GetNumDLC(); ++i)
-			{
-				if (name(Modifier.DLC) == OnlineEventMgr.GetDLCNames(i)) bMatchedDLC = true;
-			}
-
-			if (!bMatchedDLC)
-			{
-				`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ " which is not loaded - skipping edit");
-				continue;
-			}
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ "which is not loaded - skipping edit");
+			continue;
 		}
 		
 		switch (Modifier.ModifyType)

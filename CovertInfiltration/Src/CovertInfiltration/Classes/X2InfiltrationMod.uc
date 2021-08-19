@@ -46,29 +46,16 @@ static function array<X2DataTemplate> CreateTemplates()
 	local array<X2DataTemplate> Templates;
 	local InfiltrationModifier Modifier;
 	local name TemplateName;
-	local XComOnlineEventMgr OnlineEventMgr;
-	local bool MatchedDLC;
-	local int i;
 	
 	foreach default.InfilModifiers(Modifier)
 	{
 		TemplateName = GetInfilName(Modifier.DataName, Modifier.ModifyType); 
-
+		
 		// Skip if this comes from a DLC that we don't have
-		if (Modifier.DLC != "")
+		if (Modifier.DLC != "" && !class'X2Helper_Infiltration'.static.IsDLCLoaded(Modifier.DLC))
 		{
-			OnlineEventMgr = `ONLINEEVENTMGR;
-
-			for (i = 0; i < OnlineEventMgr.GetNumDLC(); ++i)
-			{
-				if (name(Modifier.DLC) == OnlineEventMgr.GetDLCNames(i)) MatchedDLC = true;
-			}
-
-			if (!MatchedDLC)
-			{
-				`CI_Trace("X2InfiltrationModTemplate" @ string(TemplateName) @ "requires" @ Modifier.DLC @ "DLC which is not loaded - skipping creation");
-				continue;
-			}
+			`CI_Trace("X2InfiltrationModTemplate" @ string(TemplateName) @ "requires" @ Modifier.DLC @ "which is not loaded - skipping creation");
+			continue;
 		}
 
 		`CREATE_X2TEMPLATE(class'X2InfiltrationModTemplate', Template, TemplateName);

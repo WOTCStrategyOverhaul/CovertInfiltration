@@ -1100,13 +1100,19 @@ static function string GetPostMissionText (XComGameState_Activity ActivityState,
 	}
 }
 
-static function bool IsDLCLoaded (coerce string DLCName)
+static function bool IsDLCLoaded (coerce name DLCName)
 {
-	local array<string> DLCs;
-  
-	DLCs = class'Helpers'.static.GetInstalledDLCNames();
+	local XComOnlineEventMgr OnlineEventMgr;
+	local int index;
 
-	return DLCs.Find(DLCName) != INDEX_NONE;
+	OnlineEventMgr = `ONLINEEVENTMGR;
+
+	for (index = 0; index < OnlineEventMgr.GetNumDLC(); ++index)
+	{
+		if (DLCName == OnlineEventMgr.GetDLCNames(index)) return true;
+	}
+
+	return false;
 }
 
 ///////////////
