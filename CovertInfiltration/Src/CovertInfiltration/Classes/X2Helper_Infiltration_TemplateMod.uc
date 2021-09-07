@@ -24,6 +24,7 @@ var config(GameData) int FacilityLeadResearchPointsToComplete;
 var config(GameData) int FacilityLeadResearchRepeatPointsIncrease;
 var config(Infiltration) float FacilityLeadPOINeededProgressThreshold;
 var config(Infiltration) int FacilityLeadPOINeededLeadsCap;
+var config(Infiltration) array<InfiltrationModifier> EditInfilModifiers;
 
 var config(UI) bool SHOW_INFILTRATION_STATS;
 var config(UI) bool SHOW_DETERRENCE_STATS;
@@ -177,6 +178,109 @@ static function PatchFacilityLeadReward ()
 static protected function bool IsFacilityLeadRewardAvailable (optional XComGameState NewGameState, optional StateObjectReference AuxRef)
 {
 	return IsFacilityLeadItemAvailable();
+}
+
+static function PatchInfiltrationTemplates()
+{
+	local X2InfiltrationModTemplateManager	InfilTemplateManager;
+	local X2InfiltrationModTemplate			InfilTemplate;
+	local X2ItemTemplateManager				ItemTemplateManager;
+	local X2ItemTemplate					ItemTemplate;
+	local X2CharacterTemplateManager		CharacterTemplateManager;
+	local X2CharacterTemplate				CharacterTemplate;
+	local X2AbilityTemplateManager			AbilityTemplateManager;
+	local X2AbilityTemplate					AbilityTemplate;
+	local InfiltrationModifier				Modifier;
+	local bool								bTemplateChanged;
+	
+	if (default.EditInfilModifiers.Length < 1)
+	{
+		return;
+	}
+	
+	InfilTemplateManager = class'X2InfiltrationModTemplateManager'.static.GetInfilTemplateManager();
+	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+	AbilityTemplateManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+	CharacterTemplateManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
+	
+	foreach default.EditInfilModifiers(Modifier)
+	{
+		bTemplateChanged = false;
+
+		// Skip if this comes from a DLC that we don't have
+		if (Modifier.DLC != "" && !class'X2Helper_Infiltration'.static.IsDLCLoaded(Modifier.DLC))
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "requires" @ Modifier.DLC @ "which is not loaded - skipping edit");
+			continue;
+		}
+		
+		switch (Modifier.ModifyType)
+		{
+			case eIMT_Ability:
+				AbilityTemplate = AbilityTemplateManager.FindAbilityTemplate(Modifier.DataName);
+				if (AbilityTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromAbility(AbilityTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
+					}
+				}
+				break;
+			case eIMT_Character:
+				CharacterTemplate = CharacterTemplateManager.FindCharacterTemplate(Modifier.DataName);
+				if (CharacterTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCharacter(CharacterTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
+					}
+				}
+				break;
+			case eIMT_Item:
+				ItemTemplate = ItemTemplateManager.FindItemTemplate(Modifier.DataName);
+				if (ItemTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromItem(ItemTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
+					}
+				}
+				break;				
+			case eIMT_Category:
+				ItemTemplate = ItemTemplateManager.FindItemTemplate(Modifier.DataName);
+				if (ItemTemplate != none)
+				{
+					InfilTemplate = InfilTemplateManager.GetInfilTemplateFromCategory(ItemTemplate);
+					if (InfilTemplate != none)
+					{
+						InfilTemplate.HoursAdded = Modifier.InfilHoursAdded;
+						InfilTemplate.Deterrence = Modifier.RiskReductionPercent;
+						bTemplateChanged = true;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+
+		if (bTemplateChanged)
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "was successfully edited using EditInfilModifiers");
+		}
+		else
+		{
+			`CI_Trace("X2InfiltrationModTemplate" @ string(Modifier.DataName) @ "could not be found for editing by EditInfilModifiers");
+		}
+	}
 }
 
 ////////////////

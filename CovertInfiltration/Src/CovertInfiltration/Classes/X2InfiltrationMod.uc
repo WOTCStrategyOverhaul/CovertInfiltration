@@ -50,11 +50,11 @@ static function array<X2DataTemplate> CreateTemplates()
 	foreach default.InfilModifiers(Modifier)
 	{
 		TemplateName = GetInfilName(Modifier.DataName, Modifier.ModifyType); 
-
+		
 		// Skip if this comes from a DLC that we don't have
 		if (Modifier.DLC != "" && !class'X2Helper_Infiltration'.static.IsDLCLoaded(Modifier.DLC))
 		{
-			`CI_Trace("X2InfiltrationModTemplate" @ string(TemplateName) @ "requires" @ Modifier.DLC @ "DLC which is not loaded - skipping");
+			`CI_Trace("X2InfiltrationModTemplate" @ string(TemplateName) @ "requires" @ Modifier.DLC @ "which is not loaded - skipping creation");
 			continue;
 		}
 
