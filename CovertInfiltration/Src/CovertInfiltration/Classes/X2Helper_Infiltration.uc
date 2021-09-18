@@ -795,6 +795,7 @@ static function array<name> GetSitrepsForAssaultMission (XComGameState_MissionSi
 				if (SitRepTemplate != none && SitRepTemplate.MeetsRequirements(MissionState))
 				{
 					MissionState.GeneratedMission.SitReps.AddItem(SitRepTemplate.DataName);
+					CardManager.MarkCardUsed('FlatRisks', Card);
 					break;
 				}
 			}
