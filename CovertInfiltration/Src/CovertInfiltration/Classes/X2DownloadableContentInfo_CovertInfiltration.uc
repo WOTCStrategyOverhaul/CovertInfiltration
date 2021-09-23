@@ -1876,6 +1876,32 @@ exec function CI_TestWaterworldAchievements ()
 	class'X2AchievementTracker'.static.FinalMissionOnSuccess();
 }
 
+exec function DumpInfilProgress ()
+{
+	local XComGameState_MissionSiteInfiltration MissionState;
+	local UIMission_Infiltrated MissionScreen;
+
+	MissionScreen = UIMission_Infiltrated(`SCREENSTACK.GetCurrentScreen());
+	if (MissionScreen == none)
+	{
+		`CI_Log(GetFuncName() @ "failed - not looking at" @ class'UIMission_Infiltrated'.Name);
+		return;
+	}
+
+	MissionState = MissionScreen.GetInfiltration();
+
+	`CI_Log(GetFuncName() @ `showvar(MissionState.MaxAllowedInfil));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetMaxAllowedInfilDecimal()));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetMaxAllowedOverInfil()));
+
+	`CI_Log(GetFuncName() @ `showvar(MissionState.SecondsForOnePercent));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetCurrentOverInfil()));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetCurrentInfil()));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetCurrentInfilInt()));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.MustLaunch()));
+	`CI_Log(GetFuncName() @ `showvar(MissionState.GetCurrentOverInfilPercentToMax()));
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

@@ -13,7 +13,7 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 // we need to duplicate any info that is used after the mission site is initialized
 var array<name> AppliedFlatRisks;
 var float SecondsForOnePercent;
-var int MaxAllowedInfil;
+var int MaxAllowedInfil; // Full number (same as UI), starting from CA launch. The current max is 250
 
 var array<name> AppliedSitRepTags;
 var array<StateObjectReference> SoldiersOnMission;
@@ -411,13 +411,26 @@ function UpdateGameBoard()
 	}
 }
 
-function float GetCurrentOverInfil()
+function float GetMaxAllowedInfilDecimal ()
+{
+	return float(MaxAllowedInfil) / 100;
+}
+
+function float GetMaxAllowedOverInfil ()
+{
+	return GetMaxAllowedInfilDecimal() - 1;
+}
+
+function float GetCurrentOverInfil ()
 {
 	local int SecondsSinceMission;
+	local float OverInfil;
 
 	SecondsSinceMission = class'X2StrategyGameRulesetDataStructures'.static.DifferenceInSeconds(GetCurrentTime(), TimerStartDateTime);
+	OverInfil = SecondsSinceMission / SecondsForOnePercent / 100;
 
-	return SecondsSinceMission / SecondsForOnePercent / 100;
+	// Force cap the infil to the max allowed, otherwise it's possible to exceed the max by flying somewhere at last second
+	return FMin(OverInfil, GetMaxAllowedOverInfil());
 }
 
 // Returns 0-1
@@ -430,7 +443,7 @@ function float GetCurrentOverInfilPercentToMax ()
 // OverInfil is also the same scale (250% infil = 1.5 OverInfil)
 function float GetOverInfilPercentToMaxAtOverInfil (float OverInfil)
 {
-	return OverInfil / ((float(MaxAllowedInfil) / 100) - 1);
+	return OverInfil / GetMaxAllowedOverInfil();
 }
 
 function float GetCurrentInfil()
