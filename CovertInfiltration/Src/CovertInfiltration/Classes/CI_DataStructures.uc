@@ -106,6 +106,11 @@ struct MultiStepLerpConfig
 	var array<MultiStepLerpStep> Steps;
 
 	var float ResultIfNoSteps;
+
+	var bool bClampXBottom;
+	var bool bClampXUpper;
+
+	// These are ignored if the respective clamping is enabled
 	var float ResultIfXExceedsBottomBoundary;
 	var float ResultIfXExceedsUpperBoundary;
 };

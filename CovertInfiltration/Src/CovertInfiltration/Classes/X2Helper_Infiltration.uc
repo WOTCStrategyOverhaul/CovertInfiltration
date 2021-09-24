@@ -1228,9 +1228,11 @@ static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig 
 	SortedSteps = AlgorithmConfig.Steps;
 	SortedSteps.Sort(SortMultiStepLerpSteps);
 
-	if (DesiredX < SortedSteps[i].X)
+	if (DesiredX < SortedSteps[0].X)
 	{
-		return AlgorithmConfig.ResultIfXExceedsBottomBoundary;
+		return AlgorithmConfig.bClampXBottom
+			? SortedSteps[0].Y // No need to execute the loop below with a modified DesiredX - we know the outcome already
+			: AlgorithmConfig.ResultIfXExceedsBottomBoundary;
 	}
 
 	for (i = 0; i < SortedSteps.Length; i++)
@@ -1257,7 +1259,9 @@ static function float ExecuteMultiStepLerp (float DesiredX, MultiStepLerpConfig 
 
 	if (!bFound)
 	{
-		return AlgorithmConfig.ResultIfXExceedsUpperBoundary;
+		return AlgorithmConfig.bClampXUpper
+			? SortedSteps[SortedSteps.Length - 1].Y // Return the last one
+			: AlgorithmConfig.ResultIfXExceedsUpperBoundary;
 	}
 
 	return Result;

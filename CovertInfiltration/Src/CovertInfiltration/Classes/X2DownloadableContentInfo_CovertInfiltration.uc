@@ -1902,6 +1902,15 @@ exec function DumpInfilProgress ()
 	`CI_Log(GetFuncName() @ `showvar(MissionState.GetCurrentOverInfilPercentToMax()));
 }
 
+exec function TestChosenInfilScalar (int InfilProgress)
+{
+	local float Scalar;
+
+	Scalar = class'XComGameState_MissionSiteInfiltration'.static.GetChosenInfilScalarForInfilInt(InfilProgress);
+
+	`CI_Log(GetFuncName() @ `showvar(InfilProgress) @ `showvar(Scalar));
+}
+
 ///////////////
 /// Helpers ///
 ///////////////

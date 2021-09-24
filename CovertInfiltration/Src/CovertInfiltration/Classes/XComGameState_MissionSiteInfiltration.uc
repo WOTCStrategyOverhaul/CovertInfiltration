@@ -721,6 +721,9 @@ static protected function MultiStepLerpConfig GetChosenOverinfilLerpConfig ()
 		AlgoConfig.Steps[i].Y = default.ChosenAppearenceMods[i].Multiplier;
 	}
 
+	AlgoConfig.bClampXBottom = true;
+	AlgoConfig.bClampXUpper = true;
+
 	return AlgoConfig;
 }
 
