@@ -884,6 +884,7 @@ static function PatchResistanceRing()
 
 	RingTemplate.OnFacilityBuiltFn = OnResistanceRingBuilt;
 	RingTemplate.GetQueueMessageFn = GetRingQueueMessage;
+	RingTemplate.IsFacilityProjectActiveFn = IsResistanceRingProjectActive;
 	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
 	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
@@ -924,6 +925,21 @@ static protected function string GetRingQueueMessage(StateObjectReference Facili
 	}
 
 	return "";
+}
+
+static protected function bool IsResistanceRingProjectActive (StateObjectReference FacilityRef)
+{
+	local bool bEmptySlot;
+	local int i;
+
+	i = class'X2StrategyElement_StaffSlots_Infiltration'.static.FindEmptyWildcardSlot(
+		class'UIUtilities_Strategy'.static.GetResistanceHQ()
+	);
+
+	bEmptySlot = i != INDEX_NONE;
+
+	// Return false to show an "idle staff" warning
+	return !bEmptySlot;
 }
 
 static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
