@@ -66,7 +66,7 @@ simulated function BuildScreen()
 	}
 
 
-	if (GetInfiltration().GetNextOverInfiltrationBonus() != none)
+	if (GetInfiltration().GetNextOverInfiltrationBonus() != none && !GetInfiltration().MustLaunch())
 	{
 		OverInfiltrationPanel = Spawn(class'UIPanel', self);
 		OverInfiltrationPanel.InitPanel('OverInfiltrationPanel');
