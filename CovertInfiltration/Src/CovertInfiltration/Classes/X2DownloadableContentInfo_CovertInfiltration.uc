@@ -521,8 +521,6 @@ static protected function PatchSupplyExactionCrates ()
 			`CI_Trace(GetFuncName() @ `showvar(LootTable) @ `showvar(EntryTemplateName) @ "post patch - Min" @ LootManager.LootTables[iTable].Loots[iLootEntry].MinCount @ "Max" @ LootManager.LootTables[iTable].Loots[iLootEntry].MaxCount);
 		}
 	}
-
-	//LootManager.LootTables;
 }
 
 ///////////
