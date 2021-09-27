@@ -1,8 +1,8 @@
 
 class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
-// Missions that feature lootcrates or other rewards not in its X2RewardTemplates
-var config array<name> InterceptMissions;
+// Chains that feature interceptable rewards for their last stage
+var config array<name> InterceptableChains;
 
 // Items that can have their quantity halved by interception complications
 var config array<name> InterceptableItems;
@@ -37,7 +37,7 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	Template.bNoSimultaneous = true;
 
 	Template.OnChainComplete = SpawnRescueMission;
-	Template.CanBeChosen = InterceptableChains;
+	Template.CanBeChosen = ChooseInterceptableChains;
 
 	Template.OnExitPostMissionSequence = TriggerRewardInterceptionPopup;
 
@@ -103,14 +103,14 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 	SpawnedChainState.StartNextStage(NewGameState);
 }
 
-function bool InterceptableChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function bool ChooseInterceptableChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
 	return IsInterceptableChain(ChainState.GetMyTemplate());
 }
 
 static function bool IsInterceptableChain(X2ActivityChainTemplate Template)
 {
-	return default.InterceptMissions.Find(Template.DataName) > INDEX_NONE;
+	return default.InterceptableChains.Find(Template.DataName) > INDEX_NONE;
 }
 
 static function bool IsInterceptableItem(name TemplateName)
