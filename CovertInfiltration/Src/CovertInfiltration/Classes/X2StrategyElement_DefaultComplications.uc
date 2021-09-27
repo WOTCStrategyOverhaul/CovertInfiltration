@@ -1,8 +1,8 @@
 
 class X2StrategyElement_DefaultComplications extends X2StrategyElement config(Infiltration);
 
-// Missions that feature lootcrates or other rewards not in its X2RewardTemplates
-var config array<name> InterceptMissions;
+// Chains that feature interceptable rewards for their last stage
+var config array<name> InterceptableChains;
 
 // Items that can have their quantity halved by interception complications
 var config array<name> InterceptableItems;
@@ -37,7 +37,7 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	Template.bNoSimultaneous = true;
 
 	Template.OnChainComplete = SpawnRescueMission;
-	Template.CanBeChosen = SupplyAndIntelChains;
+	Template.CanBeChosen = ChooseInterceptableChains;
 
 	Template.OnExitPostMissionSequence = TriggerRewardInterceptionPopup;
 
@@ -103,28 +103,14 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 	SpawnedChainState.StartNextStage(NewGameState);
 }
 
-function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function bool ChooseInterceptableChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	local XComGameState_Activity ActivityState;
-	local X2ActivityTemplate_Mission ActivityTemplate;
-
-	ActivityState = ChainState.GetLastActivity();
-	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
-
-	if (ActivityTemplate == none) return false;
-	
-	// and if there is a supply or intel rewarding chain
-	if (IsInterceptableActivity(ActivityTemplate))
-	{
-		return true;
-	}
-
-	return false;
+	return IsInterceptableChain(ChainState.GetMyTemplate());
 }
 
-static function bool IsInterceptableActivity(X2ActivityTemplate Template)
+static function bool IsInterceptableChain(X2ActivityChainTemplate Template)
 {
-	return default.InterceptMissions.Find(Template.DataName) > INDEX_NONE;
+	return default.InterceptableChains.Find(Template.DataName) > INDEX_NONE;
 }
 
 static function bool IsInterceptableItem(name TemplateName)
