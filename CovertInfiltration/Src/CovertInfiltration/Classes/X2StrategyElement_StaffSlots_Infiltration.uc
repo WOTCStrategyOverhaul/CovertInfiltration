@@ -94,6 +94,11 @@ static function EmptyResistanceRingSlot(XComGameState NewGameState, StateObjectR
 
 static function bool CanStaffBeMovedRing(StateObjectReference SlotRef)
 {
+	return IsAnyWildcardSlotEmpty();
+}
+
+static function bool IsAnyWildcardSlotEmpty()
+{
 	return FindEmptyWildcardSlot(class'UIUtilities_Strategy'.static.GetResistanceHQ()) > -1;
 }
 

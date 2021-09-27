@@ -929,17 +929,11 @@ static protected function string GetRingQueueMessage(StateObjectReference Facili
 
 static protected function bool IsResistanceRingProjectActive (StateObjectReference FacilityRef)
 {
-	local bool bEmptySlot;
-	local int i;
+	// When false is returned, will complain about idle staff.
+	// So we return false when there is an empty wildcard slot (staff can be moved),
+	// i.e. we return true when there is no empty wildcard slots
 
-	i = class'X2StrategyElement_StaffSlots_Infiltration'.static.FindEmptyWildcardSlot(
-		class'UIUtilities_Strategy'.static.GetResistanceHQ()
-	);
-
-	bEmptySlot = i != INDEX_NONE;
-
-	// Return false to show an "idle staff" warning
-	return !bEmptySlot;
+	return !class'X2StrategyElement_StaffSlots_Infiltration'.static.IsAnyWildcardSlotEmpty();
 }
 
 static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
