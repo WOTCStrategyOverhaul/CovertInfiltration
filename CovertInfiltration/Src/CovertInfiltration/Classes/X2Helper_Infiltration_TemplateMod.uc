@@ -884,6 +884,7 @@ static function PatchResistanceRing()
 
 	RingTemplate.OnFacilityBuiltFn = OnResistanceRingBuilt;
 	RingTemplate.GetQueueMessageFn = GetRingQueueMessage;
+	RingTemplate.IsFacilityProjectActiveFn = IsResistanceRingProjectActive;
 	RingTemplate.NeedsAttentionFn = ResistanceRingNeedsAttention;
 	RingTemplate.UIFacilityClass = class'UIFacility_ResitanceRing';
 }
@@ -924,6 +925,15 @@ static protected function string GetRingQueueMessage(StateObjectReference Facili
 	}
 
 	return "";
+}
+
+static protected function bool IsResistanceRingProjectActive (StateObjectReference FacilityRef)
+{
+	// When false is returned, will complain about idle staff.
+	// So we return false when there is an empty wildcard slot (staff can be moved),
+	// i.e. we return true when there is no empty wildcard slots
+
+	return !class'X2StrategyElement_StaffSlots_Infiltration'.static.IsAnyWildcardSlotEmpty();
 }
 
 static protected function bool ResistanceRingNeedsAttention(StateObjectReference FacilityRef)
