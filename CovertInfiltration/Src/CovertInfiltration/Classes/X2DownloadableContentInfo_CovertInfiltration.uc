@@ -19,6 +19,10 @@ var config(Engine) bool SuppressTraceLogs;
 var config MissionIntroDefinition InfiltrationMissionIntroDefinition;
 var config(GameCore) array<ArmorUtilitySlotsModifier> ArmorUtilitySlotsMods;
 
+var config(GameCore) array<name> SupplyExtractionLootTables;
+var config(GameCore) array<name> SupplyExtractionLootTemplates;
+var config(GameCore) float SupplyExtractionMultipler;
+
 // Cheats
 
 var name ForcedNextEnviromentalSitrep;
@@ -443,6 +447,8 @@ static function OnPreCreateTemplates()
 
 	class'XComGameState_MissionSiteInfiltration'.static.ValidateConfig();
 	class'X2Helper_Infiltration'.static.ValidateXpMultiplers();
+
+	PatchSupplyExactionCrates();
 }
 
 static event OnPostTemplatesCreated()
@@ -478,6 +484,43 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchHangar();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchEvacAbility();
+}
+
+static protected function PatchSupplyExactionCrates ()
+{
+	local name LootTable, EntryTemplateName;
+	local X2LootTableManager LootManager;
+	local int iTable, iLootEntry;
+
+	LootManager = X2LootTableManager(class'XComEngine'.static.FindClassDefaultObject("XComGame.X2LootTableManager"));
+
+	foreach default.SupplyExtractionLootTables(LootTable)
+	{
+		iTable = LootManager.LootTables.Find('TableName', LootTable);
+		if (iTable == INDEX_NONE)
+		{
+			`RedScreen("CI" @ GetFuncName() $ ": " $ LootTable @ "is not a valid loot table");
+			continue;
+		}
+
+		for (iLootEntry = 0; iLootEntry < LootManager.LootTables[iTable].Loots.Length; iLootEntry++)
+		{
+			EntryTemplateName = LootManager.LootTables[iTable].Loots[iLootEntry].TemplateName;
+
+			if (default.SupplyExtractionLootTemplates.Find(EntryTemplateName) == INDEX_NONE)
+			{
+				`CI_Log(GetFuncName() @ `showvar(LootTable) @ `showvar(iLootEntry) @ `showvar(EntryTemplateName) @ "is not permitted to be modified");
+				continue;
+			}
+
+			`CI_Trace(GetFuncName() @ `showvar(LootTable) @ `showvar(EntryTemplateName) @ "pre  patch - Min" @ LootManager.LootTables[iTable].Loots[iLootEntry].MinCount @ "Max" @ LootManager.LootTables[iTable].Loots[iLootEntry].MaxCount);
+
+			LootManager.LootTables[iTable].Loots[iLootEntry].MinCount = Round(LootManager.LootTables[iTable].Loots[iLootEntry].MinCount * default.SupplyExtractionMultipler);
+			LootManager.LootTables[iTable].Loots[iLootEntry].MaxCount = Round(LootManager.LootTables[iTable].Loots[iLootEntry].MaxCount * default.SupplyExtractionMultipler);
+
+			`CI_Trace(GetFuncName() @ `showvar(LootTable) @ `showvar(EntryTemplateName) @ "post patch - Min" @ LootManager.LootTables[iTable].Loots[iLootEntry].MinCount @ "Max" @ LootManager.LootTables[iTable].Loots[iLootEntry].MaxCount);
+		}
+	}
 }
 
 ///////////
