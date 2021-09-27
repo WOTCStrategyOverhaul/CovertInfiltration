@@ -37,7 +37,7 @@ static function X2DataTemplate CreateRewardInterceptionTemplate()
 	Template.bNoSimultaneous = true;
 
 	Template.OnChainComplete = SpawnRescueMission;
-	Template.CanBeChosen = SupplyAndIntelChains;
+	Template.CanBeChosen = InterceptableChains;
 
 	Template.OnExitPostMissionSequence = TriggerRewardInterceptionPopup;
 
@@ -103,26 +103,12 @@ function SpawnRescueMission(XComGameState NewGameState, XComGameState_Complicati
 	SpawnedChainState.StartNextStage(NewGameState);
 }
 
-function bool SupplyAndIntelChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
+function bool InterceptableChains(XComGameState NewGameState, XComGameState_ActivityChain ChainState)
 {
-	local XComGameState_Activity ActivityState;
-	local X2ActivityTemplate_Mission ActivityTemplate;
-
-	ActivityState = ChainState.GetLastActivity();
-	ActivityTemplate = X2ActivityTemplate_Mission(ActivityState.GetMyTemplate());
-
-	if (ActivityTemplate == none) return false;
-	
-	// and if there is a supply or intel rewarding chain
-	if (IsInterceptableActivity(ActivityTemplate))
-	{
-		return true;
-	}
-
-	return false;
+	return IsInterceptableChain(ChainState.GetMyTemplate());
 }
 
-static function bool IsInterceptableActivity(X2ActivityTemplate Template)
+static function bool IsInterceptableChain(X2ActivityChainTemplate Template)
 {
 	return default.InterceptMissions.Find(Template.DataName) > INDEX_NONE;
 }
