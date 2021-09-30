@@ -105,9 +105,17 @@ simulated function SetProgressInfo (int StartsAt, int EndsAt, int CurrentProgres
 		Duration = EndsAt - StartsAt;
 		ProgressPercentPoints = CurrentProgress - StartsAt;
 
-		FillBar.Show();
-		FillBar.SetHeight(BGBar.Height * (float(ProgressPercentPoints) / float(Duration)));
-		FillBar.SetY(BGBar.Y + (BGBar.Height - FillBar.Height));
+		if (ProgressPercentPoints == 0)
+		{
+			// Height of 0 bugs out the UI
+			FillBar.Hide();
+		}
+		else
+		{
+			FillBar.Show();
+			FillBar.SetHeight(BGBar.Height * (float(ProgressPercentPoints) / float(Duration)));
+			FillBar.SetY(BGBar.Y + (BGBar.Height - FillBar.Height));
+		}
 	}
 
 	ActivateAtLabel.SetText(class'UIUtilities_Text'.static.GetColoredText(EndsAt $ "%", bActivateAtFaded ? eUIState_Header : eUIState_Normal));
