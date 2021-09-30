@@ -382,11 +382,11 @@ simulated protected function PopulateMilestones ()
 		}
 		else if (InfiltrationState.GetNextOverInfiltrationBonus() == BonusTemplate)
 		{
-			MilestoneUI.SetInProgress(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription());
+			MilestoneUI.SetInProgress(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription(), GetHoursUntilPercentInfil(MilestoneTemplate.ActivateAtProgress));
 		}
 		else
 		{
-			MilestoneUI.SetLocked(MilestoneTemplate.strName);
+			MilestoneUI.SetLocked(MilestoneTemplate.strName, GetHoursUntilPercentInfil(MilestoneTemplate.ActivateAtProgress));
 		}
 	}
 
@@ -395,6 +395,15 @@ simulated protected function PopulateMilestones ()
 
 	MilestonesChosenSeparator.SetY(MilestonesList.Y + MilestonesList.TotalItemSize + 10);
 	ChosenSectionContainer.SetY(MilestonesChosenSeparator.Y + 5);
+}
+
+simulated protected function int GetHoursUntilPercentInfil (int TargetInfi)
+{
+	local float Seconds;
+
+	Seconds = GetInfiltration().GetSecondsUntilPercentInfil(TargetInfi);
+
+	return Round(Seconds / 3600);
 }
 
 simulated protected function CreateChosenMods ()

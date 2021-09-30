@@ -433,6 +433,15 @@ function float GetCurrentOverInfil ()
 	return FMin(OverInfil, GetMaxAllowedOverInfil());
 }
 
+function float GetSecondsUntilPercentInfil (int TargetInfil)
+{
+	local float TargetOverInfil;
+
+	TargetOverInfil = (float(TargetInfil) / 100) - 1;
+
+	return (TargetOverInfil - GetCurrentOverInfil()) * SecondsForOnePercent * 100;
+}
+
 // Returns 0-1
 function float GetCurrentOverInfilPercentToMax ()
 {
