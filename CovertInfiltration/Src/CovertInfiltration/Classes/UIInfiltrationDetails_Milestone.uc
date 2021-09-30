@@ -209,7 +209,7 @@ simulated protected function SetTimeLeft (int Hours, bool bFaded)
 {
 	local string strTime;
 
-	strTime = class'UIUtilities_Text'.static.GetTimeRemainingString(Hours, 1);
+	strTime = class'UIUtilities_Text'.static.GetTimeRemainingString(Hours, 2);
 
 	if (bFaded)
 	{
