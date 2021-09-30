@@ -169,16 +169,11 @@ simulated function SetInProgress (string strName, string strDescription, int Hou
 	TimeLeftLabel.Show();
 	SetTimeLeft(HoursLeft, false);
 
-	strDescription = class'UIUtilities_Text'.static.AddFontInfo(strDescription, Screen.bIsIn3D, false,, 18);
-	strDescription = class'UIUtilities_Infiltration'.static.ColourText(strDescription, "8C8770");
-	DescriptionLabel.SetHTMLText(strDescription);
-	DescriptionLabel.Show();
-
-	HiddenLabel.Hide();
-	HiddenDags.Hide();
+	ShowDescriptionNotReached(strDescription);
 }
 
-simulated function SetLocked (string strName, int HoursLeft)
+// Pass empty string for strDescription to show the "locked" graphic
+simulated function SetLocked (string strName, string strDescription, int HoursLeft)
 {
 	strName = class'UIUtilities_Text'.static.AddFontInfo(strName, Screen.bIsIn3D, true,, 24);
 	strName = class'UIUtilities_Text'.static.GetColoredText(strName, eUIState_Header);
@@ -187,9 +182,27 @@ simulated function SetLocked (string strName, int HoursLeft)
 	TimeLeftLabel.Show();
 	SetTimeLeft(HoursLeft, true);
 
-	DescriptionLabel.Hide();
-	HiddenLabel.Show();
-	HiddenDags.Show();
+	if (strDescription == "")
+	{
+		DescriptionLabel.Hide();
+		HiddenLabel.Show();
+		HiddenDags.Show();
+	}
+	else
+	{
+		ShowDescriptionNotReached(strDescription);
+	}
+}
+
+simulated protected function ShowDescriptionNotReached (string strDescription)
+{
+	strDescription = class'UIUtilities_Text'.static.AddFontInfo(strDescription, Screen.bIsIn3D, false,, 18);
+	strDescription = class'UIUtilities_Infiltration'.static.ColourText(strDescription, "8C8770");
+	DescriptionLabel.SetHTMLText(strDescription);
+	DescriptionLabel.Show();
+
+	HiddenLabel.Hide();
+	HiddenDags.Hide();
 }
 
 simulated protected function SetTimeLeft (int Hours, bool bFaded)

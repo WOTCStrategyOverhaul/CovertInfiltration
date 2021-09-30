@@ -172,8 +172,11 @@ strChosenAppearenceChanceLabels[3]="Likely"
 strChosenAppearenceChanceLabels[4]="Presumed" 
 
 [OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
-BonusName="Remove Negative SitRep"
+BonusName="Negate Risk"
 BonusDescription="Subvert the risk-added sitrep, removing its effects on the mission"
+
+[X2StrategyElement_DefaultOverInfiltrationBonuses]
+NegateRiskDescription="Remove SitRep: <XGParam:StrValue0>"
 
 [X2Ability_SitRepAbilitySet_CI]
 MentalReadinessFriendlyName="Mental Readiness"
