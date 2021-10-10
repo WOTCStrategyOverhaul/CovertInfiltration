@@ -5,10 +5,13 @@ struct SitRepBonusMapping
 	var name BonusName;
 	var name SitRepName;
 	var name MilestoneName;
+	var bool bNeverHiddenUI;
 	var array<name> SitRepsToRemove;
 };
 
 var config array<SitRepBonusMapping> SitRepBonuses;
+
+var localized string NegateRiskDescription;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
@@ -41,6 +44,7 @@ static function X2OverInfiltrationBonusTemplate CreateSitRepBonus(SitRepBonusMap
 	Template.MetatdataName = Mapping.SitRepName;
 	Template.SitRepsToRemove = Mapping.SitRepsToRemove;
 	Template.Milestone = Mapping.MilestoneName;
+	Template.bNeverHiddenUI = Mapping.bNeverHiddenUI;
 	Template.IsAvaliableFn = IsSitRepBonusAvaliable;
 	Template.ApplyFn = ApplySitRepBonus;
 	Template.GetBonusNameFn = GetSitRepName;
@@ -92,14 +96,14 @@ static function ApplySitRepBonus(XComGameState NewGameState, X2OverInfiltrationB
 	Infiltration.PostSitRepsChanged(NewGameState);
 }
 
-static function string GetSitRepName(X2OverInfiltrationBonusTemplate BonusTemplate)
+static function string GetSitRepName(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
 	return class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager()
 		.FindSitRepTemplate(BonusTemplate.MetatdataName)
 		.GetFriendlyName();
 }
 
-static function string GetSitRepDescription(X2OverInfiltrationBonusTemplate BonusTemplate)
+static function string GetSitRepDescription(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
 {
 	return class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager()
 		.FindSitRepTemplate(BonusTemplate.MetatdataName)
@@ -117,8 +121,12 @@ static function X2OverInfiltrationBonusTemplate CreateNegateRiskBonus()
 	`CREATE_X2TEMPLATE(class'X2OverInfiltrationBonusTemplate', Template, 'OverInfiltrationBonus_NegateRisk');
 	
 	Template.Milestone = 'RiskRemoval';
-	Template.IsAvaliableFn = IsNegateRiskBonusAvaliable;
+	Template.bNeverHiddenUI = true;
+
 	Template.ApplyFn = ApplyNegateRiskBonus;
+	Template.IsAvaliableFn = IsNegateRiskBonusAvaliable;
+	
+	Template.GetBonusDescriptionFn = GetNegateRiskDescription;
 
 	return Template;
 }
@@ -143,4 +151,29 @@ static function ApplyNegateRiskBonus(XComGameState NewGameState, X2OverInfiltrat
 	}
 
 	Infiltration.PostSitRepsChanged(NewGameState);
+}
+
+static function string GetNegateRiskDescription (X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration)
+{
+	local X2SitRepTemplateManager SitRepManager;
+	local X2SitRepTemplate SitRepTemplate;
+	local array<string> strRemovedSitreps;
+	local XGParamTag ParamTag;
+	local name RiskName;
+	local int i;
+
+	SitRepManager = class'X2SitRepTemplateManager'.static.GetSitRepTemplateManager();
+
+	foreach Infiltration.AppliedFlatRisks(RiskName)
+	{
+		i = class'X2Helper_Infiltration'.default.FlatRiskSitReps.Find('FlatRiskName', RiskName);
+		SitRepTemplate = SitRepManager.FindSitRepTemplate(class'X2Helper_Infiltration'.default.FlatRiskSitReps[i].SitRepName);
+
+		strRemovedSitreps.AddItem(SitRepTemplate.GetFriendlyName());
+	}
+
+	ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+	JoinArray(strRemovedSitreps, ParamTag.StrValue0);
+	
+	return `XEXPAND.ExpandString(default.NegateRiskDescription);
 }

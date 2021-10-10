@@ -341,6 +341,7 @@ simulated protected function PopulateMilestones ()
 	local array<InfilBonusMilestoneSelection> SelectedBonuses;
 	local X2OverInfiltrationBonusTemplate BonusTemplate;
 	local UIInfiltrationDetails_Milestone MilestoneUI;
+	local string strBonusName, strBonusDescription;
 	local int i, CurrentProgress, MilestoneStartAt;
 
 	MilestoneTemplateManager = class'X2InfiltrationBonusMilestoneTemplateManager'.static.GetMilestoneTemplateManager();
@@ -378,15 +379,38 @@ simulated protected function PopulateMilestones ()
 
 		if (SelectedBonuses[i].bGranted)
 		{
-			MilestoneUI.SetUnlocked(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription());
+			strBonusName = BonusTemplate.GetBonusName(InfiltrationState);
+			strBonusDescription = BonusTemplate.GetBonusDescription(InfiltrationState);
+
+			MilestoneUI.SetUnlocked(strBonusName, strBonusDescription);
 		}
 		else if (InfiltrationState.GetNextOverInfiltrationBonus() == BonusTemplate)
 		{
-			MilestoneUI.SetInProgress(BonusTemplate.GetBonusName(), BonusTemplate.GetBonusDescription());
+			strBonusName = BonusTemplate.GetBonusName(InfiltrationState);
+			strBonusDescription = BonusTemplate.GetBonusDescription(InfiltrationState);
+
+			MilestoneUI.SetInProgress(
+				strBonusName, strBonusDescription,
+				GetHoursUntilPercentInfil(MilestoneTemplate.ActivateAtProgress)
+			);
 		}
 		else
 		{
-			MilestoneUI.SetLocked(MilestoneTemplate.strName);
+			if (BonusTemplate.bNeverHiddenUI)
+			{
+				strBonusName = BonusTemplate.GetBonusName(InfiltrationState);
+				strBonusDescription = BonusTemplate.GetBonusDescription(InfiltrationState);
+			}
+			else
+			{
+				strBonusName = MilestoneTemplate.strName;
+				strBonusDescription = "";
+			}
+
+			MilestoneUI.SetLocked(
+				strBonusName, strBonusDescription,
+				GetHoursUntilPercentInfil(MilestoneTemplate.ActivateAtProgress)
+			);
 		}
 	}
 
@@ -395,6 +419,15 @@ simulated protected function PopulateMilestones ()
 
 	MilestonesChosenSeparator.SetY(MilestonesList.Y + MilestonesList.TotalItemSize + 10);
 	ChosenSectionContainer.SetY(MilestonesChosenSeparator.Y + 5);
+}
+
+simulated protected function int GetHoursUntilPercentInfil (int TargetInfi)
+{
+	local float Seconds;
+
+	Seconds = GetInfiltration().GetSecondsUntilPercentInfil(TargetInfi);
+
+	return Round(Seconds / 3600);
 }
 
 simulated protected function CreateChosenMods ()

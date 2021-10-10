@@ -8,14 +8,17 @@ var name Milestone;
 var int Weight;
 var bool DoNotMarkUsed;
 
+// Show exact bonus in the infiltration UI, even if it's not the next one
+var bool bNeverHiddenUI;
+
 var protected localized string BonusName;
 var protected localized string BonusDescription;
 
 delegate bool IsAvaliableFn(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
 delegate ApplyFn(XComGameState NewGameState, X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
 
-delegate string GetBonusNameFn(X2OverInfiltrationBonusTemplate BonusTemplate);
-delegate string GetBonusDescriptionFn(X2OverInfiltrationBonusTemplate BonusTemplate);
+delegate string GetBonusNameFn(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
+delegate string GetBonusDescriptionFn(X2OverInfiltrationBonusTemplate BonusTemplate, XComGameState_MissionSiteInfiltration Infiltration);
 
 function bool ValidateTemplate (out string strError)
 {
@@ -58,21 +61,21 @@ function bool ValidateTemplate (out string strError)
 	return true;
 }
 
-function string GetBonusName()
+function string GetBonusName(XComGameState_MissionSiteInfiltration Infiltration)
 {
 	if (GetBonusNameFn != none)
 	{
-		return GetBonusNameFn(self);
+		return GetBonusNameFn(self, Infiltration);
 	}
 
 	return BonusName;
 }
 
-function string GetBonusDescription()
+function string GetBonusDescription(XComGameState_MissionSiteInfiltration Infiltration)
 {
 	if (GetBonusDescriptionFn != none)
 	{
-		return GetBonusDescriptionFn(self);
+		return GetBonusDescriptionFn(self, Infiltration);
 	}
 
 	return BonusDescription;

@@ -394,7 +394,7 @@ function UpdateGameBoard()
 		HQPres = `HQPRES;
 		ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 		ParamTag.IntValue0 = GetCurrentInfilInt();
-		HQPres.NotifyBanner(`XEXPAND.ExpandString(default.strBannerBonusGained), GetUIButtonIcon(), BonusTemplate.GetBonusName(), NewMissionState.GetMissionObjectiveText(), eUIState_Good);
+		HQPres.NotifyBanner(`XEXPAND.ExpandString(default.strBannerBonusGained), GetUIButtonIcon(), BonusTemplate.GetBonusName(self), NewMissionState.GetMissionObjectiveText(), eUIState_Good);
 		`XSTRATEGYSOUNDMGR.PlaySoundEvent(X2ActivityTemplate_Infiltration(ActivityState.GetMyTemplate()).MilestoneSound);
 
 		`CI_Log("Checking if should pause at: " $ BonusTemplate.Milestone);
@@ -431,6 +431,15 @@ function float GetCurrentOverInfil ()
 
 	// Force cap the infil to the max allowed, otherwise it's possible to exceed the max by flying somewhere at last second
 	return FMin(OverInfil, GetMaxAllowedOverInfil());
+}
+
+function float GetSecondsUntilPercentInfil (int TargetInfil)
+{
+	local float TargetOverInfil;
+
+	TargetOverInfil = (float(TargetInfil) / 100) - 1;
+
+	return (TargetOverInfil - GetCurrentOverInfil()) * SecondsForOnePercent * 100;
 }
 
 // Returns 0-1

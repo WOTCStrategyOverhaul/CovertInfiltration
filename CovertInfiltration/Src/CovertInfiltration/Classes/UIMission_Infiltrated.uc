@@ -94,15 +94,17 @@ simulated function BuildScreen()
 
 simulated function string GetOverInfiltrationText()
 {
+	local XComGameState_MissionSiteInfiltration InfiltrationState;
 	local X2OverInfiltrationBonusTemplate NextBonus;
 	
-	NextBonus = GetInfiltration().GetNextOverInfiltrationBonus();
+	InfiltrationState = GetInfiltration();
+	NextBonus = InfiltrationState.GetNextOverInfiltrationBonus();
 
 	return 
 		strOverInfiltrationNextBonus
 		@ "(" $ GetInfiltration().GetNextThreshold() $ "%):"
-		@ NextBonus.GetBonusName() $ "\n"
-		$ NextBonus.GetBonusDescription();
+		@ NextBonus.GetBonusName(InfiltrationState) $ "\n"
+		$ NextBonus.GetBonusDescription(InfiltrationState);
 }
 
 simulated function BuildMissionPanel()
