@@ -15,9 +15,10 @@ var UISS_InfiltrationItem SquadDurationLabel, SquadDurationValue;
 var UISS_InfiltrationItem OverloadPenaltyLabel, OverloadPenaltyValue, MaxInfilValue;
 var UISS_InfiltrationItem BondModifierLabel, BondModifierValue;
 
-
 var UISS_InfiltrationItem RisksLabel;
 var UIList RiskEntries;
+
+var protected bool bForceFlushAfterUpdate; // After we update all the panels, instantly flush the movie command queue
 
 var localized string strTotalDurationTitle;
 var localized string strBaseDurationTitle;
@@ -111,6 +112,7 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	local string OverloadColour;
 
 	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	bForceFlushAfterUpdate = false;
 
 	BaseDuration = CurrentAction.HoursToComplete;
 	SquadDuration = class'X2Helper_Infiltration'.static.GetSquadInfilWithoutPenalty(XComHQ.Squad);
@@ -165,11 +167,17 @@ simulated function UpdateData(XComGameState_CovertAction CurrentAction)
 	}
 		
 	UpdateRiskLabels(CurrentAction);
+
+	if (bForceFlushAfterUpdate)
+	{
+		Movie.ProcessQueuedCommands();
+	}
 }
 
 simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 {
 	local array<ActionRiskDisplayInfo> RisksForDisplay;
+	local bool bRealizePending;
 	local UISS_Risk Item;
 	local int idx;
 
@@ -181,6 +189,11 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 		Item = GetRiskLabel(idx);
 		Item.UpdateFromInfo(RisksForDisplay[idx]);
 		Item.Show();
+
+		if (Item.bHeightRealizePending)
+		{
+			bRealizePending = true;
+		}
 	}
 
 	for (idx = idx /* Keep going but help the compiler understand what we want to do */; idx < RiskEntries.GetItemCount(); idx++)
@@ -188,6 +201,32 @@ simulated function UpdateRiskLabels(XComGameState_CovertAction CurrentAction)
 		GetRiskLabel(idx).Hide();
 	}
 
+	if (bRealizePending) bForceFlushAfterUpdate = true;
+	else RealizeRiskEntries();
+}
+
+simulated protected function OnRiskRealized (UISS_Risk RealizedRisk)
+{
+	local UISS_Risk Item;
+	local int idx;
+
+	for (idx = 0; idx < RiskEntries.GetItemCount(); idx++)
+	{
+		Item = GetRiskLabel(idx);
+		
+		// Don't care about the hidden ones
+		if (!Item.bIsVisible) continue;
+
+		// If any is still pending, bail
+		if (Item.bHeightRealizePending) return;
+	}
+
+	// All are realized, finalize the list
+	RealizeRiskEntries();
+}
+
+simulated protected function RealizeRiskEntries ()
+{
 	RiskEntries.RealizeItems();
 	RiskEntries.RealizeList();
 }
@@ -232,6 +271,7 @@ simulated function UISS_Risk GetRiskLabel(int Index)
 	}
 
 	NewEntry = Spawn(class'UISS_Risk', RiskEntries.ItemContainer);
+	NewEntry.OnHeightRealized = OnRiskRealized;
 	NewEntry.InitRisk();
 
 	return NewEntry;

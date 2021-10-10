@@ -1168,7 +1168,7 @@ simulated protected function OnRiskRealized (UICovertActionsGeoscape_Risk Realiz
 	local UICovertActionsGeoscape_Risk RiskElement;
 	local int idx;
 
-	for (idx = idx; idx < ActionRisksList.GetItemCount(); idx++)
+	for (idx = 0; idx < ActionRisksList.GetItemCount(); idx++)
 	{
 		RiskElement = UICovertActionsGeoscape_Risk(ActionRisksList.GetItem(idx));
 		
