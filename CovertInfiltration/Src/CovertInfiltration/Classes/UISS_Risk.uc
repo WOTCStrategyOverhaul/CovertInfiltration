@@ -1,7 +1,7 @@
 class UISS_Risk extends UIPanel;
 
 var protectedwrite UISS_InfiltrationItem ChanceAndName;
-var protectedwrite UISS_InfiltrationItem Description;
+var protectedwrite UIText Description;
 
 simulated function InitRisk ()
 {
@@ -11,10 +11,13 @@ simulated function InitRisk ()
 	ChanceAndName.bAnimateOnInit = false;
 	ChanceAndName.InitObjectiveListItem('ChanceAndName');
 
-	Description = Spawn(class'UISS_InfiltrationItem', self);
+	Description = Spawn(class'UIText', self);
 	Description.bAnimateOnInit = false;
-	Description.InitObjectiveListItem('Description');
+	Description.InitText('Description');
 	Description.SetPosition(10, 28);
+	Description.SetWidth(360);
+	class'UIUtilities_Infiltration'.static.ShadowToText(Description);
+	// TODO: Realize callback
 }
 
 simulated function UpdateFromInfo (ActionRiskDisplayInfo DisplayInfo)
@@ -29,8 +32,8 @@ simulated function UpdateFromInfo (ActionRiskDisplayInfo DisplayInfo)
 	else
 	{
 		Description.Show();
-		Description.SetText(DisplayInfo.Description);
-		Height = Description.Y + Description.Height;
+		Description.SetText(class'UIUtilities_Infiltration'.static.SetTextLeading(DisplayInfo.Description, -1));
+		Height = Description.Y + Description.Height; // TODO
 	}
 }
 
