@@ -1125,7 +1125,6 @@ simulated protected function UpdateRisks()
 		return;
 	}
 
-
 	// Create/update risks for showing
 	for (idx = 0; idx < RisksForDisplay.Length; idx++)
 	{
@@ -1152,10 +1151,13 @@ simulated protected function UpdateRisks()
 	// Hide extra rows
 	for (idx = idx; idx < ActionRisksList.GetItemCount(); idx++)
 	{
-		ActionRisksList.GetItem(idx).Hide();
+		RiskElement = UICovertActionsGeoscape_Risk(ActionRisksList.GetItem(idx));
+		RiskElement.Hide();
+		RiskElement.Height = 0; // UIList counts the hidden items for the total item size
 	}
 
 	ActionRisksContainer.Show();
+	ActionRisksList.ItemContainer.ClearScroll(); // Reset the scroll even if we will need to scroll afterwards
 
 	if (bRealizePending) bForceFlushAfterUpdate = true;
 	else RealizeActionRisksList();
@@ -1185,6 +1187,12 @@ simulated protected function RealizeActionRisksList ()
 {
 	ActionRisksList.RealizeItems();
 	ActionRisksList.RealizeList();
+
+	if (ActionRisksList.Scrollbar != none)
+	{
+		ActionRisksList.Scrollbar.Hide();
+		ActionRisksList.ItemContainer.AnimateScroll(ActionRisksList.TotalItemSize, ActionRisksList.Mask.Height);
+	}
 }
 
 simulated protected function UpdateProgressBar()
