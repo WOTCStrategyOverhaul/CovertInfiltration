@@ -1,3 +1,5 @@
+; Commented out lines were changed in the English version since the translation
+
 [UIStrategyMap_CAButton]
 strLabel=ТАЙНЫЕ ОПЕРАЦИИ
 
@@ -172,8 +174,11 @@ strChosenAppearenceChanceLabels[3]="Высокая вероятность"
 strChosenAppearenceChanceLabels[4]="Крайне высокая вероятность" 
 
 [OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
-BonusName="Убрать негативный SitRep"
+;BonusName="Убрать негативный SitRep"
 BonusDescription="Свернуть подготовку модификатора SitRep, устранив его последствия для миссии."
+
+[X2StrategyElement_DefaultOverInfiltrationBonuses]
+;NegateRiskDescription="Remove SitRep: <XGParam:StrValue0>"
 
 [X2Ability_SitRepAbilitySet_CI]
 MentalReadinessFriendlyName="Психологическая готовность"
