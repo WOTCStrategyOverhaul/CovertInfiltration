@@ -1,7 +1,11 @@
 class UICovertActionsGeoscape_Risk extends UIPanel;
 
 var protectedwrite UIScrollingText ChanceAndName;
-var protectedwrite UIScrollingText Description;
+var protectedwrite UIText Description;
+
+var protectedwrite bool bHeightRealizePending;
+
+delegate OnHeightRealized (UICovertActionsGeoscape_Risk Risk);
 
 simulated function InitRisk (float InitWidth)
 {
@@ -13,11 +17,12 @@ simulated function InitRisk (float InitWidth)
 	ChanceAndName.InitScrollingText('ChanceAndName');
 	ChanceAndName.SetWidth(Width);
 
-	Description = Spawn(class'UIScrollingText', self);
+	Description = Spawn(class'UIText', self);
 	Description.bAnimateOnInit = false;
-	Description.InitScrollingText('Description');
+	Description.InitText('Description');
 	Description.SetPosition(10, 28);
 	Description.SetWidth(Width - Description.X);
+	Description.OnTextSizeRealized = OnDescriptionRealized;
 }
 
 simulated function UpdateFromInfo (ActionRiskDisplayInfo DisplayInfo)
@@ -28,13 +33,38 @@ simulated function UpdateFromInfo (ActionRiskDisplayInfo DisplayInfo)
 	{
 		Description.Hide();
 		Height = ChanceAndName.Height;
+
+		bHeightRealizePending = false;
 	}
 	else
 	{
 		Description.Show();
-		Description.SetText(DisplayInfo.Description);
-		Height = Description.Y + Description.Height;
+		Description.SetText(class'UIUtilities_Infiltration'.static.SetTextLeading(DisplayInfo.Description, -1));
+
+		if (Description.TextSizeRealized)
+		{
+			SetHeightWithDescription();
+		}
+		else
+		{
+			bHeightRealizePending = true;
+		}
 	}
+}
+
+simulated protected function OnDescriptionRealized ()
+{
+	SetHeightWithDescription();
+
+	if (OnHeightRealized != none) OnHeightRealized(self);
+}
+
+simulated protected function SetHeightWithDescription ()
+{
+	if (!Description.bIsVisible) return; // Rapid updates that set no description?
+
+	Height = Description.Y + Description.Height;
+	bHeightRealizePending = false;
 }
 
 defaultproperties

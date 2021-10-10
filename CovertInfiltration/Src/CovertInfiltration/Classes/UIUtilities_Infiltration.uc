@@ -143,6 +143,24 @@ static function string SetTextLeading (string strValue, int Leading)
 	return "<textformat leading='" $ string(Leading) $ "'>" $ strValue $ "</textformat>";
 }
 
+static function ShadowToText (UIText Text)
+{
+	ShadowToTextField(Text, "text");
+}
+
+// Replicated from Utilities.as
+static function ShadowToTextField (UIPanel OuterPanel, string fieldPath)
+{
+	OuterPanel.MC.ChildSetString(fieldPath, "shadowStyle", "s{0,0}{0,0){0,0}t{0,0}");
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowColor", 0);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowBlurX", 3);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowBlurY", 3);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowStrength", 15);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowAngle", 0);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowAlpha", 0.25);
+	OuterPanel.MC.ChildSetNum(fieldPath, "shadowDistance", 0);
+}
+
 static function array<ActionRiskDisplayInfo> GetRisksForDisplay(XComGameState_CovertAction CovertAction)
 {
 	local X2StrategyElementTemplateManager StratMgr;

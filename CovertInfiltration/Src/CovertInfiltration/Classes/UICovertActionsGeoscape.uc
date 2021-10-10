@@ -100,6 +100,7 @@ var protected EStrategyMapState PreOpenMapState;
 
 // Internal state
 var protected bool bDontUpdateData;
+var protected bool bForceFlushAfterUpdate; // After we update all the panels, instantly flush the movie command queue
 
 // Localization strings
 var localized string strRewardHeader;
@@ -772,6 +773,8 @@ simulated function UpdateData()
 {
 	if (bDontUpdateData) return;
 	
+	bForceFlushAfterUpdate = false;
+
 	PrepareSlotsInfo();
 
 	FocusCameraOnCurrentAction();
@@ -780,6 +783,11 @@ simulated function UpdateData()
 	UpdateCovertActionInfo();
 	UpdateProgressBar();
 	UpdateNavHelp();
+
+	if (bForceFlushAfterUpdate)
+	{
+		Movie.ProcessQueuedCommands();
+	}
 
 	TriggerTutorialOnSelection();
 }
@@ -1106,6 +1114,7 @@ simulated protected function UpdateRisks()
 
 	local array<ActionRiskDisplayInfo> RisksForDisplay;
 	local UICovertActionsGeoscape_Risk RiskElement;
+	local bool bRealizePending;
 	
 	CurrentAction = GetAction();
 	RisksForDisplay = class'UIUtilities_Infiltration'.static.GetRisksForDisplay(CurrentAction);
@@ -1122,6 +1131,7 @@ simulated protected function UpdateRisks()
 		if (idx == ActionRisksList.GetItemCount())
 		{
 			RiskElement = Spawn(class'UICovertActionsGeoscape_Risk', ActionRisksList.ItemContainer);
+			RiskElement.OnHeightRealized = OnRiskRealized;
 			RiskElement.InitRisk(ActionRisksList.Width);
 		}
 		else
@@ -1131,17 +1141,58 @@ simulated protected function UpdateRisks()
 		}
 		
 		RiskElement.UpdateFromInfo(RisksForDisplay[idx]);
+
+		if (RiskElement.bHeightRealizePending)
+		{
+			bRealizePending = true;
+		}
 	}
 
 	// Hide extra rows
 	for (idx = idx; idx < ActionRisksList.GetItemCount(); idx++)
 	{
-		ActionRisksList.GetItem(idx).Hide();
+		RiskElement = UICovertActionsGeoscape_Risk(ActionRisksList.GetItem(idx));
+		RiskElement.Hide();
+		RiskElement.Height = 0; // UIList counts the hidden items for the total item size
 	}
 
+	ActionRisksContainer.Show();
+	ActionRisksList.ItemContainer.ClearScroll(); // Reset the scroll even if we will need to scroll afterwards
+
+	if (bRealizePending) bForceFlushAfterUpdate = true;
+	else RealizeActionRisksList();
+}
+
+simulated protected function OnRiskRealized (UICovertActionsGeoscape_Risk RealizedRisk)
+{
+	local UICovertActionsGeoscape_Risk RiskElement;
+	local int idx;
+
+	for (idx = 0; idx < ActionRisksList.GetItemCount(); idx++)
+	{
+		RiskElement = UICovertActionsGeoscape_Risk(ActionRisksList.GetItem(idx));
+		
+		// Don't care about the hidden ones
+		if (!RiskElement.bIsVisible) continue;
+
+		// If any is still pending, bail
+		if (RiskElement.bHeightRealizePending) return;
+	}
+
+	// All are realized, finalize the list
+	RealizeActionRisksList();
+}
+
+simulated protected function RealizeActionRisksList ()
+{
 	ActionRisksList.RealizeItems();
 	ActionRisksList.RealizeList();
-	ActionRisksContainer.Show();
+
+	if (ActionRisksList.Scrollbar != none)
+	{
+		ActionRisksList.Scrollbar.Hide();
+		ActionRisksList.ItemContainer.AnimateScroll(ActionRisksList.TotalItemSize, ActionRisksList.Mask.Height);
+	}
 }
 
 simulated protected function UpdateProgressBar()
