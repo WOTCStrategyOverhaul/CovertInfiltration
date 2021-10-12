@@ -391,15 +391,22 @@ static function X2DataTemplate CreateLandedUFOTemplate()
 static function bool IsUFOChainAvailable(XComGameState NewGameState)
 {
 	local XComGameState_HeadquartersAlien AlienHQ;
+	local bool bSeenUfo;
 
-	AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
-	
-	if (AlienHQ.bHasPlayerBeenIntercepted || AlienHQ.bHasGoldenPathUFOAppeared || AlienHQ.bHasPlayerAvoidedUFO)
+	// If SWO isn't enabled, check if player has seen a UFO
+	if (!`SecondWaveEnabled('CI_NoUfoGate'))
 	{
-		return IsAdvancedChainAvailable(NewGameState);
+		AlienHQ = XComGameState_HeadquartersAlien(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersAlien'));
+		bSeenUfo = AlienHQ.bHasPlayerBeenIntercepted || AlienHQ.bHasGoldenPathUFOAppeared || AlienHQ.bHasPlayerAvoidedUFO;
+
+		if (!bSeenUfo) return false;
 	}
 
-	return false;
+	// This is an advanced chain - make sure they are unlocked
+	if (!IsAdvancedChainAvailable(NewGameState)) return false;
+
+	// All good, can spawn
+	return true;
 }
 
 static function X2DataTemplate CreateDestroyFacilityTemplate()

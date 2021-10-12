@@ -1,3 +1,7 @@
 [NoEnviromentalSitreps SecondWaveOptionObject]
 Tooltip="When enabled, missions will no longer sometimes receive environmental SitReps (such as extra explosive crates or extra psionic enemies) or third-party faction SitReps (such as the Lost or any mod-added factions). This will effectively disable all environmental SitReps and third-party factions except for when the mission or the map requires it. Since these SitReps are generally beneficial to neither XCOM nor ADVENT, the tactical difficulty of the game is mostly unchanged. The spawning of positive or negative SitReps that tip mission difficulty are not affected by this option. Can be changed mid-campaign, but will not affect existing missions"
 Description="Controlled Environment: No environmental or third-party faction SitReps on missions"
+
+[CI_NoUfoGate SecondWaveOptionObject]
+Description="Busy Skies: UFO raid chains can appear before an Avenger-hunting UFO is encountered"
+Tooltip="Can be changed mid-campaign, but will not affect already spawned UFO chains"
