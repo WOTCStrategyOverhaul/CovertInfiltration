@@ -23,6 +23,8 @@ var localized string strMustLaunch;
 var localized string strInfiltration;
 var localized string strWait;
 var localized string strReturnToAvenger;
+var localized string strViewSquad;
+var localized string strDeployedSquad;
 
 var localized string strChosenAppearenceChance;
 var localized array<string> strChosenAppearenceChanceLabels;
@@ -212,7 +214,7 @@ simulated function BuildOptionsPanel()
 	// ViewSquadButton is obviously custom
 	
 	ViewSquadButton = Spawn(class'UIButton', ButtonGroup);
-	ViewSquadButton.InitButton('ViewSquadButton', "VIEW SQUAD", OnViewSquad);
+	ViewSquadButton.InitButton('ViewSquadButton', strViewSquad, OnViewSquad);
 	ViewSquadButton.SetStyle(eUIButtonStyle_HOTLINK_BUTTON);
 	ViewSquadButton.SetGamepadIcon(class'UIUtilities_Input'.const.ICON_X_SQUARE);
 	ViewSquadButton.SetResizeToText(false);
@@ -397,7 +399,7 @@ simulated function CloseScreenOnly ()
 
 simulated protected function OnViewSquad(UIButton Button)
 {
-	class'UIUtilities_Infiltration'.static.UIPersonnel_PreSetList(GetInfiltration().SoldiersOnMission, "DEPLOYED SQUAD");
+	class'UIUtilities_Infiltration'.static.UIPersonnel_PreSetList(GetInfiltration().SoldiersOnMission, strDeployedSquad);
 }
 
 simulated function OnDetailsButtonClicked (UIButton Button)
