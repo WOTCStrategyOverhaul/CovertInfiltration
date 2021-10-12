@@ -27,6 +27,8 @@ var config int ExtractionDifficulty;
 var config int ConvoyDifficulty;
 var config int LandedDifficulty;
 
+var config int InformantAssaultRandWeight;
+
 static function array<X2DataTemplate> CreateTemplates()
 {
 	local array<X2DataTemplate> Templates;
@@ -137,7 +139,8 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.MissionImage = "img:///UILibrary_StrategyImages.X2StrategyMap.Alert_Resistance_Ops_Appear";
 	ActivityAssault.Difficulty = default.InformantDifficulty;
 	ActivityAssault.StateClass = class'XComGameState_Activity_Assault_Informant';
-	
+	ActivityAssault.GetRandWeight = GetInformantAssaultRandWeight;
+
 	ActivityAssault.ActivityTag = 'Tag_Informant';
 	ActivityAssault.bNeedsPOI = true;
 	ActivityAssault.SetupStage = InformantAssaultSetup;
@@ -152,6 +155,11 @@ static function CreateInformantAssault (out array<X2DataTemplate> Templates)
 	ActivityAssault.AvailableSound = "Geoscape_NewResistOpsMissions";
 	
 	Templates.AddItem(ActivityAssault);
+}
+
+static function int GetInformantAssaultRandWeight (X2ActivityTemplate Template)
+{
+	return default.InformantAssaultRandWeight;
 }
 
 static function InformantAssaultSetup (XComGameState NewGameState, XComGameState_Activity ActivityState)
