@@ -43,7 +43,14 @@ static function X2SoldierUnlockTemplate CreateInfilSize2Unlock()
 	Template.bAllClasses = true;
 	Template.strImage = "img:///UILibrary_StrategyImages.GTS.GTS_SquadSize2";
 
+	Template.Requirements.SpecialRequirementsFn = FirstInfilSizeUpgradePurchased;
+
 	return Template;
+}
+
+static function bool FirstInfilSizeUpgradePurchased()
+{
+	return `XCOMHQ.HasSoldierUnlockTemplate('InfiltrationSize1');
 }
 
 ////////////////////
