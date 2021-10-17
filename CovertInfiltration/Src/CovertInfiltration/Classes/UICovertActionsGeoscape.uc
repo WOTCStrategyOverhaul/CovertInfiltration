@@ -1397,9 +1397,6 @@ simulated function SelectFirstNewAction()
 
 simulated function OpenLoadoutForCurrentAction(optional bool SkipIntro = false)
 {
-	// The player might have spent the resources since "allocating" them for cost slots, so make sure that the allocation status is removed
-	ClearUnaffordableCostSlots();
-
 	SSManager = new class'UISSManager_CovertAction';
 	SSManager.CovertOpsScreen = self;
 	SSManager.SkipIntro = SkipIntro;
@@ -1462,40 +1459,6 @@ simulated protected function UndoInfiltrationModifier(XComGameState_Headquarters
 	`CI_Log("Removing SquadInfiltration:" @ SquadDuration @ "from duration:" @ CovertAction.HoursToComplete);
 	CovertAction.HoursToComplete -= SquadDuration;
 	`CI_Log("Covert action total duration is now:" @ CovertAction.HoursToComplete @ "hours");
-}
-
-simulated function ClearUnaffordableCostSlots()
-{
-	local XComGameState_CovertAction CurrentAction;
-	local XComGameState NewGameState;
-	local XComGameState_HeadquartersXCom XcomHQ;
-	local array<StrategyCostScalar> CostScalars;
-	local bool Dirty;
-	local int i;
-
-	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Clear purchased but no longer affordable cost slots");
-	CurrentAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', ActionRef.ObjectID));
-	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	CostScalars.Length = 0; // Avoid compiler warning
-
-	for (i = 0; i < CurrentAction.CostSlots.Length; i++)
-	{
-		if (CurrentAction.CostSlots[i].bPurchased && !XcomHQ.CanAffordAllStrategyCosts(CurrentAction.CostSlots[i].Cost, CostScalars))
-		{
-			CurrentAction.CostSlots[i].bPurchased = false;
-			Dirty = true;
-		}
-	}
-
-	if (Dirty)
-	{
-		CurrentAction.UpdateNegatedRisks(NewGameState);
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-	}
-	else
-	{
-		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
-	}
 }
 
 ///////////////////////
