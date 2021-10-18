@@ -67,7 +67,7 @@ Summary="Squads of 5 soldiers no longer suffer any penalty to infiltration time 
 
 [InfiltrationSize2 X2SoldierUnlockTemplate]
 DisplayName="Infiltration Size II"
-Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time and can reach 250% infiltration."
+Summary="Squads of 6 soldiers no longer suffer any penalty to infiltration time and can reach 250% infiltration.\n\nREQUIRES INFILTRATION SIZE I"
 
 [UpdatedFirewalls X2SitRepTemplate]
 FriendlyName="Updated Firewalls"
