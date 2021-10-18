@@ -293,6 +293,9 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 	local bool IsSlotFilled;
 	local int i;
 
+	// Make sure that we still have enough resources (e.g. went to build items shortcut and spent all resources)
+	ClearUnaffordableCostSlots();
+
 	History = `XCOMHISTORY;
 	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 
@@ -323,6 +326,42 @@ simulated protected function EventListenerReturn OnSquadSelectUpdate(Object Even
 	if (bCreatedUIElements) UpdateUIElements();
 
 	return ELR_NoInterrupt;
+}
+
+simulated function ClearUnaffordableCostSlots ()
+{
+	local XComGameState_CovertAction CurrentAction;
+	local XComGameState_HeadquartersXCom XcomHQ;
+	local array<StrategyCostScalar> CostScalars;
+	local XComGameState NewGameState;
+	local bool Dirty;
+	local int i;
+
+	XcomHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	CostScalars.Length = 0; // Avoid compiler warning
+	CurrentAction = GetAction();
+
+	NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Clear purchased but no longer affordable cost slots");
+	CurrentAction = XComGameState_CovertAction(NewGameState.ModifyStateObject(class'XComGameState_CovertAction', CurrentAction.ObjectID));
+
+	for (i = 0; i < CurrentAction.CostSlots.Length; i++)
+	{
+		if (CurrentAction.CostSlots[i].bPurchased && !XcomHQ.CanAffordAllStrategyCosts(CurrentAction.CostSlots[i].Cost, CostScalars))
+		{
+			CurrentAction.CostSlots[i].bPurchased = false;
+			Dirty = true;
+		}
+	}
+
+	if (Dirty)
+	{
+		CurrentAction.UpdateNegatedRisks(NewGameState);
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+	}
+	else
+	{
+		`XCOMHISTORY.CleanupPendingGameState(NewGameState);
+	}
 }
 
 //////////////
