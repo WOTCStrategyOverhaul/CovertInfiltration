@@ -18,7 +18,7 @@ strDialogDataText="Отряд находится в глубоком прикр�
 strInProgressHeader="В Прогрессе"
 
 [UISSManager_CovertAction]
-strSlotOptionalNote="Опционально"
+;strSlotOptionalNote="Опционально"
 strSlotPenaltyNote="Штраф За Перегрузку"
 strSlotIrrelevantNote="Неподходящий предмет"
 strSlotRequiredPrefix="Требуется:"
@@ -166,6 +166,8 @@ strMustLaunch="НАЧАТЬ ОПЕРАЦИЮ"
 strInfiltration="ИНФИЛЬТРАЦИЯ - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
 strWait="ЖДАТЬ"
 strReturnToAvenger="ВЕРНУТЬСЯ НА \"МСТИТЕЛЬ\""
+;strViewSquad="VIEW SQUAD"
+;strDeployedSquad="DEPLOYED SQUAD"
 strChosenAppearenceChance="Присутствие"
 strChosenAppearenceChanceLabels[0]="Крайне низкая вероятность"
 strChosenAppearenceChanceLabels[1]="Низкая вероятность"
