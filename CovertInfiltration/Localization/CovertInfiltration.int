@@ -16,7 +16,7 @@ strDialogDataText="The squad is in deep cover, and opening a line of communicati
 strInProgressHeader="In Progress"
 
 [UISSManager_CovertAction]
-strSlotOptionalNote="Optional slot"
+strSlotOptionalNote="Optional Slot"
 strSlotPenaltyNote="Overload Penalty"
 strSlotIrrelevantNote="Irrelevant Item"
 strSlotRequiredPrefix="Required:"
