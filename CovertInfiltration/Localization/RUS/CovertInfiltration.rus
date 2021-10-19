@@ -1,5 +1,3 @@
-; Commented out lines were changed in the English version since the translation
-
 [UIStrategyMap_CAButton]
 strLabel=ТАЙНЫЕ ОПЕРАЦИИ
 
@@ -18,7 +16,7 @@ strDialogDataText="Отряд находится в глубоком прикр�
 strInProgressHeader="В Прогрессе"
 
 [UISSManager_CovertAction]
-;strSlotOptionalNote="Опционально"
+strSlotOptionalNote="Опциональный слот"
 strSlotPenaltyNote="Штраф За Перегрузку"
 strSlotIrrelevantNote="Неподходящий предмет"
 strSlotRequiredPrefix="Требуется:"
@@ -166,8 +164,8 @@ strMustLaunch="НАЧАТЬ ОПЕРАЦИЮ"
 strInfiltration="ИНФИЛЬТРАЦИЯ - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
 strWait="ЖДАТЬ"
 strReturnToAvenger="ВЕРНУТЬСЯ НА \"МСТИТЕЛЬ\""
-;strViewSquad="VIEW SQUAD"
-;strDeployedSquad="DEPLOYED SQUAD"
+strViewSquad="ПОСМОТРЕТЬ ОТРЯД"
+strDeployedSquad="НАПРАВЛЕННЫЙ ОТРЯД"
 strChosenAppearenceChance="Присутствие"
 strChosenAppearenceChanceLabels[0]="Крайне низкая вероятность"
 strChosenAppearenceChanceLabels[1]="Низкая вероятность"
@@ -176,11 +174,11 @@ strChosenAppearenceChanceLabels[3]="Высокая вероятность"
 strChosenAppearenceChanceLabels[4]="Крайне высокая вероятность" 
 
 [OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
-;BonusName="Убрать негативный SitRep"
+BonusName="Убрать негативный SitRep"
 BonusDescription="Свернуть подготовку модификатора SitRep, устранив его последствия для миссии."
 
 [X2StrategyElement_DefaultOverInfiltrationBonuses]
-;NegateRiskDescription="Remove SitRep: <XGParam:StrValue0>"
+NegateRiskDescription="Убрать негативный SitRep: <XGParam:StrValue0>
 
 [X2Ability_SitRepAbilitySet_CI]
 MentalReadinessFriendlyName="Психологическая готовность"
@@ -446,7 +444,7 @@ strDisabledNarrativeContentTooltip="Операция \"Потерянные и �
 
 [Complication_RewardInterception X2ComplicationTemplate]
 FriendlyName="Перехват Награды"
-FriendlyDesc="Есть шанс, что половина награды из этой цепи будет перехвачена и может в дальнейшем быть восстановления с помощью миссии спасения."
+FriendlyDesc="Есть шанс, что половина награды из этой цепи будет перехвачена и может в дальнейшем быть возращена с помощью миссии."
 
 [Complication_ChosenSurveillance X2ComplicationTemplate]
 FriendlyName="Наблюдение Избранного"
