@@ -3,7 +3,7 @@ Write-Host "Build Common Loading"
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 3.0
 
-$global:def_robocopy_args = @("/S", "/E", "/DCOPY:DA", "/COPY:DAT", "/PURGE", "/MIR", "/NP", "/R:1000000", "/W:30")
+$global:def_robocopy_args = @("/S", "/E", "/COPY:DAT", "/PURGE", "/MIR", "/NP", "/R:1000000", "/W:30")
 $global:buildCommonSelfPath = split-path -parent $MyInvocation.MyCommand.Definition
 # list of all native script packages
 $global:nativescriptpackages = @("XComGame", "Core", "Engine", "GFxUI", "AkAudio", "GameFramework", "UnrealEd", "GFxUIEditor", "IpDrv", "OnlineSubsystemPC", "OnlineSubsystemLive", "OnlineSubsystemSteamworks", "OnlineSubsystemPSN")
@@ -12,9 +12,11 @@ $global:invarCulture = [System.Globalization.CultureInfo]::InvariantCulture
 
 class BuildProject {
 	[string] $modNameCanonical
+	[string] $modNameFull
 	[string] $projectRoot
 	[string] $sdkPath
 	[string] $gamePath
+	[string] $finalModPath
 	[string] $contentOptionsJsonFilename
 	[long] $publishID = -1
 	[bool] $debug = $false
@@ -29,8 +31,10 @@ class BuildProject {
 
 	# lazily set
 	[string] $modSrcRoot
+	[string] $modX2projPath
 	[string] $devSrcRoot
 	[string] $stagingPath
+	[string] $xcomModPath
 	[string] $commandletHostPath
 	[string] $buildCachePath
 	[string] $modcookdir
@@ -39,6 +43,8 @@ class BuildProject {
 	[bool] $isHl
 	[bool] $cookHL
 	[PSCustomObject] $contentOptions
+	[string] $sdkEngineIniPath
+	[string] $sdkEngineIniContent
 
 	BuildProject(
 		[string]$mod,
@@ -46,7 +52,8 @@ class BuildProject {
 		[string]$sdkPath,
 		[string]$gamePath
 	){
-		$this.modNameCanonical = $mod
+		$this.modNameFull = $mod
+		$this.modNameCanonical = $mod -Replace '[\s;]',''
 		$this.projectRoot = $projectRoot
 		$this.sdkPath = $sdkPath
 		$this.gamePath = $gamePath
@@ -195,8 +202,11 @@ class BuildProject {
 	}
 
 	[void]_SetupUtils() {
-		$this.modSrcRoot = "$($this.projectRoot)\$($this.modNameCanonical)"
+		$this.modSrcRoot = "$($this.projectRoot)\$($this.modNameFull)"
+		$this.modX2projPath = "$($this.modSrcRoot)\$($this.modNameFull).x2proj"
 		$this.stagingPath = "$($this.sdkPath)\XComGame\Mods\$($this.modNameCanonical)"
+		$this.xcomModPath = "$($this.stagingPath)\$($this.modNameCanonical).XComMod"
+		$this.finalModPath = "$($this.gamePath)\XComGame\Mods\$($this.modNameCanonical)"
 		$this.devSrcRoot = "$($this.sdkPath)\Development\Src"
 		$this.commandletHostPath = "$($this.sdkPath)/binaries/Win64/XComGame.com"
 
@@ -218,6 +228,9 @@ class BuildProject {
 		{
 			New-Item -ItemType "directory" -Path $this.buildCachePath
 		}
+
+		$this.sdkEngineIniPath = "$($this.sdkPath)/XComGame/Config/DefaultEngine.ini"
+		$this.sdkEngineIniContent = Get-Content $this.sdkEngineIniPath | Out-String
 
 		$this.makeFingerprintsPath = "$($this.sdkPath)\XComGame\lastBuildDetails.json"
 		$lastBuildDetails = if (Test-Path $this.makeFingerprintsPath) {
@@ -287,15 +300,16 @@ class BuildProject {
 		}
 		
 		Write-Host "Copying mod project to staging..."
-		Robocopy.exe "$($this.modSrcRoot)" "$($this.sdkPath)\XComGame\Mods\$($this.modNameCanonical)" *.* $global:def_robocopy_args /XF @xf /XD "ContentForCook"
+		Robocopy.exe "$($this.modSrcRoot)" "$($this.stagingPath)" *.* $global:def_robocopy_args /XF @xf /XD "ContentForCook"
 		Write-Host "Copied project to staging."
 
 		New-Item "$($this.stagingPath)/Script" -ItemType Directory
 
 		# read mod metadata from the x2proj file
-		Write-Host "Reading mod metadata from $($this.modSrcRoot)\$($this.modNameCanonical).x2proj..."
-		[xml]$x2projXml = Get-Content -Path "$($this.modSrcRoot)\$($this.modNameCanonical).x2proj"
-		$modProperties = $x2projXml.Project.PropertyGroup[0]
+		Write-Host "Reading mod metadata from $($this.modX2ProjPath)"
+		[xml]$x2projXml = Get-Content -Path "$($this.modX2ProjPath)"
+		$xmlPropertyGroup = $x2projXml.Project.PropertyGroup
+		$modProperties = if ($xmlPropertyGroup -is [array]) { $xmlPropertyGroup[0] } else { $xmlPropertyGroup }
 		$publishedId = $modProperties.SteamPublishID
 		if ($this.publishID -ne -1) {
 			$publishedId = $this.publishID
@@ -306,7 +320,7 @@ class BuildProject {
 		Write-Host "Read."
 
 		Write-Host "Writing mod metadata..."
-		Set-Content "$($this.sdkPath)/XComGame/Mods/$($this.modNameCanonical)/$($this.modNameCanonical).XComMod" "[mod]`npublishedFileId=$publishedId`nTitle=$title`nDescription=$description`nRequiresXPACK=true"
+		Set-Content "$($this.xcomModPath)" "[mod]`npublishedFileId=$publishedId`nTitle=$title`nDescription=$description`nRequiresXPACK=true"
 		Write-Host "Written."
 
 		# Create CookedPCConsole folder for the mod
@@ -474,7 +488,7 @@ class BuildProject {
 			$scriptsMakeArguments = "$scriptsMakeArguments -debug"
 		}
 
-		$handler = [MakeStdoutReceiver]::new($this.devSrcRoot, "$($this.modSrcRoot)\Src")
+		$handler = [MakeStdoutReceiver]::new($this)
 		$handler.processDescr = "compiling base game scripts"
 		$this._InvokeEditorCmdlet($handler, $scriptsMakeArguments, 50)
 
@@ -483,7 +497,7 @@ class BuildProject {
 		{
 			Write-Host "Compiling base game scripts without final_release..."
 			$scriptsMakeArguments = "make -nopause -unattended"
-			$handler = [MakeStdoutReceiver]::new($this.devSrcRoot, "$($this.modSrcRoot)\Src")
+			$handler = [MakeStdoutReceiver]::new($this)
 			$handler.processDescr = "compiling base game scripts"
 			$this._InvokeEditorCmdlet($handler, $scriptsMakeArguments, 50)
 		}
@@ -496,7 +510,7 @@ class BuildProject {
 		{
 			$scriptsMakeArguments = "$scriptsMakeArguments -debug"
 		}
-		$handler = [MakeStdoutReceiver]::new($this.devSrcRoot, "$($this.modSrcRoot)\Src")
+		$handler = [MakeStdoutReceiver]::new($this)
 		$handler.processDescr = "compiling mod scripts"
 		$this._InvokeEditorCmdlet($handler, $scriptsMakeArguments, 50)
 	}
@@ -537,16 +551,14 @@ class BuildProject {
 		Write-Host "Checking the need to PrecompileShaders"
 		$contentfiles = @()
 
+		# We don't need to consider
+		# .umaps - they will never contain material (instances) objects - only reference them
+		# ContentForCook - seekfree packages have an inlined shader cache
+
 		if (Test-Path "$($this.modSrcRoot)/Content")
 		{
-			$contentfiles = $contentfiles + (Get-ChildItem "$($this.modSrcRoot)/Content" -Include *.upk, *.umap -Recurse -File)
+			$contentfiles += Get-ChildItem "$($this.modSrcRoot)/Content" -Include *.upk -Recurse -File
 		}
-		
-		# Turns out that seekfree packages contain an inlined shader cache, so there is no need to pass them through the shader precompiler
-		# if (Test-Path "$($this.modSrcRoot)/ContentForCook")
-		# {
-		# 	$contentfiles = $contentfiles + (Get-ChildItem "$($this.modSrcRoot)/ContentForCook" -Include *.upk, *.umap -Recurse -File)
-		# }
 
 		if ($contentfiles.length -eq 0) {
 			Write-Host "No content files, skipping PrecompileShaders."
@@ -677,11 +689,19 @@ class BuildProject {
 	}
 
 	[void]_FinalCopy() {
-		$finalModPath = "$($this.gamePath)\XComGame\Mods\$($this.modNameCanonical)"
-
 		# copy all staged files to the actual game's mods folder
 		# TODO: Is the string interpolation required in the robocopy calls?
-		Robocopy.exe "$($this.stagingPath)" "$($finalModPath)" *.* $global:def_robocopy_args
+		Robocopy.exe "$($this.stagingPath)" "$($this.finalModPath)" *.* $global:def_robocopy_args
+	}
+
+	[string[]] _PrepareBuildCacheEngineIniWithAdditions ([string] $fileNamePrefix, [array] $lines) {
+		$localDefaultEngineIniPath = [io.path]::combine($this.buildCachePath, $fileNamePrefix + "_DefaultEngine.ini")
+		$localXComEngineIniPath = [io.path]::combine($this.buildCachePath, $fileNamePrefix + "_XComEngine.ini")
+
+		$newEngineIniContent = $this.sdkEngineIniContent + "`n" + ($lines -join "`n") + "`n"
+		$newEngineIniContent | Set-Content $localDefaultEngineIniPath -NoNewline
+
+		return @($localDefaultEngineIniPath, $localXComEngineIniPath)
 	}
 
 	[void]_InvokeEditorCmdlet([StdoutReceiver] $receiver, [string] $makeFlags, [int] $sleepMsDuration) {
@@ -775,14 +795,15 @@ class ModAssetsCookStep {
 
 	[string] $cachedReleaseScriptPackagesDir
 
-	[string] $sdkEngineIniPath
-	[string] $sdkEngineIniContentOriginal
 	[string] $sdkEngineIniChangesPreamble = "HACKS FOR MOD ASSETS COOKING"
 
 	[string[]] $filesRequiredToSkipFirstPass
 
-	[string] $sdkEngineIniContentNewFirstPass
-	[string] $sdkEngineIniContentNewNormalPass
+	[string] $engineIniFirstPassDefaultPath
+	[string] $engineIniFirstPassXComPath
+
+	[string] $engineIniNormalPassDefaultPath
+	[string] $engineIniNormalPassXComPath
 
 	[string] $previousCookerOutputDirPath = $null
 
@@ -811,7 +832,7 @@ class ModAssetsCookStep {
 
 		$this._PrepareReleaseScriptPackages()
 		$this._PrepareProjectCache()
-		$this._PrepareSdkEngineIni()
+		$this._PrepareEngineIni()
 		$this._PrepareSdkFolders()
 		$this._PrepareEditorArgs()
 
@@ -834,9 +855,6 @@ class ModAssetsCookStep {
 		
 		$this.cachedReleaseScriptPackagesDir = [io.path]::combine($this.project.buildCachePath, 'ReleaseScriptPackages')
 
-		$this.sdkEngineIniPath = "$($this.project.sdkPath)/XComGame/Config/DefaultEngine.ini"
-		$this.sdkEngineIniContentOriginal = Get-Content $this.sdkEngineIniPath | Out-String
-
 		$this.filesRequiredToSkipFirstPass = @("GlobalPersistentCookerData.upk", "gfxCommon_SF.upk")
 		foreach ($package in $this.cookedNativeScriptPackages) {
 			$this.filesRequiredToSkipFirstPass += "$package.upk"
@@ -855,7 +873,9 @@ class ModAssetsCookStep {
 			ThrowFailure "Asset cooking is requested, but no ContentForCook folder is present"
 		}
 
-		if ($this.sdkEngineIniContentOriginal.Contains($this.sdkEngineIniChangesPreamble))
+		# Technically no longer needed (since we no longer overwrite the file) but kept
+		# for now to guard against aborted cook -> xmb update -> cook again
+		if ($this.project.sdkEngineIniContent.Contains($this.sdkEngineIniChangesPreamble))
 		{
 			ThrowFailure "Another cook is already in progress (DefaultEngine.ini)"
 		}
@@ -939,18 +959,15 @@ class ModAssetsCookStep {
 		return $false
 	}
 
-	[void] _PrepareSdkEngineIni() {
-		$original = $this.sdkEngineIniContentOriginal + "`n"
-		$additionsShared = $this._BuildEngineIniAdditionsShared() + "`n"
+	[void] _PrepareEngineIni() {
+		$this.engineIniFirstPassDefaultPath, $this.engineIniFirstPassXComPath =
+			$this.project._PrepareBuildCacheEngineIniWithAdditions("AssetsCookFirstPass", $this._PrepareEngineIniAdditionsShared())
 
-		$this.sdkEngineIniContentNewFirstPass = $original + $additionsShared
-		$this.sdkEngineIniContentNewNormalPass = $original + $additionsShared + $this._BuildEngineIniAdditionsNormalPass()
-
-		# Backup the DefaultEngine.ini
-		Copy-Item $this.sdkEngineIniPath "$($this.sdkEngineIniPath).bak_PRE_ASSET_COOKING"
+		$this.engineIniNormalPassDefaultPath, $this.engineIniNormalPassXComPath =
+			$this.project._PrepareBuildCacheEngineIniWithAdditions("AssetsCookNormalPass", $this._PrepareEngineIniAdditionsNormalPass())
 	}
 
-	[string] _BuildEngineIniAdditionsShared () {
+	[string[]] _PrepareEngineIniAdditionsShared () {
 		$lines = @()
 
 		# Denote the beginning of our changes (this marker is used by _Verify to detect unfinished cook)
@@ -969,11 +986,11 @@ class ModAssetsCookStep {
 		$lines += "[Engine.PackagesToAlwaysCook]"
 		$lines += "!SeekFreePackage=Empty"
 
-		return $lines -join "`n"
+		return $lines
 	}
 
-	[string] _BuildEngineIniAdditionsNormalPass () {
-		$lines = @()
+	[string[]] _PrepareEngineIniAdditionsNormalPass () {
+		$lines = $this._PrepareEngineIniAdditionsShared()
 
 		# Don't re-cook the startup (cooker doesn't cache it)
 		$lines += "[Engine.StartupPackages]"
@@ -1022,8 +1039,8 @@ class ModAssetsCookStep {
 			$mapsString = "$mapsString $umap.umap "
 		}
 
-		$this.editorArgsFirstPass = "CookPackages $cookerFlags"
-		$this.editorArgsNormalPass = "CookPackages $mapsString $cookerFlags"
+		$this.editorArgsFirstPass = "CookPackages $cookerFlags -DEFENGINEINI=""$($this.engineIniFirstPassDefaultPath)"" -ENGINEINI=""$($this.engineIniFirstPassXComPath)"""
+		$this.editorArgsNormalPass = "CookPackages $mapsString $cookerFlags -DEFENGINEINI=""$($this.engineIniNormalPassDefaultPath)"" -ENGINEINI=""$($this.engineIniNormalPassXComPath)"""
 	}
 
 	[void] _ExecuteCore () {
@@ -1037,7 +1054,7 @@ class ModAssetsCookStep {
 				# First do a cook without our assets since gfxCommon.upk still get included in the cook, polluting the TFCs, depsite the config hacks
 
 				Write-Host "Running first time mod assets cook"
-				$this._InvokeAssetCooker($this.editorArgsFirstPass, $this.sdkEngineIniContentNewFirstPass)
+				$this._InvokeAssetCooker($this.editorArgsFirstPass)
 
 				# Now delete the polluted TFCs
 				Get-ChildItem -Path $this.cachedCookerOutputPath -Filter "*$($this.tfcSuffix).tfc" | Remove-Item
@@ -1048,20 +1065,11 @@ class ModAssetsCookStep {
 				Write-Host "First time cook done, proceeding with normal"
 			}
 
-			$this._InvokeAssetCooker($this.editorArgsNormalPass, $this.sdkEngineIniContentNewNormalPass)
+			$this._InvokeAssetCooker($this.editorArgsNormalPass)
 		}
 		finally {
 			Write-Host "Cleaning up the asset cooking hacks"
-
-			# Revert ini
-			try {
-				$this.sdkEngineIniContentOriginal | Set-Content $this.sdkEngineIniPath -NoNewline
-				Write-Host "Reverted $($this.sdkEngineIniPath)"	
-			}
-			catch {
-				FailureMessage "Failed to revert $($this.sdkEngineIniPath)"
-				FailureMessage $_
-			}
+			$cleanupFailed = $false
 
 			# Revert junctions
 
@@ -1072,6 +1080,8 @@ class ModAssetsCookStep {
 			catch {
 				FailureMessage "Failed to remove $($this.cookerOutputPath) junction"
 				FailureMessage $_
+
+				$cleanupFailed = $true
 			}
 
 			if (![string]::IsNullOrEmpty($this.previousCookerOutputDirPath))
@@ -1087,15 +1097,21 @@ class ModAssetsCookStep {
 				catch {
 					FailureMessage "Failed to restore previous $($this.cookerOutputPath)"
 					FailureMessage $_
+
+					$cleanupFailed = $true
 				}
+			}
+
+			if ($cleanupFailed) {
+				Write-Host ""
+				Write-Host ""
+				ThrowFailure "Failed to clean up the asset cooking hacks - your SDK is now in a corrupted state. Please preform the cleanup manually before building a mod or opening the editor."
 			}
 		}
 	}
 
-	[void] _InvokeAssetCooker ([string] $editorArguments, [string] $engineIniContentNew) {
+	[void] _InvokeAssetCooker ([string] $editorArguments) {
 		Write-Host $editorArguments
-
-		$engineIniContentNew | Set-Content $this.sdkEngineIniPath -NoNewline
 
 		$handler = [ModcookReceiver]::new()
 		$handler.processDescr = "cooking mod packages"
@@ -1211,28 +1227,45 @@ class BufferingReceiver : StdoutReceiver {
 
 
 class MakeStdoutReceiver : StdoutReceiver {
-	[string] $developmentDirectory
-	[string] $modSrcRoot
+	[BuildProject] $proj
+	[string[]] $reversePaths
 
 	MakeStdoutReceiver(
-		[string]$developmentDirectory,
-		[string]$modSrcRoot
+		[BuildProject]$proj
 	){
-		$this.developmentDirectory = $developmentDirectory
-		$this.modSrcRoot = $modSrcRoot
+		$this.proj = $proj
+		# Since later paths overwrite earlier files, check paths in reverse order
+		$this.reversePaths = @("$($this.proj.sdkPath)\Development\SrcOrig") +
+			$this.proj.include + @("$($this.proj.modSrcRoot)\Src")
+		[array]::Reverse($this.reversePaths)
 	}
 
 	[void]ParseLine([string] $outTxt) {
 		([StdoutReceiver]$this).ParseLine($outTxt)
 		$messagePattern = "^(.*)\(([0-9]*)\) : (.*)$"
 		if (($outTxt -Match "Error|Warning") -And ($outTxt -Match $messagePattern)) {
-			# And just do a regex replace on the sdk Development directory with the mod src directory.
-			# The pattern needs escaping to avoid backslashes in the path being interpreted as regex escapes, etc.
-			$pattern = [regex]::Escape($this.developmentDirectory)
-			# n.b. -Replace is case insensitive
-			$replacementTxt = $outtxt -Replace $pattern, $this.modSrcRoot
-			# this syntax works with both VS Code and ModBuddy
-			$outTxt = $replacementTxt -Replace $messagePattern, '$1($2) : $3'
+			# extract original path from $matches automatic variable created by above -Match
+			$origPath = $matches[1]
+
+			# create regex pattern specifically from the part we're interested in replacing
+			$pattern = [regex]::Escape("$($this.proj.sdkPath)\Development\Src")
+
+			$found = $false
+			foreach ($checkPath in $this.reversePaths) {
+				$testPath = $origPath -Replace $pattern,$checkPath
+				# if the file exists, it's certainly the one that caused the error
+				if (Test-Path $testPath) {
+					# Normalize path to get rid of `..`s
+					$testPath = [IO.Path]::GetFullPath($testPath)
+					# this syntax works with both VS Code and ModBuddy
+					$outTxt = $outTxt -Replace $messagePattern, ($testPath + '($2) : $3')
+					$found = $true
+					break
+				}
+			}
+			if (-not $found) {
+				$outTxt = $outTxt -Replace $messagePattern, ($origPath + '($2) : $3')
+			}
 		}
 
 		$summPattern = "^(Success|Failure) - ([0-9]+) error\(s\), ([0-9]+) warning\(s\) \(([0-9]+) Unique Errors, ([0-9]+) Unique Warnings\)"
