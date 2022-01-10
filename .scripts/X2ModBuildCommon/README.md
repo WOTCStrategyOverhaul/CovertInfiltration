@@ -29,7 +29,7 @@ Open a command line prompt (cmd or powershell, does not matter) in the `[modRoot
 your working tree is clean and run the following command:
 
 ```
-git subtree add --prefix .scripts/X2ModBuildCommon https://github.com/X2CommunityCore/X2ModBuildCommon v1.1.2 --squash
+git subtree add --prefix .scripts/X2ModBuildCommon https://github.com/X2CommunityCore/X2ModBuildCommon v1.2.1 --squash
 ```
 
 ### Your mod does not use git
@@ -189,7 +189,7 @@ If you don't use git, simply download the new version and overwrite the old file
 If you use git, run the same command as before, replacing `add` with `pull`:
 
 ```
-git subtree pull --prefix .scripts/X2ModBuildCommon https://github.com/X2CommunityCore/X2ModBuildCommon v1.1.2 --squash
+git subtree pull --prefix .scripts/X2ModBuildCommon https://github.com/X2CommunityCore/X2ModBuildCommon v1.2.1 --squash
 ```
 
 # Configuration options
