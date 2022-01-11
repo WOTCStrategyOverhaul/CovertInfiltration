@@ -878,11 +878,15 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 	local int AppearanceChance;
 	local XComLWTuple Tuple;
 
+	`CI_Trace(GetFuncName() @ "start");
+
 	MissionState = XComGameState_MissionSite(EventSource);
 	Tuple = XComLWTuple(EventData);
 
 	if (MissionState == none || Tuple == none || NewGameState == none) return ELR_NoInterrupt;
 	
+	`CI_Trace(GetFuncName() @ `showvar(MissionState.GeneratedMission.Mission.sType));
+
 	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
 	AllChosen = AlienHQ.GetAllChosen(NewGameState);
 
@@ -890,31 +894,53 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 	MissionState = XComGameState_MissionSite(NewGameState.GetGameStateForObjectID(MissionState.ObjectID));
 
 	// If another mod already did something, skip our logic
-	if (Tuple.Data[0].b) return ELR_NoInterrupt;
+	if (Tuple.Data[0].b) 
+	{
+		`CI_Log(GetFuncName() @ "another mod already did something, skip our logic");
+		return ELR_NoInterrupt;
+	}
 
 	// Do not mess with the golden path missions
-	if (MissionState.GetMissionSource().bGoldenPath) return ELR_NoInterrupt;
+	if (MissionState.GetMissionSource().bGoldenPath) 
+	{
+		`CI_Log(GetFuncName() @ "golden path mission");
+		return ELR_NoInterrupt;
+	}
 
 	// Do not mess with missions that disallow chosen
-	if (class'XComGameState_HeadquartersAlien'.default.ExcludeChosenMissionSources.Find(MissionState.Source) != INDEX_NONE) return ELR_NoInterrupt;
+	if (class'XComGameState_HeadquartersAlien'.default.ExcludeChosenMissionSources.Find(MissionState.Source) != INDEX_NONE)
+	{
+		`CI_Log(GetFuncName() @ "mission disallows chosen");
+		return ELR_NoInterrupt;
+	}
 
 	// Do not mess with the chosen base defense
-	if (MissionState.IsA(class'XComGameState_MissionSiteChosenAssault'.Name)) return ELR_NoInterrupt;
+	if (MissionState.IsA(class'XComGameState_MissionSiteChosenAssault'.Name))
+	{
+		`CI_Log(GetFuncName() @ "chosen base defense");
+		return ELR_NoInterrupt;
+	}
 
 	// Do not mess with the chosen stronghold assault
 	foreach AllChosen(ChosenState)
 	{
-		if (ChosenState.StrongholdMission.ObjectID == MissionState.ObjectID) return ELR_NoInterrupt;
+		if (ChosenState.StrongholdMission.ObjectID == MissionState.ObjectID)
+		{
+			`CI_Log(GetFuncName() @ "chosen stronghold assault");
+			return ELR_NoInterrupt;
+		}
 	}
 
 	// Infiltrations handle chosen internally
 	if (MissionState.IsA(class'XComGameState_MissionSiteInfiltration'.Name))
 	{
+		`CI_Log(GetFuncName() @ "infiltration");
 		Tuple.Data[0].b = true;
 		return ELR_NoInterrupt;
 	}
 
 	// Ok, simple assault mission that allows chosen so we replace the logic
+	`CI_Trace(GetFuncName() @ "simple assault mission that allows chosen so we replace the logic");
 	Tuple.Data[0].b = true;	
 
 	// First, remove tags of dead chosen and find the one that controls our region
@@ -931,23 +957,38 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 	}
 
 	// Check if we found someone who can appear here
-	if (LocalChosenState == none) return ELR_NoInterrupt;
-	
+	if (LocalChosenState == none)
+	{
+		`CI_Log(GetFuncName() @ "no chosen found");
+		return ELR_NoInterrupt;
+	}
+
 	ChosenSpawningTag = LocalChosenState.GetMyTemplate().GetSpawningTag(LocalChosenState.Level);
+	
+	`CI_Trace(GetFuncName() @ `showvar(LocalChosenState.GetMyTemplateName()) @ `showvar(ChosenSpawningTag));
 
 	// Check if the chosen is already scheduled to spawn
-	if (MissionState.TacticalGameplayTags.Find(ChosenSpawningTag) != INDEX_NONE) return ELR_NoInterrupt;
+	if (MissionState.TacticalGameplayTags.Find(ChosenSpawningTag) != INDEX_NONE)
+	{
+		`CI_Log(GetFuncName() @ "chosen tag already present");
+		return ELR_NoInterrupt;
+	}
 
 	// Then see if the chosen is forced to show up (used to spawn chosen on specific missions when the global active flag is disabled)
 	// The current use case for this is the "introduction retaliation" - if we active the chosen when the retal spawns and then launch an infil, the chosen will appear on the infil
 	// This could be expanded in future if we choose to completely override chosen spawning handling
 	if (MissionState.Source == 'MissionSource_Retaliation' && class'XComGameState_HeadquartersXCom'.static.GetObjectiveStatus('CI_CompleteFirstRetal') == eObjectiveState_InProgress)
 	{
+		`CI_Trace(GetFuncName() @ "forcing due to CI_CompleteFirstRetal");
 		bForce = true;
 	}
 
-	// If chosen are not forced to showup and they are not active, bail
-	if (!bForce && !AlienHQ.bChosenActive) return ELR_NoInterrupt;
+	// If chosen are not forced to show up and they are not active, bail
+	if (!bForce && !AlienHQ.bChosenActive)
+	{
+		`CI_Log(GetFuncName() @ "!bForce && !AlienHQ.bChosenActive");
+		return ELR_NoInterrupt;
+	}
 
 	// Now check for the guranteed spawn
 	if (bForce)
@@ -956,35 +997,60 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 	}
 	else if (LocalChosenState.NumEncounters == 0)
 	{
+		`CI_Trace(GetFuncName() @ "guaranteed due to NumEncounters == 0");
 		bGuaranteed = true;
 	}
 
 	// If we are checking only for the guranteed spawns and there isn't one, bail
-	if (!bGuaranteed && Tuple.Data[1].b) return ELR_NoInterrupt;
+	if (!bGuaranteed && Tuple.Data[1].b)
+	{
+		`CI_Log(GetFuncName() @ "!bGuaranteed && Tuple.Data[1].b");
+		return ELR_NoInterrupt;
+	}
 
 	// See if the chosen should actually spawn or not (either guranteed or by a roll)
 	if (bGuaranteed)
 	{
+		`CI_Log(GetFuncName() @ "spawn because guaranteed");
 		bSpawn = true;
 	}
 	else if (CanChosenAppear(NewGameState))
 	{
-		AppearanceChance = ChosenState.GetChosenAppearChance();
+		AppearanceChance = LocalChosenState.GetChosenAppearChance();
 		
 		AppearChanceScalar = AlienHQ.ChosenAppearChanceScalar;
 		if (AppearChanceScalar <= 0) AppearChanceScalar = 1.0f;
 
-		if(ChosenState.CurrentAppearanceRoll < Round(float(AppearanceChance) * AppearChanceScalar))
+		`CI_Trace(GetFuncName() @ "spawn roll");
+		`CI_Trace(GetFuncName() @ `showvar(LocalChosenState.CurrentAppearanceRoll));
+		`CI_Trace(GetFuncName() @ `showvar(LocalChosenState.MissionsSinceLastAppearance));
+		`CI_Trace(GetFuncName() @ `showvar(AppearanceChance));
+		`CI_Trace(GetFuncName() @ `showvar(AppearChanceScalar));
+		`CI_Trace(GetFuncName() @ `showvar(Round(float(AppearanceChance) * AppearChanceScalar)));
+
+		if (LocalChosenState.CurrentAppearanceRoll < Round(float(AppearanceChance) * AppearChanceScalar))
 		{
+			`CI_Log(GetFuncName() @ "spawn roll success");
 			bSpawn = true;
 		}
+		else
+		{
+			`CI_Log(GetFuncName() @ "spawn roll fail");
+		}
+	}
+	else
+	{
+		`CI_Log(GetFuncName() @ "not bGuaranteed and not CanChosenAppear");
 	}
 
 	// Add the tag to mission if the chosen is to show up
 	if (bSpawn)
 	{
+		`CI_Log(GetFuncName() @ "added" @ ChosenSpawningTag);
 		MissionState.TacticalGameplayTags.AddItem(ChosenSpawningTag);
 	}
+
+	`CI_Trace(GetFuncName() @ "exit");
 
 	// We are finally done
 	return ELR_NoInterrupt;
@@ -1013,6 +1079,10 @@ static protected function bool CanChosenAppear (XComGameState NewGameState)
 	{
 		MinNumMissions = class'XComGameState_HeadquartersAlien'.default.MinMissionsBetweenChosenAppearances[NumActiveChosen];
 	}
+
+	`CI_Trace(GetFuncName() @ `showvar(NumActiveChosen));
+	`CI_Trace(GetFuncName() @ `showvar(MinNumMissions));
+	`CI_Trace(GetFuncName() @ `showvar(AlienHQ.MissionsSinceChosen));
 
 	return AlienHQ.MissionsSinceChosen >= MinNumMissions;
 }
