@@ -2,7 +2,8 @@ class X2RetalPlacementModifierTemplate extends X2DataTemplate config(Infiltratio
 
 var config int DefaultDelta;
 
-delegate bool IsRelevantToRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState);
+var delegate<CI_DataStructures.IsRelevantToRegion> IsRelevantToRegionFn;
+
 delegate int GetDeltaForRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState);
 
 //////////////////
@@ -11,7 +12,7 @@ delegate int GetDeltaForRegion (XComGameState NewGameState, XComGameState_WorldR
 
 function bool ValidateTemplate (out string strError)
 {
-	if (GetDeltaForRegion == DefaultGetDeltaForRegion && IsRelevantToRegion == none)
+	if (GetDeltaForRegion == DefaultGetDeltaForRegion && IsRelevantToRegionFn == none)
 	{
 		strError = "DefaultGetDeltaForRegion requires IsRelevantToRegion to be set";
 		return false;
@@ -26,7 +27,7 @@ function bool ValidateTemplate (out string strError)
 
 function int DefaultGetDeltaForRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState)
 {
-	if (IsRelevantToRegion(NewGameState, RegionState))
+	if (IsRelevantToRegionFn(NewGameState, RegionState))
 	{
 		return DefaultDelta;
 	}

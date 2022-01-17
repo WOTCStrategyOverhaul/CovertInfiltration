@@ -1,4 +1,4 @@
-class X2RetalPlacementModifierSet extends X2DataSet dependson(X2RetalPlacementModifierTemplate);
+class X2RetalPlacementModifierSet extends X2DataSet;
 
 static function array<X2DataTemplate> CreateTemplates ()
 {
@@ -17,12 +17,12 @@ static function array<X2DataTemplate> CreateTemplates ()
 	return Templates;
 }
 
-static protected function X2RetalPlacementModifierTemplate CreateGeneric (name TemplateName, delegate<X2RetalPlacementModifierTemplate.IsRelevantToRegion> IsRelevantFn)
+static protected function X2RetalPlacementModifierTemplate CreateGeneric (name TemplateName, delegate<CI_DataStructures.IsRelevantToRegion> IsRelevantFn)
 {
 	local X2RetalPlacementModifierTemplate Template;
 
 	`CREATE_X2TEMPLATE(class'X2RetalPlacementModifierTemplate', Template, TemplateName);
-	Template.IsRelevantToRegion = IsRelevantFn;
+	Template.IsRelevantToRegionFn = IsRelevantFn;
 
 	return Template;
 }
