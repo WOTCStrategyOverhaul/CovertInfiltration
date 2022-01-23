@@ -257,8 +257,6 @@ static function SupplyExtractMission ()
 
 static function AvatarCaptureMission ()
 {
-	if (!ShouldShowPopup('AvatarCapture')) return;
-
 	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strAvatarCaptureHeader, default.strAvatarCaptureBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Reduce_Avatar_Project_Progress");
 }
 
