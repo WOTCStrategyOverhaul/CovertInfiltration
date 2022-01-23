@@ -467,6 +467,7 @@ static event OnPostTemplatesCreated()
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchLiveFireTraining();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchHangar();
 	class'X2Helper_Infiltration_TemplateMod'.static.PatchEvacAbility();
+	class'X2Helper_Infiltration_TemplateMod'.static.PatchSparkStaffSlot();
 }
 
 static protected function PatchSupplyExactionCrates ()
