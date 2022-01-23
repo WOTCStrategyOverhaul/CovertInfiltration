@@ -1698,3 +1698,17 @@ static function StrategyCostReward CreateOptionalCostSlot(name ResourceName, int
 	
 	return ActionCost;
 }
+
+static function bool AreNameArraysIdentical (const out array<name> arrA, const out array<name> arrB)
+{
+	local int i;
+	
+	if (arrA.Length != arrB.Length) return false;
+
+	for (i = 0; i < arrA.Length; i++)
+	{
+		if (arrA[i] != arrB[i]) return false;
+	}
+
+	return true;
+}
