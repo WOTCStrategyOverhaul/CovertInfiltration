@@ -1290,6 +1290,7 @@ static function PatchSparkStaffSlot()
 		if (StaffSlotTemplate != none)
 		{
 			StaffSlotTemplate.ShouldDisplayToDoWarningFn = ShouldDisplaySparkToDoWarning_CI;
+			StaffSlotTemplate.IsUnitValidForSlotFn = IsUnitValidForSparkSlot_CI;
 		}
 	}
 
