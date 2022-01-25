@@ -90,6 +90,7 @@ PageTitle="Covert Infiltration"
 
 VariousSettingsTitle="Various Settings"
 TipsTitle="Tips and Explanations"
+WarningsTitle="Warnings"
 OverInfiltrationTitle="Over Infiltration"
 
 DAYS_TO_HOURS_Label="Hours Instead of Days"
@@ -102,6 +103,8 @@ SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Tip="If any of your currently infiltrating tr
 
 ENABLE_TUTORIAL_Label="Enable Tutorial"
 ENABLE_TUTORIAL_Tip="Show in-game explanations and tips regarding changes and new features/mechanics"
+ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Label="Enable Supply Extraction Tutorial"
+ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Tip="If enabled, a popup regarding changes to the Supply Extraction mission type is shown at the start of the mission.<br/><br/>The global tutorial option above is ignored for this popup."
 
 WARN_BEFORE_EXPIRATION_Label="Warn Before Expiration"
 WARN_BEFORE_EXPIRATION_Tip="Show a warning before an activity is about to expire"

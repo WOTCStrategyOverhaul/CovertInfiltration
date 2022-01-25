@@ -7,6 +7,7 @@ var localized string PageTitle;
 
 var localized string VariousSettingsTitle;
 var localized string TipsTitle;
+var localized string WarningsTitle;
 var localized string OverInfiltrationTitle;
 
 `include(CovertInfiltration\Src\ModConfigMenuAPI\MCM_API_Includes.uci)
@@ -17,6 +18,7 @@ var localized string OverInfiltrationTitle;
 `MCM_API_AutoCheckBoxVars(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED);
 
 `MCM_API_AutoCheckBoxVars(ENABLE_TUTORIAL);
+`MCM_API_AutoCheckBoxVars(ENABLE_TUTORIAL_SUPPLY_EXTRACTION);
 
 `MCM_API_AutoCheckBoxVars(WARN_BEFORE_EXPIRATION);
 `MCM_API_AutoSliderVars(HOURS_BEFORE_WARNING);
@@ -41,6 +43,7 @@ var localized string OverInfiltrationTitle;
 `MCM_API_AutoCheckBoxFns(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED, 4);
 
 `MCM_API_AutoCheckBoxFns(ENABLE_TUTORIAL, 4);
+`MCM_API_AutoCheckBoxFns(ENABLE_TUTORIAL_SUPPLY_EXTRACTION, 5);
 
 `MCM_API_AutoCheckBoxFns(WARN_BEFORE_EXPIRATION, 4);
 `MCM_API_AutoSliderFns(HOURS_BEFORE_WARNING,, 4);
@@ -79,6 +82,9 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
 	Group = Page.AddGroup('TipsGroup', TipsTitle);
 	`MCM_API_AutoAddCheckBox(Group, ENABLE_TUTORIAL);
+	`MCM_API_AutoAddCheckBox(Group, ENABLE_TUTORIAL_SUPPLY_EXTRACTION);
+	
+	Group = Page.AddGroup('WarningsGroup', WarningsTitle);
 	`MCM_API_AutoAddCheckBox(Group, WARN_BEFORE_EXPIRATION);
 	`MCM_API_AutoAddSlider(Group, HOURS_BEFORE_WARNING, 1, 4, 1);
 	`MCM_API_AutoAddCheckBox(Group, LOW_SOLDIERS_WARNING);
@@ -106,6 +112,7 @@ simulated function LoadSavedSettings()
 	SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED = `GETMCMVAR(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED);
 
 	ENABLE_TUTORIAL = `GETMCMVAR(ENABLE_TUTORIAL);
+	ENABLE_TUTORIAL_SUPPLY_EXTRACTION = `GETMCMVAR(ENABLE_TUTORIAL_SUPPLY_EXTRACTION);
 
 	WARN_BEFORE_EXPIRATION = `GETMCMVAR(WARN_BEFORE_EXPIRATION);
 	HOURS_BEFORE_WARNING = `GETMCMVAR(HOURS_BEFORE_WARNING);
@@ -130,6 +137,7 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_AutoReset(SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED);
 
 	`MCM_API_AutoReset(ENABLE_TUTORIAL);
+	`MCM_API_AutoReset(ENABLE_TUTORIAL_SUPPLY_EXTRACTION);
 
 	`MCM_API_AutoReset(WARN_BEFORE_EXPIRATION);
 	`MCM_API_AutoReset(HOURS_BEFORE_WARNING);
