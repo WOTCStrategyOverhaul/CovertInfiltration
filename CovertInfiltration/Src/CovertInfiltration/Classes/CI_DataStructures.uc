@@ -175,3 +175,5 @@ enum EStageReward
 	eStageReward_Override,
 	eStageReward_Addition
 };
+
+delegate bool IsRelevantToRegion (XComGameState NewGameState, XComGameState_WorldRegion RegionState);
