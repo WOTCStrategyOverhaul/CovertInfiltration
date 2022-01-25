@@ -900,35 +900,11 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 		return ELR_NoInterrupt;
 	}
 
-	// Do not mess with the golden path missions
-	if (MissionState.GetMissionSource().bGoldenPath) 
+	// Do not mess with the guaranteed missions
+	if (!ShouldManageChosenOnAssault(MissionState, NewGameState))
 	{
-		`CI_Log(GetFuncName() @ "golden path mission");
+		`CI_Trace(GetFuncName() @ "ShouldManageChosenOnAssault() is false");
 		return ELR_NoInterrupt;
-	}
-
-	// Do not mess with missions that disallow chosen
-	if (class'XComGameState_HeadquartersAlien'.default.ExcludeChosenMissionSources.Find(MissionState.Source) != INDEX_NONE)
-	{
-		`CI_Log(GetFuncName() @ "mission disallows chosen");
-		return ELR_NoInterrupt;
-	}
-
-	// Do not mess with the chosen base defense
-	if (MissionState.IsA(class'XComGameState_MissionSiteChosenAssault'.Name))
-	{
-		`CI_Log(GetFuncName() @ "chosen base defense");
-		return ELR_NoInterrupt;
-	}
-
-	// Do not mess with the chosen stronghold assault
-	foreach AllChosen(ChosenState)
-	{
-		if (ChosenState.StrongholdMission.ObjectID == MissionState.ObjectID)
-		{
-			`CI_Log(GetFuncName() @ "chosen stronghold assault");
-			return ELR_NoInterrupt;
-		}
 	}
 
 	// Infiltrations handle chosen internally
@@ -1085,6 +1061,51 @@ static protected function bool CanChosenAppear (XComGameState NewGameState)
 	`CI_Trace(GetFuncName() @ `showvar(AlienHQ.MissionsSinceChosen));
 
 	return AlienHQ.MissionsSinceChosen >= MinNumMissions;
+}
+
+// Used by OverrideAddChosenTacticalTagsToMission and DLCInfo::ResetAssaultChosenRoll
+//
+// Note that currently uses of this function assume that it will filter out mission
+// types where the chosen are either guranteed to show up or guranteed to not show up
+// (i.e. do not use random rolls). If that is ever changed, uses might need to be adjusted
+static function bool ShouldManageChosenOnAssault (XComGameState_MissionSite MissionState, optional XComGameState NewGameState = none)
+{
+	local array<XComGameState_AdventChosen> AllChosen;
+	local XComGameState_AdventChosen ChosenState;
+
+	// Do not mess with the golden path missions
+	if (MissionState.GetMissionSource().bGoldenPath) 
+	{
+		`CI_Log(GetFuncName() @ "golden path mission");
+		return false;
+	}
+
+	// Do not mess with missions that disallow chosen
+	if (class'XComGameState_HeadquartersAlien'.default.ExcludeChosenMissionSources.Find(MissionState.Source) != INDEX_NONE)
+	{
+		`CI_Log(GetFuncName() @ "mission disallows chosen");
+		return false;
+	}
+
+	// Do not mess with the chosen base defense
+	if (MissionState.IsA(class'XComGameState_MissionSiteChosenAssault'.Name))
+	{
+		`CI_Log(GetFuncName() @ "chosen base defense");
+		return false;
+	}
+
+	// Do not mess with the chosen stronghold assault
+	AllChosen = class'UIUtilities_Strategy'.static.GetAlienHQ().GetAllChosen(NewGameState);
+	foreach AllChosen(ChosenState)
+	{
+		if (ChosenState.StrongholdMission.ObjectID == MissionState.ObjectID)
+		{
+			`CI_Log(GetFuncName() @ "chosen stronghold assault");
+			return false;
+		}
+	}
+
+	return true;
 }
 
 static protected function EventListenerReturn PreCompleteStrategyFromTacticalTransfer (Object EventData, Object EventSource, XComGameState NullGameState, Name Event, Object CallbackData)

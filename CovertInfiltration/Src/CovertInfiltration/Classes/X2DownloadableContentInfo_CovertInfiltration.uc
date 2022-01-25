@@ -712,6 +712,7 @@ static protected function OnPreMission_Activity (XComGameState StartGameState, X
 static event OnPostMission ()
 {
 	ResetInfiltrationChosenRoll();
+	ResetAssaultChosenRoll();
 	TriggerMissionExitEvents();
 	HandleFacilityMissionExit();
 	PostChosenStronghold();
@@ -749,6 +750,101 @@ static protected function ResetInfiltrationChosenRoll ()
 	else
 	{
 		History.CleanupPendingGameState(NewGameState);
+	}
+}
+
+static protected function ResetAssaultChosenRoll ()
+{
+	local array<name> AllChosenSpawningTags, OldMissionTags, NewMissionTags;
+	local XComGameState_HeadquartersAlien AlienHQ;
+	local XComGameState_MissionSite MissionSite;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local XComGameState NewGameState;
+	local name Tag;
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	AlienHQ = class'UIUtilities_Strategy'.static.GetAlienHQ();
+	AllChosenSpawningTags = AlienHQ.GetAllChosenSpawningTags();
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionSite)
+	{
+		// Do not touch the mission on which we just went
+		if (MissionSite.ObjectID == BattleData.m_iMissionID)
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "latest mission");
+			continue;
+		}
+		
+		// Infils are handled above
+		if (MissionSite.IsA(class'XComGameState_MissionSiteInfiltration'.Name))
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "infil");
+			continue;
+		}
+
+		// Do not mess with the guaranteed missions
+		if (!class'X2EventListener_Infiltration'.static.ShouldManageChosenOnAssault(MissionSite))
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "ShouldManageChosenOnAssault is false");
+			continue;
+		}
+
+		OldMissionTags = MissionSite.TacticalGameplayTags;
+		OldMissionTags.Sort(SortTacticalTags);
+
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("CI: ResetAssaultChosenRoll for" @ MissionSite.ObjectID @ MissionSite.GeneratedMission.Mission.MissionName @ MissionSite.Source);
+		MissionSite = XComGameState_MissionSite(NewGameState.ModifyStateObject(class'XComGameState_MissionSite', MissionSite.ObjectID));
+		
+		// First, remove all the possible chosen tags
+		foreach AllChosenSpawningTags(Tag)
+		{
+			MissionSite.TacticalGameplayTags.RemoveItem(Tag);
+		}
+
+		// Now, roll a chosen
+		AlienHQ.AddChosenTacticalTagsToMission(MissionSite);
+
+		// Get the new tags
+		NewMissionTags = MissionSite.TacticalGameplayTags;
+		NewMissionTags.Sort(SortTacticalTags);
+
+		// See if anything changed
+		if (!class'X2Helper_Infiltration'.static.AreNameArraysIdentical(OldMissionTags, NewMissionTags))
+		{
+			// Reset the schedule. No need to roll it here - it will be done anyway when opening the mission blades
+			MissionSite.SelectedMissionData.SelectedMissionScheduleName = '';
+
+			`SubmitGameState(NewGameState);
+		}
+		else
+		{
+			History.CleanupPendingGameState(NewGameState);
+		}
+	}
+}
+
+// Copied from X2DLCInfo_DLC_Day60
+private static function int SortTacticalTags(name NameA, name NameB)
+{
+	local string StringA, StringB;
+
+	StringA = string(NameA);
+	StringB = string(NameB);
+
+	if (StringA < StringB)
+	{
+		return 1;
+	}
+	else if (StringA > StringB)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
 	}
 }
 
