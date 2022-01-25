@@ -1313,7 +1313,7 @@ static function bool ShouldDisplaySparkToDoWarning_CI(StateObjectReference SlotR
 	{
 		UnitInfo.UnitRef = XComHQ.Crew[i];
 
-		if (IsUnitValidForSparkSlot_CI(SlotState, UnitInfo))
+		if (IsUnitValidForSparkSlot_CI(SlotState, UnitInfo)) // Changed
 		{
 			return true;
 		}
@@ -1337,7 +1337,7 @@ static function bool IsUnitValidForSparkSlot_CI(XComGameState_StaffSlot SlotStat
 		&& Unit.IsSoldier()
 		&& Unit.IsInjured()
 		&& Unit.GetMyTemplateName() == 'SparkSoldier'
-		&& Unit.GetStaffSlot() == none)
+		&& Unit.GetStaffSlot() == none) // Added this check
 	{
 		return true;
 	}
