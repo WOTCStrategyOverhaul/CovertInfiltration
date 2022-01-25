@@ -1,3 +1,5 @@
+; Commented out entries were changed in the original since the last translation
+
 [UIStrategyMap_CAButton]
 strLabel=ТАЙНЫЕ ОПЕРАЦИИ
 
@@ -90,6 +92,7 @@ PageTitle="Covert Infiltration"
 
 VariousSettingsTitle="Различные настройки"
 TipsTitle="Советы и Пояснения"
+;WarningsTitle="Warnings"
 OverInfiltrationTitle="Сверхпроникновение"
 
 DAYS_TO_HOURS_Label="Часы вместо дней"
@@ -102,6 +105,8 @@ SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Tip="Если кто-либо из ваших
 
 ENABLE_TUTORIAL_Label="Включить обучение"
 ENABLE_TUTORIAL_Tip="Показать внутри игровые объяснения и советы относительно изменений и новых функций/механик"
+;ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Label="Enable Supply Extraction Tutorial"
+;ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Tip="If enabled, a popup regarding changes to the Supply Extraction mission type is shown at the start of the mission.<br/><br/>The global tutorial option above is ignored for this popup."
 
 WARN_BEFORE_EXPIRATION_Label="Предупреждение о истечении времени"
 WARN_BEFORE_EXPIRATION_Tip="Показывать предупреждение до истечения времени миссии"

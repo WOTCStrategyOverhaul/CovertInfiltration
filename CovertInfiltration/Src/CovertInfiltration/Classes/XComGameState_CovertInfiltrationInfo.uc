@@ -26,7 +26,7 @@ struct CharacterGroupKillCount
 var int ModVersion;
 var int StrategyModVersion;
 
-const CURRENT_MOD_VERSION = 10000005; // 1.0 patch 5
+const CURRENT_MOD_VERSION = 10000007; // 1.0 patch 7
 
 /////////////////////
 /// Strategy vars ///
