@@ -1273,6 +1273,78 @@ static function ConvertActionToLategame (name ActionName, name OptionalSlotStaff
 	ActionTemplate.Slots.AddItem(class'X2Helper_Infiltration'.static.CreateDefaultOptionalSlot(OptionalSlotStaff,,, true));
 }
 
+static function PatchSparkStaffSlot()
+{
+	local X2StrategyElementTemplateManager StratMan;
+	local array<X2DataTemplate> DataTemplates;
+	local X2DataTemplate DataTemplate;
+	local X2StaffSlotTemplate StaffSlotTemplate;
+
+	StratMan = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+	StratMan.FindDataTemplateAllDifficulties('SparkStaffSlot', DataTemplates);
+
+	foreach DataTemplates(DataTemplate)
+	{
+		StaffSlotTemplate = X2StaffSlotTemplate(DataTemplate);
+
+		if (StaffSlotTemplate != none)
+		{
+			StaffSlotTemplate.ShouldDisplayToDoWarningFn = ShouldDisplaySparkToDoWarning_CI;
+			StaffSlotTemplate.IsUnitValidForSlotFn = IsUnitValidForSparkSlot_CI;
+		}
+	}
+
+}
+
+// Copied from X2StrategyElement_DLC_Day90StaffSlots::ShouldDisplaySparkToDoWarning
+static function bool ShouldDisplaySparkToDoWarning_CI(StateObjectReference SlotRef)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_StaffSlot SlotState;
+	local StaffUnitInfo UnitInfo;
+	local int i;
+
+	History = `XCOMHISTORY;
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+	SlotState = XComGameState_StaffSlot(History.GetGameStateForObjectID(SlotRef.ObjectID));
+
+	for (i = 0; i < XComHQ.Crew.Length; i++)
+	{
+		UnitInfo.UnitRef = XComHQ.Crew[i];
+
+		if (IsUnitValidForSparkSlot_CI(SlotState, UnitInfo)) // Changed
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Copied from X2StrategyElement_DLC_Day90StaffSlots::IsUnitValidForSparkSlot
+static function bool IsUnitValidForSparkSlot_CI(XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
+{
+	local XComGameState_Unit Unit;
+
+	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
+
+	// Ensure that the unit is not already in this slot, and is an injured Spark soldier
+	// and not staffed anywhere else e.g. Infiltration
+	if (Unit.IsAlive()
+		&& Unit.GetMyTemplate().bStaffingAllowed
+		&& Unit.GetReference().ObjectID != SlotState.GetAssignedStaffRef().ObjectID
+		&& Unit.IsSoldier()
+		&& Unit.IsInjured()
+		&& Unit.GetMyTemplateName() == 'SparkSoldier'
+		&& Unit.GetStaffSlot() == none) // Added this check
+	{
+		return true;
+	}
+
+	return false;
+}
+
 /////////////////////
 /// Faction Cards ///
 /////////////////////
