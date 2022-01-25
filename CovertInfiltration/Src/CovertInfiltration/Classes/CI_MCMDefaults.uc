@@ -8,6 +8,7 @@ var config int DAYS_BEFORE_HOURS;
 var config bool SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED;
 
 var config bool ENABLE_TUTORIAL;
+var config bool ENABLE_TUTORIAL_SUPPLY_EXTRACTION;
 
 var config bool WARN_BEFORE_EXPIRATION;
 var config int HOURS_BEFORE_WARNING;

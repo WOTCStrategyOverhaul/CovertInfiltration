@@ -250,7 +250,7 @@ static function QueueAlienFacilityBuilt ()
 
 static function SupplyExtractMission ()
 {
-	if (!ShouldShowPopup('SupplyExtract')) return;
+	if (!`GETMCMVAR(ENABLE_TUTORIAL_SUPPLY_EXTRACTION)) return;
 
 	class'XComGameStateContext_TutorialBox'.static.AddModalTutorialBoxToHistoryExplicit(default.strSupplyExtractHeader, default.strSupplyExtractBody, "img:///UILibrary_XPACK_StrategyImages.CovertOp_Recover_X_Supplies");
 }
