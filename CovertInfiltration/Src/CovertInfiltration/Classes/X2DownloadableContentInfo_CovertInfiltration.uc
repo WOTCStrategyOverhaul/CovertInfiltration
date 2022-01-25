@@ -772,12 +772,25 @@ static protected function ResetAssaultChosenRoll ()
 	foreach History.IterateByClassType(class'XComGameState_MissionSite', MissionSite)
 	{
 		// Do not touch the mission on which we just went
-		if (MissionSite.ObjectID == BattleData.m_iMissionID) continue;
+		if (MissionSite.ObjectID == BattleData.m_iMissionID)
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "latest mission");
+			continue;
+		}
 		
 		// Infils are handled above
-		if (MissionSite.IsA(class'XComGameState_MissionSiteInfiltration'.Name)) continue;
+		if (MissionSite.IsA(class'XComGameState_MissionSiteInfiltration'.Name))
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "infil");
+			continue;
+		}
 
-		// TODO: check for avaliable? something else?
+		// Do not mess with the guaranteed missions
+		if (!class'X2EventListener_Infiltration'.static.ShouldManageChosenOnAssault(MissionSite))
+		{
+			`CI_Trace(GetFuncName() @ MissionSite.ObjectID @ "ShouldManageChosenOnAssault is false");
+			continue;
+		}
 
 		OldMissionTags = MissionSite.TacticalGameplayTags;
 		OldMissionTags.Sort(SortTacticalTags);
