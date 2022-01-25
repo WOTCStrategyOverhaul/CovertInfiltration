@@ -901,7 +901,7 @@ static protected function EventListenerReturn OverrideAddChosenTacticalTagsToMis
 	}
 
 	// Do not mess with the guaranteed missions
-	if (!ShouldManageChosenOnAssault(MissionState))
+	if (!ShouldManageChosenOnAssault(MissionState, NewGameState))
 	{
 		`CI_Trace(GetFuncName() @ "ShouldManageChosenOnAssault() is false");
 		return ELR_NoInterrupt;
