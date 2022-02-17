@@ -14,6 +14,7 @@ class XComGameState_MissionSiteInfiltration extends XComGameState_MissionSite co
 var array<name> AppliedFlatRisks;
 var float SecondsForOnePercent;
 var int MaxAllowedInfil; // Full number (same as UI), starting from CA launch. The current max is 250
+var int CachedMissionDifficulty;
 
 var array<name> AppliedSitRepTags;
 var array<StateObjectReference> SoldiersOnMission;
@@ -95,6 +96,7 @@ protected function EventListenerReturn OnActionStarted (Object EventData, Object
 
 	NewInfiltration = XComGameState_MissionSiteInfiltration(GameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', ObjectID));
 
+	NewInfiltration.CacheDifficulty();
 	NewInfiltration.SetSoldiersFromAction();
 	NewInfiltration.MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(NewInfiltration.SoldiersOnMission, GetSpawningAction());
 
@@ -1187,6 +1189,69 @@ private function bool SelectPlotDefinition(MissionDefinition MissionDef, string 
 
 	ExcludeBiomes.AddItem(Biome);
 	return false;
+}
+
+//---------------------------------------------------------------------------------------
+function CacheDifficulty()
+{
+	local X2MissionSourceTemplate MissionSource;
+
+	MissionSource = GetMissionSource();
+
+	if(MissionSource != none && MissionSource.GetMissionDifficultyFn != none)
+	{
+		CachedMissionDifficulty = MissionSource.GetMissionDifficultyFn(self);
+	}
+	else
+	{
+		`CI_Log("No difficulty function to cache Dfifficulty for Infiltration");
+	}
+}
+
+//---------------------------------------------------------------------------------------
+function int GetMissionDifficulty(optional bool bDisplayOnly = false)
+{
+	local X2MissionSourceTemplate MissionSource;
+	local int Difficulty;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameStateHistory History;
+
+	if (CachedMissionDifficulty > 0)
+	{
+		MissionSource = GetMissionSource();
+		Difficulty = CachedMissionDifficulty;
+
+		if(!bDisplayOnly)
+		{
+			History = `XCOMHISTORY;
+			XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+			Difficulty += `ScaleStrategyArrayInt(class'X2StrategyGameRulesetDataStructures'.default.CampaignDiffModOnMissionDiff);
+			if(MissionSource != none && MissionSource.bIgnoreDifficultyCap)
+			{
+				Difficulty = Clamp(Difficulty, class'X2StrategyGameRulesetDataStructures'.default.MinMissionDifficulty, Difficulty);
+			}
+			else
+			{
+				Difficulty = Clamp(Difficulty, class'X2StrategyGameRulesetDataStructures'.default.MinMissionDifficulty,
+									`ScaleStrategyArrayInt(class'X2StrategyGameRulesetDataStructures'.default.CampaignDiffMaxDiff));
+			}
+
+			if(XComHQ.TacticalGameplayTags.Find('DarkEvent_ShowOfForce') != INDEX_NONE)
+			{
+				++Difficulty;
+			}
+		}
+		else
+		{
+			Difficulty = Clamp(Difficulty, class'X2StrategyGameRulesetDataStructures'.default.MinMissionDifficulty,
+								class'X2StrategyGameRulesetDataStructures'.default.MaxMissionDifficulty);
+		}
+
+		return Difficulty;
+	}
+
+	return super.GetMissionDifficulty(bDisplayOnly);
 }
 
 defaultproperties
