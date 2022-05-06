@@ -26,7 +26,7 @@ struct CharacterGroupKillCount
 var int ModVersion;
 var int StrategyModVersion;
 
-const CURRENT_MOD_VERSION = 10000007; // 1.0 patch 7
+const CURRENT_MOD_VERSION = 10000008; // 1.0 patch 8
 
 /////////////////////
 /// Strategy vars ///
@@ -172,6 +172,7 @@ static function CreateInfo(optional XComGameState StartState)
 	{
 		Info = XComGameState_CovertInfiltrationInfo(StartState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
 		Info.ModVersion = CURRENT_MOD_VERSION;
+		Info.StrategyModVersion = CURRENT_MOD_VERSION;
 		return;
 	}
 
@@ -182,6 +183,7 @@ static function CreateInfo(optional XComGameState StartState)
 	
 	Info = XComGameState_CovertInfiltrationInfo(NewGameState.CreateNewStateObject(class'XComGameState_CovertInfiltrationInfo'));
 	Info.ModVersion = CURRENT_MOD_VERSION;
+	Info.StrategyModVersion = CURRENT_MOD_VERSION;
 	Info.InitExistingCampaign();
 
 	`XCOMHISTORY.AddGameStateToHistory(NewGameState);
