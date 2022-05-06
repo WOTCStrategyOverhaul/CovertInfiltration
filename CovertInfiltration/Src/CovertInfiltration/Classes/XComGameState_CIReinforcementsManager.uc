@@ -76,7 +76,22 @@ function EventListenerReturn OnPlayerTurnBegun(Object EventData, Object EventSou
 	// We need a fresh gamestate to do this
 	foreach PendingDROs(DRO)
 	{
-		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(DRO.EncounterID, default.Threshold, , , 6, , , , , , , , true);
+		class'XComGameState_AIReinforcementSpawner'.static.InitiateReinforcements(
+			DRO.EncounterID, // EncounterID
+			default.Threshold, // OverrideCountdown
+			, // OverrideTargetLocation
+			, // TargetLocationOverride
+			6, // IdealSpawnTilesOffset
+			, // IncomingGameState
+			, // InKismetInitiatedReinforcements
+			, // InSpawnVisualizationType
+			, // InDontSpawnInLOSOfXCOM
+			, // InMustSpawnInLOSOfXCOM
+			, // InDontSpawnInHazards
+			, // InForceScamper
+			true, // bAlwaysOrientAlongLOP
+			true // bIgnoreUnitCap
+		);
 	}
 
 	return ELR_NoInterrupt;
