@@ -100,6 +100,8 @@ protected function EventListenerReturn OnActionStarted (Object EventData, Object
 	NewInfiltration.SetSoldiersFromAction();
 	NewInfiltration.MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(NewInfiltration.SoldiersOnMission, GetSpawningAction());
 
+	UnRegisterFromActionEvents();
+
 	return ELR_NoInterrupt;
 }
 
@@ -1002,6 +1004,17 @@ protected function InitRegisterEvents ()
 
 	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,, 99, GetSpawningAction(), true);
 	EventManager.RegisterForEvent(ThisObj, 'AllowRulerOnMission', AllowRulerOnMission,, 99, self, true);
+}
+
+protected function UnRegisterFromActionEvents ()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.UnRegisterFromEvent(ThisObj, 'CovertActionStarted');
 }
 
 protected function EnablePreventTick()

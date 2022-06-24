@@ -67,6 +67,7 @@ function RegisterForActionEvents ()
 	ActionState = GetAction();
 	SelfObject = self;
 
+	// TODO: Potentially broken
 	EventManager.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate, 99, ActionState, true);
 	EventManager.RegisterForEvent(SelfObject, 'CovertActionAborted', OnActionAborted, ELD_Immediate, 99, ActionState, true);
 }
