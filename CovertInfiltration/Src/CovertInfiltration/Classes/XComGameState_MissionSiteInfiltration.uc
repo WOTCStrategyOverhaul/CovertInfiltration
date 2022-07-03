@@ -1006,7 +1006,8 @@ protected function InitRegisterEvents ()
 	EventManager.RegisterForEvent(ThisObj, 'AllowRulerOnMission', AllowRulerOnMission,, 99, self, true);
 }
 
-protected function UnRegisterFromActionEvents ()
+// Also called from DLCInfo::FixInfilsWithoutSoldiers
+public function UnRegisterFromActionEvents ()
 {
 	local X2EventManager EventManager;
 	local Object ThisObj;

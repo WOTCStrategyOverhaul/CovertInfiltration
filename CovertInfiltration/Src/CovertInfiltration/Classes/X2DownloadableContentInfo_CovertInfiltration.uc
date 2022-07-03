@@ -407,12 +407,176 @@ static protected function ModVersion_FinalizeStrategy ()
 	// Final state fix-up changes go here
 	`CI_Log("ModVersion_FinalizeStrategy running");
 
+	if (CIInfo.StrategyModVersion < 10000009)
+	{
+		FixInfilsWithoutSoldiers(NewGameState);
+	}
+
 	// Save that the state was updated.
 	// Do this last, so that the state update code can access the previous version
 	CIInfo = XComGameState_CovertInfiltrationInfo(NewGameState.ModifyStateObject(class'XComGameState_CovertInfiltrationInfo', CIInfo.ObjectID));
 	CIInfo.StrategyModVersion = class'XComGameState_CovertInfiltrationInfo'.const.CURRENT_MOD_VERSION;
 
 	`SubmitGameState(NewGameState);
+}
+
+static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
+{
+	local XComGameState_MissionSiteInfiltration InfilState, OlderInfilState;
+	local XComGameState_CovertAction ActionState;
+	local XComGameState_StaffSlot OccupiedSlot;
+	local XComGameState_BattleData BattleData;
+	local XComGameStateHistory History;
+	local StateObjectReference UnitRef;
+	local XComGameState_Unit UnitState;
+
+	`CI_Log(GetFuncName() @ "==============");
+	`CI_Log(GetFuncName() @ "starting");
+
+	History = `XCOMHISTORY;
+	BattleData = XComGameState_BattleData(History.GetSingleGameStateObjectForClass(class'XComGameState_BattleData'));
+
+	foreach History.IterateByClassType(class'XComGameState_MissionSiteInfiltration', InfilState)
+	{
+		// Should never happen, but just in case
+		if (InfilState.bRemoved)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "skipped due to bRemoved");
+			continue;
+		}
+
+		// Do not touch the mission on which we just went
+		if (BattleData != none && InfilState.ObjectID == BattleData.m_iMissionID)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "skipped as it was the latest mission");
+			continue;
+		}
+
+		// Figure out if we need to UnRegisterFromActionEvents() to prevent future breaks.
+		// The only case when we should NOT do that is when the CA has not been started yet
+		// (there are no conqusences to calling it even if it was called already).
+		// This needs to be done even for infils that were not actually broken.
+		ActionState = InfilState.GetSpawningAction();
+		if (
+			ActionState == none ||
+			ActionState.bRemoved ||
+			ActionState.bStarted
+		)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "UnRegisterFromActionEvents");
+			InfilState.UnRegisterFromActionEvents();
+		}
+
+		// Only infils that reached the mission stage (100%+) were affected
+		if (!InfilState.Available)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "skipped as it has not transitioned to mission stage yet");
+			continue;
+		}
+
+		// We care only about infils that lost their soldiers
+		if (InfilState.SoldiersOnMission.Length > 0)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "skipped as it has not lost its soldiers");
+			continue;
+		}
+
+		// We found a broke
+		`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "detected broken, patching");
+		InfilState = XComGameState_MissionSiteInfiltration(NewGameState.ModifyStateObject(class'XComGameState_MissionSiteInfiltration', InfilState.ObjectID));
+
+		// Attempt to find soldiers that belonged to that infil.
+		// Iterate backwards in history of this infil until we find a version that has the soldiers array non-empty.
+		// This won't work if the player played a mission since the infil broke, but it's the best possible option.
+		for (
+			OlderInfilState = XComGameState_MissionSiteInfiltration(InfilState.GetPreviousVersion()); // Start with the previous version of current infil
+			OlderInfilState != none; // Ensure that a previous version actually exists
+			OlderInfilState = XComGameState_MissionSiteInfiltration(OlderInfilState.GetPreviousVersion()) // Try the previous version of the current previous version
+		)
+		{
+			// If this version has soldiers filled out then it's the one we want
+			if (OlderInfilState.SoldiersOnMission.Length > 0) break;
+		}
+
+		// If we found a version that has soldiers set, check if these soldiers are still in limbo
+		// (e.g. were not fixed with console)
+		if (OlderInfilState.SoldiersOnMission.Length > 0)
+		{
+			`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "found older version that soldiers set, attempting restore");
+
+			foreach OlderInfilState.SoldiersOnMission(UnitRef)
+			{
+				UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
+				if (!IsUnitInInfilLimbo(UnitState, NewGameState)) continue;
+
+				InfilState.SoldiersOnMission.AddItem(UnitRef);
+
+				`CI_Log(GetFuncName() @ "infil" @ InfilState.ObjectID @ "added unit" @ UnitRef.ObjectID);
+			}
+
+			// MaxAllowedInfil is calculated from the SoldiersOnMission array, so just in case restore the
+			// value from when the infil still had soldiers
+			InfilState.MaxAllowedInfil = OlderInfilState.MaxAllowedInfil;
+		}
+
+		// At this point the infil is fixed (to the best of our ability)
+	}
+
+	`CI_Log(GetFuncName() @ "fixing units");
+
+	// Now we need to fix units that still remain in limbo
+	// (e.g. no unbroken version exists or the infil was ForceAbortSelectedInfil)
+	foreach History.IterateByClassType(class'XComGameState_Unit', UnitState)
+	{
+		if (!IsUnitInInfilLimbo(UnitState, NewGameState)) continue;
+
+		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is in infil limbo, unstaffing");
+
+		OccupiedSlot = XComGameState_StaffSlot(NewGameState.ModifyStateObject(class'XComGameState_StaffSlot', UnitState.StaffingSlot.ObjectID));
+		OccupiedSlot.EmptySlot(NewGameState);
+	}
+
+
+	`CI_Log(GetFuncName() @ "finished");
+	`CI_Log(GetFuncName() @ "==============");
+}
+
+// For use only by FixInfilsWithoutSoldiers
+private static function bool IsUnitInInfilLimbo (XComGameState_Unit UnitState, XComGameState CheckGameState)
+{
+	local XComGameState_MissionSiteInfiltration OtherInfilState;
+	local XComGameState_StaffSlot OccupiedSlot;
+
+	if (UnitState == none || UnitState.bRemoved)
+	{
+		//`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "no longer exists (???)");
+		return false;
+	}
+
+	OccupiedSlot = UnitState.GetStaffSlot();
+	if (OccupiedSlot == none || OccupiedSlot.GetMyTemplateName() != 'InfiltrationStaffSlot')
+	{
+		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is not staffed into an InfiltrationStaffSlot");
+		return false;
+	}
+
+	// Ensure that the unit is not on an another infil
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_MissionSiteInfiltration', OtherInfilState)
+	{
+		// Check the pending state, just in case
+		if (CheckGameState.GetGameStateForObjectID(OtherInfilState.ObjectID) != none)
+		{
+			OtherInfilState = XComGameState_MissionSiteInfiltration(CheckGameState.GetGameStateForObjectID(OtherInfilState.ObjectID));
+		}
+
+		if (OtherInfilState.SoldiersOnMission.Find(UnitRef) != INDEX_NONE)
+		{
+			`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is on an infil" @ OtherInfilState.ObjectID);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /////////////////
