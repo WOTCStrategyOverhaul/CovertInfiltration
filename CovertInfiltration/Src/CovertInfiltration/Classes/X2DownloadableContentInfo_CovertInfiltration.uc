@@ -506,8 +506,7 @@ static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
 
 			foreach OlderInfilState.SoldiersOnMission(UnitRef)
 			{
-				UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));
-				if (!IsUnitInInfilLimbo(UnitState, NewGameState)) continue;
+				if (!IsUnitInInfilLimbo(UnitRef, NewGameState)) continue;
 
 				InfilState.SoldiersOnMission.AddItem(UnitRef);
 
@@ -528,7 +527,7 @@ static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
 	// (e.g. no unbroken version exists or the infil was ForceAbortSelectedInfil)
 	foreach History.IterateByClassType(class'XComGameState_Unit', UnitState)
 	{
-		if (!IsUnitInInfilLimbo(UnitState, NewGameState)) continue;
+		if (!IsUnitInInfilLimbo(UnitState.GetReference(), NewGameState)) continue;
 
 		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is in infil limbo, unstaffing");
 
@@ -542,14 +541,22 @@ static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
 }
 
 // For use only by FixInfilsWithoutSoldiers
-private static function bool IsUnitInInfilLimbo (XComGameState_Unit UnitState, XComGameState CheckGameState)
+private static function bool IsUnitInInfilLimbo (StateObjectReference UnitRef, XComGameState CheckGameState)
 {
 	local XComGameState_MissionSiteInfiltration OtherInfilState;
 	local XComGameState_StaffSlot OccupiedSlot;
+	local XComGameState_Unit UnitState;
+
+	UnitState = XComGameState_Unit(CheckGameState.GetGameStateForObjectID(UnitRef.ObjectID));
+
+	if (UnitState == none)
+	{
+		UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));	
+	}
 
 	if (UnitState == none || UnitState.bRemoved)
 	{
-		//`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "no longer exists (???)");
+		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "no longer exists (???)");
 		return false;
 	}
 
@@ -569,7 +576,7 @@ private static function bool IsUnitInInfilLimbo (XComGameState_Unit UnitState, X
 			OtherInfilState = XComGameState_MissionSiteInfiltration(CheckGameState.GetGameStateForObjectID(OtherInfilState.ObjectID));
 		}
 
-		if (OtherInfilState.SoldiersOnMission.Find(UnitRef) != INDEX_NONE)
+		if (OtherInfilState.SoldiersOnMission.Find('ObjectID', UnitRef.ObjectID) != INDEX_NONE)
 		{
 			`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is on an infil" @ OtherInfilState.ObjectID);
 			return false;
