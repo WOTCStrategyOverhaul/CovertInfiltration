@@ -102,7 +102,7 @@ protected function EventListenerReturn OnActionStarted (Object EventData, Object
 
 	// For some players, when the history is compacted (e.g. strategy -> tactical transition)
 	// the final deletion of the CA causes the filter on this listener to be lost.
-	// Thus, we trigger on all start of all CAs, which most notably leads to losing out soldiers
+	// Thus, we trigger on all start of all CAs, which most notably leads to losing our soldiers
 	// (since our CA no longer exists, "SoldiersOnMission =" assigns an empty array).
 	UnRegisterFromActionEvents();
 

@@ -67,7 +67,8 @@ function RegisterForActionEvents ()
 	ActionState = GetAction();
 	SelfObject = self;
 
-	// TODO: Potentially broken
+	// These technically suffer from same issue as XComGameState_MissionSiteInfiltration::OnActionStarted
+	// but since the self gets also deleted in response to these events, there is no point in manually unregistering
 	EventManager.RegisterForEvent(SelfObject, 'CovertActionExpired', OnActionExpired, ELD_Immediate, 99, ActionState, true);
 	EventManager.RegisterForEvent(SelfObject, 'CovertActionAborted', OnActionAborted, ELD_Immediate, 99, ActionState, true);
 }
