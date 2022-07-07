@@ -100,6 +100,10 @@ protected function EventListenerReturn OnActionStarted (Object EventData, Object
 	NewInfiltration.SetSoldiersFromAction();
 	NewInfiltration.MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(NewInfiltration.SoldiersOnMission, GetSpawningAction());
 
+	// For some players, when the history is compacted (e.g. strategy -> tactical transition)
+	// the final deletion of the CA causes the filter on this listener to be lost.
+	// Thus, we trigger on all start of all CAs, which most notably leads to losing out soldiers
+	// (since our CA no longer exists, "SoldiersOnMission =" assigns an empty array).
 	UnRegisterFromActionEvents();
 
 	return ELR_NoInterrupt;

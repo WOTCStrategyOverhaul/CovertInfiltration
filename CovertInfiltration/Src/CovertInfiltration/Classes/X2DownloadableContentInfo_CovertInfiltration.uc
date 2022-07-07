@@ -531,13 +531,10 @@ static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
 
 		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is in infil limbo, unstaffing");
 
-		UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitRef.ObjectID));
-		if (UnitState == none)
-		{
-			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));	
-		}
-
+		UnitState = XComGameState_Unit(NewGameState.ModifyStateObject(class'XComGameState_Unit', UnitRef.ObjectID));
 		OccupiedSlot = XComGameState_StaffSlot(NewGameState.ModifyStateObject(class'XComGameState_StaffSlot', UnitState.StaffingSlot.ObjectID));
+
+		// Kick them out of the slot - the staff slot code will handle everything
 		OccupiedSlot.EmptySlot(NewGameState);
 	}
 
