@@ -525,11 +525,17 @@ static protected function FixInfilsWithoutSoldiers (XComGameState NewGameState)
 
 	// Now we need to fix units that still remain in limbo
 	// (e.g. no unbroken version exists or the infil was ForceAbortSelectedInfil)
-	foreach History.IterateByClassType(class'XComGameState_Unit', UnitState)
+	foreach `XCOMHQ.Crew(UnitRef)
 	{
-		if (!IsUnitInInfilLimbo(UnitState.GetReference(), NewGameState)) continue;
+		if (!IsUnitInInfilLimbo(UnitRef, NewGameState)) continue;
 
 		`CI_Log(GetFuncName() @ "unit" @ UnitRef.ObjectID @ "is in infil limbo, unstaffing");
+
+		UnitState = XComGameState_Unit(NewGameState.GetGameStateForObjectID(UnitRef.ObjectID));
+		if (UnitState == none)
+		{
+			UnitState = XComGameState_Unit(History.GetGameStateForObjectID(UnitRef.ObjectID));	
+		}
 
 		OccupiedSlot = XComGameState_StaffSlot(NewGameState.ModifyStateObject(class'XComGameState_StaffSlot', UnitState.StaffingSlot.ObjectID));
 		OccupiedSlot.EmptySlot(NewGameState);
