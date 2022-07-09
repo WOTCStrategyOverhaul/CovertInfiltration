@@ -100,6 +100,12 @@ protected function EventListenerReturn OnActionStarted (Object EventData, Object
 	NewInfiltration.SetSoldiersFromAction();
 	NewInfiltration.MaxAllowedInfil = class'X2Helper_Infiltration'.static.GetMaxAllowedInfil(NewInfiltration.SoldiersOnMission, GetSpawningAction());
 
+	// For some players, when the history is compacted (e.g. strategy -> tactical transition)
+	// the final deletion of the CA causes the filter on this listener to be lost.
+	// Thus, we trigger on all start of all CAs, which most notably leads to losing our soldiers
+	// (since our CA no longer exists, "SoldiersOnMission =" assigns an empty array).
+	UnRegisterFromActionEvents();
+
 	return ELR_NoInterrupt;
 }
 
@@ -1002,6 +1008,18 @@ protected function InitRegisterEvents ()
 
 	EventManager.RegisterForEvent(ThisObj, 'CovertActionStarted', OnActionStarted,, 99, GetSpawningAction(), true);
 	EventManager.RegisterForEvent(ThisObj, 'AllowRulerOnMission', AllowRulerOnMission,, 99, self, true);
+}
+
+// Also called from DLCInfo::FixInfilsWithoutSoldiers
+public function UnRegisterFromActionEvents ()
+{
+	local X2EventManager EventManager;
+	local Object ThisObj;
+
+	EventManager = `XEVENTMGR;
+	ThisObj = self;
+
+	EventManager.UnRegisterFromEvent(ThisObj, 'CovertActionStarted');
 }
 
 protected function EnablePreventTick()
