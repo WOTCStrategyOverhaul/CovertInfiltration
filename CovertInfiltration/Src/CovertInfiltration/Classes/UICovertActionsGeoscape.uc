@@ -790,6 +790,8 @@ simulated function UpdateData()
 	}
 
 	TriggerTutorialOnSelection();
+
+	`XEVENTMGR.TriggerEvent('CI_UICovertActionsGeoscape_UpdateData', self, self, none);
 }
 
 simulated function bool CanOpenLoadout()
