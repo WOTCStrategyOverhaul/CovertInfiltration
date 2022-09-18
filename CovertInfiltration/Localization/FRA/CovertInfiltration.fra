@@ -1,0 +1,509 @@
+[UIStrategyMap_CAButton]
+strLabel=COVERT OPS
+
+[UICovertActionsGeoscape]
+strRewardHeader=Récompense
+strSlotsHeader="Ressources à déployer
+strInfiltration="MISSION D'INFILTRATION
+strExfilLabel="COÛT D'EXFILTRATION :"
+strExpirLabel="EXPIRE EN :"
+strOpenLoadout="Ouvrez l'écran de l'équipement"
+strAbortAction="Abandonner l'action
+strCloseScreen="Fermer l'écran des opérations secrètes".
+strRisksHeader=Risks
+strDialogDataTitle="ABANDONNER L'OPERATION SECRETES"
+strDialogDataText="L'escouade est entrée profondément en territoire ennemis, et ouvrir une ligne de communication nous obligera à dépenser <XGParam:StrValue0>, ce qui ne fera qu'augmenter au fur et à mesure qu'ils se rapprocheront de leur objectif. Il peut être un meilleur choix de laisser l'escouade continuer. Si nous les retirons, l'opportunité sera perdue à jamais. Êtes-vous sûr, commandant ?"
+strInProgressHeader="En cours"
+
+[UISSManager_CovertAction]
+strSlotOptionalNote="Créneau optionnel".
+strSlotPenaltyNote="Pénalité de surcharge"
+strSlotIrrelevantNote="Élément non pertinent".
+strSlotRequiredPrefix="Obligatoire :"
+strConfirmInfiltration="CONFIRMEZ L'INFILTRATION"
+
+[UISS_InfiltrationReadout] (en anglais)
+strTotalDurationTitle="DURÉE TOTALE :"
+strBaseDurationTitle="DURÉE DE BASE :"
+strSquadDurationTitle="INFILTRATION MODIFIER :"
+strOverloadPenaltyTitle="OVERLOAD PENALTY :"
+strBondModifierTitle="BOND MODIFIER :"
+strDaysAndHours="<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+strPlusDaysAndHours="+<XGParam:IntValue0> jours, <XGParam:IntValue1> heures"
+strMinusDaysAndHours="-<XGParam:IntValue0> Days, <XGParam:IntValue1> Hours"
+strMaxAllowedInfil="Infiltration maximum : <XGParam:IntValue0>%"
+
+[UISS_TerrainDisplay]
+strAbandoned=Abandonné
+strAbandoned_Indoors=Abandonné en intérieur
+strAbandoned_Occluded=Abandonné Occlusif
+strCityCenter=City Center
+strDerelictFacility=Installation du Dr. Vahlen
+strLostTower=Tours perdues
+strFacility=Facility d'ADVENT
+strRooftops=Rooftops
+strSarcophagusRoom=Sarcophage de l'Elu
+strSlums=Bidonvilles
+strShanty=Cabane
+strSmallTown=Petite ville
+strStronghold=Forteresse des élus
+strWilderness=Sauvage
+strTunnels_Reverb=Tunnels
+strTunnels_Sewer=Egouts
+strTunnels_Subway=Metro
+
+[X2EventListener_Infiltration_SitReps]
+strReinforcementDelayBannerMessage="Brouillage des communications..."
+strReinforcementDelayBannerSubtitle="Retard des renforts ADVENT :"
+strReinforcementDelayBannerValue="1 Tours"
+
+[X2Helper_Infiltration]
+strChainEffect_Finished="'<XGParam:StrValue0>' Chaîne terminée"
+strChainEffect_InProgress="'<XGParam:StrValue0>' Chaîne Progressée"
+strChainEffect_Halted="'<XGParam:StrValue0>' Chaîne Échouée"
+
+[X2Helper_Infiltration_TemplateMod]
+strSoldiers=Soldiers
+strReady=Prêt
+strTired=Fatigué
+strWounded=Blessé
+strInfiltrating=Infiltration
+strOnCovertAction=Sur les actions secrètes
+strUnavailable=Disponible
+
+strInfilLabel=HEURES D'INFILTRATION
+strDeterLabel=Pourcentage de détermination
+
+strAcademyProjectStatusGTS=GTS
+
+[UIFacility_ResitanceRing]
+strAssingOrdersOverlay=Assigner les commandes
+
+[UIStrategyMapItem_OpportunityCI]
+strProgress=Progression
+strCovertAction=Action de couverture
+strCovertInfiltration=Infiltration de couverture
+
+[CI_MCMScreen]
+ModName="Infiltration secrète".
+PageTitle="Infiltration secrète".
+
+VariousSettingsTitle="Réglages divers".
+TipsTitle="Conseils et Explications".
+WarningsTitle="Avertissements".
+OverInfiltrationTitle="Sur-Infiltration"
+
+DAYS_TO_HOURS_Label="Heures au lieu de jours".
+DAYS_TO_HOURS_Tip="Afficher les heures au lieu des jours dans la file d'attente des événements lorsque le temps restant atteint un certain seuil".
+DAYS_BEFORE_HOURS_Label="Seuil de conversion des jours en heures"
+DAYS_BEFORE_HOURS_Tip="A ce nombre de jours restants, les heures seront affichées à la place des jours".
+
+SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Label="Désactiver le reste de SKULLJACK lorsqu'il est déjà déployé".
+SUPPRESS_SKULLJACK_NAG_IF_DEPLOYED_Tip="Si l'une de vos troupes actuellement infiltrées est équipée d'un SKULLJACK, désactivez le rappel de Shen pour l'équiper dans Squad Select".
+
+ENABLE_TUTORIAL_Label="Didacticiel sur l'activation".
+ENABLE_TUTORIAL_Tip="Afficher les explications et astuces en jeu concernant les changements et les nouvelles fonctionnalités/mécanismes".
+ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Label="Didacticiel sur l'extraction de ressources"
+ENABLE_TUTORIAL_SUPPLY_EXTRACTION_Tip="Si elle est activée, une popup concernant les modifications apportées au type de mission Extraction de ravitaillement s'affiche au début de la mission.<br/><br/>L'option de tutoriel global ci-dessus est ignorée pour cette popup."
+
+WARN_BEFORE_EXPIRATION_Label="Avertir avant l'expiration"
+WARN_BEFORE_EXPIRATION_Tip="Afficher un message avant l'expiration d'une activité".
+HOURS_BEFORE_WARNING_Label="Avertir avant l'expiration")
+HOURS_BEFORE_WARNING_Tip="L'avertissement d'expiration apparaîtra ce nombre d'heures avant l'expiration de l'activité"
+
+LOW_SOLDIERS_WARNING_Label="Activation de l'avertissement pour les soldats en situation de faiblesse".
+LOW_SOLDIERS_WARNING_Tip="Bradford vous avertira lorsqu'il restera moins de 6 soldats prêts à combattre dans la caserne".
+
+PAUSE_ON_MILESTONE_100_Label="Pause à 100% d'infiltration (Mission Ready)"
+PAUSE_ON_MILESTONE_100_Tip="Si elle est activée, toute analyse du géopanorama sera mise en pause lorsqu'une infiltration atteint 100 %".
+PAUSE_ON_MILESTONE_125_Label="Pause à 125% d'infiltration (Buff Générique Tier 1)"
+PAUSE_ON_MILESTONE_125_Tip="Si cette option est activée, tous les scans de géopanorama seront mis en pause lorsqu'une infiltration atteint 125%".
+PAUSE_ON_MILESTONE_150_Label="Pause à 150% d'infiltration (Tier 1 Aléatoire Sitrep)"
+PAUSE_ON_MILESTONE_150_Tip="Si elle est activée, toute analyse géopanoramique sera mise en pause lorsqu'une infiltration atteindra 150%".
+PAUSE_ON_MILESTONE_175_Label="Pause à 175% d'infiltration (Sitrep négatif retiré)"
+PAUSE_ON_MILESTONE_175_Tip="Si elle est activée, toute analyse géospatiale sera mise en pause lorsqu'une infiltration atteint 175%".
+PAUSE_ON_MILESTONE_200_Label="Pause à 200% d'infiltration (Tier 2 Aléatoire Sitrep)"
+PAUSE_ON_MILESTONE_200_Tip="Si elle est activée, toute analyse du géopanorama sera mise en pause lorsqu'une infiltration atteindra 200%".
+PAUSE_ON_MILESTONE_225_Label="Pause à 225% d'infiltration (Buff Générique Tier 2)"
+PAUSE_ON_MILESTONE_225_Tip="Si cette option est activée, tous les scans de géopanorama seront mis en pause lorsqu'une infiltration atteint 225%".
+
+[UIUtilities_Infiltration]
+strReinforcementsBodyWarning="Dans <XGParam:StrValue0> Tours"
+strReinforcementsBodyImminent="Imminent"
+strOpportunityAvaliableUnknownLocation=Lieu inconnu
+strAssaultAvaliableHeader=Nouvelle mission d'assaut
+strAssaultExpiringHeader=Mission d'assaut arrivant à expiration
+strInfiltrationAvaliableHeader=Nouvelle mission d'infiltration
+strInfiltrationExpiringHeader=Mission d'infiltration arrivant à expiration
+strCovertActionAvaliableHeader=Nouvelle action secrète
+strCovertActionExpiringHeader=Expiration d'une action secrète
+
+strCompletionStatusLabel_NotReached=Non atteint
+strCompletionStatusLabel_NotCompleted=Pas encore achevé
+strCompletionStatusLabel_Expired=Expiré
+strCompletionStatusLabel_Failure=Échoué
+strCompletionStatusLabel_PartialSuccess=Succès partiel
+strCompletionStatusLabel_Success=Succès
+
+strCompletionStatusLabel_Available=Disponible
+strCompletionStatusLabel_Ongoing=En cours
+strCompletionStatusLabel_Infiltrating=Infiltrant
+
+strChainStatusPrefix="(<XGParam:IntValue0>/<XGParam:IntValue1>)"
+
+strActionableLeadUsed="Une de nos pistes d'installation exploitables a été consommée".
+strLastActionableLeadUsed="Notre dernière piste d'installation exploitable a été consommée !"
+
+[UISkyrangerExfiltrate]
+strBody="Le Skyranger a atteint le site d'action. En attente d'ordres."
+strSkyrangerExfiltrateSubtitle="PRÊT POUR L'EXFILTRATION"
+strConfirmExfiltration="ABANDONNER L'ACTION ET EXFILTRER"
+
+[UIMission_Infiltré]
+strOverInfiltrationHeader="Surinfiltration"
+strOverInfiltrationNextBonus="Prochain bonus"
+strMissionReady="MISSION READY"
+strMustLaunch="MUST LAUNCH"
+strInfiltration="INFILTRATION - <XGParam:IntValue0>% (<XGParam:IntValue1>% MAX)"
+strWait="WAIT"
+strReturnToAvenger="RETOUR A L'AVENGER"
+strViewSquad="VIEW SQUAD"
+strDeployedSquad="SQUAD DEPLOYÉ"
+strChosenAppearenceChance="Présence"
+strChosenAppearenceChanceLabels[0]="Improbable"
+strChosenAppearenceChanceLabels[1]="Faisable"
+strChosenAppearenceChanceLabels[2]= "Probable
+strChosenAppearenceChanceLabels[3]= "Probable
+strChosenAppearenceChanceLabels[4]="Présumée 
+
+[OverInfiltrationBonus_NegateRisk X2OverInfiltrationBonusTemplate]
+BonusName="Négliger le risque
+BonusDescription="supprime le sitrep à risque ajouté, supprimant ses effets sur la mission".
+
+[X2StrategyElement_DefaultOverInfiltrationBonuses]
+NegateRiskDescription="Supprimer le SitRep : <XGParam:StrValue0>"
+
+[X2Ability_SitRepAbilitySet_CI]
+MentalReadinessFriendlyName="Préparation mentale"
+MentalReadinessFriendlyDesc="L'équipe gagne +<Ability:MENTAL_READINESS_VALUE/> esquive, piratage et défense contre le psi".
+
+IntelligenceLeakFriendlyName="Fuite d'opération" (IntelligenceLeak Operation)
+IntelligenceLeakFriendlyDesc="Commence la mission sans dissimulation et compromet le rayon de détection des soldats dissimulés".
+
+FoxholesFriendlyName="Retrenchée"
+FoxholesFriendlyDesc="L'équipe gagne +<Ability:FOXHOLES_MOBILITY/> mobilité et +<Ability:FOXHOLES_DEFENSE/> défense lorsqu'elle est à couvert".
+
+OpportuneMoment1FriendlyName="Moment Opportun"
+OpportuneMoment1FriendlyDesc="<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% de réduction du rayon de détection, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% d'évaluation des dégâts".
+OpportuneMoment2FriendlyName="Moment opportun II"
+OpportuneMoment2FriendlyDesc="<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% réduction du rayon de détection, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% crit"
+
+ExperimentalRolloutFriendlyName="Armure Experimentale"
+ExperimentalRolloutFriendlyDesc="Toutes les unités ennemies ont +<Ability:EXPERIMENTALROLLOUT_EXPLOSIVEDAMAGE/>% de résistance aux dégâts explosifs et -<Ability:EXPERIMENTALROLLOUT_CRITMODIFIER/>% de chances de crit contre elles lorsqu'elles sont à pleine santé".
+
+[X2EventListener_Infiltration_UI]
+strInfiltrationReady="Mission prête"
+strCanWaitForBonusOrLaunch="L'escouade peut effectuer un assaut maintenant ou une surinfiltration".
+strAcademyTrainingMaxRank="Rang d'entraînement maximal".
+strReadySoldiers="Prêt"
+strTiredSoldiers="Fatigué"
+strInformantsTitle="Informateurs"
+
+[XComGameState_MissionSiteInfiltration]
+strBannerBonusGained="Bonus Gainé (<XGParam:IntValue0>%)"
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Le tutoriel est désactivé pendant l'exécution de Covert Infiltration"
+strDisabledNarrativeContentTooltip="L'option "Lost and Abandoned" est désactivée pendant l'exécution de Covert Infiltration".
+
+[X2ActivityTemplate_CovertAction]
+strOverviewHeader=ACTIONS SOUS COUVERTURE
+
+[X2ActivityTemplate_Infiltration]
+strOverviewHeader=INFILTRATION
+
+[X2ActivityTemplate_Assault] strOverviewHeader=INFILTRATION
+strOverviewHeader=ASSAUT
+
+[UIListener_AvengerHUD]
+ChainsOverview_Label=Chaînes d'activités
+
+[UIChainsOverview]
+strOngoing=EN COURS
+strEnded=FINIS
+
+[Activity_IntelligenceInfiltration X2ActivityTemplate_Infiltration]
+strOverviewDescription="Pirater le coffre de données d'ADVENT"
+
+[Activity_InformantInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Sauver l'informateur de la résistance".
+
+[Activity_DistractionInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Distraire la garnison ADVENT".
+
+[Activity_SabotageInfiltrate X2ActivityTemplate_Infiltration]
+strOverviewDescription="Saboter l'infrastructure d'ADVENT".
+
+[Activity_PersonnelRescue X2ActivityTemplate_Infiltration]
+strOverviewDescription="Sauver le personnel XCOM".
+
+[Activity_CaptureDVIP X2ActivityTemplate_Infiltration]
+strOverviewDescription="Capture d'un collaborateur d'ADVENT".
+
+[Activity_DatatapAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Protéger la base de données de la résistance".
+MissionPinLabel="Protéger la base de données".
+
+[Activity_IntelligenceAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Pirater le serveur de données d'ADVENT" (Hack ADVENT Datavault)
+MissionPinLabel="Pirater l'information".
+
+[Activity_InformantAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Sauvegarde d'un informateur de la résistance".
+MissionPinLabel="Informateur sur la résistance".
+
+[Activity_DistractionAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Détourner l'attention de la garnison d'ADVENT".
+MissionPinLabel="Détourner l'attention d'ADVENT".
+
+[Activity_SabotageAssault X2ActivityTemplate_Assault]
+strOverviewDescription="Saboter l'infrastructure d'ADVENT".
+MissionPinLabel="Saboter les communications".
+
+[Activity_SupplyConvoy X2ActivityTemplate_Assault]
+strOverviewDescription="Incursion dans un convoi de ravitaillement".
+MissionPinLabel="Convoi de ravitaillement".
+
+[Activity_SupplyExtract X2ActivityTemplate_Assault]
+strOverviewDescription="Interrompre le transfert de matériel".
+MissionPinLabel="Transfert de matériel".
+
+[Activity_SecureUFO X2ActivityTemplate_Assault]
+strOverviewDescription="Sécuriser l'ovni"
+MissionPinLabel="Atterrissage de l'OVNI".
+
+[Activity_WaitGeneric X2ActivityTemplate]
+strOverviewHeader="ATTENDEZ"
+strOverviewDescription="Nous devons être patients et attendre que la cible devienne vulnérable"
+
+[Activity_WaitDarkEvent X2ActivityTemplate]
+strOverviewHeader="ATTENDEZ"
+strOverviewDescription="Nos amis de la résistance ont eu vent d'un projet ADVENT et cherchent des solutions".
+
+[Activity_PreparePersonnel X2ActivityTemplate_CovertAction]
+strOverviewDescription=Recherche d'universitaires disparus
+
+[Activity_PrepareFactionJB X2ActivityTemplate_CovertAction]
+strOverviewDescription=Consulter la Faction
+
+[Activity_PrepareFacility X2ActivityTemplate_CovertAction]
+strOverviewDescription=Trouver un collaborateur pour AVATAR
+
+[Activity_PrepareUFO X2ActivityTemplate_CovertAction]
+strOverviewDescription=Sabotage de l'OVNI atterri
+
+[ActivityChain_CounterDarkEvent X2ActivityChainTemplate]
+strTitle="Contrer l'événement"
+strDescription="Démolir l'infrastructure critique pour les opérations d'ADVENT contre XCOM".
+strObjective="Arrêter le <font color='#E52E11'><XGParam:StrValue0/></font> project d'ADVENT"
+
+[ActivityChain_SupplyRaid X2ActivityChainTemplate]
+strTitle="Raid d'un convoi de ravitaillement"
+strDescription="S'emparer du matériel ennemi d'un convoi de ravitaillement vuulnérable".
+strObjective="Frapper un ADVENT <font color='#CBB11F'>convoi de ravitaillement</font>"
+
+[ActivityChain_CaptureInformant X2ActivityChainTemplate]
+strTitle="Capture un collaborateur d'ADVENT"
+strDescription="Capturer un collaborateur humain pour l'interroger et obtenir de nombreuses informations sur les opérations d'ADVENT".
+strObjective="Capturer un collaborateur d'ADVENT très bien placé <font color='#27AAE1'></font>"
+
+[ActivityChain_RescueScientist X2ActivityChainTemplate]
+strTitle="Sauver un scientifique"
+strDescription="Sortir un scientifique dissident d'un goulag d'ADVENT."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_RescueEngineer X2ActivityChainTemplate]
+strTitle="Sauver ingénieur"
+strDescription="Sortir un ingénieur dissident d'un goulag d'ADVENT."
+strObjective="rescue <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakFactionSoldier X2ActivityChainTemplate]
+strTitle="Sauver un soldat d'une faction"
+strDescription="Sauver un des agents de la faction d'une cellule ADVENT".
+strObjective="Sauver <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakCapturedSoldier X2ActivityChainTemplate]
+strTitle="Sauver un soldat"
+strDescription="Sauver de la captivité un de nos soldats capturés".
+strObjective="sauver <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_JailbreakChosenSoldier X2ActivityChainTemplate]
+strTitle="Sauver le soldat des élus"
+strDescription="Sauver un de nos soldats enlevés par les Élus."
+strObjective="sauver <font color='#33AB13'><XGParam:StrValue0/></font>"
+
+[ActivityChain_GatherSupplies X2ActivityChainTemplate]
+strTitle="Interruption du transfert de ressources"
+strDescription="Interrompre un transfert d'approvisionnement ADVENT avant que les renforts n'arrivent pour sécuriser le site".
+
+[ActivityChain_GatherIntel X2ActivityChainTemplate]
+strTitle="Protect Datatap"
+strDescription="Protéger un poste d'écoute de la résistance qui a récemment intercepté des données importantes provenant de transmissions ADVENT."
+
+[ActivityChain_LandedUFO X2ActivityChainTemplate]
+strTitle="Raid Alien UFO"
+strDescription="Faites atterrir un OVNI, éliminez l'équipage et dépouillez le site avant qu'il ne sache ce qui l'a frappé".
+strObjectif="attaquer l'OVNI <font color='#CBB11F'>alien</font>"
+
+[ActivityChain_DestroyFacility X2ActivityChainTemplate]
+strTitle="Acquérir une piste d'installation"
+strDescription="Capturez un collaborateur humain qui participe au projet Avatar afin que nos 'négociateurs professionnels' puissent leur demander poliment une piste d'installation."
+strObjective="capturer un <font color='#842015'>coordinateur d'AVATAR</font>"
+
+[ActivityChain_SupplyIntercept X2ActivityChainTemplate]
+strTitle="Sauver les ressources interceptées"
+strDescription="Couper les communications d'une force d'interdiction ADVENT pour que la Résistance puisse récupérer les ressources".
+strObjectif="sauver nos <font color='#CBB11F'>ressources interceptées</font>"
+
+[ActivityChain_IntelIntercept X2ActivityChainTemplate]
+strTitle="Sauvegarder les informations interceptées"
+strDescription="Protéger un messager crucial de la Résistance qui a été coincé par les troupes ADVENT."
+strObjectif="sauver notre <font color='#27AAE1'>intel intercepté</font>"
+
+[X2StrategyElement_DefaultActivityChains]
+strCounterDarkEventDescription="La Résistance a entendu parler du projet d'ADVENT <font color='#E52E11'>'<XGParam:StrValue0/>'</font>. Si vous le jugez nécessaire, commandant, nous pouvons envoyer une équipe pour le perturber."
+strCounterHiddenDarkEventDescription="La Résistance a entendu parler d'un <font color='#E52E11'>projet ADVENT top-secret</font>. Nous ne connaissons pas les détails, mais si ADVENT veut le cacher, ça ne peut pas être quelque chose de bon."
+
+[UIViewChainButton]
+strLabel=Voir la chaîne
+
+[UIUtilities_InfiltrationTutorial]
+strWelcomeHeader=Bienvenue
+strWelcomeBody="<Bullet/> Bienvenue dans Covert Infiltration. Au fur et à mesure de votre progression, vous serez accueilli par des popups de tutoriel qui expliquent les changements apportés par le mod. Prenez votre temps pour les lire attentivement. Ils expliquent tous les aspects majeurs que vous devez connaître pour prendre des décisions efficaces. Au cas où vous voudriez revoir les tutoriels plus tard, vous pouvez toujours les trouver dans les Archives XCOM dans les Quartiers du Commandant. <br/><Bullet/> Si vous le souhaitez, vous pouvez désactiver les tutoriels dans le MCM. Dans ce cas, vous pourrez toujours les trouver dans les Archives, où ils seront tous débloqués, quel que soit l'endroit où vous vous trouvez dans la campagne. <br/><Bullet/>Notez que les tutoriels ne s'adapteront pas si vous modifiez l'une des valeurs fondamentales des mods Strategy Overhaul dans les fichiers de configuration. Si vous avez effectué des modifications ou des suppressions importantes en fonction de vos goûts personnels, les tutoriels risquent d'être inexacts."
+
+strGeoscapeEntryHeader=Déploiement proactif
+strGeoscapeEntryBody="<Bullet/> Dans Covert Infiltration, la plupart des activités sont lancées via le menu Covert Ops. Vous pouvez déployer autant de soldats que vous en avez de disponibles sur autant d'activités que vous le souhaitez, mais faites attention au nombre que vous engagez : de nouvelles missions apparaîtront tout au long du mois et des frappes de représailles ADVENT peuvent survenir sans prévenir. Pour commencer, cliquez sur le bouton " Opérations secrètes " en bas de l'écran.<br/><Bullet/> Parfois, nous n'aurons pas assez de soldats pour accomplir toutes les missions disponibles. Il n'y a cependant pas de pénalité stratégique pour sauter des missions, sauf pour les missions de représailles et les missions de défense des Avengers.<br/><Bullet/>Nos informations sur les opérations d'ADVENT sont actuellement assez limitées. L'expansion du réseau de la Résistance augmentera le nombre de missions que nous découvrons chaque mois. Une fois que nous en aurons la capacité, contacter de nouvelles régions devrait être une priorité majeure.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, en tant que votre conseiller stratégique, je recommanderais d'envoyer quelques équipes immédiatement. Mais n'oubliez pas de garder une escouade ou deux en réserve pour faire face aux événements inattendus.</i>"
+
+strCrewLimitHeader=Limite d'équipe
+strCrewLimitBody="<Bullet/> À bord du Talion, l'espace est précieux, mais chacun a besoin de son propre lit pour une récupération optimale. Vous êtes limité dans le nombre de personnel pouvant être maintenu en même temps par la limite d'équipage.<br/><Bullet/>Chaque soldat, scientifique et ingénieur compte dans la limite - les autres membres d'équipage ne sont pas comptés. Les unités robotiques telles que les SPARK ou certaines unités d'autres mods ne comptent pas dans la limite.<br/><Bullet/>Pour chaque personne dépassant la limite, le temps de récupération de la volonté de tous les soldats est augmenté de 10%. Ces pénalités peuvent rapidement devenir paralysantes et tous les efforts doivent être faits pour éviter de dépasser la limite.<br/><Bullet/>La limite de l'équipage peut être augmentée via des améliorations dans les quartiers d'habitation (la pièce située sous les quartiers du commandant). Ces améliorations sont gourmandes en ressources et en énergie.<br/><Bullet/>L'état actuel de la limite d'équipage est visible dans le coin supérieur droit de l'écran dans les quartiers d'habitation, le recrutement et sur le Géopanorama.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, les conséquences de la surcharge du Talion sont graves. Nous devrions planifier à l'avance pour nous assurer que chacun dispose de sa propre couchette au fur et à mesure que nous augmentons nos forces.</i>"
+
+strCrewExpansionHeader=Crew Expansion
+strCrewExpansionBody="En construisant un Atelier, les ingénieurs ne seront plus pris en compte dans la limite d'équipage, tandis que la construction d'un Laboratoire fera de même pour les scientifiques. En donnant à nos ingénieurs et à nos scientifiques des quartiers séparés, nous pourrons consacrer l'intégralité des quartiers d'habitation à nos soldats."
+
+strCovertActionLoadoutHeader=Actions de couverture
+strCovertActionLoadoutBody="<Bullet/> Les actions secrètes sont le type d'activité le plus simple. Une équipe de soldats est envoyée pour une durée déterminée, et elle revient avec des ressources. La durée est déterminée par une durée de base plus un temps supplémentaire basé sur le nombre de soldats et d'équipements envoyés.<br/><Bullet/>Les actions secrètes n'aboutiront (généralement) jamais à un combat tactique. Équiper l'équipe d'équipements tels que des grenades spécialisées ou des médikits est un gaspillage de ressources, sauf s'il y a un risque d'embuscade.<br/><Bullet/> Cependant, des armes et des armures améliorées diminueront les chances de déclenchement des risques. Une estimation approximative de la chance de déclenchement de chaque risque est indiquée sur le côté droit de l'écran de sélection de l'escouade. Une escouade équipée d'objets plus lourds ou de niveau supérieur aura plus de chances de rentrer saine et sauve.<br/><Bullet/> En continuant à améliorer leurs armées et à faire venir des renforts d'outre-monde, les extraterrestres vont également intensifier leurs patrouilles et leurs efforts de sécurité. Les chances de risque d'action secrète augmenteront régulièrement au fil du temps, donc à un moment donné, l'équipement purement conventionnel ne suffira pas.<br/>"
+
+strInfiltrationLoadoutHeader=Missions d'infiltration
+strInfiltrationLoadoutBody="<Bullet/> Les missions d'infiltration vous font équiper une escouade complète en vue d'un combat tactique. Une fois déployée, l'escouade devra passer du temps sur le site de la mission pendant une durée qui dépend du nombre de soldats et de leur équipement.<br/><Bullet/>En général, chaque type d'objet a la même durée d'infiltration, quel que soit son niveau technologique. Choisissez plutôt des armures plus légères et des armes plus petites pour minimiser la durée d'infiltration de l'escouade. Il existe des exceptions à ces règles, comme les Amplis Psi ou les Déguisements, qui deviennent meilleurs avec le niveau technologique.<br/><Bullet/>L'ajout de soldats supplémentaires dans les deux emplacements optionnels entraîne des pénalités importantes sur la durée d'infiltration. Ces pénalités peuvent être supprimées grâce à des mises à niveau de l'école de tactique de guérilla.<br/><Bullet/> Pour commencer un combat tactique, l'escouade doit se préparer pour au moins la durée d'infiltration indiquée. Cependant, une variété de bonus peut être obtenue par la surinfiltration, où l'escouade se prépare au-delà de 100% et jusqu'à 250% de la durée indiquée.<br/><Bullet/>Les risques ne peuvent PAS être réduits en alignant un meilleur équipement, contrairement aux actions secrètes. Au lieu de cela, si un risque s'active, il peut être supprimé plus tard par la surinfiltration.<br/>"
+
+strOverInfiltrationHeader=Overinfiltration
+strOverInfiltrationBody="<Bullet/> L'escouade infiltrée s'est suffisamment préparée pour lancer la mission maintenant. Cependant, vous pouvez également surinfiltrer une mission, en éditant les SITREP de la mission après chaque 25% supplémentaire d'infiltration jusqu'à 250%.<br/><Bullet/>La surinfiltration est recommandée pour les missions difficiles ou les escouades inexpérimentées, mais n'est pas nécessaire pour terminer toutes les missions.<br/><Bullet/>La chance qu'un des Élus des Anciens ait vent de notre opération et se montre pour nous arrêter sera réduite grâce à l'infiltration continue.<br/><Bullet/>Pour plus d'informations sur la progression de la surinfiltration de l'escouade, cliquez sur le bouton en forme de point d'interrogation jaune sur l'élément le plus à droite de l'interface utilisateur.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, la surinfiltration peut être un processus valable pour les missions difficiles. Cependant, chaque jour que nous passons à attendre est un jour de plus où l'escouade est indisponible pour une autre opération. Si nous pensons que l'escouade peut gérer la mission telle quelle, je recommande d'y aller dès que possible.</i>"
+
+strAssaultLoadoutHeader=Missions d'assaut
+strAssaultLoadoutBody="<br/><Bullet/>Les missions d'assaut sont celles auxquelles vous êtes habitués dans le jeu de base XCOM 2, où l'escouade s'envole en Skyranger pour un combat tactique et revient immédiatement.<br/><Bullet/> Contrairement aux missions d'infiltration et aux actions secrètes, le temps d'infiltration et la négation des risques ne sont pas en jeu. Vous pouvez emmener autant de soldats et autant de matériel que le Skyranger peut transporter sans aucune pénalité.<br/><Bullet/> Attention, les missions d'assaut sont généralement plus difficiles que l'infiltration moyenne. Plus d'ennemis seront présents et l'escouade n'aura pas le contrôle des SitRep du site de la mission.<br/>"
+
+strCovertActionFinishedHeader=Fatigue des actions secrètes
+strCovertActionFinishedBody="<Bullet/> Tout comme les missions, les actions secrètes affecteront la volonté de vos soldats. S'ils perdent trop de volonté et finissent par être fatigués, ils ne pourront pas se déployer sur une autre Action Cachée avant d'avoir récupéré.<br/><Bullet/>Si les Actions Cachées peuvent être un moyen facile de gagner des ressources, vous devez faire attention au nombre que vous tentez à un moment donné. Toutes les actions secrètes ne valent pas les risques encourus.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, nous devrons choisir nos cibles avec soin. Déployer beaucoup de soldats nous laissera exposés lorsque d'autres missions plus critiques en termes de temps apparaîtront.</i>"
+
+strFacilityRingHeader=Remplacement des anneaux de résistance
+strFacilityRingBody="<br/><Bullet/>L'anneau de résistance n'est plus nécessaire pour préparer des actions secrètes - à la place, sa construction débloque des ordres de résistance et une variété d'améliorations.<br/><Bullet/>Lorsque l'anneau est construit, vous pourrez attribuer des ordres instantanément. Cela ne peut être fait qu'une fois et après, vous devrez attendre un largage de ressources comme d'habitude.<br/><Bullet/>L'école de tactique de guérilla a également été retouchée, mais sa fonction principale reste intacte. Un tutoriel pour en expliquer davantage apparaîtra lorsque vous la construirez.<br/>"
+
+strFacilityGTSHeader=Modifications de l'école Guerilla Tactics
+strFacilityGTSBody="<Bullet/> L'école de tactique de guérilla dispose désormais de 2 emplacements d'entraînement, et au lieu d'entraîner des Rookies à des Squaddies, elle a désormais une valeur de rang d'entraînement maximum. Tout soldat sous ce rang peut être staffé pour s'entraîner jusqu'au rang d'entraînement maximum. Le rang d'entraînement maximal actuel peut être vu en haut à droite.<br/><Bullet/>Les soldats sont promus d'un rang chaque fois qu'ils sont staffés. Vous pouvez choisir de les staffer plusieurs fois (si nécessaire) pour atteindre le rang d'entraînement maximal.<br/><Bullet/>Si le soldat staffé est un Rookie, vous pouvez choisir à quelle classe il sera promu. La formation d'un soldat de Rookie à Squaddie prend un peu plus de temps que les autres augmentations de grade.<br/><Bullet/>Le rang d'entraînement maximum commence à Squaddie mais peut être augmenté à Caporal et Sergent grâce à un ordre de résistance et une mise à niveau à l'école de tactique de guérilla.<br/>"
+
+strActivityChainsHeader=Chaînes d'activités
+strActivityChainsBody="<Bullet/> Une chaîne d'activité est un ensemble d'activités qui doivent être complétées en séquence pour obtenir une grande ressources à la fin de la chaîne. Ces activités peuvent inclure des missions d'assaut, des infiltrations secrètes et des actions secrètes.<br/><Bullet/>Si la ou les ressources principales sont généralement données à la fin de la chaîne, les missions précédentes sont toujours bénéfiques pour l'obtention d'un butin et de ressources et incluent souvent des ressources secondaires. <br/><Bullet/>Les étapes de la chaîne sont semi-Aléatoireisées, la structure de chaque chaîne et de l'étape finale est généralement la même, mais les types de mission et les ressources des étapes de préparation seront variés.<br/><Bullet/>Les chaînes sont découvertes au fil du temps par des informateurs de la Résistance et présentées à XCOM pour analyse. Pour plus d'infos, cliquez sur le bouton Afficher la chaîne en haut de l'écran ou rendez-vous dans les quartiers du commandant pour ouvrir l'aperçu de la chaîne.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, nous n'avons pas le luxe de frapper les grandes cibles d'ADVENT tout de suite. Nous devrons recueillir des informations et distraire l'ennemi avant d'avancer vers notre objectif principal.</i>"
+
+strResistanceInformantsHeader=Resistance Informants
+strResistanceInformantsBody="<Bullet/> Dans le coin supérieur droit de cet écran, vous pouvez voir le nombre actuel d'informateurs. Ces sympathisants de la résistance, cachés dans les zones contrôlées par ADVENT, sont la clé des opérations mondiales d'XCOM.<br/><Bullet/>Les informateurs recueillent des données et les rapportent à XCOM, révélant ainsi de nouvelles opportunités sur lesquelles nos soldats peuvent enquêter. Avec notre nombre actuel, vous pouvez vous attendre à ce que nos informateurs découvrent une nouvelle chaîne d'activité toutes les deux semaines environ.<br/><Bullet/>L'administration ADVENT dans notre région de départ est déjà complètement pénétrée. Si vous voulez augmenter le nombre d'informateurs de la résistance à votre disposition, vous devrez contacter de nouvelles régions ou construire davantage de relais radio.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, nous devrions faire de l'extension du réseau de résistance une priorité élevée. Sans cibles ADVENT à atteindre, nous allons manquer de ressources essentielles et priver les troupes d'expérience de combat.</i>"
+
+strFacilityAssaultsHeader=Installations d'Avatar en difficulté
+strFacilityAssaultsBody="<Bullet/> Les installations cachées soutenant le projet Avatar devraient être une cible importante pour XCOM. Cependant, un assaut direct est du suicide étant donné les renforts qu'ADVENT peut apporter. Les installations doivent être brouillées avant de pouvoir être attaquées en toute sécurité.<br/><Bullet/>Les pistes exploitables sont obtenues en recherchant les pistes des installations, qui peuvent être acquises en capturant des coordinateurs Avatar, en scannant des sites ou en obtenant des ressources de hack aléatoires. Si vous détenez au moins une piste actionnable, n'importe quelle installation dans le monde peut être ciblée.<br/><Bullet/> Les pistes actionnables sont dépensées pour tenter, et non débloquer, des installations. Si l'assaut échoue, le plomb actionnable sera tout de même consommé. Si vous avez absolument besoin d'un plomb actionnable, il y en a toujours un disponible au marché noir, mais il ne réapparaîtra pas une fois acheté.<br/><Bullet/>Il existe une autre méthode pour attaquer une installation. Si un relais radio est construit dans la région de l'installation, celle-ci sera déverrouillée en permanence. Le simple fait de contacter la région ne suffit pas.<br/><Bullet/>La quantité de pistes exploitables que vous possédez actuellement est visible en haut à droite de l'écran lorsque vous cliquez sur une installation d'Avatar (à condition qu'elle soit située dans une région sans relais radio).<br/>"
+
+strAdvancedChainsHeader=Expansion de la résistance
+strAdvancedChainsBody="<Bullet/> Les extraterrestres améliorent sans cesse leurs forces. Pour qu'XCOM puisse suivre, ils ont besoin d'un flux constant de ressources qui peuvent être difficiles à obtenir par le biais des missions de transfert de ravitaillement et des petites ressources en renseignements que l'on trouve couramment.<br/><Bullet/>La construction d'au moins un relais radio dans n'importe quelle région contactée débloquera de nouvelles chaînes avancées qui permettront à XCOM de lancer des attaques très gratifiantes sur les convois de ravitaillement et les collaborateurs d'ADVENT.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, nous ne pouvons pas gagner cette guerre avec de petites attaques. Nous devons frapper ADVENT là où ça fait mal, et cela signifie étendre le réseau de résistance par des contacts et des relais, dès que possible.</i>"
+
+strDarkEventsHeader=Compter les événements sombres
+strDarkEventsBody="<br/><br/>L'ADVENT vient seulement de commencer ses opérations de contre-insurrection. Bien qu'il n'y ait qu'un seul Événement Sombre ce mois-ci, ADVENT accélérera ses efforts et finira par en amener trois contre nous chaque mois.<br/><Bullet/>La résistance enquêtera et préparera des Chaînes d'Activité pour neutraliser chaque Événement Sombre, mais leur intelligence est limitée. Chaque région que vous avez contactée sera suffisante pour découvrir un Dark Event aléatoire chaque mois.<br/><Bullet/>Cela signifie que si vous contrôlez deux régions, et qu'ADVENT prépare trois Dark Events, seuls deux d'entre eux seront disponibles pour être contrés. De plus, ces deux-là ne seront peut-être pas ceux que vous souhaitez contrer.<br/><Bullet/>Les chaînes d'activité en phase de préparation peuvent être surveillées à l'aide de l'écran de présentation des chaînes dans les quartiers du commandant.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, maintenant qu'ADVENT sait que nous possédons le Talion, ils vont intensifier leurs efforts pour nous détruire. Nous devrions étendre le réseau de résistance afin de pouvoir découvrir et neutraliser toute opération ennemie.</i>"
+
+strCovertOpsAbortHeader=Abandon des opérations secrètes
+strCovertOpsAbortBody="<Bullet/> Une fois qu'une opération secrète a commencé, l'équipe entre dans un silence radio pour éviter la détection des ADVENT. Les contacter et les ramener chez eux deviendra de plus en plus difficile au fur et à mesure qu'ils s'aventurent en territoire ADVENT.<br/><Bullet/>Après un certain point, le coût en renseignements pour localiser et extraire une équipe peut devenir suffisamment élevé pour que vous deviez simplement la laisser terminer sa mission et rentrer chez elle.<br/><Bullet/>Dans le cas d'infiltrations secrètes, la meilleure ligne de conduite est parfois de les laisser s'infiltrer à 100% et commencer leur mission, puis d'envoyer le Skyranger pour les évacuer. Cependant, cette méthode n'est pas viable tout le temps, car la zone de ramassage est préplacée dans certains types de mission.<br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, nous devons penser à l'avenir lorsque nous envisageons nos déploiements. Si nous avons soudainement besoin d'une escouade en cas d'urgence, il est moins coûteux d'annuler une opération qui en est à ses débuts par rapport à une opération en cours depuis un certain temps.</i>"
+
+strSupplyExtractHeader=Modifications de l'extraction des ressources
+strSupplyExtractBody="ADVENT est en train de transférer du matériel vers l'un de ses avant-postes éloignés. Les renforts des bases aériennes ennemies peuvent facilement atteindre cet endroit et se lanceront dès que l'escouade sera repérée. Récupérer plus que quelques caisses sera extrêmement difficile. Prenez ce que vous pouvez et partez avant que votre position ne soit envahie."
+
+strAvatarCaptureHeader=Collaborateur avatar
+strAvatarCaptureBody="La cible de cette opération est un collaborateur humain que nous soupçonnons d'être impliqué dans le projet AVATAR. La seule façon de trouver une piste sur les installations des aliens est de les prendre vivants. Les tuer n'accomplira rien à part un petit retard de construction."
+
+strIndividualBuiltItemsHeader=Articles construits individuellement
+strIndividualBuiltItemsBody="<br/><br/>Dans Covert Infiltration, les objets sont construits individuellement plutôt qu'universellement améliorés. Cela a plusieurs implications pour votre stratégie à venir en termes de cibles que vous choisissez et de la façon dont vous équipez vos forces.<br/><Bullet/> Équiper correctement plusieurs escouades d'agents avec le dernier équipement peut être un défi. La surinfiltration peut aider les escouades sous-équipées à prendre l'avantage sur leurs adversaires, tandis que les escouades bien équipées pourraient vouloir s'infiltrer plus rapidement afin que leur équipement puisse être renouvelé plus fréquemment.<br/><Bullet/>N'oubliez pas que les objets peuvent être vendus au marché noir pour obtenir des ressources, mais que les alliages et l'elerium investis ne peuvent être récupérés. Construire trop d'objets de niveau 2 peut vous laisser sans le sou lorsque les objets de niveau 3 sont débloqués.<br/><Bullet/>Au lieu de gagner une seule arme ou armure du Pack héritage tactique lorsque le schéma est construit, un " prototype " est accordé lorsque la recherche correspondante est terminée. Les joueurs attentifs auront déjà remarqué les popups après la recherche terminée. Des prototypes supplémentaires peuvent être obtenus à partir de certains sites de balayage.<br/><Bullet/> Par défaut, les accessoires d'armes peuvent être librement retirés et transférés. Le bouton " Supprimer les améliorations d'armes " sur l'écran de sélection de l'escouade supprime les améliorations de toutes les armes non équipées par l'escouade actuelle. Dans l'écran d'amélioration des armes, le bouton X dans le coin de chaque amélioration supprime cette amélioration de l'arme actuellement sélectionnée.<br/>"
+
+strMindShieldOnTiredNerfHeader="Boucliers mentaux sur les soldats fatigués"
+strMindShieldOnTiredNerfBody="<br/>En difficulté commandant et légende, les soldats qui ont un mindshield équipé et qui commencent la mission fatigués sont assurés d'être secoués et de recevoir un trait négatif après la mission.<br/><Bullet/>La pénalité est appliquée après la fin de la mission et n'affecte pas le soldat avant/pendant la mission sous quelque forme que ce soit. <br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, le mindshield est un outil très puissant mais son utilisation n'est pas sans coût. Les inconvénients seront bien plus importants sur les soldats qui ne sont pas totalement reposés mentalement.</i>"
+
+[UIListener_CampaignStartMenu]
+strDisabledTutorialTooltip="Le tutoriel est désactivé pendant l'exécution de Covert Infiltration".
+strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" est désactivé pendant l'exécution de Covert Infiltration"
+
+[Complication_RewardInterception X2ComplicationTemplate]
+FriendlyName="Interception de ressources".
+FriendlyDesc="Il y a une chance que la moitié des ressources de cette chaîne soit interceptée, et rendue récupérable dans une mission de sauvetage."
+
+[Complication_ChosenSurveillance X2ComplicationTemplate]
+FriendlyName="Chosen Surveillance"
+FriendlyDesc="Terminer cette chaîne a une chance d'augmenter la connaissance d'un Élu aléatoire".
+
+[Complication_OpenProvocation X2ComplicationTemplate]
+FriendlyName="Provocation ouverte".
+FriendlyDesc="L'achèvement de cette chaîne a une chance de réduire le délai de rétorsion d'une semaine."
+
+[AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
+DisplayName=Formation améliorée à la guérilla
+Summary=Le rang maximal de formation du SGT est augmenté de <XGParam:IntValue0>.
+
+[UIFacility_AcademySlot_CI]
+strTrainNonRookieDialogTitle=TRAÎNER LE SOLDAT
+strTrainNonRookieDialogText=<XGParam:StrValue3/!ExistingClass/> <XGParam:StrValue0/!UnitName/> peuvent suivre une formation spécialisée à l'école de tactique de guérilla, étudiant pour devenir un <XGParam:StrValue1/!RankName/>, mais ils seront indisponibles pour le combat pendant le processus de formation. Voulez-vous poursuivre ? <br/><br/>Durée de la formation : <XGParam:StrValue2/!Durée/>.
+m_strStopTrainRookieDialogTitle=STOP GTS TRAINING ?
+m_strStopTrainRookieDialogText=Désirez-vous arrêter l'entraînement de %UNITNAME au SGT ? \n\nWARNING : Toute la progression de l'entraînement sera perdue.
+m_strNoSoldiersTooltip=Il n'y a pas de soldats disponibles pour l'entraînement de l'école de tactique de guérilla. 
+m_strSoldiersAvailableTooltip=Attribuez un soldat en dessous du rang d'entraînement pour obtenir des promotions et, s'il s'agit d'une recrue, choisissez une classe spécifique.
+
+[UIInfiltrationDetails]
+strHeader=INFILTRATION
+strOperationText="<XGParam:StrValue0/> (<XGParam:IntValue0/>%)"
+strChosenHelpText="Une surinfiltration modifiera les chances d'intervention d'un Chosen. La chance de base cachée est la plus faible si un Chosen a été rencontré récemment."
+
+strChosenProgressLeftLabel=Infil %
+strChosenModifierLeftLabel=Modificateur
+
+[UIInfiltrationDetails_Milestone]
+strHidden=CACHEE
+
+[GénériqueBuff1 X2InfiltrationBonusMilestoneTemplate]
+strName=Moment opportun II
+
+[SitRep1 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP I Aléatoire
+
+[RiskRemoval X2InfiltrationBonusMilestoneTemplate]
+strName=Déménagement SITREP négatif
+
+[SitRep2 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP II Aléatoire
+
+[GénériqueBuff2 X2InfiltrationBonusMilestoneTemplate]
+strName=Moment opportun II
+
+[SitRep3 X2InfiltrationBonusMilestoneTemplate]
+strName=SITREP III Aléatoire
+
+[X2EventListener_Infiltration]
+strOneTimeMarketLeadDescription="Nous avons vraiment dû tirer quelques ficelles pour celui-ci, et nous l'avons payé. Considère que c'est ta seule faveur, Bradford. On ne le refera pas."
+
+[UIAlert_CovertInfiltration]
+strRewardsIntercepted_Title=INTERCEPTION DE RECOMPENSE
+strRewardsIntercepted_Description="Commandant, une partie de l'équipe de résistance transportant le butin de guerre vers la base a été interceptée ! Près de la moitié des ressources n'ont pas été récupérées, et la situation de l'équipe de résistance sur le terrain s'annonce difficile. Si nous lançons bientôt une mission de récupération, nous devrions être en mesure de sauver le reste de notre butin.<br/><br/>ressources interceptées : <XGParam:StrValue0>"
+
+[UIChainPreview]
+strSingleComplicationFluff=POTENTIELLE COMPLICATION

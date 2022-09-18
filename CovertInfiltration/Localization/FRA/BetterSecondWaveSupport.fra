@@ -1,0 +1,7 @@
+[NoEnviromentalSitreps SecondWaveObject]
+Tooltip="Lorsqu'elle est activée, les missions ne recevront plus parfois de SitRep environnementaux (comme des caisses explosives ou des ennemis psioniques supplémentaires) ou de SitRep de factions tierces (comme les Lost ou toute faction ajoutée par le mod). Cela désactivera effectivement tous les SitRep environnementaux et les factions tierces, sauf lorsque la mission ou la carte l'exige. Comme ces SitRep ne sont généralement bénéfiques ni à XCOM ni à ADVENT, la difficulté tactique du jeu reste pratiquement inchangée. Le frai des SitRep positives ou négatives qui font basculer la difficulté de la mission ne sont pas affectées par cette option. Peut être modifié en milieu de campagne, mais n'affectera pas les missions existantes".
+Description="Environnement contrôlé : Pas de SitRep environnementale ou de faction tierce sur les missions".
+
+[CI_NoUfoGate SecondWaveOptionObject] (en anglais)
+Description="Cieux occupés : Les chaînes de raid OVNI peuvent apparaître avant qu'un OVNI chasseur de vengeurs ne soit rencontré".
+Tooltip="Peut être modifié en cours de campagne, mais n'affectera pas les chaînes d'OVNIs déjà apparues".
