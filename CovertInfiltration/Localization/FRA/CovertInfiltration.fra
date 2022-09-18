@@ -22,7 +22,7 @@ strSlotIrrelevantNote="Élément non pertinent".
 strSlotRequiredPrefix="Obligatoire :"
 strConfirmInfiltration="CONFIRMEZ L'INFILTRATION"
 
-[UISS_InfiltrationReadout] (en anglais)
+[UISS_InfiltrationReadout]
 strTotalDurationTitle="DURÉE TOTALE :"
 strBaseDurationTitle="DURÉE DE BASE :"
 strSquadDurationTitle="INFILTRATION MODIFIER :"
@@ -439,18 +439,18 @@ strIndividualBuiltItemsHeader=Articles construits individuellement
 strIndividualBuiltItemsBody="<br/><br/>Dans Covert Infiltration, les objets sont construits individuellement plutôt qu'universellement améliorés. Cela a plusieurs implications pour votre stratégie à venir en termes de cibles que vous choisissez et de la façon dont vous équipez vos forces.<br/><Bullet/> Équiper correctement plusieurs escouades d'agents avec le dernier équipement peut être un défi. La surinfiltration peut aider les escouades sous-équipées à prendre l'avantage sur leurs adversaires, tandis que les escouades bien équipées pourraient vouloir s'infiltrer plus rapidement afin que leur équipement puisse être renouvelé plus fréquemment.<br/><Bullet/>N'oubliez pas que les objets peuvent être vendus au marché noir pour obtenir des ressources, mais que les alliages et l'elerium investis ne peuvent être récupérés. Construire trop d'objets de niveau 2 peut vous laisser sans le sou lorsque les objets de niveau 3 sont débloqués.<br/><Bullet/>Au lieu de gagner une seule arme ou armure du Pack héritage tactique lorsque le schéma est construit, un " prototype " est accordé lorsque la recherche correspondante est terminée. Les joueurs attentifs auront déjà remarqué les popups après la recherche terminée. Des prototypes supplémentaires peuvent être obtenus à partir de certains sites de balayage.<br/><Bullet/> Par défaut, les accessoires d'armes peuvent être librement retirés et transférés. Le bouton " Supprimer les améliorations d'armes " sur l'écran de sélection de l'escouade supprime les améliorations de toutes les armes non équipées par l'escouade actuelle. Dans l'écran d'amélioration des armes, le bouton X dans le coin de chaque amélioration supprime cette amélioration de l'arme actuellement sélectionnée.<br/>"
 
 strMindShieldOnTiredNerfHeader="Boucliers mentaux sur les soldats fatigués"
-strMindShieldOnTiredNerfBody="<br/>En difficulté commandant et légende, les soldats qui ont un mindshield équipé et qui commencent la mission fatigués sont assurés d'être secoués et de recevoir un trait négatif après la mission.<br/><Bullet/>La pénalité est appliquée après la fin de la mission et n'affecte pas le soldat avant/pendant la mission sous quelque forme que ce soit. <br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, le mindshield est un outil très puissant mais son utilisation n'est pas sans coût. Les inconvénients seront bien plus importants sur les soldats qui ne sont pas totalement reposés mentalement.</i>"
+strMindShieldOnTiredNerfBody="<br/>En difficulté commandant et légende, les soldats qui ont un boucliers mental équipé et qui commencent la mission fatigués sont assurés d'être secoués et de recevoir un trait négatif après la mission.<br/><Bullet/>La pénalité est appliquée après la fin de la mission et n'affecte pas le soldat avant/pendant la mission sous quelque forme que ce soit. <br/><br/>RECOMMANDATION DE BRADFORD : <i>Commandant, le mindshield est un outil très puissant mais son utilisation n'est pas sans coût. Les inconvénients seront bien plus importants sur les soldats qui ne sont pas totalement reposés mentalement.</i>"
 
 [UIListener_CampaignStartMenu]
 strDisabledTutorialTooltip="Le tutoriel est désactivé pendant l'exécution de Covert Infiltration".
-strDisabledNarrativeContentTooltip="\"Lost and Abandoned\" est désactivé pendant l'exécution de Covert Infiltration"
+strDisabledNarrativeContentTooltip="\"Perdus et abandonnés\" est désactivé pendant l'exécution de Covert Infiltration"
 
 [Complication_RewardInterception X2ComplicationTemplate]
 FriendlyName="Interception de ressources".
 FriendlyDesc="Il y a une chance que la moitié des ressources de cette chaîne soit interceptée, et rendue récupérable dans une mission de sauvetage."
 
 [Complication_ChosenSurveillance X2ComplicationTemplate]
-FriendlyName="Chosen Surveillance"
+FriendlyName="Surveillance des Élus"
 FriendlyDesc="Terminer cette chaîne a une chance d'augmenter la connaissance d'un Élu aléatoire".
 
 [Complication_OpenProvocation X2ComplicationTemplate]
@@ -458,11 +458,11 @@ FriendlyName="Provocation ouverte".
 FriendlyDesc="L'achèvement de cette chaîne a une chance de réduire le délai de rétorsion d'une semaine."
 
 [AcademyTrainingRankUnlock X2AcademyTrainingRankUnlockTemplate]
-DisplayName=Formation améliorée à la guérilla
+DisplayName="Formation améliorée à la guérilla".
 Summary=Le rang maximal de formation du SGT est augmenté de <XGParam:IntValue0>.
 
 [UIFacility_AcademySlot_CI]
-strTrainNonRookieDialogTitle=TRAÎNER LE SOLDAT
+strTrainNonRookieDialogTitle=ENTRAÎNER LE SOLDAT
 strTrainNonRookieDialogText=<XGParam:StrValue3/!ExistingClass/> <XGParam:StrValue0/!UnitName/> peuvent suivre une formation spécialisée à l'école de tactique de guérilla, étudiant pour devenir un <XGParam:StrValue1/!RankName/>, mais ils seront indisponibles pour le combat pendant le processus de formation. Voulez-vous poursuivre ? <br/><br/>Durée de la formation : <XGParam:StrValue2/!Durée/>.
 m_strStopTrainRookieDialogTitle=STOP GTS TRAINING ?
 m_strStopTrainRookieDialogText=Désirez-vous arrêter l'entraînement de %UNITNAME au SGT ? \n\nWARNING : Toute la progression de l'entraînement sera perdue.

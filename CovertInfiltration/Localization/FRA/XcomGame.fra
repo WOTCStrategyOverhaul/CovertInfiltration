@@ -195,8 +195,6 @@ Description="Notre équipe a rencontré une patrouille ADVENT sur le chemin du s
 FriendlyName="Equipement utilitaires supplémentaires".
 Description="La Résistance avait une cache de ravitaillement dans la zone, dont notre équipe a profité - ils ont quelques objets supplémentaires qui peuvent s'avérer utiles".
 
-; ---
-
 [X2StrategyGameRulesetDataStructures]
 CovertActionRiskLabels[0]="Contré".
 CovertActionRiskLabels[1]="Trivial"
@@ -332,7 +330,7 @@ ActionObjectif="Récupérer des corps d'aliens"
 [Reward_AlienCorpses X2RewardTemplate]
 DisplayName="Corps d'Aliens".
 
-[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate] (récit d'une action)
+[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Récupérer du butin extraterrestre".
 ActionPreNarrative="Certains de mes semblables sont tombés par hasard sur un poste ADVENT non préparé, et nous avons facilement dépassé leurs défenses. Venez, partagez avec nous le butin de leur défaite."
 ActionPostNarrative="Espérons que nous en trouverons plus pour soutenir notre objectif commun."
@@ -373,8 +371,6 @@ ActionObjective="Découvrir le marché noir"
 
 [Reward_BlackMarket X2RewardTemplate]
 DisplayName="Marché noir"
-
-; ---
 
 [CovertActionNarrative_BlackMarket_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Aidez les contrebandiers"
@@ -426,7 +422,7 @@ ObjectiveTextPools[3]="Les prisonniers doivent survivre"
 ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]= [DefaultSabotageCC].
 
-[DefaultSabotageCC X2MissionNarrativeTemplate] (Modèle de narration de mission par défaut)
+[DefaultSabotageCC X2MissionNarrativeTemplate]
 ObjectiveTextPools[0]= "Non utilisé".
 ObjectiveTextPools[1]= "Placer X4 charges sur le monument".
 ObjectiveTextPools[2]="Extraire tous les soldats XCOM".
