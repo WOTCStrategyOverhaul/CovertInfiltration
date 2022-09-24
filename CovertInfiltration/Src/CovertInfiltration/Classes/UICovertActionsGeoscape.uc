@@ -791,7 +791,7 @@ simulated function UpdateData()
 
 	TriggerTutorialOnSelection();
 
-	`XEVENTMGR.TriggerEvent('CI_UICovertActionsGeoscape_UpdateData', self, self, none);
+	`XEVENTMGR.TriggerEvent('CI_UICovertActionsGeoscape_PostUpdateData', self, self, none);
 }
 
 simulated function bool CanOpenLoadout()
