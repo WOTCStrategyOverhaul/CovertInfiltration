@@ -316,7 +316,7 @@ strObjective="нанести удар по <font color='#CBB11F'>конвою с
 
 [ActivityChain_CaptureInformant X2ActivityChainTemplate]
 strTitle="Захватите сотрудника \"Адвента\""
-;strDescription="Захватите человека-сотрудника для допроса, чтобы узнать, что он(а) знает о \"Адвенте\"."
+strDescription="Захватите сотрудника для допроса, чтобы узнать, что он(а) знает о \"Адвенте\"."
 strObjective="захватить важного <font color='#27AAE1'>коллаборациониста \"Адвента\"</font>"
 
 [ActivityChain_RescueScientist X2ActivityChainTemplate]
@@ -359,7 +359,7 @@ strObjective="штурмуйте <font color='#CBB11F'>НЛО</font>"
 
 [ActivityChain_DestroyFacility X2ActivityChainTemplate]
 strTitle="Получите данные об объекте"
-;strDescription="Захватите сотрудника, ассистирующего в проекте \"Аватар\", и добудьте информацию об их объектах."
+strDescription="Захватите сотрудника, ассистирующего в проекте \"Аватар\", и добудьте информацию об их объектах."
 strObjective="захватите <font color='#842015'>координатора \"Аватара\"</font>"
 
 [ActivityChain_SupplyIntercept X2ActivityChainTemplate]
