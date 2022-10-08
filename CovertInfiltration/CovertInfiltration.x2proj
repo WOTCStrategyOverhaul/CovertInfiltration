@@ -13,6 +13,7 @@
     <Folder Include="Config\" />
     <Folder Include="Localization\" />
     <Folder Include="Content" />
+    <Folder Include="Localization\ESN" />
     <Folder Include="Localization\RUS" />
     <Folder Include="Localization\FRA" />
     <Folder Include="Src\" />
@@ -79,6 +80,15 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\CovertInfiltration.int">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\ESN\BetterSecondWaveSupport.esn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\ESN\CovertInfiltration.esn">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\ESN\XComGame.esn">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Localization\FRA\BetterSecondWaveSupport.fra">
