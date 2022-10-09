@@ -1,10 +1,10 @@
 [ResistanceRing X2FacilityTemplate]
-CompletedSummary="Les ordres de résistance sont disponibles!\nNUn nouvel emplacement pour le personnel est disponible - ajoute un emplacement pour un ordre joker +1".
+CompletedSummary="Les ordres de résistance sont disponibles!\n\nUn nouvel emplacement pour le personnel est disponible - ajoute un emplacement pour un ordre joker +1".
 Summary="L'anneau de résistance permet d'assigner des ordres de résistance sur une base mensuelle."
 
 [ResistanceRingStaffSlot X2StaffSlotTemplate]
 BonusEmptyText="Accorde +1 emplacement d'ordre joker".
-BonusText="WILDCARD ORDERS +%AVENGERBONUS"
+BonusText="ORDRES JOER +%AVENGERBONUS"
 FilledText="%UNITNAME aide la Résistance en matière d'organisation et de logistique, ce qui lui permet d'exécuter davantage d'ordres".
 
 [InfiltrationStaffSlot X2StaffSlotTemplate]
@@ -67,11 +67,11 @@ Summary="Les escouades de 5 soldats ne subissent plus de pénalité au temps d'i
 
 [InfiltrationSize2 X2SoldierUnlockTemplate]
 DisplayName="Taille d'infiltration II"
-Summary="Les escouades de 6 soldats ne subissent plus de pénalité au temps d'infiltration et peuvent atteindre 250% d'infiltration.\n\n REQUIERE TAILLE D'INFILTRATION I"
+Summary="Les escouades de 6 soldats ne subissent plus de pénalité au temps d'infiltration et peuvent atteindre 250% d'infiltration.\n\n EXIGE TAILLE D'INFILTRATION I"
 
 [UpdatedFirewalls X2SitRepTemplate]
 FriendlyName="Pare-feux actualisés"
-Description="La défense technologique de l'ennemi est augmentée de <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> et les tours ne peuvent pas être piratées".
+Description="La défense technologique de l'ennemi est augmentée de <Ability:UPDATED_FIREWALLS_HACK_DEFENSE_BONUS/> et les tours ne peuvent être piratées".
 
 [MentalReadiness X2SitRepTemplate]
 FriendlyName="Disponibilité mentale"
@@ -101,7 +101,7 @@ FriendlyName="Mauvaise informations"
 Description="La durée de la mission est réduite de 1".
 
 [WellRehearsed X2SitRepTemplate]
-FriendlyName="Bien répété"
+FriendlyName="Bonne informations"
 Description="Le temps de mission est augmenté de 1".
 
 [VolunteerArmy X2SitRepTemplate]
@@ -110,7 +110,7 @@ Description="Un soldat de la Résistance rejoint l'équipe pour cette opération
 
 [IntelligenceLeak X2SitRepTemplate]
 FriendlyName=" Fuite d'opération"
-Description="L'escouade ne commence pas avec la dissimulation, et les distances de détection sont augmentées de 33%".
+Description="L'escouade ne commence pas avec la dissimulation, et les distances de détection des ennemis est augmentées de 33%".
 
 [Foxholes X2SitRepTemplate]
 FriendlyName="Retrenchée"
@@ -130,11 +130,11 @@ Description="Le premier groupe de renfort ADVENT sera retardé".
 
 [OpportuneMoment1 X2SitRepTemplate]
 FriendlyName="Moment opportun"
-Description="-<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% de rayon de détection, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% d'hématocrite".
+Description="-<Ability:OPPORTUNE_MOMENT_1_DETECTION_MODIFIER/>% de rayon de détection, +<Ability:OPPORTUNE_MOMENT_1_CRIT_BONUS/>% de taux de coup critiques".
 
 [OpportuneMoment2 X2SitRepTemplate]
 FriendlyName="Moment opportun II"
-Description="-<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% de rayon de détection, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% d'évaluation".
+Description="-<Ability:OPPORTUNE_MOMENT_2_DETECTION_MODIFIER/>% de rayon de détection, +<Ability:OPPORTUNE_MOMENT_2_CRIT_BONUS/>% de taux de coup critiques".
 
 [MessyInsertion X2SitRepTemplate]
 FriendlyName="Insertion désordonnée"
@@ -199,7 +199,7 @@ Description="La Résistance avait une cache de ravitaillement dans la zone, dont
 CovertActionRiskLabels[0]="Contré".
 CovertActionRiskLabels[1]="Trivial"
 CovertActionRiskLabels[2]="Mineur".
-CovertActionRiskLabels[3]= "Modéré
+CovertActionRiskLabels[3]="Modéré
 CovertActionRiskLabels[4]="Majeure
 CovertActionRiskLabels[5]="Extrême"
 
@@ -330,7 +330,7 @@ ActionObjectif="Récupérer des corps d'aliens"
 [Reward_AlienCorpses X2RewardTemplate]
 DisplayName="Corps d'Aliens".
 
-[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate]
+[CovertActionNarrative_AlienCorpses_Skirmishers X2CovertActionNarrativeTemplate] (récit d'une action)
 ActionName="Récupérer du butin extraterrestre".
 ActionPreNarrative="Certains de mes semblables sont tombés par hasard sur un poste ADVENT non préparé, et nous avons facilement dépassé leurs défenses. Venez, partagez avec nous le butin de leur défaite."
 ActionPostNarrative="Espérons que nous en trouverons plus pour soutenir notre objectif commun."
@@ -371,6 +371,8 @@ ActionObjective="Découvrir le marché noir"
 
 [Reward_BlackMarket X2RewardTemplate]
 DisplayName="Marché noir"
+
+; ---
 
 [CovertActionNarrative_BlackMarket_Skirmishers X2CovertActionNarrativeTemplate]
 ActionName="Aidez les contrebandiers"
@@ -422,7 +424,7 @@ ObjectiveTextPools[3]="Les prisonniers doivent survivre"
 ConsoleObjectiveTextPools[0]=
 ConsoleObjectiveTextPools[1]= [DefaultSabotageCC].
 
-[DefaultSabotageCC X2MissionNarrativeTemplate]
+[DefaultSabotageCC X2MissionNarrativeTemplate] (Modèle de narration de mission par défaut)
 ObjectiveTextPools[0]= "Non utilisé".
 ObjectiveTextPools[1]= "Placer X4 charges sur le monument".
 ObjectiveTextPools[2]="Extraire tous les soldats XCOM".
